@@ -19,6 +19,17 @@ $large = Get-ChildItem -Path $RepoRoot -Recurse -File |
   Where-Object { $_.Length -gt 100MB }
 
 $secretRegex = "(ghp_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+|glpat-[A-Za-z0-9_\-]+|BEGIN (RSA |OPENSSH |DSA |EC )?PRIVATE KEY|MINERU_API_TOKEN|access_token|api[_-]?token|password\s*=)"
+$generatedReports = @(
+  (Join-Path $RepoRoot "reports\file_manifest.json"),
+  (Join-Path $RepoRoot "reports\public_repo_audit_summary.json")
+)
+function Is-GeneratedReport([string]$Path) {
+  foreach ($report in $generatedReports) {
+    if ($Path -eq $report) { return $true }
+  }
+  return $false
+}
+
 $secretHits = @()
 Get-ChildItem -Path $RepoRoot -Recurse -File |
   Where-Object {
@@ -35,7 +46,9 @@ Get-ChildItem -Path $RepoRoot -Recurse -File |
     }
   }
 
-$files = Get-ChildItem -Path $RepoRoot -Recurse -File | ForEach-Object {
+$files = Get-ChildItem -Path $RepoRoot -Recurse -File |
+  Where-Object { -not (Is-GeneratedReport $_.FullName) } |
+  ForEach-Object {
   [pscustomobject]@{
     path = $_.FullName.Substring($RepoRoot.Length + 1).Replace("\", "/")
     bytes = $_.Length
