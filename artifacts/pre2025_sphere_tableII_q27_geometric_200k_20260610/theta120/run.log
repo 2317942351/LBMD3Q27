@@ -1,0 +1,1481 @@
+MPMD: TCLB: local:0/1 work:0/1 ---  connected to:
+[  ]    ---- : Using std::chrono::steady_clock::now() for walltime
+[  ]    #### : -------------------------------------------------------------------------
+[  ]    #### : -  CLB version:                   ded67cd                               -
+[  ]    #### : -        Model: d3q27_pf_velocity_q27_geometric                               -
+[  ]    #### : -------------------------------------------------------------------------
+[  ]    #### : Setting output path to: case
+[  ]    ---- : Discarding 1 comments
+[ 0]    ---- : Selecting device 0/1
+[  ]    ---- :   Threads  |      Action
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 512
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 384
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 384
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 512
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 384
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 512
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | BorderExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 384
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 640
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 256
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 768
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 896
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)0, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)1, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)3, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)0, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)1, (eStage)9> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)0> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)1> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)2> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)3> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)4> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)5> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)6> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)7> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)8> --- Reduced from maximum 1024
+[  ]    ==== :    32x4    | InteriorExecutor<(eOperationType)4, (eCalculateGlobals)2, (eStage)9> --- Reduced from maximum 1024
+[ 0] warning ! No "Units" element in config file
+[  ]    ==== : Mesh size in config file: 80x80x140
+[  ]    ---- : Global lattice size: 80x80x140
+[  ]    ==== : Max region size: 1075200. Mesh size 1075200. Overhead:  0%
+[  ]    ---- : Local lattice size: 96x80x140
+[  ]    #### : [0] Cumulative allocation of 1269176320 b (1.3 GB)
+[  ]    ---- : Creating geom size:1075200
+[  ]    #### : Setting output path to: case
+[  ]    #### : Setting output path to: /media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta120/output/case
+[  ]    ---- : loading geometry ...
+[  ]    ---- : overwriting all flags
+[  ]    ---- : Setting number of zones to 3
+[  ]    ---- : Setting Density_h to 1 (1.000000)
+[  ]    ---- : Setting Density_l to 0.001 (0.001000)
+[  ]    ---- : Setting Viscosity_h to 0.09 (0.090000)
+[  ]    ---- : Setting Viscosity_l to 0.1 (0.100000)
+[  ]    ---- : Setting tauUpdate to 3 (3.000000)
+[  ]    ---- : Setting sigma to 5e-05 (0.000050)
+[  ]    ---- : Setting M to 0.2 (0.200000)
+[  ]    ---- : Setting IntWidth to 6 (6.000000)
+[  ]    ---- : Setting Radius to 24 (24.000000)
+[  ]    ---- : Setting BubbleType to 1 (1.000000)
+[  ]    ---- : Setting CenterX to 40 (40.000000)
+[  ]    ---- : Setting CenterY to 40 (40.000000)
+[  ]    ---- : Setting CenterZ to 72 (72.000000)
+[  ]    ---- : Setting VelocityX in zone  (-1) to 0.0 (0.000000)
+[  ]    ---- : Setting VelocityY in zone  (-1) to 0.0 (0.000000)
+[  ]    ---- : Setting VelocityZ in zone  (-1) to 0.0 (0.000000)
+[  ]    ---- : Setting DropletOnlyVelocity to 0.0 (0.000000)
+[  ]    ---- : Setting DropletVelocityX to 0.0 (0.000000)
+[  ]    ---- : Setting DropletVelocityY to 0.0 (0.000000)
+[  ]    ---- : Setting DropletVelocityZ to 0.0 (0.000000)
+[  ]    ---- : Setting GravitationX to 0.0 (0.000000)
+[  ]    ---- : Setting GravitationY to 0.0 (0.000000)
+[  ]    ---- : Setting GravitationZ to 0.0 (0.000000)
+[  ]    ---- : Setting BuoyancyX to 0.0 (0.000000)
+[  ]    ---- : Setting BuoyancyY to 0.0 (0.000000)
+[  ]    ---- : Setting BuoyancyZ to 0.0 (0.000000)
+[  ]    ---- : Setting radAngle in zone  (-1) to 120d (2.094395)
+[ 0] WARNING ! Zone-specific settings in zone 0 were overwritten from 1.570796 to 2.094395
+[  ]    ---- : Setting minGradient to 1e-08 (0.000000)
+[  ]    ---- : Initializing Lattice ...
+[  ]    119.5 MLBUps    137.89 GB/s [====================]  0s
+[  ]    ---- : Callback VTK with no Iterations attribute
+[  ]    ---- :        0 it writing vtk
+[  ]    ---- : Setting callback Log at 1000.000000 iterations
+[  ]    ---- : Adding Log to the solver hands
+[  ]    ---- : Setting callback Failcheck at 1000.000000 iterations
+[  ]    ---- : Adding Failcheck to the solver hands
+[  ]    ---- : Setting action Solve at 200000.000000 iterations
+[  ]    ---- : Setting callback VTK at 20000.000000 iterations
+[  ]    ---- : Adding VTK to the solver hands
+[  ]    ---- : Setting callback Log at 1000.000000 iterations
+[  ]    ---- : Adding Log to the solver hands
+[  ]    ---- : Setting callback Failcheck at 1000.000000 iterations
+[  ]    ---- : Adding Failcheck to the solver hands
+[  ]    146.0 MLBUps    168.50 GB/s [==                  ]  0s
+[  ]    220.4 MLBUps    254.39 GB/s [====                ]  1s
+[  ]    220.4 MLBUps    254.33 GB/s [=========           ]  2s
+[  ]    220.3 MLBUps    254.21 GB/s [=============       ]  3s
+[  ]    220.5 MLBUps    254.40 GB/s [=================   ]  4s
+[  ]    ---- :    216.6 MLBUps    249.94 GB/s [====================]
+[  ]    220.3 MLBUps    254.26 GB/s [===                 ]  0s
+[  ]    220.1 MLBUps    254.05 GB/s [=======             ]  1s
+[  ]    220.3 MLBUps    254.25 GB/s [============        ]  2s
+[  ]    220.4 MLBUps    254.38 GB/s [================    ]  3s
+[  ]    ---- :    217.6 MLBUps    251.14 GB/s [====================]
+[  ]    220.3 MLBUps    254.28 GB/s [====                ]  0s
+[  ]    220.4 MLBUps    254.37 GB/s [========            ]  1s
+[  ]    220.3 MLBUps    254.21 GB/s [============        ]  2s
+[  ]    220.5 MLBUps    254.48 GB/s [================    ]  3s
+[  ]    ---- :    217.4 MLBUps    250.84 GB/s [====================]
+[  ]    220.1 MLBUps    254.04 GB/s [====                ]  0s
+[  ]    220.3 MLBUps    254.23 GB/s [========            ]  1s
+[  ]    220.3 MLBUps    254.18 GB/s [============        ]  2s
+[  ]    220.5 MLBUps    254.47 GB/s [================    ]  3s
+[  ]    ---- :    217.4 MLBUps    250.85 GB/s [====================]
+[  ]    220.2 MLBUps    254.12 GB/s [====                ]  0s
+[  ]    220.3 MLBUps    254.26 GB/s [========            ]  1s
+[  ]    220.4 MLBUps    254.32 GB/s [============        ]  2s
+[  ]    220.4 MLBUps    254.37 GB/s [================    ]  3s
+[  ]    ---- :    217.5 MLBUps    251.05 GB/s [====================]
+[  ]    220.5 MLBUps    254.45 GB/s [====                ]  0s
+[  ]    220.3 MLBUps    254.26 GB/s [========            ]  2s
+[  ]    220.4 MLBUps    254.40 GB/s [============        ]  2s
+[  ]    220.5 MLBUps    254.40 GB/s [================    ]  3s
+[  ]    ---- :    217.5 MLBUps    251.04 GB/s [====================]
+[  ]    220.4 MLBUps    254.36 GB/s [====                ]  0s
+[  ]    220.4 MLBUps    254.30 GB/s [========            ]  1s
+[  ]    220.3 MLBUps    254.20 GB/s [============        ]  2s
+[  ]    220.3 MLBUps    254.20 GB/s [================    ]  3s
+[  ]    ---- :    217.4 MLBUps    250.83 GB/s [====================]
+[  ]    217.7 MLBUps    251.25 GB/s [====                ]  1s
+[  ]    217.7 MLBUps    251.25 GB/s [========            ]  2s
+[  ]    217.9 MLBUps    251.46 GB/s [============        ]  3s
+[  ]    217.8 MLBUps    251.37 GB/s [================    ]  3s
+[  ]    ---- :    215.5 MLBUps    248.69 GB/s [====================]
+[  ]    217.9 MLBUps    251.51 GB/s [====                ]  0s
+[  ]    212.3 MLBUps    244.99 GB/s [========            ]  2s
+[  ]    212.7 MLBUps    245.49 GB/s [============        ]  3s
+[  ]    212.5 MLBUps    245.23 GB/s [================    ]  4s
+[  ]    212.8 MLBUps    245.61 GB/s [=================== ]  5s
+[  ]    ---- :     95.6 MLBUps    110.37 GB/s [====================]
+[  ]    212.5 MLBUps    245.26 GB/s [===                 ]  1s
+[  ]    213.1 MLBUps    245.86 GB/s [=======             ]  2s
+[  ]    212.8 MLBUps    245.56 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.27 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    245.05 GB/s [=================== ]  5s
+[  ]    ---- :    171.5 MLBUps    197.88 GB/s [====================]
+[  ]    212.6 MLBUps    245.37 GB/s [===                 ]  1s
+[  ]    213.0 MLBUps    245.75 GB/s [=======             ]  2s
+[  ]    212.6 MLBUps    245.37 GB/s [===========         ]  3s
+[  ]    212.4 MLBUps    245.16 GB/s [===============     ]  4s
+[  ]    212.8 MLBUps    245.55 GB/s [=================== ]  5s
+[  ]    ---- :    172.4 MLBUps    198.91 GB/s [====================]
+[  ]    212.4 MLBUps    245.12 GB/s [===                 ]  1s
+[  ]    212.3 MLBUps    245.02 GB/s [=======             ]  2s
+[  ]    212.2 MLBUps    244.86 GB/s [===========         ]  3s
+[  ]    212.3 MLBUps    245.05 GB/s [===============     ]  4s
+[  ]    212.9 MLBUps    245.70 GB/s [=================== ]  5s
+[  ]    ---- :    171.3 MLBUps    197.69 GB/s [====================]
+[  ]    212.5 MLBUps    245.18 GB/s [===                 ]  1s
+[  ]    212.3 MLBUps    245.02 GB/s [=======             ]  2s
+[  ]    212.7 MLBUps    245.42 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.25 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.10 GB/s [=================== ]  5s
+[  ]    ---- :    171.5 MLBUps    197.87 GB/s [====================]
+[  ]    212.6 MLBUps    245.36 GB/s [===                 ]  1s
+[  ]    212.5 MLBUps    245.19 GB/s [=======             ]  2s
+[  ]    212.5 MLBUps    245.27 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.20 GB/s [===============     ]  4s
+[  ]    212.8 MLBUps    245.60 GB/s [=================== ]  5s
+[  ]    ---- :    171.5 MLBUps    197.90 GB/s [====================]
+[  ]    212.2 MLBUps    244.87 GB/s [===                 ]  1s
+[  ]    212.4 MLBUps    245.15 GB/s [=======             ]  2s
+[  ]    212.5 MLBUps    245.22 GB/s [===========         ]  3s
+[  ]    212.6 MLBUps    245.32 GB/s [===============     ]  4s
+[  ]    212.0 MLBUps    244.70 GB/s [=================== ]  5s
+[  ]    ---- :    172.7 MLBUps    199.25 GB/s [====================]
+[  ]    212.4 MLBUps    245.12 GB/s [===                 ]  1s
+[  ]    212.1 MLBUps    244.75 GB/s [=======             ]  2s
+[  ]    212.1 MLBUps    244.82 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.19 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.15 GB/s [=================== ]  5s
+[  ]    ---- :    171.5 MLBUps    197.88 GB/s [====================]
+[  ]    212.8 MLBUps    245.51 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.07 GB/s [=======             ]  1s
+[  ]    213.0 MLBUps    245.80 GB/s [===========         ]  2s
+[  ]    212.5 MLBUps    245.28 GB/s [===============     ]  3s
+[  ]    212.1 MLBUps    244.78 GB/s [=================== ]  4s
+[  ]    ---- :    177.0 MLBUps    204.21 GB/s [====================]
+[  ]    212.3 MLBUps    244.99 GB/s [===                 ]  1s
+[  ]    212.5 MLBUps    245.17 GB/s [=======             ]  2s
+[  ]    212.5 MLBUps    245.21 GB/s [===========         ]  3s
+[  ]    212.6 MLBUps    245.33 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.26 GB/s [=================== ]  5s
+[  ]    ---- :    172.5 MLBUps    199.12 GB/s [====================]
+[  ]    212.5 MLBUps    245.23 GB/s [===                 ]  1s
+[  ]    212.3 MLBUps    245.01 GB/s [=======             ]  2s
+[  ]    212.3 MLBUps    245.02 GB/s [===========         ]  3s
+[  ]    212.3 MLBUps    244.99 GB/s [===============     ]  4s
+[  ]    212.1 MLBUps    244.75 GB/s [=================== ]  5s
+[  ]    ---- :    171.7 MLBUps    198.10 GB/s [====================]
+[  ]    212.8 MLBUps    245.55 GB/s [===                 ]  0s
+[  ]    207.4 MLBUps    239.36 GB/s [=======             ]  2s
+[  ]    206.9 MLBUps    238.79 GB/s [===========         ]  3s
+[  ]    207.2 MLBUps    239.13 GB/s [===============     ]  4s
+[  ]    207.2 MLBUps    239.07 GB/s [=================== ]  5s
+[  ]    ---- :    191.7 MLBUps    221.26 GB/s [====================]
+[  ]    ---- :    20000 it writing vtk
+[  ]    167.8 MLBUps    193.59 GB/s [===                 ]  1s
+[  ]    211.9 MLBUps    244.49 GB/s [=======             ]  2s
+[  ]    212.0 MLBUps    244.69 GB/s [==========          ]  3s
+[  ]    212.1 MLBUps    244.77 GB/s [==============      ]  4s
+[  ]    212.3 MLBUps    244.98 GB/s [==================  ]  5s
+[  ]    ---- :    203.2 MLBUps    234.45 GB/s [====================]
+[  ]    212.2 MLBUps    244.91 GB/s [===                 ]  0s
+[  ]    211.8 MLBUps    244.38 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.10 GB/s [===========         ]  2s
+[  ]    212.5 MLBUps    245.22 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.44 GB/s [=================== ]  4s
+[  ]    ---- :    191.2 MLBUps    220.62 GB/s [====================]
+[  ]    212.3 MLBUps    244.99 GB/s [===                 ]  0s
+[  ]    212.1 MLBUps    244.72 GB/s [=======             ]  1s
+[  ]    212.1 MLBUps    244.81 GB/s [===========         ]  3s
+[  ]    212.1 MLBUps    244.81 GB/s [===============     ]  4s
+[  ]    211.6 MLBUps    244.22 GB/s [=================== ]  5s
+[  ]    ---- :    178.3 MLBUps    205.80 GB/s [====================]
+[  ]    212.1 MLBUps    244.71 GB/s [===                 ]  0s
+[  ]    212.1 MLBUps    244.81 GB/s [=======             ]  1s
+[  ]    212.3 MLBUps    245.00 GB/s [===========         ]  3s
+[  ]    212.1 MLBUps    244.78 GB/s [===============     ]  4s
+[  ]    212.1 MLBUps    244.82 GB/s [=================== ]  5s
+[  ]    ---- :    178.3 MLBUps    205.73 GB/s [====================]
+[  ]    212.3 MLBUps    244.97 GB/s [===                 ]  0s
+[  ]    212.6 MLBUps    245.35 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.84 GB/s [===========         ]  2s
+[  ]    212.4 MLBUps    245.15 GB/s [===============     ]  3s
+[  ]    212.0 MLBUps    244.64 GB/s [=================== ]  5s
+[  ]    ---- :    175.8 MLBUps    202.91 GB/s [====================]
+[  ]    212.3 MLBUps    244.95 GB/s [===                 ]  0s
+[  ]    211.8 MLBUps    244.40 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.86 GB/s [===========         ]  2s
+[  ]    211.9 MLBUps    244.51 GB/s [===============     ]  3s
+[  ]    212.2 MLBUps    244.92 GB/s [=================== ]  4s
+[  ]    ---- :    181.0 MLBUps    208.89 GB/s [====================]
+[  ]    212.2 MLBUps    244.91 GB/s [===                 ]  0s
+[  ]    212.3 MLBUps    244.98 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.49 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.91 GB/s [===============     ]  4s
+[  ]    211.9 MLBUps    244.55 GB/s [=================== ]  5s
+[  ]    ---- :    176.7 MLBUps    203.86 GB/s [====================]
+[  ]    212.0 MLBUps    244.63 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.06 GB/s [=======             ]  1s
+[  ]    211.5 MLBUps    244.07 GB/s [===========         ]  3s
+[  ]    212.4 MLBUps    245.07 GB/s [===============     ]  3s
+[  ]    212.4 MLBUps    245.13 GB/s [=================== ]  4s
+[  ]    ---- :    181.1 MLBUps    209.00 GB/s [====================]
+[  ]    211.9 MLBUps    244.59 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.85 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.83 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.83 GB/s [===============     ]  4s
+[  ]    212.1 MLBUps    244.73 GB/s [=================== ]  5s
+[  ]    ---- :    177.0 MLBUps    204.22 GB/s [====================]
+[  ]    212.4 MLBUps    245.07 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.92 GB/s [=======             ]  1s
+[  ]    212.1 MLBUps    244.74 GB/s [===========         ]  2s
+[  ]    212.4 MLBUps    245.08 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    244.99 GB/s [=================== ]  5s
+[  ]    ---- :    176.6 MLBUps    203.82 GB/s [====================]
+[  ]    212.3 MLBUps    244.94 GB/s [===                 ]  0s
+[  ]    211.9 MLBUps    244.58 GB/s [=======             ]  1s
+[  ]    212.1 MLBUps    244.80 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.86 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.07 GB/s [=================== ]  5s
+[  ]    ---- :    177.6 MLBUps    204.92 GB/s [====================]
+[  ]    212.0 MLBUps    244.60 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.13 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.58 GB/s [===========         ]  3s
+[  ]    212.0 MLBUps    244.70 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.22 GB/s [=================== ]  5s
+[  ]    ---- :    177.5 MLBUps    204.84 GB/s [====================]
+[  ]    211.9 MLBUps    244.55 GB/s [===                 ]  0s
+[  ]    212.7 MLBUps    245.41 GB/s [=======             ]  1s
+[  ]    212.5 MLBUps    245.24 GB/s [===========         ]  2s
+[  ]    212.5 MLBUps    245.27 GB/s [===============     ]  3s
+[  ]    212.2 MLBUps    244.83 GB/s [=================== ]  5s
+[  ]    ---- :    176.6 MLBUps    203.81 GB/s [====================]
+[  ]    212.4 MLBUps    245.15 GB/s [===                 ]  1s
+[  ]    212.2 MLBUps    244.93 GB/s [=======             ]  2s
+[  ]    212.1 MLBUps    244.74 GB/s [===========         ]  3s
+[  ]    212.6 MLBUps    245.30 GB/s [===============     ]  4s
+[  ]    212.0 MLBUps    244.66 GB/s [=================== ]  5s
+[  ]    ---- :    170.7 MLBUps    197.03 GB/s [====================]
+[  ]    212.2 MLBUps    244.93 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.06 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.15 GB/s [===========         ]  2s
+[  ]    211.6 MLBUps    244.20 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    245.02 GB/s [=================== ]  4s
+[  ]    ---- :    182.2 MLBUps    210.30 GB/s [====================]
+[  ]    212.1 MLBUps    244.78 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.06 GB/s [=======             ]  1s
+[  ]    211.8 MLBUps    244.47 GB/s [===========         ]  3s
+[  ]    212.0 MLBUps    244.64 GB/s [===============     ]  4s
+[  ]    212.1 MLBUps    244.81 GB/s [=================== ]  5s
+[  ]    ---- :    177.4 MLBUps    204.69 GB/s [====================]
+[  ]    212.1 MLBUps    244.77 GB/s [===                 ]  0s
+[  ]    211.8 MLBUps    244.46 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.14 GB/s [===========         ]  3s
+[  ]    212.0 MLBUps    244.69 GB/s [===============     ]  4s
+[  ]    211.9 MLBUps    244.51 GB/s [=================== ]  5s
+[  ]    ---- :    177.3 MLBUps    204.57 GB/s [====================]
+[  ]    212.3 MLBUps    244.99 GB/s [===                 ]  0s
+[  ]    212.5 MLBUps    245.20 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.86 GB/s [===========         ]  2s
+[  ]    212.1 MLBUps    244.73 GB/s [===============     ]  4s
+[  ]    212.2 MLBUps    244.91 GB/s [=================== ]  5s
+[  ]    ---- :    176.6 MLBUps    203.84 GB/s [====================]
+[  ]    212.1 MLBUps    244.78 GB/s [===                 ]  0s
+[  ]    212.3 MLBUps    245.05 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.50 GB/s [===========         ]  3s
+[  ]    211.9 MLBUps    244.59 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    245.02 GB/s [=================== ]  5s
+[  ]    ---- :    177.1 MLBUps    204.42 GB/s [====================]
+[  ]    211.8 MLBUps    244.43 GB/s [===                 ]  0s
+[  ]    211.7 MLBUps    244.36 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.10 GB/s [===========         ]  2s
+[  ]    211.5 MLBUps    244.08 GB/s [===============     ]  3s
+[  ]    211.6 MLBUps    244.23 GB/s [=================== ]  4s
+[  ]    ---- :    187.9 MLBUps    216.82 GB/s [====================]
+[  ]    ---- :    40000 it writing vtk
+[  ]    167.3 MLBUps    193.07 GB/s [===                 ]  1s
+[  ]    211.9 MLBUps    244.54 GB/s [=======             ]  2s
+[  ]    211.8 MLBUps    244.40 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.89 GB/s [==============      ]  4s
+[  ]    212.1 MLBUps    244.74 GB/s [==================  ]  5s
+[  ]    ---- :    203.9 MLBUps    235.31 GB/s [====================]
+[  ]    212.4 MLBUps    245.10 GB/s [===                 ]  0s
+[  ]    212.0 MLBUps    244.68 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.85 GB/s [===========         ]  2s
+[  ]    211.8 MLBUps    244.38 GB/s [===============     ]  3s
+[  ]    212.1 MLBUps    244.78 GB/s [=================== ]  4s
+[  ]    ---- :    192.4 MLBUps    221.99 GB/s [====================]
+[  ]    212.1 MLBUps    244.74 GB/s [===                 ]  0s
+[  ]    207.0 MLBUps    238.89 GB/s [=======             ]  2s
+[  ]    205.4 MLBUps    237.09 GB/s [===========         ]  3s
+[  ]    205.3 MLBUps    236.94 GB/s [===============     ]  4s
+[  ]    205.4 MLBUps    237.03 GB/s [=================== ]  5s
+[  ]    ---- :    191.2 MLBUps    220.69 GB/s [====================]
+[  ]    205.5 MLBUps    237.20 GB/s [===                 ]  1s
+[  ]    205.9 MLBUps    237.55 GB/s [=======             ]  2s
+[  ]    208.6 MLBUps    240.72 GB/s [===========         ]  2s
+[  ]    208.4 MLBUps    240.53 GB/s [===============     ]  3s
+[  ]    208.4 MLBUps    240.46 GB/s [=================== ]  4s
+[  ]    ---- :    195.7 MLBUps    225.87 GB/s [====================]
+[  ]    208.3 MLBUps    240.34 GB/s [===                 ]  0s
+[  ]    208.6 MLBUps    240.75 GB/s [=======             ]  1s
+[  ]    208.3 MLBUps    240.38 GB/s [===========         ]  2s
+[  ]    209.0 MLBUps    241.16 GB/s [===============     ]  3s
+[  ]    208.6 MLBUps    240.67 GB/s [=================== ]  4s
+[  ]    ---- :    194.4 MLBUps    224.38 GB/s [====================]
+[  ]    208.4 MLBUps    240.54 GB/s [===                 ]  1s
+[  ]    208.9 MLBUps    241.04 GB/s [=======             ]  1s
+[  ]    208.7 MLBUps    240.87 GB/s [===========         ]  2s
+[  ]    208.2 MLBUps    240.24 GB/s [===============     ]  4s
+[  ]    208.4 MLBUps    240.54 GB/s [=================== ]  5s
+[  ]    ---- :    193.1 MLBUps    222.81 GB/s [====================]
+[  ]    208.2 MLBUps    240.24 GB/s [===                 ]  1s
+[  ]    208.3 MLBUps    240.41 GB/s [=======             ]  2s
+[  ]    209.7 MLBUps    242.02 GB/s [===========         ]  2s
+[  ]    210.7 MLBUps    243.14 GB/s [===============     ]  3s
+[  ]    210.9 MLBUps    243.41 GB/s [=================== ]  4s
+[  ]    ---- :    192.5 MLBUps    222.13 GB/s [====================]
+[  ]    211.0 MLBUps    243.54 GB/s [===                 ]  0s
+[  ]    210.7 MLBUps    243.15 GB/s [=======             ]  1s
+[  ]    210.4 MLBUps    242.82 GB/s [===========         ]  2s
+[  ]    211.0 MLBUps    243.46 GB/s [===============     ]  3s
+[  ]    211.1 MLBUps    243.61 GB/s [=================== ]  4s
+[  ]    ---- :    181.6 MLBUps    209.57 GB/s [====================]
+[  ]    209.9 MLBUps    242.25 GB/s [===                 ]  1s
+[  ]    211.7 MLBUps    244.33 GB/s [=======             ]  1s
+[  ]    210.7 MLBUps    243.15 GB/s [===========         ]  2s
+[  ]    211.7 MLBUps    244.26 GB/s [===============     ]  3s
+[  ]    210.8 MLBUps    243.28 GB/s [=================== ]  4s
+[  ]    ---- :    189.2 MLBUps    218.33 GB/s [====================]
+[  ]    211.7 MLBUps    244.25 GB/s [===                 ]  0s
+[  ]    210.9 MLBUps    243.41 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.54 GB/s [===========         ]  2s
+[  ]    210.9 MLBUps    243.35 GB/s [===============     ]  3s
+[  ]    211.3 MLBUps    243.88 GB/s [=================== ]  4s
+[  ]    ---- :    186.6 MLBUps    215.38 GB/s [====================]
+[  ]    211.2 MLBUps    243.78 GB/s [===                 ]  0s
+[  ]    210.5 MLBUps    242.97 GB/s [=======             ]  1s
+[  ]    211.2 MLBUps    243.70 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.61 GB/s [===============     ]  3s
+[  ]    213.0 MLBUps    245.82 GB/s [=================== ]  4s
+[  ]    ---- :    188.5 MLBUps    217.48 GB/s [====================]
+[  ]    213.0 MLBUps    245.77 GB/s [===                 ]  0s
+[  ]    212.8 MLBUps    245.60 GB/s [=======             ]  1s
+[  ]    212.6 MLBUps    245.39 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.54 GB/s [===============     ]  3s
+[  ]    213.0 MLBUps    245.80 GB/s [=================== ]  4s
+[  ]    ---- :    177.9 MLBUps    205.35 GB/s [====================]
+[  ]    213.1 MLBUps    245.88 GB/s [===                 ]  0s
+[  ]    212.3 MLBUps    245.04 GB/s [=======             ]  2s
+[  ]    212.8 MLBUps    245.56 GB/s [===========         ]  3s
+[  ]    212.4 MLBUps    245.13 GB/s [===============     ]  4s
+[  ]    212.9 MLBUps    245.74 GB/s [=================== ]  5s
+[  ]    ---- :    171.6 MLBUps    198.06 GB/s [====================]
+[  ]    212.1 MLBUps    244.80 GB/s [===                 ]  1s
+[  ]    212.9 MLBUps    245.66 GB/s [=======             ]  2s
+[  ]    212.5 MLBUps    245.18 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.26 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.06 GB/s [=================== ]  5s
+[  ]    ---- :    171.7 MLBUps    198.12 GB/s [====================]
+[  ]    212.6 MLBUps    245.32 GB/s [===                 ]  1s
+[  ]    212.9 MLBUps    245.68 GB/s [=======             ]  2s
+[  ]    212.9 MLBUps    245.68 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.17 GB/s [===============     ]  4s
+[  ]    212.7 MLBUps    245.42 GB/s [=================== ]  5s
+[  ]    ---- :    171.3 MLBUps    197.63 GB/s [====================]
+[  ]    212.7 MLBUps    245.47 GB/s [===                 ]  1s
+[  ]    212.4 MLBUps    245.06 GB/s [=======             ]  2s
+[  ]    212.5 MLBUps    245.17 GB/s [===========         ]  3s
+[  ]    212.7 MLBUps    245.41 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.22 GB/s [=================== ]  5s
+[  ]    ---- :    171.8 MLBUps    198.24 GB/s [====================]
+[  ]    212.7 MLBUps    245.51 GB/s [===                 ]  1s
+[  ]    212.5 MLBUps    245.20 GB/s [=======             ]  2s
+[  ]    212.3 MLBUps    244.99 GB/s [===========         ]  3s
+[  ]    212.6 MLBUps    245.33 GB/s [===============     ]  4s
+[  ]    212.6 MLBUps    245.29 GB/s [=================== ]  5s
+[  ]    ---- :    170.6 MLBUps    196.89 GB/s [====================]
+[  ]    212.7 MLBUps    245.40 GB/s [===                 ]  1s
+[  ]    212.2 MLBUps    244.93 GB/s [=======             ]  2s
+[  ]    210.7 MLBUps    243.15 GB/s [===========         ]  3s
+[  ]    211.4 MLBUps    243.95 GB/s [===============     ]  4s
+[  ]    212.0 MLBUps    244.61 GB/s [=================== ]  5s
+[  ]    ---- :    180.7 MLBUps    208.48 GB/s [====================]
+[  ]    211.9 MLBUps    244.51 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.82 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.16 GB/s [===========         ]  3s
+[  ]    212.0 MLBUps    244.64 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.27 GB/s [=================== ]  5s
+[  ]    ---- :    176.9 MLBUps    204.09 GB/s [====================]
+[  ]    212.0 MLBUps    244.68 GB/s [===                 ]  0s
+[  ]    212.5 MLBUps    245.20 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.06 GB/s [===========         ]  2s
+[  ]    212.6 MLBUps    245.28 GB/s [===============     ]  3s
+[  ]    212.6 MLBUps    245.34 GB/s [=================== ]  5s
+[  ]    ---- :    177.4 MLBUps    204.72 GB/s [====================]
+[  ]    ---- :    60000 it writing vtk
+[  ]    122.4 MLBUps    141.26 GB/s [===                 ]  1s
+[  ]    220.2 MLBUps    254.07 GB/s [======              ]  2s
+[  ]    219.1 MLBUps    252.80 GB/s [==========          ]  3s
+[  ]    217.2 MLBUps    250.61 GB/s [==============      ]  4s
+[  ]    217.5 MLBUps    250.95 GB/s [==================  ]  5s
+[  ]    ---- :    210.2 MLBUps    242.52 GB/s [====================]
+[  ]    217.4 MLBUps    250.85 GB/s [===                 ]  0s
+[  ]    217.0 MLBUps    250.47 GB/s [=======             ]  1s
+[  ]    216.3 MLBUps    249.57 GB/s [===========         ]  2s
+[  ]    212.0 MLBUps    244.61 GB/s [===============     ]  3s
+[  ]    212.5 MLBUps    245.17 GB/s [=================== ]  4s
+[  ]    ---- :    189.6 MLBUps    218.75 GB/s [====================]
+[  ]    212.3 MLBUps    244.96 GB/s [====                ]  1s
+[  ]    212.0 MLBUps    244.70 GB/s [=======             ]  2s
+[  ]    212.1 MLBUps    244.80 GB/s [===========         ]  3s
+[  ]    212.1 MLBUps    244.78 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.14 GB/s [=================== ]  5s
+[  ]    ---- :    163.0 MLBUps    188.12 GB/s [====================]
+[  ]    212.5 MLBUps    245.24 GB/s [===                 ]  0s
+[  ]    212.7 MLBUps    245.50 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.90 GB/s [===========         ]  2s
+[  ]    212.3 MLBUps    244.94 GB/s [===============     ]  3s
+[  ]    212.2 MLBUps    244.92 GB/s [=================== ]  5s
+[  ]    ---- :    176.9 MLBUps    204.17 GB/s [====================]
+[  ]    213.0 MLBUps    245.80 GB/s [===                 ]  0s
+[  ]    212.5 MLBUps    245.21 GB/s [=======             ]  2s
+[  ]    212.4 MLBUps    245.16 GB/s [===========         ]  3s
+[  ]    212.0 MLBUps    244.60 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.10 GB/s [=================== ]  5s
+[  ]    ---- :    170.2 MLBUps    196.38 GB/s [====================]
+[  ]    212.2 MLBUps    244.93 GB/s [===                 ]  1s
+[  ]    212.7 MLBUps    245.50 GB/s [=======             ]  2s
+[  ]    212.3 MLBUps    244.98 GB/s [===========         ]  3s
+[  ]    212.4 MLBUps    245.06 GB/s [===============     ]  4s
+[  ]    212.1 MLBUps    244.81 GB/s [=================== ]  5s
+[  ]    ---- :    171.1 MLBUps    197.46 GB/s [====================]
+[  ]    212.3 MLBUps    245.03 GB/s [===                 ]  1s
+[  ]    212.3 MLBUps    245.01 GB/s [=======             ]  2s
+[  ]    212.2 MLBUps    244.87 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.89 GB/s [===============     ]  4s
+[  ]    214.7 MLBUps    247.79 GB/s [=================== ]  5s
+[  ]    ---- :    172.6 MLBUps    199.15 GB/s [====================]
+[  ]    215.6 MLBUps    248.75 GB/s [===                 ]  0s
+[  ]    215.5 MLBUps    248.70 GB/s [=======             ]  1s
+[  ]    214.9 MLBUps    247.99 GB/s [===========         ]  2s
+[  ]    215.0 MLBUps    248.12 GB/s [===============     ]  3s
+[  ]    215.4 MLBUps    248.60 GB/s [=================== ]  4s
+[  ]    ---- :     97.6 MLBUps    112.58 GB/s [====================]
+[  ]    215.1 MLBUps    248.18 GB/s [====                ]  0s
+[  ]    215.3 MLBUps    248.47 GB/s [========            ]  1s
+[  ]    215.5 MLBUps    248.71 GB/s [============        ]  2s
+[  ]    215.3 MLBUps    248.50 GB/s [================    ]  3s
+[  ]    ---- :    212.2 MLBUps    244.86 GB/s [====================]
+[  ]    215.1 MLBUps    248.27 GB/s [====                ]  0s
+[  ]    214.9 MLBUps    247.94 GB/s [========            ]  2s
+[  ]    215.0 MLBUps    248.07 GB/s [============        ]  3s
+[  ]    215.0 MLBUps    248.08 GB/s [================    ]  4s
+[  ]    ---- :    213.0 MLBUps    245.75 GB/s [====================]
+[  ]    214.7 MLBUps    247.73 GB/s [====                ]  1s
+[  ]    214.7 MLBUps    247.81 GB/s [========            ]  2s
+[  ]    214.2 MLBUps    247.16 GB/s [============        ]  3s
+[  ]    215.3 MLBUps    248.42 GB/s [================    ]  4s
+[  ]    ---- :    212.8 MLBUps    245.54 GB/s [====================]
+[  ]    214.9 MLBUps    248.02 GB/s [====                ]  1s
+[  ]    215.5 MLBUps    248.68 GB/s [========            ]  1s
+[  ]    215.1 MLBUps    248.28 GB/s [============        ]  2s
+[  ]    215.3 MLBUps    248.45 GB/s [================    ]  3s
+[  ]    ---- :    212.4 MLBUps    245.15 GB/s [====================]
+[  ]    215.3 MLBUps    248.49 GB/s [====                ]  0s
+[  ]    214.8 MLBUps    247.87 GB/s [========            ]  1s
+[  ]    215.4 MLBUps    248.59 GB/s [============        ]  2s
+[  ]    215.4 MLBUps    248.62 GB/s [================    ]  3s
+[  ]    ---- :    212.7 MLBUps    245.47 GB/s [====================]
+[  ]    215.5 MLBUps    248.72 GB/s [====                ]  0s
+[  ]    215.1 MLBUps    248.26 GB/s [========            ]  1s
+[  ]    215.3 MLBUps    248.49 GB/s [============        ]  2s
+[  ]    215.2 MLBUps    248.37 GB/s [================    ]  3s
+[  ]    ---- :    212.6 MLBUps    245.30 GB/s [====================]
+[  ]    214.8 MLBUps    247.86 GB/s [====                ]  1s
+[  ]    215.2 MLBUps    248.36 GB/s [========            ]  2s
+[  ]    214.7 MLBUps    247.76 GB/s [============        ]  3s
+[  ]    213.5 MLBUps    246.41 GB/s [================    ]  4s
+[  ]    214.5 MLBUps    247.58 GB/s [=================== ]  5s
+[  ]    ---- :     97.4 MLBUps    112.43 GB/s [====================]
+[  ]    214.1 MLBUps    247.11 GB/s [====                ]  1s
+[  ]    214.4 MLBUps    247.38 GB/s [========            ]  2s
+[  ]    214.3 MLBUps    247.32 GB/s [============        ]  3s
+[  ]    214.9 MLBUps    247.98 GB/s [================    ]  4s
+[  ]    ---- :    212.1 MLBUps    244.78 GB/s [====================]
+[  ]    215.5 MLBUps    248.67 GB/s [===                 ]  0s
+[  ]    214.1 MLBUps    247.11 GB/s [=======             ]  1s
+[  ]    215.3 MLBUps    248.47 GB/s [===========         ]  2s
+[  ]    215.1 MLBUps    248.21 GB/s [===============     ]  3s
+[  ]    215.0 MLBUps    248.13 GB/s [=================== ]  4s
+[  ]    ---- :     97.5 MLBUps    112.49 GB/s [====================]
+[  ]    215.1 MLBUps    248.26 GB/s [====                ]  0s
+[  ]    214.1 MLBUps    247.06 GB/s [========            ]  2s
+[  ]    213.8 MLBUps    246.72 GB/s [============        ]  3s
+[  ]    214.8 MLBUps    247.91 GB/s [===============     ]  4s
+[  ]    214.2 MLBUps    247.20 GB/s [=================== ]  5s
+[  ]    ---- :     96.4 MLBUps    111.29 GB/s [====================]
+[  ]    214.3 MLBUps    247.35 GB/s [===                 ]  0s
+[  ]    215.1 MLBUps    248.23 GB/s [=======             ]  1s
+[  ]    214.6 MLBUps    247.68 GB/s [===========         ]  2s
+[  ]    214.9 MLBUps    247.95 GB/s [===============     ]  3s
+[  ]    214.1 MLBUps    247.05 GB/s [=================== ]  5s
+[  ]    ---- :     94.9 MLBUps    109.55 GB/s [====================]
+[  ]    215.2 MLBUps    248.34 GB/s [====                ]  0s
+[  ]    214.9 MLBUps    247.98 GB/s [========            ]  1s
+[  ]    214.4 MLBUps    247.38 GB/s [============        ]  3s
+[  ]    214.8 MLBUps    247.91 GB/s [================    ]  4s
+[  ]    ---- :    212.4 MLBUps    245.16 GB/s [====================]
+[  ]    ---- :    80000 it writing vtk
+[  ]    170.2 MLBUps    196.40 GB/s [====                ]  1s
+[  ]    216.3 MLBUps    249.62 GB/s [=======             ]  2s
+[  ]    216.8 MLBUps    250.19 GB/s [===========         ]  3s
+[  ]    212.3 MLBUps    245.04 GB/s [===============     ]  4s
+[  ]    212.1 MLBUps    244.74 GB/s [=================== ]  5s
+[  ]    ---- :    199.8 MLBUps    230.62 GB/s [====================]
+[  ]    212.0 MLBUps    244.61 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.09 GB/s [=======             ]  1s
+[  ]    212.3 MLBUps    245.02 GB/s [===========         ]  2s
+[  ]    212.4 MLBUps    245.13 GB/s [===============     ]  3s
+[  ]    212.3 MLBUps    245.02 GB/s [=================== ]  4s
+[  ]    ---- :    189.0 MLBUps    218.13 GB/s [====================]
+[  ]    212.4 MLBUps    245.13 GB/s [===                 ]  0s
+[  ]    212.1 MLBUps    244.80 GB/s [=======             ]  1s
+[  ]    212.0 MLBUps    244.59 GB/s [===========         ]  3s
+[  ]    212.0 MLBUps    244.63 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.21 GB/s [=================== ]  5s
+[  ]    ---- :    177.0 MLBUps    204.32 GB/s [====================]
+[  ]    211.7 MLBUps    244.25 GB/s [===                 ]  0s
+[  ]    212.0 MLBUps    244.69 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.48 GB/s [===========         ]  2s
+[  ]    211.7 MLBUps    244.31 GB/s [===============     ]  4s
+[  ]    211.8 MLBUps    244.39 GB/s [=================== ]  4s
+[  ]    ---- :    183.8 MLBUps    212.08 GB/s [====================]
+[  ]    211.9 MLBUps    244.49 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.83 GB/s [=======             ]  1s
+[  ]    211.5 MLBUps    244.07 GB/s [===========         ]  3s
+[  ]    213.7 MLBUps    246.55 GB/s [===============     ]  3s
+[  ]    216.9 MLBUps    250.36 GB/s [=================== ]  4s
+[  ]    ---- :    184.9 MLBUps    213.40 GB/s [====================]
+[  ]    216.0 MLBUps    249.22 GB/s [===                 ]  0s
+[  ]    216.0 MLBUps    249.29 GB/s [=======             ]  1s
+[  ]    216.5 MLBUps    249.82 GB/s [===========         ]  2s
+[  ]    216.6 MLBUps    249.93 GB/s [================    ]  3s
+[  ]    ---- :    213.7 MLBUps    246.61 GB/s [====================]
+[  ]    215.9 MLBUps    249.12 GB/s [====                ]  0s
+[  ]    216.5 MLBUps    249.85 GB/s [========            ]  1s
+[  ]    216.6 MLBUps    249.92 GB/s [============        ]  2s
+[  ]    216.7 MLBUps    250.08 GB/s [================    ]  3s
+[  ]    ---- :    213.4 MLBUps    246.29 GB/s [====================]
+[  ]    215.9 MLBUps    249.16 GB/s [====                ]  0s
+[  ]    215.6 MLBUps    248.84 GB/s [========            ]  1s
+[  ]    212.4 MLBUps    245.06 GB/s [============        ]  3s
+[  ]    210.8 MLBUps    243.29 GB/s [===============     ]  4s
+[  ]    211.4 MLBUps    243.94 GB/s [=================== ]  5s
+[  ]    ---- :    151.4 MLBUps    174.69 GB/s [====================]
+[  ]    211.2 MLBUps    243.70 GB/s [===                 ]  1s
+[  ]    211.7 MLBUps    244.29 GB/s [=======             ]  2s
+[  ]    211.6 MLBUps    244.24 GB/s [===========         ]  2s
+[  ]    211.7 MLBUps    244.33 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.41 GB/s [=================== ]  4s
+[  ]    ---- :    185.9 MLBUps    214.54 GB/s [====================]
+[  ]    211.5 MLBUps    244.06 GB/s [===                 ]  0s
+[  ]    211.0 MLBUps    243.48 GB/s [=======             ]  1s
+[  ]    211.6 MLBUps    244.24 GB/s [===========         ]  2s
+[  ]    211.9 MLBUps    244.49 GB/s [===============     ]  3s
+[  ]    211.7 MLBUps    244.26 GB/s [=================== ]  4s
+[  ]    ---- :    187.1 MLBUps    215.88 GB/s [====================]
+[  ]    212.9 MLBUps    245.66 GB/s [===                 ]  0s
+[  ]    213.8 MLBUps    246.74 GB/s [=======             ]  1s
+[  ]    215.9 MLBUps    249.18 GB/s [===========         ]  2s
+[  ]    215.7 MLBUps    248.97 GB/s [===============     ]  3s
+[  ]    215.2 MLBUps    248.30 GB/s [=================== ]  4s
+[  ]    ---- :    165.4 MLBUps    190.82 GB/s [====================]
+[  ]    215.7 MLBUps    248.87 GB/s [====                ]  0s
+[  ]    216.0 MLBUps    249.22 GB/s [========            ]  1s
+[  ]    216.0 MLBUps    249.24 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.16 GB/s [================    ]  3s
+[  ]    ---- :    213.5 MLBUps    246.35 GB/s [====================]
+[  ]    215.8 MLBUps    249.04 GB/s [====                ]  0s
+[  ]    215.6 MLBUps    248.80 GB/s [========            ]  1s
+[  ]    216.2 MLBUps    249.48 GB/s [============        ]  2s
+[  ]    215.8 MLBUps    249.07 GB/s [================    ]  3s
+[  ]    ---- :    213.3 MLBUps    246.10 GB/s [====================]
+[  ]    216.0 MLBUps    249.27 GB/s [====                ]  0s
+[  ]    215.5 MLBUps    248.73 GB/s [========            ]  1s
+[  ]    215.8 MLBUps    249.09 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.16 GB/s [================    ]  3s
+[  ]    ---- :    213.0 MLBUps    245.77 GB/s [====================]
+[  ]    216.2 MLBUps    249.53 GB/s [====                ]  0s
+[  ]    215.6 MLBUps    248.76 GB/s [========            ]  2s
+[  ]    215.7 MLBUps    248.97 GB/s [============        ]  2s
+[  ]    215.8 MLBUps    249.06 GB/s [================    ]  3s
+[  ]    ---- :    213.2 MLBUps    246.05 GB/s [====================]
+[  ]    215.5 MLBUps    248.67 GB/s [====                ]  0s
+[  ]    215.1 MLBUps    248.22 GB/s [========            ]  1s
+[  ]    215.4 MLBUps    248.59 GB/s [============        ]  2s
+[  ]    214.9 MLBUps    247.94 GB/s [================    ]  3s
+[  ]    ---- :    213.1 MLBUps    245.93 GB/s [====================]
+[  ]    215.5 MLBUps    248.74 GB/s [====                ]  0s
+[  ]    215.7 MLBUps    248.88 GB/s [========            ]  1s
+[  ]    215.7 MLBUps    248.92 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.14 GB/s [================    ]  3s
+[  ]    ---- :    213.1 MLBUps    245.87 GB/s [====================]
+[  ]    215.7 MLBUps    248.89 GB/s [====                ]  0s
+[  ]    216.0 MLBUps    249.29 GB/s [========            ]  1s
+[  ]    215.7 MLBUps    248.89 GB/s [============        ]  2s
+[  ]    215.6 MLBUps    248.75 GB/s [================    ]  3s
+[  ]    ---- :    212.5 MLBUps    245.17 GB/s [====================]
+[  ]    215.6 MLBUps    248.83 GB/s [====                ]  0s
+[  ]    215.2 MLBUps    248.35 GB/s [========            ]  1s
+[  ]    215.6 MLBUps    248.85 GB/s [============        ]  2s
+[  ]    212.7 MLBUps    245.50 GB/s [================    ]  4s
+[  ]    208.3 MLBUps    240.40 GB/s [=================== ]  5s
+[  ]    ---- :     95.8 MLBUps    110.50 GB/s [====================]
+[  ]    208.2 MLBUps    240.26 GB/s [===                 ]  1s
+[  ]    208.1 MLBUps    240.10 GB/s [=======             ]  2s
+[  ]    208.1 MLBUps    240.13 GB/s [===========         ]  3s
+[  ]    208.2 MLBUps    240.27 GB/s [===============     ]  4s
+[  ]    210.4 MLBUps    242.78 GB/s [=================== ]  5s
+[  ]    ---- :    193.8 MLBUps    223.59 GB/s [====================]
+[  ]    ---- :   100000 it writing vtk
+[  ]    168.1 MLBUps    194.04 GB/s [===                 ]  1s
+[  ]    214.9 MLBUps    248.05 GB/s [=======             ]  2s
+[  ]    215.3 MLBUps    248.43 GB/s [===========         ]  3s
+[  ]    214.8 MLBUps    247.87 GB/s [===============     ]  4s
+[  ]    215.1 MLBUps    248.24 GB/s [=================== ]  5s
+[  ]    ---- :    205.1 MLBUps    236.74 GB/s [====================]
+[  ]    215.5 MLBUps    248.72 GB/s [===                 ]  0s
+[  ]    215.2 MLBUps    248.34 GB/s [=======             ]  1s
+[  ]    214.8 MLBUps    247.90 GB/s [===========         ]  2s
+[  ]    214.7 MLBUps    247.73 GB/s [===============     ]  3s
+[  ]    215.6 MLBUps    248.81 GB/s [=================== ]  4s
+[  ]    ---- :    173.5 MLBUps    200.22 GB/s [====================]
+[  ]    215.2 MLBUps    248.35 GB/s [====                ]  0s
+[  ]    215.5 MLBUps    248.66 GB/s [========            ]  1s
+[  ]    215.6 MLBUps    248.75 GB/s [============        ]  2s
+[  ]    215.3 MLBUps    248.49 GB/s [================    ]  3s
+[  ]    ---- :    212.8 MLBUps    245.58 GB/s [====================]
+[  ]    215.3 MLBUps    248.51 GB/s [====                ]  0s
+[  ]    215.6 MLBUps    248.80 GB/s [========            ]  1s
+[  ]    215.2 MLBUps    248.29 GB/s [============        ]  2s
+[  ]    215.2 MLBUps    248.32 GB/s [================    ]  3s
+[  ]    ---- :    212.8 MLBUps    245.52 GB/s [====================]
+[  ]    214.2 MLBUps    247.24 GB/s [====                ]  1s
+[  ]    215.2 MLBUps    248.34 GB/s [========            ]  2s
+[  ]    215.1 MLBUps    248.23 GB/s [============        ]  3s
+[  ]    215.1 MLBUps    248.19 GB/s [================    ]  4s
+[  ]    ---- :    212.0 MLBUps    244.69 GB/s [====================]
+[  ]    215.0 MLBUps    248.15 GB/s [====                ]  1s
+[  ]    214.9 MLBUps    248.02 GB/s [========            ]  2s
+[  ]    215.5 MLBUps    248.73 GB/s [============        ]  2s
+[  ]    215.3 MLBUps    248.47 GB/s [================    ]  3s
+[  ]    ---- :    212.3 MLBUps    245.00 GB/s [====================]
+[  ]    215.2 MLBUps    248.32 GB/s [====                ]  0s
+[  ]    215.4 MLBUps    248.59 GB/s [========            ]  1s
+[  ]    215.8 MLBUps    249.00 GB/s [============        ]  2s
+[  ]    211.7 MLBUps    244.31 GB/s [================    ]  4s
+[  ]    211.7 MLBUps    244.34 GB/s [=================== ]  5s
+[  ]    ---- :    131.7 MLBUps    151.98 GB/s [====================]
+[  ]    211.0 MLBUps    243.45 GB/s [===                 ]  1s
+[  ]    211.5 MLBUps    244.08 GB/s [=======             ]  2s
+[  ]    210.9 MLBUps    243.40 GB/s [===========         ]  3s
+[  ]    211.6 MLBUps    244.17 GB/s [===============     ]  4s
+[  ]    211.9 MLBUps    244.53 GB/s [=================== ]  4s
+[  ]    ---- :    185.8 MLBUps    214.45 GB/s [====================]
+[  ]    211.3 MLBUps    243.85 GB/s [===                 ]  0s
+[  ]    211.5 MLBUps    244.08 GB/s [=======             ]  1s
+[  ]    211.5 MLBUps    244.07 GB/s [===========         ]  2s
+[  ]    211.4 MLBUps    243.99 GB/s [===============     ]  3s
+[  ]    211.6 MLBUps    244.21 GB/s [=================== ]  4s
+[  ]    ---- :    188.7 MLBUps    217.79 GB/s [====================]
+[  ]    212.2 MLBUps    244.89 GB/s [===                 ]  0s
+[  ]    211.8 MLBUps    244.46 GB/s [=======             ]  1s
+[  ]    211.7 MLBUps    244.35 GB/s [===========         ]  3s
+[  ]    211.9 MLBUps    244.49 GB/s [===============     ]  3s
+[  ]    211.6 MLBUps    244.24 GB/s [=================== ]  5s
+[  ]    ---- :    181.5 MLBUps    209.47 GB/s [====================]
+[  ]    211.2 MLBUps    243.69 GB/s [===                 ]  0s
+[  ]    211.7 MLBUps    244.32 GB/s [=======             ]  1s
+[  ]    211.7 MLBUps    244.34 GB/s [===========         ]  2s
+[  ]    211.3 MLBUps    243.88 GB/s [===============     ]  3s
+[  ]    210.8 MLBUps    243.29 GB/s [=================== ]  4s
+[  ]    ---- :    189.8 MLBUps    219.08 GB/s [====================]
+[  ]    211.3 MLBUps    243.87 GB/s [===                 ]  0s
+[  ]    211.7 MLBUps    244.27 GB/s [=======             ]  1s
+[  ]    211.8 MLBUps    244.47 GB/s [===========         ]  2s
+[  ]    211.5 MLBUps    244.11 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.36 GB/s [=================== ]  4s
+[  ]    ---- :    186.8 MLBUps    215.58 GB/s [====================]
+[  ]    211.8 MLBUps    244.44 GB/s [===                 ]  0s
+[  ]    211.7 MLBUps    244.26 GB/s [=======             ]  2s
+[  ]    211.3 MLBUps    243.87 GB/s [===========         ]  2s
+[  ]    211.5 MLBUps    244.11 GB/s [===============     ]  3s
+[  ]    211.6 MLBUps    244.22 GB/s [=================== ]  4s
+[  ]    ---- :    186.6 MLBUps    215.34 GB/s [====================]
+[  ]    211.7 MLBUps    244.29 GB/s [===                 ]  0s
+[  ]    211.5 MLBUps    244.08 GB/s [=======             ]  1s
+[  ]    211.8 MLBUps    244.39 GB/s [===========         ]  2s
+[  ]    211.4 MLBUps    244.01 GB/s [===============     ]  3s
+[  ]    211.1 MLBUps    243.65 GB/s [=================== ]  4s
+[  ]    ---- :    188.3 MLBUps    217.26 GB/s [====================]
+[  ]    211.8 MLBUps    244.39 GB/s [===                 ]  0s
+[  ]    211.6 MLBUps    244.17 GB/s [=======             ]  1s
+[  ]    211.4 MLBUps    243.95 GB/s [===========         ]  2s
+[  ]    211.8 MLBUps    244.37 GB/s [===============     ]  3s
+[  ]    211.6 MLBUps    244.21 GB/s [=================== ]  4s
+[  ]    ---- :    188.5 MLBUps    217.49 GB/s [====================]
+[  ]    211.6 MLBUps    244.19 GB/s [===                 ]  0s
+[  ]    211.2 MLBUps    243.67 GB/s [=======             ]  1s
+[  ]    211.4 MLBUps    243.94 GB/s [===========         ]  2s
+[  ]    211.3 MLBUps    243.88 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.46 GB/s [=================== ]  4s
+[  ]    ---- :    188.4 MLBUps    217.42 GB/s [====================]
+[  ]    211.7 MLBUps    244.26 GB/s [===                 ]  0s
+[  ]    211.3 MLBUps    243.89 GB/s [=======             ]  1s
+[  ]    211.5 MLBUps    244.11 GB/s [===========         ]  2s
+[  ]    211.6 MLBUps    244.23 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.39 GB/s [=================== ]  4s
+[  ]    ---- :    188.9 MLBUps    217.94 GB/s [====================]
+[  ]    211.2 MLBUps    243.74 GB/s [===                 ]  0s
+[  ]    211.1 MLBUps    243.59 GB/s [=======             ]  1s
+[  ]    211.7 MLBUps    244.32 GB/s [===========         ]  2s
+[  ]    211.4 MLBUps    244.01 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.39 GB/s [=================== ]  4s
+[  ]    ---- :    190.0 MLBUps    219.26 GB/s [====================]
+[  ]    211.6 MLBUps    244.14 GB/s [===                 ]  0s
+[  ]    212.7 MLBUps    245.41 GB/s [=======             ]  1s
+[  ]    213.6 MLBUps    246.52 GB/s [===========         ]  2s
+[  ]    213.5 MLBUps    246.35 GB/s [===============     ]  3s
+[  ]    213.9 MLBUps    246.81 GB/s [=================== ]  4s
+[  ]    ---- :    182.8 MLBUps    210.97 GB/s [====================]
+[  ]    213.7 MLBUps    246.60 GB/s [===                 ]  0s
+[  ]    213.0 MLBUps    245.82 GB/s [=======             ]  1s
+[  ]    213.5 MLBUps    246.35 GB/s [===========         ]  2s
+[  ]    213.0 MLBUps    245.79 GB/s [===============     ]  3s
+[  ]    213.4 MLBUps    246.21 GB/s [=================== ]  4s
+[  ]    ---- :    171.6 MLBUps    198.01 GB/s [====================]
+[  ]    ---- :   120000 it writing vtk
+[  ]    169.1 MLBUps    195.14 GB/s [===                 ]  1s
+[  ]    216.3 MLBUps    249.63 GB/s [=======             ]  2s
+[  ]    215.3 MLBUps    248.48 GB/s [===========         ]  3s
+[  ]    215.4 MLBUps    248.58 GB/s [===============     ]  4s
+[  ]    215.4 MLBUps    248.56 GB/s [=================== ]  5s
+[  ]    ---- :    203.8 MLBUps    235.16 GB/s [====================]
+[  ]    215.6 MLBUps    248.77 GB/s [===                 ]  0s
+[  ]    215.7 MLBUps    248.88 GB/s [=======             ]  1s
+[  ]    215.2 MLBUps    248.32 GB/s [===========         ]  2s
+[  ]    215.4 MLBUps    248.59 GB/s [===============     ]  3s
+[  ]    216.0 MLBUps    249.30 GB/s [=================== ]  4s
+[  ]    ---- :    173.5 MLBUps    200.27 GB/s [====================]
+[  ]    215.6 MLBUps    248.85 GB/s [====                ]  0s
+[  ]    215.7 MLBUps    248.92 GB/s [========            ]  1s
+[  ]    212.0 MLBUps    244.61 GB/s [============        ]  3s
+[  ]    209.2 MLBUps    241.37 GB/s [===============     ]  4s
+[  ]    209.2 MLBUps    241.42 GB/s [=================== ]  5s
+[  ]    ---- :    161.1 MLBUps    185.93 GB/s [====================]
+[  ]    209.1 MLBUps    241.30 GB/s [===                 ]  1s
+[  ]    209.1 MLBUps    241.27 GB/s [=======             ]  2s
+[  ]    209.0 MLBUps    241.18 GB/s [===========         ]  3s
+[  ]    209.0 MLBUps    241.24 GB/s [===============     ]  4s
+[  ]    209.0 MLBUps    241.22 GB/s [=================== ]  4s
+[  ]    ---- :    193.1 MLBUps    222.81 GB/s [====================]
+[  ]    209.3 MLBUps    241.58 GB/s [===                 ]  0s
+[  ]    209.4 MLBUps    241.65 GB/s [=======             ]  1s
+[  ]    208.9 MLBUps    241.02 GB/s [===========         ]  2s
+[  ]    209.1 MLBUps    241.26 GB/s [===============     ]  3s
+[  ]    209.2 MLBUps    241.42 GB/s [=================== ]  4s
+[  ]    ---- :    194.0 MLBUps    223.93 GB/s [====================]
+[  ]    209.1 MLBUps    241.35 GB/s [===                 ]  0s
+[  ]    209.0 MLBUps    241.22 GB/s [=======             ]  1s
+[  ]    211.1 MLBUps    243.55 GB/s [===========         ]  2s
+[  ]    211.2 MLBUps    243.72 GB/s [===============     ]  3s
+[  ]    211.9 MLBUps    244.57 GB/s [=================== ]  4s
+[  ]    ---- :    194.3 MLBUps    224.19 GB/s [====================]
+[  ]    210.9 MLBUps    243.43 GB/s [===                 ]  0s
+[  ]    211.4 MLBUps    244.01 GB/s [=======             ]  1s
+[  ]    211.8 MLBUps    244.37 GB/s [===========         ]  2s
+[  ]    211.3 MLBUps    243.80 GB/s [===============     ]  3s
+[  ]    210.7 MLBUps    243.18 GB/s [=================== ]  4s
+[  ]    ---- :    187.9 MLBUps    216.79 GB/s [====================]
+[  ]    211.1 MLBUps    243.65 GB/s [===                 ]  0s
+[  ]    211.9 MLBUps    244.51 GB/s [=======             ]  1s
+[  ]    212.1 MLBUps    244.71 GB/s [===========         ]  2s
+[  ]    212.1 MLBUps    244.74 GB/s [===============     ]  4s
+[  ]    212.0 MLBUps    244.69 GB/s [=================== ]  5s
+[  ]    ---- :    180.6 MLBUps    208.46 GB/s [====================]
+[  ]    211.2 MLBUps    243.67 GB/s [===                 ]  0s
+[  ]    211.4 MLBUps    243.96 GB/s [=======             ]  1s
+[  ]    211.4 MLBUps    244.01 GB/s [===========         ]  2s
+[  ]    213.7 MLBUps    246.60 GB/s [===============     ]  3s
+[  ]    213.1 MLBUps    245.96 GB/s [=================== ]  4s
+[  ]    ---- :    188.4 MLBUps    217.42 GB/s [====================]
+[  ]    213.5 MLBUps    246.34 GB/s [===                 ]  0s
+[  ]    213.0 MLBUps    245.85 GB/s [=======             ]  1s
+[  ]    212.6 MLBUps    245.39 GB/s [===========         ]  2s
+[  ]    212.9 MLBUps    245.67 GB/s [===============     ]  3s
+[  ]    213.4 MLBUps    246.29 GB/s [=================== ]  4s
+[  ]    ---- :    177.8 MLBUps    205.22 GB/s [====================]
+[  ]    213.6 MLBUps    246.50 GB/s [===                 ]  0s
+[  ]    213.8 MLBUps    246.71 GB/s [=======             ]  1s
+[  ]    213.5 MLBUps    246.33 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.52 GB/s [===============     ]  3s
+[  ]    213.1 MLBUps    245.96 GB/s [=================== ]  4s
+[  ]    ---- :    172.4 MLBUps    198.99 GB/s [====================]
+[  ]    213.7 MLBUps    246.67 GB/s [===                 ]  0s
+[  ]    213.3 MLBUps    246.20 GB/s [=======             ]  1s
+[  ]    213.8 MLBUps    246.75 GB/s [===========         ]  2s
+[  ]    213.2 MLBUps    246.06 GB/s [===============     ]  3s
+[  ]    213.7 MLBUps    246.61 GB/s [=================== ]  4s
+[  ]    ---- :    172.4 MLBUps    199.01 GB/s [====================]
+[  ]    213.8 MLBUps    246.68 GB/s [===                 ]  0s
+[  ]    213.8 MLBUps    246.75 GB/s [=======             ]  1s
+[  ]    213.1 MLBUps    245.89 GB/s [===========         ]  2s
+[  ]    213.1 MLBUps    245.92 GB/s [===============     ]  3s
+[  ]    213.3 MLBUps    246.15 GB/s [=================== ]  4s
+[  ]    ---- :    171.9 MLBUps    198.36 GB/s [====================]
+[  ]    213.4 MLBUps    246.31 GB/s [===                 ]  0s
+[  ]    213.3 MLBUps    246.13 GB/s [=======             ]  1s
+[  ]    213.3 MLBUps    246.16 GB/s [===========         ]  2s
+[  ]    212.9 MLBUps    245.63 GB/s [===============     ]  3s
+[  ]    213.2 MLBUps    246.01 GB/s [=================== ]  4s
+[  ]    ---- :    171.4 MLBUps    197.77 GB/s [====================]
+[  ]    213.4 MLBUps    246.25 GB/s [===                 ]  0s
+[  ]    213.3 MLBUps    246.19 GB/s [=======             ]  1s
+[  ]    213.8 MLBUps    246.69 GB/s [===========         ]  2s
+[  ]    213.7 MLBUps    246.65 GB/s [===============     ]  3s
+[  ]    213.8 MLBUps    246.72 GB/s [=================== ]  4s
+[  ]    ---- :    173.3 MLBUps    200.01 GB/s [====================]
+[  ]    215.2 MLBUps    248.35 GB/s [===                 ]  0s
+[  ]    215.2 MLBUps    248.30 GB/s [=======             ]  1s
+[  ]    215.4 MLBUps    248.58 GB/s [===========         ]  2s
+[  ]    215.4 MLBUps    248.59 GB/s [===============     ]  3s
+[  ]    216.2 MLBUps    249.51 GB/s [=================== ]  4s
+[  ]    ---- :     97.5 MLBUps    112.55 GB/s [====================]
+[  ]    215.9 MLBUps    249.14 GB/s [====                ]  0s
+[  ]    215.7 MLBUps    248.94 GB/s [========            ]  1s
+[  ]    215.9 MLBUps    249.18 GB/s [============        ]  2s
+[  ]    216.2 MLBUps    249.51 GB/s [================    ]  3s
+[  ]    ---- :    213.5 MLBUps    246.38 GB/s [====================]
+[  ]    216.0 MLBUps    249.25 GB/s [====                ]  0s
+[  ]    216.1 MLBUps    249.35 GB/s [========            ]  1s
+[  ]    215.7 MLBUps    248.96 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.15 GB/s [================    ]  3s
+[  ]    ---- :    212.3 MLBUps    245.04 GB/s [====================]
+[  ]    215.9 MLBUps    249.09 GB/s [====                ]  0s
+[  ]    215.8 MLBUps    249.03 GB/s [========            ]  1s
+[  ]    215.5 MLBUps    248.73 GB/s [============        ]  2s
+[  ]    215.0 MLBUps    248.12 GB/s [================    ]  3s
+[  ]    ---- :    213.0 MLBUps    245.76 GB/s [====================]
+[  ]    215.9 MLBUps    249.17 GB/s [====                ]  0s
+[  ]    215.7 MLBUps    248.88 GB/s [========            ]  1s
+[  ]    215.8 MLBUps    248.99 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.12 GB/s [================    ]  3s
+[  ]    ---- :    212.5 MLBUps    245.19 GB/s [====================]
+[  ]    ---- :   140000 it writing vtk
+[  ]    157.1 MLBUps    181.29 GB/s [====                ]  1s
+[  ]    212.5 MLBUps    245.22 GB/s [======              ]  2s
+[  ]    212.9 MLBUps    245.65 GB/s [==========          ]  3s
+[  ]    212.6 MLBUps    245.35 GB/s [==============      ]  4s
+[  ]    213.2 MLBUps    246.09 GB/s [==================  ]  5s
+[  ]    ---- :    205.2 MLBUps    236.79 GB/s [====================]
+[  ]    212.7 MLBUps    245.43 GB/s [===                 ]  0s
+[  ]    212.7 MLBUps    245.44 GB/s [=======             ]  1s
+[  ]    212.8 MLBUps    245.62 GB/s [===========         ]  2s
+[  ]    212.9 MLBUps    245.71 GB/s [===============     ]  3s
+[  ]    213.1 MLBUps    245.86 GB/s [=================== ]  4s
+[  ]    ---- :    193.9 MLBUps    223.77 GB/s [====================]
+[  ]    212.9 MLBUps    245.73 GB/s [===                 ]  0s
+[  ]    212.6 MLBUps    245.38 GB/s [=======             ]  2s
+[  ]    212.4 MLBUps    245.16 GB/s [===========         ]  3s
+[  ]    212.7 MLBUps    245.50 GB/s [===============     ]  4s
+[  ]    213.1 MLBUps    245.88 GB/s [=================== ]  5s
+[  ]    ---- :    170.7 MLBUps    196.96 GB/s [====================]
+[  ]    213.3 MLBUps    246.16 GB/s [===                 ]  0s
+[  ]    214.6 MLBUps    247.67 GB/s [=======             ]  1s
+[  ]    213.9 MLBUps    246.89 GB/s [===========         ]  2s
+[  ]    209.8 MLBUps    242.16 GB/s [===============     ]  4s
+[  ]    210.0 MLBUps    242.39 GB/s [=================== ]  5s
+[  ]    ---- :    169.8 MLBUps    196.00 GB/s [====================]
+[  ]    210.1 MLBUps    242.44 GB/s [===                 ]  1s
+[  ]    210.0 MLBUps    242.31 GB/s [=======             ]  2s
+[  ]    209.8 MLBUps    242.11 GB/s [===========         ]  3s
+[  ]    209.7 MLBUps    241.95 GB/s [===============     ]  4s
+[  ]    210.2 MLBUps    242.55 GB/s [=================== ]  5s
+[  ]    ---- :    189.7 MLBUps    218.94 GB/s [====================]
+[  ]    210.1 MLBUps    242.47 GB/s [===                 ]  0s
+[  ]    210.1 MLBUps    242.46 GB/s [=======             ]  1s
+[  ]    210.2 MLBUps    242.61 GB/s [===========         ]  2s
+[  ]    210.4 MLBUps    242.76 GB/s [===============     ]  3s
+[  ]    209.9 MLBUps    242.19 GB/s [=================== ]  5s
+[  ]    ---- :    189.1 MLBUps    218.25 GB/s [====================]
+[  ]    210.1 MLBUps    242.44 GB/s [===                 ]  0s
+[  ]    210.3 MLBUps    242.65 GB/s [=======             ]  1s
+[  ]    210.2 MLBUps    242.59 GB/s [===========         ]  2s
+[  ]    210.1 MLBUps    242.43 GB/s [===============     ]  4s
+[  ]    210.1 MLBUps    242.42 GB/s [=================== ]  5s
+[  ]    ---- :    189.5 MLBUps    218.74 GB/s [====================]
+[  ]    210.2 MLBUps    242.57 GB/s [===                 ]  0s
+[  ]    210.1 MLBUps    242.47 GB/s [=======             ]  1s
+[  ]    210.1 MLBUps    242.50 GB/s [===========         ]  2s
+[  ]    210.7 MLBUps    243.18 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.47 GB/s [=================== ]  4s
+[  ]    ---- :    190.5 MLBUps    219.81 GB/s [====================]
+[  ]    212.3 MLBUps    245.01 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.92 GB/s [=======             ]  1s
+[  ]    212.3 MLBUps    245.05 GB/s [===========         ]  2s
+[  ]    212.4 MLBUps    245.13 GB/s [===============     ]  4s
+[  ]    211.8 MLBUps    244.40 GB/s [=================== ]  5s
+[  ]    ---- :    176.2 MLBUps    203.36 GB/s [====================]
+[  ]    211.4 MLBUps    243.90 GB/s [===                 ]  0s
+[  ]    212.1 MLBUps    244.71 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.86 GB/s [===========         ]  2s
+[  ]    212.5 MLBUps    245.17 GB/s [===============     ]  3s
+[  ]    212.2 MLBUps    244.88 GB/s [=================== ]  4s
+[  ]    ---- :    180.7 MLBUps    208.50 GB/s [====================]
+[  ]    212.7 MLBUps    245.44 GB/s [===                 ]  0s
+[  ]    212.6 MLBUps    245.29 GB/s [=======             ]  1s
+[  ]    212.4 MLBUps    245.08 GB/s [===========         ]  2s
+[  ]    212.4 MLBUps    245.07 GB/s [===============     ]  3s
+[  ]    212.4 MLBUps    245.08 GB/s [=================== ]  4s
+[  ]    ---- :    177.5 MLBUps    204.85 GB/s [====================]
+[  ]    212.2 MLBUps    244.83 GB/s [===                 ]  1s
+[  ]    212.3 MLBUps    245.04 GB/s [=======             ]  2s
+[  ]    212.7 MLBUps    245.48 GB/s [===========         ]  3s
+[  ]    211.9 MLBUps    244.54 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.27 GB/s [=================== ]  5s
+[  ]    ---- :    171.6 MLBUps    198.07 GB/s [====================]
+[  ]    212.0 MLBUps    244.69 GB/s [===                 ]  1s
+[  ]    212.1 MLBUps    244.74 GB/s [=======             ]  2s
+[  ]    212.5 MLBUps    245.27 GB/s [===========         ]  3s
+[  ]    212.5 MLBUps    245.17 GB/s [===============     ]  4s
+[  ]    212.0 MLBUps    244.68 GB/s [=================== ]  5s
+[  ]    ---- :    171.7 MLBUps    198.20 GB/s [====================]
+[  ]    212.3 MLBUps    244.98 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.82 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.57 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.93 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    244.99 GB/s [=================== ]  5s
+[  ]    ---- :    176.4 MLBUps    203.55 GB/s [====================]
+[  ]    212.0 MLBUps    244.62 GB/s [===                 ]  0s
+[  ]    212.2 MLBUps    244.89 GB/s [=======             ]  1s
+[  ]    211.9 MLBUps    244.58 GB/s [===========         ]  3s
+[  ]    212.6 MLBUps    245.37 GB/s [===============     ]  4s
+[  ]    212.4 MLBUps    245.17 GB/s [=================== ]  5s
+[  ]    ---- :    176.8 MLBUps    203.98 GB/s [====================]
+[  ]    212.1 MLBUps    244.81 GB/s [===                 ]  0s
+[  ]    211.8 MLBUps    244.37 GB/s [=======             ]  1s
+[  ]    212.7 MLBUps    245.45 GB/s [===========         ]  2s
+[  ]    212.0 MLBUps    244.69 GB/s [===============     ]  3s
+[  ]    212.3 MLBUps    244.98 GB/s [=================== ]  4s
+[  ]    ---- :    180.1 MLBUps    207.82 GB/s [====================]
+[  ]    212.1 MLBUps    244.71 GB/s [===                 ]  0s
+[  ]    212.4 MLBUps    245.09 GB/s [=======             ]  1s
+[  ]    212.5 MLBUps    245.24 GB/s [===========         ]  2s
+[  ]    212.3 MLBUps    245.04 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    245.04 GB/s [=================== ]  5s
+[  ]    ---- :    176.6 MLBUps    203.74 GB/s [====================]
+[  ]    212.9 MLBUps    245.73 GB/s [===                 ]  0s
+[  ]    211.9 MLBUps    244.48 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.88 GB/s [===========         ]  2s
+[  ]    212.6 MLBUps    245.29 GB/s [===============     ]  3s
+[  ]    211.8 MLBUps    244.46 GB/s [=================== ]  5s
+[  ]    ---- :    176.2 MLBUps    203.36 GB/s [====================]
+[  ]    212.5 MLBUps    245.27 GB/s [===                 ]  0s
+[  ]    212.3 MLBUps    245.00 GB/s [=======             ]  1s
+[  ]    212.1 MLBUps    244.81 GB/s [===========         ]  2s
+[  ]    212.4 MLBUps    245.15 GB/s [===============     ]  3s
+[  ]    212.2 MLBUps    244.89 GB/s [=================== ]  5s
+[  ]    ---- :    175.9 MLBUps    202.94 GB/s [====================]
+[  ]    212.4 MLBUps    245.16 GB/s [===                 ]  0s
+[  ]    211.7 MLBUps    244.32 GB/s [=======             ]  1s
+[  ]    212.2 MLBUps    244.93 GB/s [===========         ]  2s
+[  ]    212.0 MLBUps    244.68 GB/s [===============     ]  3s
+[  ]    212.0 MLBUps    244.62 GB/s [=================== ]  4s
+[  ]    ---- :    180.8 MLBUps    208.63 GB/s [====================]
+[  ]    ---- :   160000 it writing vtk
+[  ]    168.0 MLBUps    193.83 GB/s [===                 ]  1s
+[  ]    217.5 MLBUps    250.95 GB/s [=======             ]  2s
+[  ]    217.3 MLBUps    250.78 GB/s [===========         ]  3s
+[  ]    217.3 MLBUps    250.82 GB/s [===============     ]  4s
+[  ]    216.6 MLBUps    249.96 GB/s [=================== ]  5s
+[  ]    ---- :    199.1 MLBUps    229.77 GB/s [====================]
+[  ]    211.3 MLBUps    243.79 GB/s [===                 ]  0s
+[  ]    211.5 MLBUps    244.05 GB/s [=======             ]  1s
+[  ]    211.3 MLBUps    243.86 GB/s [===========         ]  2s
+[  ]    211.7 MLBUps    244.28 GB/s [===============     ]  3s
+[  ]    211.1 MLBUps    243.62 GB/s [=================== ]  4s
+[  ]    ---- :    192.7 MLBUps    222.39 GB/s [====================]
+[  ]    210.7 MLBUps    243.11 GB/s [===                 ]  1s
+[  ]    211.1 MLBUps    243.64 GB/s [=======             ]  1s
+[  ]    211.0 MLBUps    243.48 GB/s [===========         ]  2s
+[  ]    211.3 MLBUps    243.79 GB/s [===============     ]  3s
+[  ]    210.7 MLBUps    243.15 GB/s [=================== ]  4s
+[  ]    ---- :    188.3 MLBUps    217.32 GB/s [====================]
+[  ]    210.6 MLBUps    243.03 GB/s [===                 ]  1s
+[  ]    210.5 MLBUps    242.96 GB/s [=======             ]  2s
+[  ]    210.6 MLBUps    243.02 GB/s [===========         ]  3s
+[  ]    211.1 MLBUps    243.55 GB/s [===============     ]  4s
+[  ]    212.5 MLBUps    245.24 GB/s [=================== ]  4s
+[  ]    ---- :    190.0 MLBUps    219.32 GB/s [====================]
+[  ]    213.0 MLBUps    245.77 GB/s [===                 ]  0s
+[  ]    212.9 MLBUps    245.74 GB/s [=======             ]  1s
+[  ]    212.5 MLBUps    245.19 GB/s [===========         ]  2s
+[  ]    212.9 MLBUps    245.65 GB/s [===============     ]  3s
+[  ]    212.9 MLBUps    245.63 GB/s [=================== ]  4s
+[  ]    ---- :    177.8 MLBUps    205.15 GB/s [====================]
+[  ]    213.8 MLBUps    246.69 GB/s [===                 ]  0s
+[  ]    213.2 MLBUps    246.01 GB/s [=======             ]  1s
+[  ]    213.6 MLBUps    246.47 GB/s [===========         ]  2s
+[  ]    213.2 MLBUps    246.01 GB/s [===============     ]  3s
+[  ]    213.0 MLBUps    245.79 GB/s [=================== ]  4s
+[  ]    ---- :    172.1 MLBUps    198.58 GB/s [====================]
+[  ]    213.2 MLBUps    245.98 GB/s [===                 ]  0s
+[  ]    213.4 MLBUps    246.24 GB/s [=======             ]  1s
+[  ]    213.1 MLBUps    245.88 GB/s [===========         ]  2s
+[  ]    213.6 MLBUps    246.47 GB/s [===============     ]  3s
+[  ]    213.1 MLBUps    245.90 GB/s [=================== ]  4s
+[  ]    ---- :    172.6 MLBUps    199.21 GB/s [====================]
+[  ]    213.5 MLBUps    246.38 GB/s [===                 ]  0s
+[  ]    213.4 MLBUps    246.25 GB/s [=======             ]  1s
+[  ]    213.6 MLBUps    246.51 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.57 GB/s [===============     ]  3s
+[  ]    212.6 MLBUps    245.36 GB/s [=================== ]  4s
+[  ]    ---- :    171.5 MLBUps    197.91 GB/s [====================]
+[  ]    213.1 MLBUps    245.97 GB/s [===                 ]  0s
+[  ]    213.7 MLBUps    246.56 GB/s [=======             ]  1s
+[  ]    213.2 MLBUps    246.07 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.62 GB/s [===============     ]  3s
+[  ]    213.1 MLBUps    245.89 GB/s [=================== ]  4s
+[  ]    ---- :    172.2 MLBUps    198.70 GB/s [====================]
+[  ]    213.4 MLBUps    246.22 GB/s [===                 ]  0s
+[  ]    213.0 MLBUps    245.77 GB/s [=======             ]  1s
+[  ]    213.5 MLBUps    246.39 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.60 GB/s [===============     ]  3s
+[  ]    213.7 MLBUps    246.64 GB/s [=================== ]  4s
+[  ]    ---- :    172.7 MLBUps    199.29 GB/s [====================]
+[  ]    213.7 MLBUps    246.64 GB/s [===                 ]  0s
+[  ]    215.5 MLBUps    248.67 GB/s [=======             ]  1s
+[  ]    215.9 MLBUps    249.09 GB/s [===========         ]  2s
+[  ]    215.6 MLBUps    248.78 GB/s [===============     ]  3s
+[  ]    215.6 MLBUps    248.77 GB/s [=================== ]  4s
+[  ]    ---- :    134.4 MLBUps    155.05 GB/s [====================]
+[  ]    215.8 MLBUps    249.01 GB/s [====                ]  0s
+[  ]    215.4 MLBUps    248.60 GB/s [========            ]  1s
+[  ]    215.8 MLBUps    249.06 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.15 GB/s [================    ]  3s
+[  ]    ---- :    213.3 MLBUps    246.10 GB/s [====================]
+[  ]    215.9 MLBUps    249.18 GB/s [====                ]  0s
+[  ]    215.7 MLBUps    248.91 GB/s [========            ]  1s
+[  ]    215.8 MLBUps    249.07 GB/s [============        ]  2s
+[  ]    215.8 MLBUps    248.99 GB/s [================    ]  3s
+[  ]    ---- :    213.1 MLBUps    245.87 GB/s [====================]
+[  ]    215.4 MLBUps    248.62 GB/s [====                ]  0s
+[  ]    216.0 MLBUps    249.26 GB/s [========            ]  1s
+[  ]    215.7 MLBUps    248.95 GB/s [============        ]  2s
+[  ]    215.7 MLBUps    248.91 GB/s [================    ]  3s
+[  ]    ---- :    213.2 MLBUps    246.04 GB/s [====================]
+[  ]    215.6 MLBUps    248.77 GB/s [====                ]  0s
+[  ]    215.7 MLBUps    248.89 GB/s [========            ]  1s
+[  ]    215.8 MLBUps    248.98 GB/s [============        ]  2s
+[  ]    215.9 MLBUps    249.15 GB/s [================    ]  3s
+[  ]    ---- :    212.4 MLBUps    245.10 GB/s [====================]
+[  ]    210.6 MLBUps    243.09 GB/s [====                ]  1s
+[  ]    210.6 MLBUps    242.98 GB/s [=======             ]  2s
+[  ]    211.0 MLBUps    243.48 GB/s [===========         ]  3s
+[  ]    210.9 MLBUps    243.42 GB/s [===============     ]  4s
+[  ]    210.3 MLBUps    242.67 GB/s [=================== ]  5s
+[  ]    ---- :    183.8 MLBUps    212.15 GB/s [====================]
+[  ]    210.7 MLBUps    243.15 GB/s [===                 ]  1s
+[  ]    210.6 MLBUps    243.05 GB/s [=======             ]  2s
+[  ]    211.3 MLBUps    243.83 GB/s [===========         ]  2s
+[  ]    212.7 MLBUps    245.42 GB/s [===============     ]  3s
+[  ]    212.4 MLBUps    245.17 GB/s [=================== ]  4s
+[  ]    ---- :    188.5 MLBUps    217.53 GB/s [====================]
+[  ]    212.5 MLBUps    245.23 GB/s [===                 ]  0s
+[  ]    213.0 MLBUps    245.80 GB/s [=======             ]  1s
+[  ]    212.7 MLBUps    245.50 GB/s [===========         ]  2s
+[  ]    212.9 MLBUps    245.63 GB/s [===============     ]  3s
+[  ]    212.7 MLBUps    245.47 GB/s [=================== ]  4s
+[  ]    ---- :    177.2 MLBUps    204.50 GB/s [====================]
+[  ]    212.8 MLBUps    245.57 GB/s [===                 ]  1s
+[  ]    212.6 MLBUps    245.36 GB/s [=======             ]  2s
+[  ]    212.7 MLBUps    245.40 GB/s [===========         ]  3s
+[  ]    212.9 MLBUps    245.65 GB/s [===============     ]  4s
+[  ]    211.9 MLBUps    244.50 GB/s [=================== ]  5s
+[  ]    ---- :    172.0 MLBUps    198.49 GB/s [====================]
+[  ]    211.6 MLBUps    244.15 GB/s [===                 ]  1s
+[  ]    212.0 MLBUps    244.60 GB/s [=======             ]  2s
+[  ]    211.5 MLBUps    244.06 GB/s [===========         ]  3s
+[  ]    214.3 MLBUps    247.25 GB/s [===============     ]  3s
+[  ]    214.4 MLBUps    247.37 GB/s [=================== ]  4s
+[  ]    ---- :    177.5 MLBUps    204.86 GB/s [====================]
+[  ]    ---- :   180000 it writing vtk
+[  ]    161.0 MLBUps    185.83 GB/s [===                 ]  1s
+[  ]    218.8 MLBUps    252.47 GB/s [======              ]  2s
+[  ]    218.3 MLBUps    251.93 GB/s [===========         ]  3s
+[  ]    214.4 MLBUps    247.43 GB/s [===============     ]  4s
+[  ]    214.1 MLBUps    247.12 GB/s [=================== ]  5s
+[  ]    ---- :    203.5 MLBUps    234.88 GB/s [====================]
+[  ]    214.3 MLBUps    247.34 GB/s [===                 ]  0s
+[  ]    214.5 MLBUps    247.48 GB/s [=======             ]  1s
+[  ]    214.5 MLBUps    247.56 GB/s [===========         ]  2s
+[  ]    214.6 MLBUps    247.61 GB/s [===============     ]  3s
+[  ]    214.3 MLBUps    247.36 GB/s [=================== ]  4s
+[  ]    ---- :    177.8 MLBUps    205.17 GB/s [====================]
+[  ]    214.4 MLBUps    247.47 GB/s [===                 ]  0s
+[  ]    214.3 MLBUps    247.30 GB/s [=======             ]  1s
+[  ]    214.3 MLBUps    247.30 GB/s [===========         ]  2s
+[  ]    214.2 MLBUps    247.19 GB/s [===============     ]  4s
+[  ]    214.2 MLBUps    247.21 GB/s [=================== ]  5s
+[  ]    ---- :     97.5 MLBUps    112.52 GB/s [====================]
+[  ]    214.3 MLBUps    247.28 GB/s [===                 ]  0s
+[  ]    214.0 MLBUps    246.96 GB/s [=======             ]  1s
+[  ]    214.2 MLBUps    247.16 GB/s [===========         ]  3s
+[  ]    214.2 MLBUps    247.16 GB/s [===============     ]  4s
+[  ]    214.1 MLBUps    247.12 GB/s [=================== ]  5s
+[  ]    ---- :     96.7 MLBUps    111.61 GB/s [====================]
+[  ]    214.2 MLBUps    247.16 GB/s [===                 ]  0s
+[  ]    214.2 MLBUps    247.14 GB/s [=======             ]  1s
+[  ]    214.2 MLBUps    247.20 GB/s [===========         ]  3s
+[  ]    205.5 MLBUps    237.19 GB/s [===============     ]  4s
+[  ]    205.7 MLBUps    237.41 GB/s [=================== ]  5s
+[  ]    ---- :    166.9 MLBUps    192.58 GB/s [====================]
+[  ]    206.0 MLBUps    237.76 GB/s [===                 ]  1s
+[  ]    206.0 MLBUps    237.68 GB/s [=======             ]  2s
+[  ]    208.8 MLBUps    240.97 GB/s [===========         ]  3s
+[  ]    209.8 MLBUps    242.15 GB/s [===============     ]  4s
+[  ]    210.6 MLBUps    243.02 GB/s [=================== ]  5s
+[  ]    ---- :    194.9 MLBUps    224.97 GB/s [====================]
+[  ]    210.7 MLBUps    243.16 GB/s [===                 ]  0s
+[  ]    210.7 MLBUps    243.13 GB/s [=======             ]  1s
+[  ]    210.8 MLBUps    243.21 GB/s [===========         ]  2s
+[  ]    210.8 MLBUps    243.22 GB/s [===============     ]  3s
+[  ]    210.6 MLBUps    243.05 GB/s [=================== ]  4s
+[  ]    ---- :    189.8 MLBUps    219.01 GB/s [====================]
+[  ]    210.9 MLBUps    243.40 GB/s [===                 ]  0s
+[  ]    211.3 MLBUps    243.79 GB/s [=======             ]  1s
+[  ]    210.7 MLBUps    243.13 GB/s [===========         ]  2s
+[  ]    210.9 MLBUps    243.32 GB/s [===============     ]  3s
+[  ]    210.7 MLBUps    243.14 GB/s [=================== ]  4s
+[  ]    ---- :    187.9 MLBUps    216.81 GB/s [====================]
+[  ]    210.2 MLBUps    242.61 GB/s [===                 ]  1s
+[  ]    210.3 MLBUps    242.64 GB/s [=======             ]  2s
+[  ]    210.8 MLBUps    243.28 GB/s [===========         ]  3s
+[  ]    211.6 MLBUps    244.24 GB/s [===============     ]  4s
+[  ]    213.7 MLBUps    246.57 GB/s [=================== ]  4s
+[  ]    ---- :    191.3 MLBUps    220.73 GB/s [====================]
+[  ]    213.5 MLBUps    246.42 GB/s [===                 ]  0s
+[  ]    213.3 MLBUps    246.16 GB/s [=======             ]  1s
+[  ]    213.1 MLBUps    245.95 GB/s [===========         ]  2s
+[  ]    213.2 MLBUps    246.07 GB/s [===============     ]  3s
+[  ]    213.3 MLBUps    246.11 GB/s [=================== ]  4s
+[  ]    ---- :    175.8 MLBUps    202.93 GB/s [====================]
+[  ]    213.0 MLBUps    245.85 GB/s [===                 ]  0s
+[  ]    212.9 MLBUps    245.73 GB/s [=======             ]  1s
+[  ]    213.5 MLBUps    246.35 GB/s [===========         ]  2s
+[  ]    212.8 MLBUps    245.60 GB/s [===============     ]  3s
+[  ]    213.2 MLBUps    246.00 GB/s [=================== ]  4s
+[  ]    ---- :    172.7 MLBUps    199.29 GB/s [====================]
+[  ]    213.1 MLBUps    245.97 GB/s [===                 ]  0s
+[  ]    212.7 MLBUps    245.45 GB/s [=======             ]  1s
+[  ]    212.5 MLBUps    245.27 GB/s [===========         ]  3s
+[  ]    213.1 MLBUps    245.88 GB/s [===============     ]  4s
+[  ]    212.7 MLBUps    245.41 GB/s [=================== ]  5s
+[  ]    ---- :    172.3 MLBUps    198.87 GB/s [====================]
+[  ]    212.8 MLBUps    245.57 GB/s [===                 ]  1s
+[  ]    213.4 MLBUps    246.32 GB/s [=======             ]  1s
+[  ]    213.2 MLBUps    246.05 GB/s [===========         ]  2s
+[  ]    212.6 MLBUps    245.39 GB/s [===============     ]  3s
+[  ]    212.7 MLBUps    245.47 GB/s [=================== ]  4s
+[  ]    ---- :    171.2 MLBUps    197.56 GB/s [====================]
+[  ]    212.5 MLBUps    245.22 GB/s [===                 ]  1s
+[  ]    212.4 MLBUps    245.07 GB/s [=======             ]  2s
+[  ]    211.4 MLBUps    244.00 GB/s [===========         ]  3s
+[  ]    212.2 MLBUps    244.90 GB/s [===============     ]  4s
+[  ]    212.3 MLBUps    244.96 GB/s [=================== ]  5s
+[  ]    ---- :    177.1 MLBUps    204.34 GB/s [====================]
+[  ]    212.5 MLBUps    245.27 GB/s [===                 ]  0s
+[  ]    213.0 MLBUps    245.76 GB/s [=======             ]  1s
+[  ]    213.2 MLBUps    246.08 GB/s [===========         ]  2s
+[  ]    212.3 MLBUps    244.94 GB/s [===============     ]  3s
+[  ]    213.0 MLBUps    245.80 GB/s [=================== ]  4s
+[  ]    ---- :    177.6 MLBUps    204.93 GB/s [====================]
+[  ]    212.9 MLBUps    245.68 GB/s [===                 ]  0s
+[  ]    213.1 MLBUps    245.90 GB/s [=======             ]  1s
+[  ]    212.5 MLBUps    245.26 GB/s [===========         ]  3s
+[  ]    213.7 MLBUps    246.64 GB/s [===============     ]  3s
+[  ]    214.8 MLBUps    247.88 GB/s [=================== ]  4s
+[  ]    ---- :    173.3 MLBUps    200.00 GB/s [====================]
+[  ]    214.3 MLBUps    247.27 GB/s [===                 ]  0s
+[  ]    214.8 MLBUps    247.93 GB/s [=======             ]  1s
+[  ]    214.3 MLBUps    247.34 GB/s [===========         ]  2s
+[  ]    214.3 MLBUps    247.27 GB/s [===============     ]  4s
+[  ]    214.7 MLBUps    247.72 GB/s [=================== ]  5s
+[  ]    ---- :     97.1 MLBUps    112.06 GB/s [====================]
+[  ]    213.9 MLBUps    246.88 GB/s [===                 ]  0s
+[  ]    214.7 MLBUps    247.77 GB/s [=======             ]  1s
+[  ]    214.8 MLBUps    247.83 GB/s [===========         ]  2s
+[  ]    214.8 MLBUps    247.91 GB/s [===============     ]  3s
+[  ]    214.5 MLBUps    247.55 GB/s [=================== ]  4s
+[  ]    ---- :    134.0 MLBUps    154.66 GB/s [====================]
+[  ]    213.8 MLBUps    246.70 GB/s [====                ]  1s
+[  ]    214.0 MLBUps    246.92 GB/s [=======             ]  2s
+[  ]    214.2 MLBUps    247.17 GB/s [===========         ]  3s
+[  ]    215.1 MLBUps    248.17 GB/s [===============     ]  4s
+[  ]    214.6 MLBUps    247.69 GB/s [=================== ]  5s
+[  ]    ---- :     97.6 MLBUps    112.58 GB/s [====================]
+[  ]    213.7 MLBUps    246.58 GB/s [===                 ]  0s
+[  ]    214.9 MLBUps    247.94 GB/s [=======             ]  1s
+[  ]    214.4 MLBUps    247.37 GB/s [===========         ]  2s
+[  ]    213.0 MLBUps    245.78 GB/s [===============     ]  4s
+[  ]    213.6 MLBUps    246.52 GB/s [=================== ]  4s
+[  ]    ---- :    152.3 MLBUps    175.79 GB/s [====================]
+[  ]    ---- :   200000 it writing vtk
+[  ]    ---- : Total duration: 1015.196679 s = 16.919945 min = 0.281999 h

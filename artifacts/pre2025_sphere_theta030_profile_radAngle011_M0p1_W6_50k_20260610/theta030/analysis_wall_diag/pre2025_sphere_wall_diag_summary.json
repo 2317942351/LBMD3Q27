@@ -1,0 +1,1075 @@
+{
+  "status": "runtime_sanity",
+  "case_root": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030",
+  "frame_count": 6,
+  "summaries": [
+    {
+      "status": "runtime_sanity",
+      "step": 0,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030/output/case_VTK_P00_00000000.vti",
+      "dims": [
+        96,
+        80,
+        140
+      ],
+      "cell_count": 1075200,
+      "wall_count": 121164,
+      "fluid_count": 954036,
+      "nonfinite_count": 0,
+      "phase_all": {
+        "count": 1075200,
+        "min": -0.0,
+        "mean": 0.10051407198610256,
+        "p95": 0.9998072449100965,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_wall": {
+        "count": 121164,
+        "min": -0.0,
+        "mean": 0.3968583658773894,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_fluid": {
+        "count": 954036,
+        "min": 0.0,
+        "mean": 0.06287790309410697,
+        "p95": 0.7296000643319109,
+        "p99": 0.9992815581211185,
+        "max": 0.9999997995397631
+      },
+      "wall_phase_pred": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.3978191555634191,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.7954628943313244
+      },
+      "wall_phase_profile_pred": {
+        "count": 121164,
+        "min": -0.0,
+        "mean": 0.3968583658773894,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "wall_phase_bounded_pred": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.3978191555634191,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.7954628943313244
+      },
+      "wall_profile_delta": {
+        "count": 121164,
+        "min": -0.1208892596789658,
+        "mean": 0.0009607896860297403,
+        "p95": 6.338212162924335e-08,
+        "p99": 0.0009123726205026591,
+        "max": 1.054862754745995
+      },
+      "wall_clamp_delta": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_phase_pred_gt_1_count": 64,
+      "wall_phase_profile_pred_gt_1_count": 0,
+      "wall_phase_field_gt_1_count": 0,
+      "fluid_phase_field_gt_1_count": 0,
+      "wall_profile_delta_nonzero_count": 34780,
+      "wall_clamp_delta_nonzero_count": 0,
+      "max_velocity": 0.0,
+      "max_mach": 0.0,
+      "by_wall_bc_path": {
+        "1": {
+          "count": 47872,
+          "phase_field": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_profile_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "4": {
+          "count": 392,
+          "phase_field": {
+            "count": 392,
+            "min": 4.01339755992932e-14,
+            "mean": 5.5350923718169934e-14,
+            "p95": 8.693842651623023e-14,
+            "p99": 8.85512392083984e-14,
+            "max": 8.85512392083984e-14
+          },
+          "wall_phase_pred": {
+            "count": 392,
+            "min": 4.01339755992932e-14,
+            "mean": 5.5350923718169947e-14,
+            "p95": 8.693842651623023e-14,
+            "p99": 8.855123920839842e-14,
+            "max": 8.855123920839842e-14
+          },
+          "wall_phase_profile_pred": {
+            "count": 392,
+            "min": 4.01339755992932e-14,
+            "mean": 5.5350923718169947e-14,
+            "p95": 8.693842651623023e-14,
+            "p99": 8.855123920839842e-14,
+            "max": 8.855123920839842e-14
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "5": {
+          "count": 72900,
+          "phase_field": {
+            "count": 72900,
+            "min": -0.0,
+            "mean": 0.0029210842684222593,
+            "p95": 4.204602784499982e-05,
+            "p99": 0.03871027504442147,
+            "max": 0.7406001395853296
+          },
+          "wall_phase_pred": {
+            "count": 72900,
+            "min": 0.0,
+            "mean": 0.004517972080741978,
+            "p95": 3.958480154679082e-05,
+            "p99": 0.05748091281297842,
+            "max": 1.7954628943313244
+          },
+          "wall_phase_profile_pred": {
+            "count": 72900,
+            "min": -0.0,
+            "mean": 0.0029210842684222597,
+            "p95": 4.2046027844999835e-05,
+            "p99": 0.038710275044421476,
+            "max": 0.7406001395853296
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 64,
+          "wall_phase_profile_pred_gt_1_count": 0
+        }
+      }
+    },
+    {
+      "status": "runtime_sanity",
+      "step": 10000,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030/output/case_VTK_P00_00010000.vti",
+      "dims": [
+        96,
+        80,
+        140
+      ],
+      "cell_count": 1075200,
+      "wall_count": 121164,
+      "fluid_count": 954036,
+      "nonfinite_count": 0,
+      "phase_all": {
+        "count": 1075200,
+        "min": 1.3450915679528296e-08,
+        "mean": 0.10105537880927175,
+        "p95": 0.9998351226463236,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_wall": {
+        "count": 121164,
+        "min": 2.774194753201316e-08,
+        "mean": 0.40238936787008994,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_fluid": {
+        "count": 954036,
+        "min": 1.3450915679528296e-08,
+        "mean": 0.06278551116217564,
+        "p95": 0.7302201075321081,
+        "p99": 0.9993772502583138,
+        "max": 0.9999998839906756
+      },
+      "wall_phase_pred": {
+        "count": 121164,
+        "min": 1.4182920943961564e-08,
+        "mean": 0.4052800856450081,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.5576942761027706
+      },
+      "wall_phase_profile_pred": {
+        "count": 121164,
+        "min": 2.774194753201316e-08,
+        "mean": 0.40238936787008994,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "wall_phase_bounded_pred": {
+        "count": 121164,
+        "min": 1.4182920943961564e-08,
+        "mean": 0.4052800856450081,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.5576942761027706
+      },
+      "wall_profile_delta": {
+        "count": 121164,
+        "min": -0.06716321422351004,
+        "mean": 0.0028907177749181974,
+        "p95": 5.3958536808816325e-05,
+        "p99": 0.04866852258470579,
+        "max": 0.7806512377872968
+      },
+      "wall_clamp_delta": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_phase_pred_gt_1_count": 576,
+      "wall_phase_profile_pred_gt_1_count": 0,
+      "wall_phase_field_gt_1_count": 0,
+      "fluid_phase_field_gt_1_count": 0,
+      "wall_profile_delta_nonzero_count": 72900,
+      "wall_clamp_delta_nonzero_count": 0,
+      "max_velocity": 0.00026082381561523733,
+      "max_mach": 0.0004517601004695678,
+      "by_wall_bc_path": {
+        "1": {
+          "count": 47872,
+          "phase_field": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_profile_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "4": {
+          "count": 392,
+          "phase_field": {
+            "count": 392,
+            "min": 1.3969184585236268e-06,
+            "mean": 7.912834210004793e-06,
+            "p95": 1.98716421575706e-05,
+            "p99": 2.4232945078093618e-05,
+            "max": 2.4240909958104227e-05
+          },
+          "wall_phase_pred": {
+            "count": 392,
+            "min": 1.3969184585236268e-06,
+            "mean": 7.912834210004793e-06,
+            "p95": 1.98716421575706e-05,
+            "p99": 2.4232945078093618e-05,
+            "max": 2.4240909958104227e-05
+          },
+          "wall_phase_profile_pred": {
+            "count": 392,
+            "min": 1.3969184585236268e-06,
+            "mean": 7.912834210004793e-06,
+            "p95": 1.98716421575706e-05,
+            "p99": 2.4232945078093618e-05,
+            "max": 2.4240909958104227e-05
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "5": {
+          "count": 72900,
+          "phase_field": {
+            "count": 72900,
+            "min": 2.774194753201316e-08,
+            "mean": 0.012113885689719777,
+            "p95": 0.012696106383633199,
+            "p99": 0.4614166725335195,
+            "max": 0.999415170063759
+          },
+          "wall_phase_pred": {
+            "count": 72900,
+            "min": 1.4182920943961564e-08,
+            "mean": 0.016918425175044726,
+            "p95": 0.01801180054677544,
+            "p99": 0.7448400493566152,
+            "max": 1.5576942761027706
+          },
+          "wall_phase_profile_pred": {
+            "count": 72900,
+            "min": 2.774194753201316e-08,
+            "mean": 0.012113885689719777,
+            "p95": 0.012696106383633199,
+            "p99": 0.4614166725335195,
+            "max": 0.999415170063759
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 576,
+          "wall_phase_profile_pred_gt_1_count": 0
+        }
+      }
+    },
+    {
+      "status": "runtime_sanity",
+      "step": 20000,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030/output/case_VTK_P00_00020000.vti",
+      "dims": [
+        96,
+        80,
+        140
+      ],
+      "cell_count": 1075200,
+      "wall_count": 121164,
+      "fluid_count": 954036,
+      "nonfinite_count": 0,
+      "phase_all": {
+        "count": 1075200,
+        "min": 1.572368829816202e-08,
+        "mean": 0.10145705731027567,
+        "p95": 0.9998386654263097,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_wall": {
+        "count": 121164,
+        "min": 4.396286622412516e-08,
+        "mean": 0.40639997003401995,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_fluid": {
+        "count": 954036,
+        "min": 1.572368829816202e-08,
+        "mean": 0.06272885095615505,
+        "p95": 0.7256785516464763,
+        "p99": 0.9993967672678484,
+        "max": 0.999999878814603
+      },
+      "wall_phase_pred": {
+        "count": 121164,
+        "min": 2.429437541251059e-08,
+        "mean": 0.4103641838205175,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.48388500065128
+      },
+      "wall_phase_profile_pred": {
+        "count": 121164,
+        "min": 4.396286622412516e-08,
+        "mean": 0.40639997003401995,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "wall_phase_bounded_pred": {
+        "count": 121164,
+        "min": 2.429437541251059e-08,
+        "mean": 0.4103641838205175,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.48388500065128
+      },
+      "wall_profile_delta": {
+        "count": 121164,
+        "min": -0.05386538941948593,
+        "mean": 0.003964213786497336,
+        "p95": 0.0008036967427886988,
+        "p99": 0.10294805485009477,
+        "max": 0.7502167484856347
+      },
+      "wall_clamp_delta": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_phase_pred_gt_1_count": 820,
+      "wall_phase_profile_pred_gt_1_count": 0,
+      "wall_phase_field_gt_1_count": 0,
+      "fluid_phase_field_gt_1_count": 0,
+      "wall_profile_delta_nonzero_count": 72900,
+      "wall_clamp_delta_nonzero_count": 0,
+      "max_velocity": 0.00033012479512169266,
+      "max_mach": 0.000571792917989038,
+      "by_wall_bc_path": {
+        "1": {
+          "count": 47872,
+          "phase_field": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_profile_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "4": {
+          "count": 392,
+          "phase_field": {
+            "count": 392,
+            "min": 0.00021160815424471293,
+            "mean": 0.0008450782067975273,
+            "p95": 0.0018045791978505996,
+            "p99": 0.0021599279162933336,
+            "max": 0.00216030468968064
+          },
+          "wall_phase_pred": {
+            "count": 392,
+            "min": 0.00021160815424471293,
+            "mean": 0.0008450782067975273,
+            "p95": 0.0018045791978505996,
+            "p99": 0.0021599279162933336,
+            "max": 0.00216030468968064
+          },
+          "wall_phase_profile_pred": {
+            "count": 392,
+            "min": 0.00021160815424471293,
+            "mean": 0.0008450782067975273,
+            "p95": 0.0018045791978505996,
+            "p99": 0.0021599279162933336,
+            "max": 0.00216030468968064
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "5": {
+          "count": 72900,
+          "phase_field": {
+            "count": 72900,
+            "min": 4.396286622412516e-08,
+            "mean": 0.018775235919683633,
+            "p95": 0.05503105297547004,
+            "p99": 0.7193157479228908,
+            "max": 0.9998587224830955
+          },
+          "wall_phase_pred": {
+            "count": 72900,
+            "min": 2.429437541251059e-08,
+            "mean": 0.025363987623759948,
+            "p95": 0.0757721679330402,
+            "p99": 1.0071435983807766,
+            "max": 1.48388500065128
+          },
+          "wall_phase_profile_pred": {
+            "count": 72900,
+            "min": 4.396286622412516e-08,
+            "mean": 0.018775235919683633,
+            "p95": 0.05503105297547004,
+            "p99": 0.7193157479228908,
+            "max": 0.9998587224830955
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 820,
+          "wall_phase_profile_pred_gt_1_count": 0
+        }
+      }
+    },
+    {
+      "status": "runtime_sanity",
+      "step": 30000,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030/output/case_VTK_P00_00030000.vti",
+      "dims": [
+        96,
+        80,
+        140
+      ],
+      "cell_count": 1075200,
+      "wall_count": 121164,
+      "fluid_count": 954036,
+      "nonfinite_count": 0,
+      "phase_all": {
+        "count": 1075200,
+        "min": 1.560871095908459e-08,
+        "mean": 0.10184192775488082,
+        "p95": 0.9998496363945643,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_wall": {
+        "count": 121164,
+        "min": 4.429739820110897e-08,
+        "mean": 0.41025003968151064,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_fluid": {
+        "count": 954036,
+        "min": 1.560871095908459e-08,
+        "mean": 0.0626736359152876,
+        "p95": 0.7234745551198722,
+        "p99": 0.9994316390330128,
+        "max": 0.9999998796403238
+      },
+      "wall_phase_pred": {
+        "count": 121164,
+        "min": 2.396284367325254e-08,
+        "mean": 0.41541898561236446,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.491645186937543
+      },
+      "wall_phase_profile_pred": {
+        "count": 121164,
+        "min": 4.429739820110897e-08,
+        "mean": 0.41025003968151064,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "wall_phase_bounded_pred": {
+        "count": 121164,
+        "min": 2.396284367325254e-08,
+        "mean": 0.41541898561236446,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.491645186937543
+      },
+      "wall_profile_delta": {
+        "count": 121164,
+        "min": -0.04270154332611012,
+        "mean": 0.005168945930853942,
+        "p95": 0.002329389294868456,
+        "p99": 0.16581951159337038,
+        "max": 0.7494843497899621
+      },
+      "wall_clamp_delta": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_phase_pred_gt_1_count": 1120,
+      "wall_phase_profile_pred_gt_1_count": 0,
+      "wall_phase_field_gt_1_count": 0,
+      "fluid_phase_field_gt_1_count": 0,
+      "wall_profile_delta_nonzero_count": 72900,
+      "wall_clamp_delta_nonzero_count": 0,
+      "max_velocity": 0.00031644477498987987,
+      "max_mach": 0.0005480984280721731,
+      "by_wall_bc_path": {
+        "1": {
+          "count": 47872,
+          "phase_field": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_profile_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "4": {
+          "count": 392,
+          "phase_field": {
+            "count": 392,
+            "min": 0.002129754063649538,
+            "mean": 0.008131889985321729,
+            "p95": 0.01640963539624728,
+            "p99": 0.019339119014521677,
+            "max": 0.01934712230550343
+          },
+          "wall_phase_pred": {
+            "count": 392,
+            "min": 0.002129754063649538,
+            "mean": 0.008131889985321729,
+            "p95": 0.01640963539624728,
+            "p99": 0.019339119014521677,
+            "max": 0.01934712230550343
+          },
+          "wall_phase_profile_pred": {
+            "count": 392,
+            "min": 0.002129754063649538,
+            "mean": 0.008131889985321729,
+            "p95": 0.01640963539624728,
+            "p99": 0.019339119014521677,
+            "max": 0.01934712230550343
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "5": {
+          "count": 72900,
+          "phase_field": {
+            "count": 72900,
+            "min": 4.429739820110897e-08,
+            "mean": 0.025135090632322298,
+            "p95": 0.11294607905795685,
+            "p99": 0.867452702985675,
+            "max": 0.9999562336862415
+          },
+          "wall_phase_pred": {
+            "count": 72900,
+            "min": 2.396284367325254e-08,
+            "mean": 0.033726176568755595,
+            "p95": 0.16108739155545415,
+            "p99": 1.040887769543621,
+            "max": 1.491645186937543
+          },
+          "wall_phase_profile_pred": {
+            "count": 72900,
+            "min": 4.429739820110897e-08,
+            "mean": 0.025135090632322298,
+            "p95": 0.11294607905795685,
+            "p99": 0.867452702985675,
+            "max": 0.9999562336862415
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 1120,
+          "wall_phase_profile_pred_gt_1_count": 0
+        }
+      }
+    },
+    {
+      "status": "runtime_sanity",
+      "step": 40000,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030/output/case_VTK_P00_00040000.vti",
+      "dims": [
+        96,
+        80,
+        140
+      ],
+      "cell_count": 1075200,
+      "wall_count": 121164,
+      "fluid_count": 954036,
+      "nonfinite_count": 0,
+      "phase_all": {
+        "count": 1075200,
+        "min": 1.5512619966883503e-08,
+        "mean": 0.10221871468587994,
+        "p95": 0.9998629930608849,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_wall": {
+        "count": 121164,
+        "min": 4.507393936608494e-08,
+        "mean": 0.4140237888207756,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_fluid": {
+        "count": 954036,
+        "min": 1.5512619966883503e-08,
+        "mean": 0.06261900356126783,
+        "p95": 0.7206467417719247,
+        "p99": 0.9994694567827414,
+        "max": 0.999999872805821
+      },
+      "wall_phase_pred": {
+        "count": 121164,
+        "min": 2.407204986750851e-08,
+        "mean": 0.42044789719856807,
+        "p95": 1.0,
+        "p99": 1.0039713682998017,
+        "max": 1.4831358510732424
+      },
+      "wall_phase_profile_pred": {
+        "count": 121164,
+        "min": 4.507393936608494e-08,
+        "mean": 0.4140237888207756,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "wall_phase_bounded_pred": {
+        "count": 121164,
+        "min": 2.407204986750851e-08,
+        "mean": 0.42044789719856807,
+        "p95": 1.0,
+        "p99": 1.0039713682998017,
+        "max": 1.4831358510732424
+      },
+      "wall_profile_delta": {
+        "count": 121164,
+        "min": -0.05259773079625574,
+        "mean": 0.006424108377792467,
+        "p95": 0.004395608173338836,
+        "p99": 0.22216760960092127,
+        "max": 0.7320009981010568
+      },
+      "wall_clamp_delta": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_phase_pred_gt_1_count": 1396,
+      "wall_phase_profile_pred_gt_1_count": 0,
+      "wall_phase_field_gt_1_count": 0,
+      "fluid_phase_field_gt_1_count": 0,
+      "wall_profile_delta_nonzero_count": 72900,
+      "wall_clamp_delta_nonzero_count": 0,
+      "max_velocity": 0.00029517200530863907,
+      "max_mach": 0.0005112529101665533,
+      "by_wall_bc_path": {
+        "1": {
+          "count": 47872,
+          "phase_field": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_profile_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "4": {
+          "count": 392,
+          "phase_field": {
+            "count": 392,
+            "min": 0.008535481756687406,
+            "mean": 0.03274402493948351,
+            "p95": 0.06465406106640664,
+            "p99": 0.07348417430963429,
+            "max": 0.0734943666681131
+          },
+          "wall_phase_pred": {
+            "count": 392,
+            "min": 0.008535481756687406,
+            "mean": 0.03274402493948351,
+            "p95": 0.06465406106640664,
+            "p99": 0.07348417430963429,
+            "max": 0.0734943666681131
+          },
+          "wall_phase_profile_pred": {
+            "count": 392,
+            "min": 0.008535481756687406,
+            "mean": 0.03274402493948351,
+            "p95": 0.06465406106640664,
+            "p99": 0.07348417430963429,
+            "max": 0.0734943666681131
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "5": {
+          "count": 72900,
+          "phase_field": {
+            "count": 72900,
+            "min": 4.507393936608494e-08,
+            "mean": 0.03127493403160734,
+            "p95": 0.17715825909036534,
+            "p99": 0.9378057855742681,
+            "max": 0.9999841645987358
+          },
+          "wall_phase_pred": {
+            "count": 72900,
+            "min": 2.407204986750851e-08,
+            "mean": 0.04195217226873829,
+            "p95": 0.2616841614690433,
+            "p99": 1.0804835994309852,
+            "max": 1.4831358510732424
+          },
+          "wall_phase_profile_pred": {
+            "count": 72900,
+            "min": 4.507393936608494e-08,
+            "mean": 0.03127493403160734,
+            "p95": 0.17715825909036534,
+            "p99": 0.9378057855742681,
+            "max": 0.9999841645987358
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 1396,
+          "wall_phase_profile_pred_gt_1_count": 0
+        }
+      }
+    },
+    {
+      "status": "runtime_sanity",
+      "step": 50000,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_50k_20260610/theta030/output/case_VTK_P00_00050000.vti",
+      "dims": [
+        96,
+        80,
+        140
+      ],
+      "cell_count": 1075200,
+      "wall_count": 121164,
+      "fluid_count": 954036,
+      "nonfinite_count": 0,
+      "phase_all": {
+        "count": 1075200,
+        "min": 1.5660308738223123e-08,
+        "mean": 0.10258960194768173,
+        "p95": 0.9998760486655678,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_wall": {
+        "count": 121164,
+        "min": 4.245708811409115e-08,
+        "mean": 0.41774073742929607,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "phase_fluid": {
+        "count": 954036,
+        "min": 1.5660308738223123e-08,
+        "mean": 0.06256493602365554,
+        "p95": 0.7145603525199484,
+        "p99": 0.999504376597831,
+        "max": 0.9999998854984499
+      },
+      "wall_phase_pred": {
+        "count": 121164,
+        "min": 2.2890836580057854e-08,
+        "mean": 0.42539218464690154,
+        "p95": 1.0,
+        "p99": 1.0164612718257438,
+        "max": 1.485158068259571
+      },
+      "wall_phase_profile_pred": {
+        "count": 121164,
+        "min": 4.245708811409115e-08,
+        "mean": 0.41774073742929607,
+        "p95": 1.0,
+        "p99": 1.0,
+        "max": 1.0
+      },
+      "wall_phase_bounded_pred": {
+        "count": 121164,
+        "min": 2.2890836580057854e-08,
+        "mean": 0.42539218464690154,
+        "p95": 1.0,
+        "p99": 1.0164612718257438,
+        "max": 1.485158068259571
+      },
+      "wall_profile_delta": {
+        "count": 121164,
+        "min": -0.06041448931316136,
+        "mean": 0.007651447217605484,
+        "p95": 0.007365047928087541,
+        "p99": 0.27372318161806397,
+        "max": 0.7140874234459799
+      },
+      "wall_clamp_delta": {
+        "count": 121164,
+        "min": 0.0,
+        "mean": 0.0,
+        "p95": 0.0,
+        "p99": 0.0,
+        "max": 0.0
+      },
+      "wall_phase_pred_gt_1_count": 1628,
+      "wall_phase_profile_pred_gt_1_count": 0,
+      "wall_phase_field_gt_1_count": 0,
+      "fluid_phase_field_gt_1_count": 0,
+      "wall_profile_delta_nonzero_count": 72900,
+      "wall_clamp_delta_nonzero_count": 0,
+      "max_velocity": 0.00027844742983677243,
+      "max_mach": 0.00048228509571426,
+      "by_wall_bc_path": {
+        "1": {
+          "count": 47872,
+          "phase_field": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "wall_phase_profile_pred": {
+            "count": 47872,
+            "min": 1.0,
+            "mean": 1.0,
+            "p95": 1.0,
+            "p99": 1.0,
+            "max": 1.0
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "4": {
+          "count": 392,
+          "phase_field": {
+            "count": 392,
+            "min": 0.023029743482251813,
+            "mean": 0.08386995288762106,
+            "p95": 0.16049807973594254,
+            "p99": 0.17506954606418842,
+            "max": 0.17507878453192027
+          },
+          "wall_phase_pred": {
+            "count": 392,
+            "min": 0.023029743482251813,
+            "mean": 0.08386995288762106,
+            "p95": 0.16049807973594254,
+            "p99": 0.17506954606418842,
+            "max": 0.17507878453192027
+          },
+          "wall_phase_profile_pred": {
+            "count": 392,
+            "min": 0.023029743482251813,
+            "mean": 0.08386995288762106,
+            "p95": 0.16049807973594254,
+            "p99": 0.17506954606418842,
+            "max": 0.17507878453192027
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 0,
+          "wall_phase_profile_pred_gt_1_count": 0
+        },
+        "5": {
+          "count": 72900,
+          "phase_field": {
+            "count": 72900,
+            "min": 4.245708811409115e-08,
+            "mean": 0.037177800937603304,
+            "p95": 0.24413713757885755,
+            "p99": 0.9704713376735747,
+            "max": 0.9999936719697602
+          },
+          "wall_phase_pred": {
+            "count": 72900,
+            "min": 2.2890836580057854e-08,
+            "mean": 0.049894947037383154,
+            "p95": 0.36972698186947883,
+            "p99": 1.126322021268478,
+            "max": 1.485158068259571
+          },
+          "wall_phase_profile_pred": {
+            "count": 72900,
+            "min": 4.245708811409115e-08,
+            "mean": 0.037177800937603304,
+            "p95": 0.24413713757885755,
+            "p99": 0.9704713376735747,
+            "max": 0.9999936719697602
+          },
+          "phase_field_gt_1_count": 0,
+          "wall_phase_pred_gt_1_count": 1628,
+          "wall_phase_profile_pred_gt_1_count": 0
+        }
+      }
+    }
+  ]
+}

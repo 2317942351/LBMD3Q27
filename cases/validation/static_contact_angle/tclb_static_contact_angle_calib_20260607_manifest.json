@@ -1,0 +1,54 @@
+{
+  "status": "exploratory_not_validation",
+  "created_utc": "2026-06-06T20:26:09.958300+00:00",
+  "source": "TCLB example/multiphase/d3q27_pf_velocity/ContactAngle_45.xml",
+  "run_id": "tclb_static_contact_angle_calib_20260607",
+  "purpose": "A2 static contact-angle calibration before impact sweep",
+  "wall_axis": "y",
+  "wall_side": "min",
+  "grid": {
+    "nx": 128,
+    "ny": 64,
+    "nz": 128
+  },
+  "radius_lu": 24.0,
+  "center_lu": [
+    64.0,
+    0.0,
+    64.0
+  ],
+  "steps": 200000,
+  "vtk_interval": 10000,
+  "postprocess": {
+    "script": "scripts/tclb_static_contact_angle_postprocess.py",
+    "required_outputs": [
+      "apparent_contact_angle_deg",
+      "phase/rho drift",
+      "max Mach",
+      "nonfinite",
+      "contour-fit figure",
+      "summary JSON"
+    ]
+  },
+  "generated": [
+    {
+      "angle_deg": 45,
+      "case_xml": "cases\\validation\\static_contact_angle\\contact_angle_theta045.xml",
+      "remote_run_dir": "/home/yuan/runs/tclb_static_contact_angle_calib_20260607/theta045",
+      "status": "exploratory_not_validation"
+    },
+    {
+      "angle_deg": 90,
+      "case_xml": "cases\\validation\\static_contact_angle\\contact_angle_theta090.xml",
+      "remote_run_dir": "/home/yuan/runs/tclb_static_contact_angle_calib_20260607/theta090",
+      "status": "exploratory_not_validation"
+    },
+    {
+      "angle_deg": 135,
+      "case_xml": "cases\\validation\\static_contact_angle\\contact_angle_theta135.xml",
+      "remote_run_dir": "/home/yuan/runs/tclb_static_contact_angle_calib_20260607/theta135",
+      "status": "exploratory_not_validation"
+    }
+  ],
+  "claim_limit": "Calibration cases only; promotion requires measured apparent angle, mass/Mach report, and read-only audit."
+}

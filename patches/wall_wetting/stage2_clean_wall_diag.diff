@@ -1,0 +1,124 @@
+diff --git a/models/multiphase/d3q27_pf_velocity/Dynamics.R b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 7eb1d1a..0000000 100644
+--- a/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -179,9 +179,16 @@ if (Options$thermo){
+     AddQuantity(name="IsItBoundary", unit="1")
+ 	if (Options$geometric){
+ 		AddQuantity(name="GradPhi", unit=1, vector=T)
++		if (!Options$staircaseimp){
++			AddQuantity(name="WallPfF", unit=1)
++			AddQuantity(name="WallGradTangent", unit=1)
++			AddQuantity(name="WallTanCoeff", unit=1)
++			AddQuantity(name="WallPhasePred", unit=1)
++			AddQuantity(name="WallBCPath", unit=1)
++		}
+ 	}
+ 	if (Options$staircaseimp) {
+ 		AddQuantity(name="ActualNormal", unit=1, vector=T)
+diff --git a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index 1de51b4..0000000 100644
+--- a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -532,6 +532,101 @@ CudaDeviceFunction vector_t getGradPhi() {
+ 	return gradPhi;
+ }
+ 
++CudaDeviceFunction real_t wallDiagRawPfF() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return gradPhi_PhaseF_dyn(nw_x, nw_y, nw_z);
++}
++
++CudaDeviceFunction real_t getWallPfF() {
++	return wallDiagRawPfF();
++}
++
++CudaDeviceFunction real_t getWallTanCoeff() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return tan(PI/2.0 - radAngle);
++}
++
++CudaDeviceFunction real_t getWallBCPath() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	if (h < 0.001) {
++		return 1.0;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return 2.0;
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
++		return 3.0;
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
++		return 4.0;
++	}
++	return 5.0;
++}
++
++CudaDeviceFunction real_t getWallGradTangent() {
++	if (getWallBCPath() != 5.0) {
++		return 0.0;
++	}
++
++#ifdef OPTIONS_staircaseimp
++	// This diagnostic lane is built for q27_geometric without staircase improvement.
++	return 0.0;
++#else
++	vector_t solid_normal = {nw_x, nw_y, nw_z};
++	real_t der_x_1 = gradPhiVal_x_dyn(nw_x,   nw_y,   nw_z);
++	real_t der_y_1 = gradPhiVal_y_dyn(nw_x,   nw_y,   nw_z);
++	real_t der_z_1 = gradPhiVal_z_dyn(nw_x,   nw_y,   nw_z);
++	real_t der_x_2 = gradPhiVal_x_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++	real_t der_y_2 = gradPhiVal_y_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++	real_t der_z_2 = gradPhiVal_z_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++
++	real_t norm = solid_normal.x*solid_normal.x + solid_normal.y*solid_normal.y + solid_normal.z*solid_normal.z;
++	if (norm < 1e-12) {
++		return 0.0;
++	}
++
++	real_t coeff_1 = (der_x_1*solid_normal.x + der_y_1*solid_normal.y + der_z_1*solid_normal.z)/norm;
++	real_t coeff_2 = (der_x_2*solid_normal.x + der_y_2*solid_normal.y + der_z_2*solid_normal.z)/norm;
++	vector_t proj_grad_1 = {der_x_1 - coeff_1*solid_normal.x, der_y_1 - coeff_1*solid_normal.y, der_z_1 - coeff_1*solid_normal.z};
++	vector_t proj_grad_2 = {der_x_2 - coeff_2*solid_normal.x, der_y_2 - coeff_2*solid_normal.y, der_z_2 - coeff_2*solid_normal.z};
++	vector_t grad_tangent_v = {1.5*proj_grad_1.x - 0.5*proj_grad_2.x,
++								 1.5*proj_grad_1.y - 0.5*proj_grad_2.y,
++								 1.5*proj_grad_1.z - 0.5*proj_grad_2.z};
++	return sqrt(grad_tangent_v.x*grad_tangent_v.x + grad_tangent_v.y*grad_tangent_v.y + grad_tangent_v.z*grad_tangent_v.z);
++#endif
++}
++
++CudaDeviceFunction real_t getWallPhasePred() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	real_t pf_f = wallDiagRawPfF();
++	if (h < 0.001) {
++		return 1.0;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return pf_f;
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
++		return PhaseF_dyn(nw_x, nw_y, nw_z);
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
++		real_t a = -h * (4.0/IntWidth) * cos(radAngle);
++		return (1 + a - sqrt((1+a)*(1+a) - 4*a*pf_f))/(a+1e-12) - pf_f;
++	}
++	return getWallTanCoeff() * getWallGradTangent() * 2.0*h + pf_f;
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R

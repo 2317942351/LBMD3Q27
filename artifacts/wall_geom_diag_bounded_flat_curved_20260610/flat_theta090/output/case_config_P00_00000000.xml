@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<CLBConfig version="2.0" output="/mnt/8A0E24070E23EAC1/runs/tclb_wall_geom_diag_bounded_flat_curved_20260610/flat_theta090/output/" permissive="true">
+	<Geometry nx="80" ny="80" nz="80">
+		<MRT>
+			<Box />
+		</MRT>
+		<Wall mask="ALL" name="OuterDomain">
+			<Box nx="1" />
+			<Box dx="-1" />
+			<Box dy="-1" />
+			<Box nz="1" />
+			<Box dz="-1" />
+		</Wall>
+		<Wall mask="ALL" name="FlatLowerY">
+			<Box ny="1" />
+		</Wall>
+	</Geometry>
+	<Model>
+		<Param name="Density_h" value="1" />
+		<Param name="Density_l" value="0.001" />
+		<Param name="Viscosity_h" value="0.09" />
+		<Param name="Viscosity_l" value="0.1" />
+		<Param name="tauUpdate" value="3" />
+		<Param name="sigma" value="5e-05" />
+		<Param name="M" value="0.1" />
+		<Param name="IntWidth" value="6" />
+		<Param name="Radius" value="24" />
+		<Param name="BubbleType" value="1" />
+		<Param name="CenterX" value="40" />
+		<Param name="CenterY" value="0" />
+		<Param name="CenterZ" value="40" />
+		<Param name="VelocityX" value="0.0" />
+		<Param name="VelocityY" value="0.0" />
+		<Param name="VelocityZ" value="0.0" />
+		<Param name="GravitationX" value="0.0" />
+		<Param name="GravitationY" value="0.0" />
+		<Param name="GravitationZ" value="0.0" />
+		<Param name="BuoyancyX" value="0.0" />
+		<Param name="BuoyancyY" value="0.0" />
+		<Param name="BuoyancyZ" value="0.0" />
+		<Param name="radAngle" value="90d" />
+		<Param name="minGradient" value="1e-08" />
+	</Model>
+	<VTK what="PhaseField,U,P,Rho,BOUNDARY,Normal,IsItBoundary,GradPhi,SpecialBoundaryPoint,WallPfF,WallGradTangent,WallTanCoeff,WallPhasePred,WallBCPath,WallPhaseBoundedPred,WallClampDelta" />
+	<Log Iterations="10" />
+	<Failcheck Iterations="10" />
+	<Solve Iterations="50">
+		<VTK Iterations="50" what="PhaseField,U,P,Rho,BOUNDARY,Normal,IsItBoundary,GradPhi,SpecialBoundaryPoint,WallPfF,WallGradTangent,WallTanCoeff,WallPhasePred,WallBCPath,WallPhaseBoundedPred,WallClampDelta" />
+		<Log Iterations="10" />
+		<Failcheck Iterations="10" />
+	</Solve>
+	<Run model="d3q27_pf_velocity_q27_geometric">
+		<Code version="ded67cd" precision="double" cross="GPU" />
+	</Run>
+</CLBConfig>

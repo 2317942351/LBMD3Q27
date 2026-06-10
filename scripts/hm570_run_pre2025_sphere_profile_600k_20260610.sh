@@ -1,0 +1,146 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run the PRE 2025 reduced sphere theta030 profile-lane trend extension.
+# Status: exploratory_not_validation. Raw VTI/PVTI/PRI remain on HM570.
+
+RUN_ROOT="${1:-/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_profile_radAngle011_M0p1_W6_600k_20260610}"
+CASE_DIR="$RUN_ROOT/theta030"
+BINARY="${BINARY:-/home/yuan/src/TCLB_clean_wall_profile_diag_20260610/CLB/d3q27_pf_velocity_q27_geometric/main}"
+POSTPROCESS="${POSTPROCESS:-/tmp/tclb_pre2025_sphere_postprocess.py}"
+WALL_POSTPROCESS="${WALL_POSTPROCESS:-/tmp/pre2025_sphere_wall_diag_postprocess.py}"
+GALLERY_SCRIPT="${GALLERY_SCRIPT:-/tmp/pre2025_sphere_single_case_frame_gallery.py}"
+TARGETS_CSV="${TARGETS_CSV:-/tmp/table_II_sphere_targets.csv}"
+
+cd /home/yuan/src/TCLB
+export PATH=/usr/local/cuda-12.6/bin:$PATH
+export OMPI_MCA_plm_rsh_agent=/usr/bin/ssh
+
+mkdir -p "$CASE_DIR"
+batch_log="$RUN_ROOT/batch_profile_600k.log"
+current_case_dir=""
+
+mark_interrupted() {
+  local rc=$?
+  local sig="${1:-unknown}"
+  {
+    echo "BATCH_INTERRUPTED $(date -Is) signal=$sig rc=$rc current_case_dir=${current_case_dir:-none}"
+    echo "status=exploratory_not_validation"
+    echo "reason=stopped_or_interrupted"
+  } | tee -a "$batch_log" >/dev/null || true
+  if [[ -n "${current_case_dir:-}" && -d "$current_case_dir" ]]; then
+    {
+      echo "status=exploratory_not_validation"
+      echo "reason=stopped_or_interrupted"
+      echo "signal=$sig"
+      echo "timestamp=$(date -Is)"
+    } > "$current_case_dir/run.interrupted" || true
+  fi
+  exit 130
+}
+
+trap 'mark_interrupted SIGINT' INT
+trap 'mark_interrupted SIGTERM' TERM
+
+{
+  echo "BATCH_PREP $(date -Is)"
+  echo "status=exploratory_not_validation"
+  echo "run_root=$RUN_ROOT"
+  echo "case_dir=$CASE_DIR"
+  echo "binary=$BINARY"
+  echo "raw_policy=remote-only"
+} | tee -a "$batch_log"
+
+xml="$CASE_DIR/pre2025_sphere_tableII_theta030.xml"
+if [[ ! -f "$xml" ]]; then
+  echo "MISSING_XML $xml" | tee -a "$batch_log"
+  exit 2
+fi
+if [[ ! -x "$BINARY" ]]; then
+  echo "MISSING_BINARY $BINARY" | tee -a "$batch_log"
+  exit 3
+fi
+
+current_case_dir="$CASE_DIR"
+cp -f "$xml" "$CASE_DIR/case.xml"
+echo "$BINARY" > "$CASE_DIR/binary.path"
+sha256sum "$BINARY" > "$CASE_DIR/binary.sha256"
+
+rm -f "$CASE_DIR/run.done" "$CASE_DIR/run.interrupted" "$CASE_DIR/run.numerical_failure"
+rm -f "$CASE_DIR/run.returncode" "$CASE_DIR/analysis_pre2025_sphere.returncode"
+rm -f "$CASE_DIR/analysis_wall_diag.returncode" "$CASE_DIR/analysis_morphology.returncode"
+
+echo "CASE_START $(date -Is) theta=030" | tee -a "$batch_log"
+set +e
+"$BINARY" "$CASE_DIR/case.xml" > "$CASE_DIR/run.log" 2> "$CASE_DIR/run.stderr"
+rc=$?
+set -e
+printf '%s\n' "$rc" > "$CASE_DIR/run.returncode"
+echo "CASE_END $(date -Is) theta=030 rc=$rc" | tee -a "$batch_log"
+
+if grep -Eiq '(^|[^A-Za-z])nan([^A-Za-z]|$)|(^|[^A-Za-z])inf([^A-Za-z]|$)|Stopping due to NaN|discovered NaN|NaN value|Checking .*discovered|error[[:space:]]*!' "$CASE_DIR/run.log" "$CASE_DIR/run.stderr"; then
+  touch "$CASE_DIR/run.numerical_failure"
+  echo "CASE_NUMERICAL_FAILURE $(date -Is) theta=030" | tee -a "$batch_log"
+  exit 6
+fi
+if [[ "$rc" -ne 0 ]]; then
+  exit "$rc"
+fi
+
+mkdir -p "$CASE_DIR/analysis_pre2025_sphere"
+set +e
+python3 "$POSTPROCESS" \
+  --root "$CASE_DIR" \
+  --analysis-dir "$CASE_DIR/analysis_pre2025_sphere" \
+  --targets-csv "$TARGETS_CSV" \
+  --theta 30 \
+  > "$CASE_DIR/analysis_pre2025_sphere_stdout.log" \
+  2> "$CASE_DIR/analysis_pre2025_sphere_stderr.log"
+post_rc=$?
+set -e
+printf '%s\n' "$post_rc" > "$CASE_DIR/analysis_pre2025_sphere.returncode"
+echo "POSTPROCESS_END $(date -Is) rc=$post_rc" | tee -a "$batch_log"
+if [[ "$post_rc" -ne 0 ]]; then
+  exit "$post_rc"
+fi
+
+mkdir -p "$CASE_DIR/analysis_wall_diag"
+set +e
+python3 "$WALL_POSTPROCESS" \
+  --case-root "$CASE_DIR" \
+  --out-dir "$CASE_DIR/analysis_wall_diag" \
+  --plot \
+  > "$CASE_DIR/analysis_wall_diag_stdout.log" \
+  2> "$CASE_DIR/analysis_wall_diag_stderr.log"
+wall_rc=$?
+set -e
+printf '%s\n' "$wall_rc" > "$CASE_DIR/analysis_wall_diag.returncode"
+echo "WALL_DIAG_END $(date -Is) rc=$wall_rc" | tee -a "$batch_log"
+if [[ "$wall_rc" -ne 0 ]]; then
+  exit "$wall_rc"
+fi
+
+mkdir -p "$CASE_DIR/analysis_morphology"
+set +e
+python3 "$GALLERY_SCRIPT" \
+  --case-root "$CASE_DIR" \
+  --out-dir "$CASE_DIR/analysis_morphology" \
+  --analysis-subdir "analysis_pre2025_sphere" \
+  --title "profile theta030 radAngle11 M0.1 W6, 0-600k every 50k" \
+  > "$CASE_DIR/analysis_morphology_stdout.log" \
+  2> "$CASE_DIR/analysis_morphology_stderr.log"
+gallery_rc=$?
+set -e
+printf '%s\n' "$gallery_rc" > "$CASE_DIR/analysis_morphology.returncode"
+echo "MORPHOLOGY_END $(date -Is) rc=$gallery_rc" | tee -a "$batch_log"
+if [[ "$gallery_rc" -ne 0 ]]; then
+  exit "$gallery_rc"
+fi
+
+tar -czf "$RUN_ROOT/curated_profile_600k_theta030.tar.gz" \
+  --exclude='*.vti' --exclude='*.pvti' --exclude='*.pri' \
+  -C "$RUN_ROOT" theta030 batch_profile_600k.log
+
+touch "$CASE_DIR/run.done"
+current_case_dir=""
+echo "BATCH_END $(date -Is)" | tee -a "$batch_log"

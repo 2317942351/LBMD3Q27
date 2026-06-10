@@ -1,0 +1,38 @@
+{
+  "status": "exploratory_not_validation",
+  "article": {
+    "title": "Wetting boundary scheme implemented in three-dimensional phase-field lattice Boltzmann model with large density ratios and complex solid boundaries",
+    "journal": "Physical Review E",
+    "volume": "112",
+    "article_number": "065303",
+    "doi": "10.1103/xz95-6bmt",
+    "local_html": "C:/Users/yuanz/Desktop/\u5728\u5177\u6709\u5927\u5bc6\u5ea6\u6bd4\u548c\u590d\u6742\u56fa\u4f53\u8fb9\u754c\u7684\u4e09\u7ef4\u76f8\u573a\u683c\u73bb\u5c14\u5179\u66fc\u6a21\u578b\u4e2d\u5b9e\u73b0\u7684\u6da6\u6e7f\u8fb9\u754c\u65b9\u6848 _\u7269\u7406\u8bc4\u8bba E --- Wetting boundary scheme implemented in three-dimensional phase-field lattice Boltzmann model with large density ratios and complex solid boundaries _ Phys. Rev. E.html"
+  },
+  "case_family": {
+    "name": "PRE 2025 Table II reduced spherical-surface static droplet",
+    "domain_lu": [80, 80, 140],
+    "solid_sphere_radius_lu": 24.0,
+    "initial_drop_radius_lu": 24.0,
+    "angles_deg": [30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130],
+    "reported_metric": "relative error in H1-H2",
+    "tclb_status": "exploratory_not_validation"
+  },
+  "author_raw_data_workbook": {
+    "source": "C:/Users/yuanz/Downloads/raw data.xlsx",
+    "local_extract_dir": "C:/Users/yuanz/Desktop/LBMCORE5/TCLB/references/pre2025_wetting_boundary/raw_data_xlsx",
+    "extract_script": "C:/Users/yuanz/Desktop/LBMCORE5/TCLB/scripts/extract_pre2025_raw_data_xlsx.py",
+    "content_note": "The workbook contains author-provided curve data for Fig.11(a,b), Fig.12(a,b), Fig.16(a), Fig.17(a), Fig.18(a), Fig.19(a), and Fig.21(a). It is supplementary figure data, not the Table II spherical-static error table.",
+    "table_II_note": "For the reduced spherical-static setup, continue using table_II_sphere_errors.csv and table_II_sphere_targets.csv."
+  },
+  "target_geometry_note": {
+    "formula": "The target table_II_sphere_targets.csv is computed by conserving the initial spherical droplet volume outside a solid sphere and using Hmax = liquid_sphere_radius + center_distance; H1_minus_H2 = Hmax - solid_sphere_radius.",
+    "table_I_crosscheck": "This formula matches the article Table I expected Hmax values for 50-150 deg to roundoff-level table precision, but gives 145.38 lu at 30 deg versus the extracted Table I value 142.85 lu. Treat low-angle exactness as pending PDF/equation audit.",
+    "claim_limit": "These targets are suitable for TCLB analogue setup and postprocessing. They are not proof of formula equivalence between PRE 2025 and TCLB."
+  },
+  "tclb_model_note": {
+    "primary_binary_candidate": "/home/yuan/src/TCLB/CLB/d3q27_pf_velocity_q27_geometric_staircaseimp/main",
+    "reason": "q27 phase-field plus geometric wetting plus staircase improvement exposes ActualNormal and special-boundary counters for a curved solid sphere.",
+    "known_limitation": "Current TCLB model is not the PRE 2025 D3Q19/D3Q19 conservative AC MRT model. Any run is an independent TCLB analogue unless the PRE wall formula is implemented directly."
+  },
+  "raw_output_policy": "Keep raw VTI/PVTI remote-only unless explicitly requested."
+}

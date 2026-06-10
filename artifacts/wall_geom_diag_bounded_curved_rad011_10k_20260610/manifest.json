@@ -1,0 +1,30 @@
+{
+  "status": "runtime_sanity",
+  "created_utc": "2026-06-10T12:38:48.499023+00:00",
+  "purpose": "short flat/curved wall formula diagnostics, not validation",
+  "diagnostic_binary": "/home/yuan/src/TCLB_clean_wall_bounded_diag_20260610/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "diagnostic_binary_sha256": "2b950ce317784beed5b403944e9db8f6a9bd415b3c5acddb962c86fb2ea7c3e5",
+  "remote_root": "/mnt/8A0E24070E23EAC1/runs/tclb_wall_geom_diag_bounded_curved_rad011_10k_20260610",
+  "steps": 10000,
+  "vtk_interval": 2000,
+  "vtk_what": "PhaseField,U,P,Rho,BOUNDARY,Normal,IsItBoundary,GradPhi,SpecialBoundaryPoint,WallPfF,WallGradTangent,WallTanCoeff,WallPhasePred,WallBCPath,WallPhaseBoundedPred,WallClampDelta",
+  "shared_parameters": {
+    "Density_h": 1.0,
+    "Density_l": 0.001,
+    "Viscosity_h": 0.09,
+    "Viscosity_l": 0.1,
+    "sigma": 5e-05,
+    "M": 0.1,
+    "IntWidth": 6,
+    "Radius": 24
+  },
+  "generated": [
+    {
+      "case_id": "curved_theta011",
+      "geometry": "curved",
+      "theta_deg": 11,
+      "case_xml": "cases\\diagnostics\\wall_geom_diag_bounded_curved_rad011_10k_20260610\\curved_theta011.xml",
+      "remote_case": "/mnt/8A0E24070E23EAC1/runs/tclb_wall_geom_diag_bounded_curved_rad011_10k_20260610/curved_theta011"
+    }
+  ]
+}

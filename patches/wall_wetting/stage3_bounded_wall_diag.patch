@@ -1,0 +1,73 @@
+diff --git a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index 5afdb90..0000000 100644
+--- a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -626,6 +626,31 @@ CudaDeviceFunction real_t getWallPhasePred() {
+ 	return getWallTanCoeff() * getWallGradTangent() * 2.0*h + pf_f;
+ }
+ 
++CudaDeviceFunction real_t wallDiagBoundedPhaseValue(real_t value) {
++	if (value < PhaseField_l) {
++		return PhaseField_l;
++	}
++	if (value > PhaseField_h) {
++		return PhaseField_h;
++	}
++	return value;
++}
++
++CudaDeviceFunction real_t getWallPhaseBoundedPred() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return wallDiagBoundedPhaseValue(getWallPhasePred());
++}
++
++CudaDeviceFunction real_t getWallClampDelta() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	real_t raw = getWallPhasePred();
++	return raw - wallDiagBoundedPhaseValue(raw);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+@@ -775,6 +800,12 @@ CudaDeviceFunction void calcWallPhase_correction() {
+ 		// Might as well calculate using the neighbors, e.g. averaging
+ 		PhaseF = PhaseF_dyn(nw_x, nw_y, nw_z);
+ 	}
++#ifdef OPTIONS_geometric
++	if (IamWall || IamSolid) {
++		PhaseF = wallDiagBoundedPhaseValue(PhaseF);
++	}
++#endif
+ }
+ 
+ 
+@@ -938,6 +969,11 @@ CudaDeviceFunction void calcWallPhase(){
+ 			PhaseF =  tan(PI/2.0 - radAngle) * grad_tangent * 2.0*h + pf_f;
+ #endif // end boundary condition pick
+ 		}
++#ifdef OPTIONS_geometric
++		if (IsSpecialBoundaryPoint != <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
++			PhaseF = wallDiagBoundedPhaseValue(PhaseF);
++		}
++#endif
+ 	}
+ }
+ 
+diff --git a/models/multiphase/d3q27_pf_velocity/Dynamics.R b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index b08ac26..0000000 100644
+--- a/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -184,6 +184,8 @@ if (Options$thermo){
+ 			AddQuantity(name="WallGradTangent", unit=1)
+ 			AddQuantity(name="WallTanCoeff", unit=1)
+ 			AddQuantity(name="WallPhasePred", unit=1)
++			AddQuantity(name="WallPhaseBoundedPred", unit=1)
++			AddQuantity(name="WallClampDelta", unit=1)
+ 			AddQuantity(name="WallBCPath", unit=1)
+ 		}
+ 	}

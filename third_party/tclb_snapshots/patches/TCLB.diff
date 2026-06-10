@@ -1,0 +1,209 @@
+diff --git a/models/multiphase/d3q27_pf_velocity/Dynamics.R b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 2023981..f28eb32 100644
+--- a/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -210,6 +210,9 @@ if (Options$thermo){
+ 		AddSetting(name="CenterY", default=0.0, comment='Diffuse sphere center_y')
+ 		AddSetting(name="CenterZ", default=0.0, comment='Diffuse sphere center_z')
+ 		AddSetting(name="BubbleType",default=1.0, comment='droplet(1.0) or bubble(-1.0)?!')
++		AddSetting(name="CompositeDropletTailRadius", default=0.0, comment='optional top cylinder tail radius for a volume-conserved sphere-plus-tail droplet')
++		AddSetting(name="CompositeDropletTailLength", default=0.0, comment='optional top cylinder tail length along +Z')
++		AddSetting(name="CompositeDropletBodyRadius", default=0.0, comment='optional solved body radius override; <=0 solves volume-conserved radius from Radius')
+ 	# Annular Taylor bubble
+ 		AddSetting(name="DonutTime", default=0.0, comment='Radius of a Torus - initialised to travel along x-axis')
+ 		AddSetting(name="Donut_h",   default=0.0, comment='Half donut thickness, i.e. the radius of the cross-section')
+@@ -235,6 +238,14 @@ if (Options$thermo){
+ 	AddSetting(name="VelocityX", default=0.0, comment='inlet/outlet/init velocity', zonal=T)
+ 	AddSetting(name="VelocityY", default=0.0, comment='inlet/outlet/init velocity', zonal=T)
+ 	AddSetting(name="VelocityZ", default=0.0, comment='inlet/outlet/init velocity', zonal=T)
++	AddSetting(name="DropletOnlyVelocity", default=0.0, comment='0 off, 1 hard droplet mask, 2 smooth phase-fraction weighted droplet velocity')
++	AddSetting(name="DropletVelocityX", default=0.0, comment='droplet-only initial velocity x')
++	AddSetting(name="DropletVelocityY", default=0.0, comment='droplet-only initial velocity y')
++	AddSetting(name="DropletVelocityZ", default=0.0, comment='droplet-only initial velocity z')
++	AddSetting(name="CompositeDropletTailVelocityMode", default=0.0, comment='0 off, 1 smooth uniform tail velocity, 2 smooth axial ramp tail velocity')
++	AddSetting(name="CompositeDropletTailVelocityX", default=0.0, comment='optional extra tail velocity x')
++	AddSetting(name="CompositeDropletTailVelocityY", default=0.0, comment='optional extra tail velocity y')
++	AddSetting(name="CompositeDropletTailVelocityZ", default=0.0, comment='optional extra tail velocity z')
+ 	AddSetting(name="Pressure" , default=0.0, comment='inlet/outlet/init density', zonal=T)
+ 	AddSetting(name="GravitationX", default=0.0, comment='applied (rho)*GravitationX')
+ 	AddSetting(name="GravitationY", default=0.0, comment='applied (rho)*GravitationY')
+diff --git a/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt b/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
+index 02cf4ce..a0a0090 100755
+--- a/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
++++ b/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
+@@ -255,6 +255,110 @@ CudaDeviceFunction real_t calcF_phi(int i, real_t tmp1, real_t nx, real_t ny, re
+ 	return f_phi;
+ }
+ 
++CudaDeviceFunction real_t sphereTail_max(real_t a, real_t b)
++{
++	return (a > b) ? a : b;
++}
++
++CudaDeviceFunction real_t sphereTail_min(real_t a, real_t b)
++{
++	return (a < b) ? a : b;
++}
++
++CudaDeviceFunction real_t sphereTail_sphereBelowVolume(real_t radius, real_t z_join)
++{
++	return PI * (radius*radius*z_join - z_join*z_join*z_join/3.0 + 2.0*radius*radius*radius/3.0);
++}
++
++CudaDeviceFunction real_t sphereTail_compositeVolume(real_t body_radius, real_t tail_radius, real_t tail_length)
++{
++	if (tail_radius <= 0.0 || tail_length <= 0.0) {
++		return 4.0*PI*body_radius*body_radius*body_radius/3.0;
++	}
++	if (body_radius <= tail_radius) {
++		return 1.0e300;
++	}
++	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
++	return sphereTail_sphereBelowVolume(body_radius, z_join)
++	     + PI*tail_radius*tail_radius*tail_length;
++}
++
++CudaDeviceFunction real_t sphereTail_solveBodyRadius(real_t reference_radius, real_t tail_radius, real_t tail_length)
++{
++	if (tail_radius <= 0.0 || tail_length <= 0.0) return reference_radius;
++
++	real_t target = 4.0*PI*reference_radius*reference_radius*reference_radius/3.0;
++	real_t low = tail_radius * (1.0 + 1.0e-9);
++	if (low < 1.0e-12) low = 1.0e-12;
++	real_t high = reference_radius;
++	if (high <= low) high = low * 1.25;
++
++	for (int i = 0; i < 80 && sphereTail_compositeVolume(high, tail_radius, tail_length) < target; i++) {
++		high *= 1.05;
++	}
++	for (int i = 0; i < 80; i++) {
++		real_t mid = 0.5*(low + high);
++		if (sphereTail_compositeVolume(mid, tail_radius, tail_length) < target) {
++			low = mid;
++		} else {
++			high = mid;
++		}
++	}
++	return 0.5*(low + high);
++}
++
++CudaDeviceFunction real_t sphereTail_topCappedCylinderSignedDistance(real_t radial, real_t z_local, real_t tail_radius, real_t z_join, real_t tail_length)
++{
++	real_t z_top = z_join + tail_length;
++	real_t qx = radial - tail_radius;
++	real_t qz = z_local - z_top;
++	if (z_local <= z_top) {
++		return sphereTail_max(qx, qz);
++	}
++	real_t ox = sphereTail_max(qx, 0.0);
++	return sqrt(ox*ox + qz*qz);
++}
++
++CudaDeviceFunction real_t sphereTail_signedDistance(real_t body_radius, real_t tail_radius, real_t tail_length)
++{
++	real_t x_local = X - CenterX;
++	real_t y_local = Y - CenterY;
++	real_t z_local = Z - CenterZ;
++	real_t radial = sqrt(x_local*x_local + y_local*y_local);
++	real_t sphere_sdf = sqrt(x_local*x_local + y_local*y_local + z_local*z_local) - body_radius;
++
++	if (tail_radius <= 0.0 || tail_length <= 0.0 || body_radius <= tail_radius) return sphere_sdf;
++
++	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
++	real_t truncated_sphere_sdf = sphereTail_max(sphere_sdf, z_local - z_join);
++	real_t cylinder_sdf = 1.0e30;
++	if (z_local >= z_join) {
++		cylinder_sdf = sphereTail_topCappedCylinderSignedDistance(radial, z_local, tail_radius, z_join, tail_length);
++	}
++	return sphereTail_min(truncated_sphere_sdf, cylinder_sdf);
++}
++
++CudaDeviceFunction real_t sphereTail_tailVelocityWeight(real_t body_radius, real_t tail_radius, real_t tail_length, real_t velocity_mode)
++{
++	if (tail_radius <= 0.0 || tail_length <= 0.0 || body_radius <= tail_radius) return 0.0;
++
++	real_t x_local = X - CenterX;
++	real_t y_local = Y - CenterY;
++	real_t z_local = Z - CenterZ;
++	real_t radial = sqrt(x_local*x_local + y_local*y_local);
++	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
++	real_t axial = (z_local - z_join) / tail_length;
++	if (axial <= 0.0 || axial > 1.0) return 0.0;
++
++	real_t radial_weight = 0.5*(1.0 - tanh(2.0*(radial - tail_radius)/IntWidth));
++	real_t top_weight = 0.5*(1.0 - tanh(2.0*(z_local - (z_join + tail_length))/IntWidth));
++	real_t axial_weight = (velocity_mode > 1.5) ? axial : 1.0;
++	real_t weight = axial_weight * radial_weight * top_weight;
++	if (weight < 0.0) weight = 0.0;
++	if (weight > 1.0) weight = 1.0;
++	return weight;
++}
++
+ /*	INITIALISATION:	*/
+ CudaDeviceFunction void Init() 
+ {
+@@ -274,6 +378,47 @@ CudaDeviceFunction void Init()
+ 		U = VelocityX;	V = VelocityY;	W = VelocityZ;
+ 	}
+ 
++	if (DropletOnlyVelocity > 0.5) {
++		real_t pf_mid = 0.5*(PhaseField_h + PhaseField_l);
++		real_t liquid_fraction = (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
++		if (liquid_fraction < 0.0) liquid_fraction = 0.0;
++		if (liquid_fraction > 1.0) liquid_fraction = 1.0;
++		real_t droplet_fraction = (BubbleType >= 0.0) ? liquid_fraction : (1.0 - liquid_fraction);
++		if (DropletOnlyVelocity > 1.5) {
++			U = droplet_fraction * DropletVelocityX;
++			V = droplet_fraction * DropletVelocityY;
++			W = droplet_fraction * DropletVelocityZ;
++		} else {
++			int in_droplet = (BubbleType >= 0.0 && PhaseF > pf_mid) ||
++			                 (BubbleType <  0.0 && PhaseF < pf_mid);
++			if (in_droplet) {
++				U = DropletVelocityX;
++				V = DropletVelocityY;
++				W = DropletVelocityZ;
++			} else {
++				U = 0.0;
++				V = 0.0;
++				W = 0.0;
++			}
++		}
++	}
++
++	if (CompositeDropletTailVelocityMode > 0.5 &&
++	    CompositeDropletTailRadius > 0.0 &&
++	    CompositeDropletTailLength > 0.0 &&
++	    (CompositeDropletTailVelocityX != 0.0 ||
++	     CompositeDropletTailVelocityY != 0.0 ||
++	     CompositeDropletTailVelocityZ != 0.0)) {
++		real_t body_radius = CompositeDropletBodyRadius;
++		if (body_radius <= 0.0) {
++			body_radius = sphereTail_solveBodyRadius(Radius, CompositeDropletTailRadius, CompositeDropletTailLength);
++		}
++		real_t tail_weight = sphereTail_tailVelocityWeight(body_radius, CompositeDropletTailRadius, CompositeDropletTailLength, CompositeDropletTailVelocityMode);
++		U += tail_weight * CompositeDropletTailVelocityX;
++		V += tail_weight * CompositeDropletTailVelocityY;
++		W += tail_weight * CompositeDropletTailVelocityZ;
++	}
++
+ 	pnorm = 0.0; // initialise as zero and fill in later stage
+ }
+ 
+@@ -322,7 +467,15 @@ CudaDeviceFunction void specialCases_Init()
+ 	   // BubbleType = -1 refers to light fluid bubble.
+         if ( Radius > 0 ){ 
+                 real_t Ri;
+-                Ri = sqrt( (X - CenterX)*(X - CenterX) + (Y - CenterY)*(Y - CenterY) + (Z - CenterZ)*(Z - CenterZ) );
++		if (CompositeDropletTailRadius > 0.0 && CompositeDropletTailLength > 0.0) {
++			real_t body_radius = CompositeDropletBodyRadius;
++			if (body_radius <= 0.0) {
++				body_radius = sphereTail_solveBodyRadius(Radius, CompositeDropletTailRadius, CompositeDropletTailLength);
++			}
++			Ri = Radius + sphereTail_signedDistance(body_radius, CompositeDropletTailRadius, CompositeDropletTailLength);
++		} else {
++			Ri = sqrt( (X - CenterX)*(X - CenterX) + (Y - CenterY)*(Y - CenterY) + (Z - CenterZ)*(Z - CenterZ) );
++		}
+                 PhaseF = 0.5*(PhaseField_h + PhaseField_l)
+                        - 0.5*(PhaseField_h - PhaseField_l) * BubbleType * tanh(2 * (Ri - Radius)/IntWidth);
+         }	

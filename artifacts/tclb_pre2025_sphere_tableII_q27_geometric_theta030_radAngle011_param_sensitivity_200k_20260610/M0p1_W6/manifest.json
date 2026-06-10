@@ -1,0 +1,113 @@
+{
+  "status": "exploratory_not_validation",
+  "created_utc": "2026-06-10T07:11:20.282559+00:00",
+  "purpose": "PRE 2025 Table II reduced sphere static wetting TCLB analogue setup",
+  "binary": "/home/yuan/src/TCLB/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "remote_root": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_theta030_radAngle011_param_sensitivity_200k_20260610/M0p1_W6",
+  "case_dir": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_theta030_radAngle011_param_sensitivity_200k_20260610\\M0p1_W6",
+  "reference_targets": "references\\pre2025_wetting_boundary\\table_II_sphere_targets.csv",
+  "reference_target_angles_deg": [
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+    120,
+    130
+  ],
+  "input_angle_map_deg": {
+    "30": 11.0
+  },
+  "domain_lu": [
+    80,
+    80,
+    140
+  ],
+  "cells": 896000,
+  "solid_sphere": {
+    "radius_lu": 24.0,
+    "center_lu": [
+      40.0,
+      40.0,
+      24.0
+    ],
+    "xml_sphere": {
+      "dx": 16.0,
+      "dy": 16.0,
+      "dz": 0.0,
+      "nx": 48.0,
+      "ny": 48.0,
+      "nz": 48.0
+    }
+  },
+  "outer_domain_boundary": {
+    "node_type": "Wall",
+    "reason": "The article states that no-slip is applied at all computational domain boundaries.",
+    "boxes": [
+      "x-min",
+      "x-max",
+      "y-min",
+      "y-max",
+      "z-min",
+      "z-max"
+    ]
+  },
+  "initial_drop": {
+    "radius_lu": 24.0,
+    "center_lu": [
+      40.0,
+      40.0,
+      72.0
+    ],
+    "initial_relation_to_solid": "initial diffuse sphere tangent to the top of the solid sphere"
+  },
+  "fluid_parameters": {
+    "Density_h": 1.0,
+    "Density_l": 0.001,
+    "density_ratio_h_over_l": 1000.0,
+    "Viscosity_h": 0.09,
+    "Viscosity_l": 0.1,
+    "tauUpdate": 3,
+    "dynamic_viscosity_ratio_h_over_l": 899.9999999999999,
+    "sigma": 5e-05,
+    "M": 0.1,
+    "IntWidth": 6.0
+  },
+  "solve": {
+    "steps": 200000,
+    "vtk_interval": 20000,
+    "log_interval": 1000,
+    "failcheck_interval": 1000
+  },
+  "metrics_to_report": [
+    "H1_minus_H2_relative_error",
+    "Hmax_relative_error",
+    "global_spherical_cap_contact_angle",
+    "spurious_velocity",
+    "mass_drift",
+    "rho_drift",
+    "max_Mach",
+    "nonfinite_count",
+    "NumSpecialPoints",
+    "NumWallBoundaryPoints",
+    "NumBoundaryPoints"
+  ],
+  "generated": [
+    {
+      "theta_deg": 30,
+      "tclb_radAngle_deg": 11.0,
+      "case_tag": "theta030",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_theta030_radAngle011_param_sensitivity_200k_20260610\\M0p1_W6\\theta030\\pre2025_sphere_tableII_theta030.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_theta030_radAngle011_param_sensitivity_200k_20260610/M0p1_W6/theta030",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_theta030_radAngle011_param_sensitivity_200k_20260610/M0p1_W6/theta030/output",
+      "expected_Hmax_lu": 43.61373202227981,
+      "expected_H1_minus_H2_lu": 19.613732022279812,
+      "status": "exploratory_not_validation"
+    }
+  ],
+  "claim_limit": "Prepared cases only. Do not call successful execution validation without read-only audit and formula/metric review."
+}

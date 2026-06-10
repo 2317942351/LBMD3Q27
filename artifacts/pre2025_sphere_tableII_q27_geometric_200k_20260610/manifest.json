@@ -1,0 +1,209 @@
+{
+  "status": "exploratory_not_validation",
+  "created_utc": "2026-06-09T23:28:15.392032+00:00",
+  "purpose": "PRE 2025 Table II reduced sphere static wetting TCLB analogue setup",
+  "binary": "/home/yuan/src/TCLB/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "remote_root": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610",
+  "case_dir": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610",
+  "reference_targets": "references\\pre2025_wetting_boundary\\table_II_sphere_targets.csv",
+  "reference_target_angles_deg": [
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+    120,
+    130
+  ],
+  "domain_lu": [
+    80,
+    80,
+    140
+  ],
+  "cells": 896000,
+  "solid_sphere": {
+    "radius_lu": 24.0,
+    "center_lu": [
+      40.0,
+      40.0,
+      24.0
+    ],
+    "xml_sphere": {
+      "dx": 16.0,
+      "dy": 16.0,
+      "dz": 0.0,
+      "nx": 48.0,
+      "ny": 48.0,
+      "nz": 48.0
+    }
+  },
+  "outer_domain_boundary": {
+    "node_type": "Wall",
+    "reason": "The article states that no-slip is applied at all computational domain boundaries.",
+    "boxes": [
+      "x-min",
+      "x-max",
+      "y-min",
+      "y-max",
+      "z-min",
+      "z-max"
+    ]
+  },
+  "initial_drop": {
+    "radius_lu": 24.0,
+    "center_lu": [
+      40.0,
+      40.0,
+      72.0
+    ],
+    "initial_relation_to_solid": "initial diffuse sphere tangent to the top of the solid sphere"
+  },
+  "fluid_parameters": {
+    "Density_h": 1.0,
+    "Density_l": 0.001,
+    "density_ratio_h_over_l": 1000.0,
+    "Viscosity_h": 0.09,
+    "Viscosity_l": 0.1,
+    "tauUpdate": 3,
+    "dynamic_viscosity_ratio_h_over_l": 899.9999999999999,
+    "sigma": 5e-05,
+    "M": 0.2,
+    "IntWidth": 6.0
+  },
+  "solve": {
+    "steps": 200000,
+    "vtk_interval": 20000,
+    "log_interval": 1000,
+    "failcheck_interval": 1000
+  },
+  "metrics_to_report": [
+    "H1_minus_H2_relative_error",
+    "Hmax_relative_error",
+    "global_spherical_cap_contact_angle",
+    "spurious_velocity",
+    "mass_drift",
+    "rho_drift",
+    "max_Mach",
+    "nonfinite_count",
+    "NumSpecialPoints",
+    "NumWallBoundaryPoints",
+    "NumBoundaryPoints"
+  ],
+  "generated": [
+    {
+      "theta_deg": 30,
+      "case_tag": "theta030",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta030\\pre2025_sphere_tableII_theta030.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta030",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta030/output",
+      "expected_Hmax_lu": 43.61373202227981,
+      "expected_H1_minus_H2_lu": 19.613732022279812,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 40,
+      "case_tag": "theta040",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta040\\pre2025_sphere_tableII_theta040.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta040",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta040/output",
+      "expected_Hmax_lu": 46.49202465923699,
+      "expected_H1_minus_H2_lu": 22.49202465923699,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 50,
+      "case_tag": "theta050",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta050\\pre2025_sphere_tableII_theta050.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta050",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta050/output",
+      "expected_Hmax_lu": 49.287616553519854,
+      "expected_H1_minus_H2_lu": 25.287616553519854,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 60,
+      "case_tag": "theta060",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta060\\pre2025_sphere_tableII_theta060.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta060",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta060/output",
+      "expected_Hmax_lu": 51.996614873901834,
+      "expected_H1_minus_H2_lu": 27.996614873901834,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 70,
+      "case_tag": "theta070",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta070\\pre2025_sphere_tableII_theta070.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta070",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta070/output",
+      "expected_Hmax_lu": 54.61725245189115,
+      "expected_H1_minus_H2_lu": 30.617252451891147,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 80,
+      "case_tag": "theta080",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta080\\pre2025_sphere_tableII_theta080.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta080",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta080/output",
+      "expected_Hmax_lu": 57.14325109754865,
+      "expected_H1_minus_H2_lu": 33.14325109754865,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 90,
+      "case_tag": "theta090",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta090\\pre2025_sphere_tableII_theta090.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta090",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta090/output",
+      "expected_Hmax_lu": 59.56209307101984,
+      "expected_H1_minus_H2_lu": 35.56209307101984,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 100,
+      "case_tag": "theta100",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta100\\pre2025_sphere_tableII_theta100.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta100",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta100/output",
+      "expected_Hmax_lu": 61.85471018961866,
+      "expected_H1_minus_H2_lu": 37.85471018961866,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 110,
+      "case_tag": "theta110",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta110\\pre2025_sphere_tableII_theta110.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta110",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta110/output",
+      "expected_Hmax_lu": 63.995840438075355,
+      "expected_H1_minus_H2_lu": 39.995840438075355,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 120,
+      "case_tag": "theta120",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta120\\pre2025_sphere_tableII_theta120.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta120",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta120/output",
+      "expected_Hmax_lu": 65.95494903256218,
+      "expected_H1_minus_H2_lu": 41.95494903256218,
+      "status": "exploratory_not_validation"
+    },
+    {
+      "theta_deg": 130,
+      "case_tag": "theta130",
+      "case_xml": "cases\\validation\\pre2025_sphere_tableII_q27_geometric_200k_20260610\\theta130\\pre2025_sphere_tableII_theta130.xml",
+      "remote_case_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta130",
+      "remote_output_dir": "/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610/theta130/output",
+      "expected_Hmax_lu": 67.69774327381867,
+      "expected_H1_minus_H2_lu": 43.69774327381867,
+      "status": "exploratory_not_validation"
+    }
+  ],
+  "claim_limit": "Prepared cases only. Do not call successful execution validation without read-only audit and formula/metric review."
+}
