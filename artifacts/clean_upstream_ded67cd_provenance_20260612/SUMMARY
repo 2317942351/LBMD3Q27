@@ -1,0 +1,271 @@
+---------------------------------------------------------------------------------------
+                DENSITIES                     |Adj| comment 
+g0                              [  0,  0,  0] |   | g0 
+g1                              [  1,  0,  0] |   | g1 
+g2                              [ -1,  0,  0] |   | g2 
+g3                              [  0,  1,  0] |   | g3 
+g4                              [  0, -1,  0] |   | g4 
+g5                              [  0,  0,  1] |   | g5 
+g6                              [  0,  0, -1] |   | g6 
+g7                              [  1,  1,  1] |   | g7 
+g8                              [ -1,  1,  1] |   | g8 
+g9                              [  1, -1,  1] |   | g9 
+g10                             [ -1, -1,  1] |   | g10 
+g11                             [  1,  1, -1] |   | g11 
+g12                             [ -1,  1, -1] |   | g12 
+g13                             [  1, -1, -1] |   | g13 
+g14                             [ -1, -1, -1] |   | g14 
+g15                             [  1,  1,  0] |   | g15 
+g16                             [ -1,  1,  0] |   | g16 
+g17                             [  1, -1,  0] |   | g17 
+g18                             [ -1, -1,  0] |   | g18 
+g19                             [  1,  0,  1] |   | g19 
+g20                             [ -1,  0,  1] |   | g20 
+g21                             [  1,  0, -1] |   | g21 
+g22                             [ -1,  0, -1] |   | g22 
+g23                             [  0,  1,  1] |   | g23 
+g24                             [  0, -1,  1] |   | g24 
+g25                             [  0,  1, -1] |   | g25 
+g26                             [  0, -1, -1] |   | g26 
+h0                              [  0,  0,  0] |   | h0 
+h1                              [  1,  0,  0] |   | h1 
+h2                              [ -1,  0,  0] |   | h2 
+h3                              [  0,  1,  0] |   | h3 
+h4                              [  0, -1,  0] |   | h4 
+h5                              [  0,  0,  1] |   | h5 
+h6                              [  0,  0, -1] |   | h6 
+h7                              [  1,  1,  1] |   | h7 
+h8                              [ -1,  1,  1] |   | h8 
+h9                              [  1, -1,  1] |   | h9 
+h10                             [ -1, -1,  1] |   | h10 
+h11                             [  1,  1, -1] |   | h11 
+h12                             [ -1,  1, -1] |   | h12 
+h13                             [  1, -1, -1] |   | h13 
+h14                             [ -1, -1, -1] |   | h14 
+h15                             [  1,  1,  0] |   | h15 
+h16                             [ -1,  1,  0] |   | h16 
+h17                             [  1, -1,  0] |   | h17 
+h18                             [ -1, -1,  0] |   | h18 
+h19                             [  1,  0,  1] |   | h19 
+h20                             [ -1,  0,  1] |   | h20 
+h21                             [  1,  0, -1] |   | h21 
+h22                             [ -1,  0, -1] |   | h22 
+h23                             [  0,  1,  1] |   | h23 
+h24                             [  0, -1,  1] |   | h24 
+h25                             [  0,  1, -1] |   | h25 
+h26                             [  0, -1, -1] |   | h26 
+Init_UX_External                parameter     |   | free stream velocity 
+Init_UY_External                parameter     |   | free stream velocity 
+Init_UZ_External                parameter     |   | free stream velocity 
+Init_PhaseField_External        parameter     |   | Init_PhaseField_External 
+pnorm                           [  0,  0,  0] |   | pnorm 
+U                               [  0,  0,  0] |   | U 
+V                               [  0,  0,  0] |   | V 
+W                               [  0,  0,  0] |   | W 
+nw_x                            [  0,  0,  0] |   | nw_x 
+nw_y                            [  0,  0,  0] |   | nw_y 
+nw_z                            [  0,  0,  0] |   | nw_z 
+IsSpecialBoundaryPoint          [  0,  0,  0] |   | IsSpecialBoundaryPoint 
+---------------------------------------------------------------------------------------
+                FIELDS                        |Adj| comment 
+g0                  [  0|0  ,  0|0  ,  0|0  ] |   | g0 
+g1                  [ -1|-1 ,  0|0  ,  0|0  ] |   | g1 
+g2                  [  1|1  ,  0|0  ,  0|0  ] |   | g2 
+g3                  [  0|0  , -1|-1 ,  0|0  ] |   | g3 
+g4                  [  0|0  ,  1|1  ,  0|0  ] |   | g4 
+g5                  [  0|0  ,  0|0  , -1|-1 ] |   | g5 
+g6                  [  0|0  ,  0|0  ,  1|1  ] |   | g6 
+g7                  [ -1|-1 , -1|-1 , -1|-1 ] |   | g7 
+g8                  [  1|1  , -1|-1 , -1|-1 ] |   | g8 
+g9                  [ -1|-1 ,  1|1  , -1|-1 ] |   | g9 
+g10                 [  1|1  ,  1|1  , -1|-1 ] |   | g10 
+g11                 [ -1|-1 , -1|-1 ,  1|1  ] |   | g11 
+g12                 [  1|1  , -1|-1 ,  1|1  ] |   | g12 
+g13                 [ -1|-1 ,  1|1  ,  1|1  ] |   | g13 
+g14                 [  1|1  ,  1|1  ,  1|1  ] |   | g14 
+g15                 [ -1|-1 , -1|-1 ,  0|0  ] |   | g15 
+g16                 [  1|1  , -1|-1 ,  0|0  ] |   | g16 
+g17                 [ -1|-1 ,  1|1  ,  0|0  ] |   | g17 
+g18                 [  1|1  ,  1|1  ,  0|0  ] |   | g18 
+g19                 [ -1|-1 ,  0|0  , -1|-1 ] |   | g19 
+g20                 [  1|1  ,  0|0  , -1|-1 ] |   | g20 
+g21                 [ -1|-1 ,  0|0  ,  1|1  ] |   | g21 
+g22                 [  1|1  ,  0|0  ,  1|1  ] |   | g22 
+g23                 [  0|0  , -1|-1 , -1|-1 ] |   | g23 
+g24                 [  0|0  ,  1|1  , -1|-1 ] |   | g24 
+g25                 [  0|0  , -1|-1 ,  1|1  ] |   | g25 
+g26                 [  0|0  ,  1|1  ,  1|1  ] |   | g26 
+h0                  [  0|0  ,  0|0  ,  0|0  ] |   | h0 
+h1                  [ -1|-1 ,  0|0  ,  0|0  ] |   | h1 
+h2                  [  1|1  ,  0|0  ,  0|0  ] |   | h2 
+h3                  [  0|0  , -1|-1 ,  0|0  ] |   | h3 
+h4                  [  0|0  ,  1|1  ,  0|0  ] |   | h4 
+h5                  [  0|0  ,  0|0  , -1|-1 ] |   | h5 
+h6                  [  0|0  ,  0|0  ,  1|1  ] |   | h6 
+h7                  [ -1|-1 , -1|-1 , -1|-1 ] |   | h7 
+h8                  [  1|1  , -1|-1 , -1|-1 ] |   | h8 
+h9                  [ -1|-1 ,  1|1  , -1|-1 ] |   | h9 
+h10                 [  1|1  ,  1|1  , -1|-1 ] |   | h10 
+h11                 [ -1|-1 , -1|-1 ,  1|1  ] |   | h11 
+h12                 [  1|1  , -1|-1 ,  1|1  ] |   | h12 
+h13                 [ -1|-1 ,  1|1  ,  1|1  ] |   | h13 
+h14                 [  1|1  ,  1|1  ,  1|1  ] |   | h14 
+h15                 [ -1|-1 , -1|-1 ,  0|0  ] |   | h15 
+h16                 [  1|1  , -1|-1 ,  0|0  ] |   | h16 
+h17                 [ -1|-1 ,  1|1  ,  0|0  ] |   | h17 
+h18                 [  1|1  ,  1|1  ,  0|0  ] |   | h18 
+h19                 [ -1|-1 ,  0|0  , -1|-1 ] |   | h19 
+h20                 [  1|1  ,  0|0  , -1|-1 ] |   | h20 
+h21                 [ -1|-1 ,  0|0  ,  1|1  ] |   | h21 
+h22                 [  1|1  ,  0|0  ,  1|1  ] |   | h22 
+h23                 [  0|0  , -1|-1 , -1|-1 ] |   | h23 
+h24                 [  0|0  ,  1|1  , -1|-1 ] |   | h24 
+h25                 [  0|0  , -1|-1 ,  1|1  ] |   | h25 
+h26                 [  0|0  ,  1|1  ,  1|1  ] |   | h26 
+Init_UX_External                parameter     |   | free stream velocity 
+Init_UY_External                parameter     |   | free stream velocity 
+Init_UZ_External                parameter     |   | free stream velocity 
+Init_PhaseField_External        parameter     |   | Init_PhaseField_External 
+pnorm               [  0|0  ,  0|0  ,  0|0  ] |   | pnorm 
+U                   [  0|0  ,  0|0  ,  0|0  ] |   | U 
+V                   [  0|0  ,  0|0  ,  0|0  ] |   | V 
+W                   [  0|0  ,  0|0  ,  0|0  ] |   | W 
+nw_x                [  0|0  ,  0|0  ,  0|0  ] |   | nw_x 
+nw_y                [  0|0  ,  0|0  ,  0|0  ] |   | nw_y 
+nw_z                [  0|0  ,  0|0  ,  0|0  ] |   | nw_z 
+IsSpecialBoundaryPoint [  0|0  ,  0|0  ,  0|0  ] |   | IsSpecialBoundaryPoint 
+IsBoundary          [ -2|2  , -2|2  , -2|2  ] |   | IsBoundary 
+gradPhiVal_x        [ -2|2  , -2|2  , -2|2  ] |   | gradPhiVal_x 
+gradPhiVal_y        [ -2|2  , -2|2  , -2|2  ] |   | gradPhiVal_y 
+gradPhiVal_z        [ -2|2  , -2|2  , -2|2  ] |   | gradPhiVal_z 
+gradPhi_PhaseF      [ -1|1  , -1|1  , -1|1  ] |   | gradPhi_PhaseF 
+PhaseF              [ -2|2  , -2|2  , -2|2  ] |   | PhaseF 
+---------------------------------------------------------------------------------------
+                SETTINGS                      |Adj| comment 
+Density_h                                     |   | High density 
+Density_l                                     |   | Low  density 
+PhaseField_h                                  |   | PhaseField in Liquid 
+PhaseField_l                                  |   | PhaseField gas 
+IntWidth                                      |   | Anti-diffusivity coeff 
+omega_phi        [=            1.0/(3*M+0.5)] |   | one over relaxation time (phase field) 
+M                                             |   | Mobility 
+sigma                                         |   | surface tension 
+force_fixed_iterator                          |   | to resolve implicit relation of viscous force 
+Washburn_start                                |   | Start of washburn gas phase 
+Washburn_end                                  |   | End of washburn gas phase 
+minGradient                                   |   | if the phase gradient is less than this, set phase normals to zero 
+RTI_Characteristic_Length                     |   | Use for RTI instability 
+pseudo2D                                      |   | if 1, assume model is pseduo2D 
+Radius                                        |   | Diffuse Sphere Radius 
+CenterX                                       |   | Diffuse sphere center_x 
+CenterY                                       |   | Diffuse sphere center_y 
+CenterZ                                       |   | Diffuse sphere center_z 
+BubbleType                                    |   | droplet(1.0) or bubble(-1.0)?! 
+DonutTime                                     |   | Radius of a Torus - initialised to travel along x-axis 
+Donut_h                                       |   | Half donut thickness, i.e. the radius of the cross-section 
+Donut_D                                       |   | Dilation factor along the x-axis 
+Donut_x0                                      |   | Position along x-axis 
+HEIGHT                                        |   | Height of channel for 2D Poiseuille flow 
+developedFlow                                 |   | set greater than 0 for fully developed flow in the domain (x-direction) 
+developedPipeFlow                             |   | set greater than 0 for fully developed pipe flow in the inlets 
+developedPipeFlow_X                           |   | set greater than 0 for fully developed pipe flow in the domain (x-direction-only) 
+pipeRadius                                    |   | radius of pipe for developed pipe flow 
+pipeCentre_Y                                  |   | pipe centre Y co-ord for developed pipe flow 
+pipeCentre_Z                                  |   | pipe centre Z co-ord for developed pipe flow 
+tau_l            [=          (3*Viscosity_l)] |   | relaxation time (low density fluid) 
+tau_h            [=          (3*Viscosity_h)] |   | relaxation time (high density fluid) 
+tauUpdate                                     |   | Interpolation: 1-linear, 2- inverse, 3- dyn viscosity 
+Viscosity_l                                   |   | kinematic viscosity 
+Viscosity_h                                   |   | kinematic viscosity 
+GravitationX                                  |   | applied (rho)*GravitationX 
+GravitationY                                  |   | applied (rho)*GravitationY 
+GravitationZ                                  |   | applied (rho)*GravitationZ 
+BuoyancyX                                     |   | applied (rho_h-rho)*BuoyancyX 
+BuoyancyY                                     |   | applied (rho_h-rho)*BuoyancyY 
+BuoyancyZ                                     |   | applied (rho_h-rho)*BuoyancyZ 
+xyzTrack                                      |   | x<-1, y<-2, z<-3 
+Threshold                                     |   | Parameters threshold 
+                ZONE SETTINGS                 |Adj| comment 
+PhaseField                                    |   | Initial PhaseField distribution 
+radAngle                                      |   | Contact angle in radians, can use units -> 90d where d=2pi/360 
+Uavg                                          |   | Average velocity of channel for 2D Poiseuille flow 
+VelocityX                                     |   | inlet/outlet/init velocity 
+VelocityY                                     |   | inlet/outlet/init velocity 
+VelocityZ                                     |   | inlet/outlet/init velocity 
+Pressure                                      |   | inlet/outlet/init density 
+VfrontInObj                                   | X | Weight of [velocity infront of bubble] in objective 
+VbackInObj                                    | X | Weight of [velocity behind bubble] in objective 
+XLocationInObj                                | X | Weight of [tracking of x-centroid of the gas regions in domain] in objective 
+PressureLossInObj                             | X | Weight of [pressure loss] in objective 
+OutletFluxInObj                               | X | Weight of [pressure loss] in objective 
+InletFluxInObj                                | X | Weight of [pressure loss] in objective 
+TotalDensityInObj                             | X | Weight of [Mass conservation check] in objective 
+KineticEnergyInObj                            | X | Weight of [Measure of kinetic energy] in objective 
+GasTotalVelocityInObj                         | X | Weight of [use to determine avg velocity of bubbles] in objective 
+GasTotalVelocityXInObj                        | X | Weight of [use to determine avg velocity of bubbles] in objective 
+GasTotalVelocityYInObj                        | X | Weight of [use to determine avg velocity of bubbles] in objective 
+GasTotalVelocityZInObj                        | X | Weight of [use to determine avg velocity of bubbles] in objective 
+GasTotalPhaseInObj                            | X | Weight of [use in line with GasTotalVelocity to determine average velocity] in objective 
+LiqTotalVelocityInObj                         | X | Weight of [use to determine avg velocity of droplets] in objective 
+LiqTotalVelocityXInObj                        | X | Weight of [use to determine avg velocity of droplets] in objective 
+LiqTotalVelocityYInObj                        | X | Weight of [use to determine avg velocity of droplets] in objective 
+LiqTotalVelocityZInObj                        | X | Weight of [use to determine avg velocity of droplets] in objective 
+NumFluidCellsInObj                            | X | Weight of [Number of fluid cells] in objective 
+NumSpecialPointsInObj                         | X | Weight of [Number of special points] in objective 
+NumWallBoundaryPointsInObj                    | X | Weight of [Number of boundary nodes] in objective 
+NumBoundaryPointsInObj                        | X | Weight of [Number of boundary nodes] in objective 
+LiqTotalPhaseInObj                            | X | Weight of [use in line with LiqTotalVelocity to determine average velocity] in objective 
+FluxNodeCountInObj                            | X | Weight of [nodes in flux region] in objective 
+FluxXInObj                                    | X | Weight of [flux in x direction for flux_nodes] in objective 
+FluxYInObj                                    | X | Weight of [flux in y direction for flux_nodes] in objective 
+FluxZInObj                                    | X | Weight of [flux in z direction for flux_nodes] in objective 
+---------------------------------------------------------------------------------------
+                GLOBALS                       |Adj| comment 
+Vfront                              [      1] |   | velocity infront of bubble 
+Vback                               [      1] |   | velocity behind bubble 
+XLocation                           [      m] |   | tracking of x-centroid of the gas regions in domain 
+PressureLoss                        [   1mPa] |   | pressure loss 
+OutletFlux                          [  1m2/s] |   | pressure loss 
+InletFlux                           [  1m2/s] |   | pressure loss 
+TotalDensity                        [ 1kg/m3] |   | Mass conservation check 
+KineticEnergy                       [      J] |   | Measure of kinetic energy 
+GasTotalVelocity                    [    m/s] |   | use to determine avg velocity of bubbles 
+GasTotalVelocityX                   [    m/s] |   | use to determine avg velocity of bubbles 
+GasTotalVelocityY                   [    m/s] |   | use to determine avg velocity of bubbles 
+GasTotalVelocityZ                   [    m/s] |   | use to determine avg velocity of bubbles 
+GasTotalPhase                       [      1] |   | use in line with GasTotalVelocity to determine average velocity 
+LiqTotalVelocity                    [    m/s] |   | use to determine avg velocity of droplets 
+LiqTotalVelocityX                   [    m/s] |   | use to determine avg velocity of droplets 
+LiqTotalVelocityY                   [    m/s] |   | use to determine avg velocity of droplets 
+LiqTotalVelocityZ                   [    m/s] |   | use to determine avg velocity of droplets 
+NumFluidCells                       [      1] |   | Number of fluid cells 
+NumSpecialPoints                    [      1] |   | Number of special points 
+NumWallBoundaryPoints               [      1] |   | Number of boundary nodes 
+NumBoundaryPoints                   [      1] |   | Number of boundary nodes 
+LiqTotalPhase                       [      1] |   | use in line with LiqTotalVelocity to determine average velocity 
+FluxNodeCount                       [      1] |   | nodes in flux region 
+FluxX                               [      1] |   | flux in x direction for flux_nodes 
+FluxY                               [      1] |   | flux in y direction for flux_nodes 
+FluxZ                               [      1] |   | flux in z direction for flux_nodes 
+Objective                           [      1] |   | Objective function 
+InterfacePosition                   [      1] |   | trackPosition 
+InterfaceYTop                       [      1] |   | Track top position of the interface in Y direction 
+RTISpike                            [      1] |   | SpikeTracker  
+RTIBubble                           [      1] |   | BubbleTracker 
+RTISaddle                           [      1] |   | SaddleTracker 
+DropFront                           [      m] |   | Highest location of droplet 
+---------------------------------------------------------------------------------------
+                QUANTITIES                    |Adj| comment 
+SpecialBoundaryPoint                [      1] |   | SpecialBoundaryPoint 
+Rho                                 [  kg/m3] |   | Rho 
+PhaseField                          [      1] |   | PhaseField 
+U                                   [    m/s] |   | U 
+P                                   [     Pa] |   | P 
+Pstar                               [      1] |   | Pstar 
+Normal                              [      1] |   | Normal 
+IsItBoundary                        [      1] |   | IsItBoundary 
+GradPhi                             [      1] |   | GradPhi 
+---------------------------------------------------------------------------------------
+
+Field access plot:  file:///home/yuan/src/TCLB_clean_upstream_ded67cd_20260612/CLB/d3q27_pf_velocity_q27_geometric/field_access.pdf 
+

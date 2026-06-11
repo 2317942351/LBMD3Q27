@@ -1,0 +1,264 @@
+{
+  "status": "runtime_sanity / exploratory_not_validation",
+  "case_root": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611/theta030",
+  "rad_angle_deg": 11.0,
+  "steps": [
+    0,
+    50000
+  ],
+  "pass_gate1": true,
+  "rows": [
+    {
+      "status": "runtime_sanity / exploratory_not_validation",
+      "step": 0,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611/theta030/output/case_VTK_P00_00000000.vti",
+      "dims": [
+        96,
+        80,
+        180
+      ],
+      "cell_count": 1382400,
+      "wall_count": 135160,
+      "normal_path_count": 10256,
+      "rad_angle_deg": 11.0,
+      "tan_coeff": 5.144554015970307,
+      "target_cos": -0.981627183447664,
+      "q_clip_count_normal": 0,
+      "nonfinite_total_normal": 0,
+      "signed_minus_profile": {
+        "count": 10256,
+        "min": -0.12115699817794134,
+        "mean": 0.0358003340551407,
+        "p95": 0.3072615635660031,
+        "p99": 0.644099272116979,
+        "max": 0.791472008858299
+      },
+      "signed_minus_raw": {
+        "count": 10256,
+        "min": -0.8009428700802562,
+        "mean": 0.024445915911009503,
+        "p95": 0.21794344118170494,
+        "p99": 0.5410240777843044,
+        "max": 0.7232104946732834
+      },
+      "actual_minus_signed": {
+        "count": 10256,
+        "min": -0.791472008858299,
+        "mean": -0.0358003340551407,
+        "p95": -1.0186954217885812e-12,
+        "p99": -9.001057205674572e-13,
+        "max": 0.12115699817794123
+      },
+      "contact_residual": {
+        "count": 4564,
+        "min": 0.41468727617044143,
+        "mean": 1.093293709913596,
+        "p95": 1.9140307306429576,
+        "p99": 1.96986477427175,
+        "max": 1.9812035991896169
+      },
+      "signed_normal_grad": {
+        "count": 10256,
+        "min": -4.276925679241872e-05,
+        "mean": 0.0037854197432566163,
+        "p95": 0.008907870278141602,
+        "p99": 0.14118362072959031,
+        "max": 0.17143479549887125
+      },
+      "target_normal_grad": {
+        "count": 10256,
+        "min": -0.7653894526536258,
+        "mean": -0.013708581821216106,
+        "p95": -6.066278389500753e-14,
+        "p99": -5.504829900723075e-15,
+        "max": -2.0193563659415773e-16
+      },
+      "tangent_grad_mag": {
+        "count": 10256,
+        "min": 3.925231146709438e-17,
+        "mean": 0.002664678372247697,
+        "p95": 0.014801265987041751,
+        "p99": 0.08517098108770091,
+        "max": 0.148776638417561
+      },
+      "signed_delta_q": {
+        "count": 10256,
+        "min": 0.00020193563659435968,
+        "mean": 3.469386520599375,
+        "p95": 5.893377209128525,
+        "p99": 5.989608930977118,
+        "max": 6.04685305735833
+      },
+      "raw_pred_nonfinite_count": 0,
+      "raw_pred_gt_1_count": 64,
+      "raw_pred_lt_0_count": 0,
+      "raw_pred_stats": {
+        "count": 10256,
+        "min": 9.250253285354069e-15,
+        "mean": 0.03210380283875218,
+        "p95": 0.16734186277607607,
+        "p99": 0.8225148782745255,
+        "max": 1.7954628943313244
+      },
+      "profile_pred_nonfinite_count": 0,
+      "profile_pred_gt_1_count": 0,
+      "profile_pred_lt_0_count": 0,
+      "profile_pred_stats": {
+        "count": 10256,
+        "min": 1.6898844142423784e-14,
+        "mean": 0.02074938469462099,
+        "p95": 0.10885761389418627,
+        "p99": 0.5851780039670663,
+        "max": 0.7406001395853296
+      },
+      "signed_pred_nonfinite_count": 0,
+      "signed_pred_gt_1_count": 0,
+      "signed_pred_lt_0_count": 0,
+      "signed_pred_stats": {
+        "count": 10256,
+        "min": 1.000201956026965e-12,
+        "mean": 0.05654971874976168,
+        "p95": 0.4749673210491419,
+        "p99": 0.9414278379861376,
+        "max": 0.9945200242510682
+      },
+      "actual_phase_nonfinite_count": 0,
+      "actual_phase_gt_1_count": 0,
+      "actual_phase_lt_0_count": 0,
+      "actual_phase_stats": {
+        "count": 10256,
+        "min": 1.689884414242378e-14,
+        "mean": 0.02074938469462099,
+        "p95": 0.10885761389418627,
+        "p99": 0.5851780039670663,
+        "max": 0.7406001395853296
+      }
+    },
+    {
+      "status": "runtime_sanity / exploratory_not_validation",
+      "step": 50000,
+      "file": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611/theta030/output/case_VTK_P00_00050000.vti",
+      "dims": [
+        96,
+        80,
+        180
+      ],
+      "cell_count": 1382400,
+      "wall_count": 135160,
+      "normal_path_count": 10256,
+      "rad_angle_deg": 11.0,
+      "tan_coeff": 5.144554015970307,
+      "target_cos": -0.981627183447664,
+      "q_clip_count_normal": 0,
+      "nonfinite_total_normal": 0,
+      "signed_minus_profile": {
+        "count": 10256,
+        "min": -0.10939159640803961,
+        "mean": 0.18350542979810763,
+        "p95": 0.5136743109479552,
+        "p99": 0.6423869947894766,
+        "max": 0.72230479027905
+      },
+      "signed_minus_raw": {
+        "count": 10256,
+        "min": -0.47006527308892154,
+        "mean": 0.07728581627484056,
+        "p95": 0.3621455644324926,
+        "p99": 0.47633708223979215,
+        "max": 0.5935517310504226
+      },
+      "actual_minus_signed": {
+        "count": 10256,
+        "min": -0.72230479027905,
+        "mean": -0.18350542979810763,
+        "p95": 0.020601381918396708,
+        "p99": 0.05388440566188996,
+        "max": 0.10939159640803961
+      },
+      "contact_residual": {
+        "count": 10256,
+        "min": -0.018372805337717457,
+        "mean": 0.1061361279779557,
+        "p95": 0.30488885823696316,
+        "p99": 0.8529615949426372,
+        "max": 0.8997429729274995
+      },
+      "signed_normal_grad": {
+        "count": 10256,
+        "min": -0.16427952983130173,
+        "mean": -0.05129324266236557,
+        "p95": -0.003996727712581125,
+        "p99": -4.79744881339339e-05,
+        "max": -3.374036630421351e-06
+      },
+      "target_normal_grad": {
+        "count": 10256,
+        "min": -0.696653212370849,
+        "mean": -0.1446651267237007,
+        "p95": -0.004625191027887213,
+        "p99": -0.0003076797136096183,
+        "max": -1.6663091760548327e-05
+      },
+      "tangent_grad_mag": {
+        "count": 10256,
+        "min": 3.2389769276055554e-06,
+        "mean": 0.028120052054000175,
+        "p95": 0.08315595793390676,
+        "p99": 0.10174611311526773,
+        "max": 0.13541566678243036
+      },
+      "signed_delta_q": {
+        "count": 10256,
+        "min": 0.005049430819415613,
+        "mean": 2.277739361483766,
+        "p95": 4.104444121355691,
+        "p99": 4.758504911973106,
+        "max": 5.226402019047386
+      },
+      "raw_pred_nonfinite_count": 0,
+      "raw_pred_gt_1_count": 1920,
+      "raw_pred_lt_0_count": 0,
+      "raw_pred_stats": {
+        "count": 10256,
+        "min": 0.011616762128762755,
+        "mean": 0.4415082912737847,
+        "p95": 1.2038637156746683,
+        "p99": 1.3336867536927637,
+        "max": 1.4480228316330213
+      },
+      "profile_pred_nonfinite_count": 0,
+      "profile_pred_gt_1_count": 0,
+      "profile_pred_lt_0_count": 0,
+      "profile_pred_stats": {
+        "count": 10256,
+        "min": 0.02066124490076105,
+        "mean": 0.33528867775051774,
+        "p95": 0.9947271948420593,
+        "p99": 0.9999159661581235,
+        "max": 0.9999976721925408
+      },
+      "signed_pred_nonfinite_count": 0,
+      "signed_pred_gt_1_count": 0,
+      "signed_pred_lt_0_count": 0,
+      "signed_pred_stats": {
+        "count": 10256,
+        "min": 0.011625630672385825,
+        "mean": 0.5187941075486253,
+        "p95": 0.9983258519978542,
+        "p99": 0.999993008530872,
+        "max": 0.9999999030664496
+      },
+      "actual_phase_nonfinite_count": 0,
+      "actual_phase_gt_1_count": 0,
+      "actual_phase_lt_0_count": 0,
+      "actual_phase_stats": {
+        "count": 10256,
+        "min": 0.02066124490076105,
+        "mean": 0.33528867775051774,
+        "p95": 0.9947271948420593,
+        "p99": 0.9999159661581235,
+        "max": 0.9999976721925408
+      }
+    }
+  ]
+}

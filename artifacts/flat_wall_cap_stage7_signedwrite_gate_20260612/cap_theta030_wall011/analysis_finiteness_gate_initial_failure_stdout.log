@@ -1,0 +1,139 @@
+{
+  "status": "failed_negative_evidence",
+  "gate_passed": false,
+  "root": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011",
+  "output_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/output",
+  "out_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/analysis_finiteness_gate_initial_failure",
+  "required_arrays": [
+    "PhaseField",
+    "U",
+    "P",
+    "Rho",
+    "WallPhasePred",
+    "WallPhaseProfilePred",
+    "WallPhaseSignedProfilePred",
+    "WallPhaseRawPred",
+    "WallPhaseSignedPred",
+    "WallContactResidual",
+    "WallSignedNormalGrad",
+    "WallTangentGradMag",
+    "WallSignedDeltaQ",
+    "WallSignedQClipped",
+    "BoundaryMask"
+  ],
+  "phase_threshold": 0.5,
+  "vti_files_checked": 1,
+  "vti_steps_checked": [
+    0
+  ],
+  "csv_files_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/output/case_Log_P00_00000000.csv"
+  ],
+  "text_logs_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/run.log",
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/run.stderr"
+  ],
+  "first_bad": {
+    "source": "log_csv",
+    "path": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/output/case_Log_P00_00000000.csv",
+    "line": 2,
+    "row_index": 1,
+    "iteration": "1000",
+    "columns": [
+      "TotalDensity",
+      "TotalDensity_si",
+      "KineticEnergy",
+      "KineticEnergy_si",
+      "LiqTotalVelocity",
+      "LiqTotalVelocity_si",
+      "LiqTotalVelocityX",
+      "LiqTotalVelocityX_si",
+      "LiqTotalVelocityY",
+      "LiqTotalVelocityY_si",
+      "LiqTotalVelocityZ",
+      "LiqTotalVelocityZ_si",
+      "LiqTotalPhase",
+      "LiqTotalPhase_si"
+    ],
+    "values": [
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan"
+    ]
+  },
+  "first_csv_bad": {
+    "source": "log_csv",
+    "path": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/output/case_Log_P00_00000000.csv",
+    "line": 2,
+    "row_index": 1,
+    "iteration": "1000",
+    "columns": [
+      "TotalDensity",
+      "TotalDensity_si",
+      "KineticEnergy",
+      "KineticEnergy_si",
+      "LiqTotalVelocity",
+      "LiqTotalVelocity_si",
+      "LiqTotalVelocityX",
+      "LiqTotalVelocityX_si",
+      "LiqTotalVelocityY",
+      "LiqTotalVelocityY_si",
+      "LiqTotalVelocityZ",
+      "LiqTotalVelocityZ_si",
+      "LiqTotalPhase",
+      "LiqTotalPhase_si"
+    ],
+    "values": [
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan",
+      " -nan"
+    ]
+  },
+  "first_text_log_bad": {
+    "source": "text_log",
+    "path": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta030_wall011/run.log",
+    "line": 319,
+    "text": "[  ]    ==== : Checking PhaseField discovered NaN"
+  },
+  "first_vti_bad": null,
+  "max_fluid_nonfinite_count_by_array": {
+    "PhaseField": 0,
+    "U": 0,
+    "P": 0,
+    "Rho": 0,
+    "WallPhasePred": 0,
+    "WallPhaseProfilePred": 0,
+    "WallPhaseSignedProfilePred": 0,
+    "WallPhaseRawPred": 0,
+    "WallPhaseSignedPred": 0,
+    "WallContactResidual": 0,
+    "WallSignedNormalGrad": 0,
+    "WallTangentGradMag": 0,
+    "WallSignedDeltaQ": 0,
+    "WallSignedQClipped": 0,
+    "BoundaryMask": 0
+  },
+  "claim_limit": "stability gate only; passing this does not validate physical prediction"
+}

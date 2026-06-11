@@ -36,6 +36,13 @@ VTK_WHAT = (
     "WallPhasePred,WallBCPath,WallPhaseProfilePred,WallProfileDelta,"
     "WallPhaseSignedProfilePred,WallSignedProfileDelta,WallSignedLogitShift"
 )
+STAGE7_EXTRA_VTK = (
+    "WallFluidSampleCount,WallFluidSampleH,WallPhaseRawPred,"
+    "WallPhaseSignedPred,WallContactResidual,WallSignedNormalGrad,"
+    "WallTangentGradMag,WallSignedDeltaQ,WallSignedQClipped,BoundaryMask,"
+    "WallH,WallGeomNormal,WallGrad1,WallGrad2,WallGradTangentVec,"
+    "WallNormalCoeff1,WallNormalCoeff2,WallActualMinusProfile,WallActualMinusRaw"
+)
 
 
 @dataclass(frozen=True)
@@ -78,6 +85,7 @@ def model_xml(
     int_width: float,
     wall_angle: float,
     min_gradient: float,
+    use_stage7_signed_wall_ghost: bool,
     cap_radius: float,
     cap_center_x: float,
     cap_center_y: float,
@@ -114,7 +122,14 @@ def model_xml(
     <Param name="radAngle" value="90d" zone="OuterDomain"/>
     <Param name="radAngle" value="{wall_angle:.16g}d" zone="FlatLowerY"/>
     <Param name="minGradient" value="{min_gradient:.16g}"/>
+{stage7_param_xml(use_stage7_signed_wall_ghost)}
   </Model>"""
+
+
+def stage7_param_xml(use_stage7_signed_wall_ghost: bool) -> str:
+    if not use_stage7_signed_wall_ghost:
+        return ""
+    return '    <Param name="UseStage7SignedWallGhost" value="1"/>'
 
 
 def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> tuple[str, dict[str, float]]:
@@ -125,6 +140,9 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     cap_center_z = args.nz / 2.0
     cap_height = cap_radius * (1.0 - math.cos(math.radians(case.init_theta_deg)))
     cap_base_radius = cap_radius * math.sin(math.radians(case.init_theta_deg))
+    vtk_what = VTK_WHAT
+    if args.stage7_signed_wall_ghost:
+        vtk_what = f"{VTK_WHAT},{STAGE7_EXTRA_VTK}"
     meta = {
         "volume_equivalent_sphere_radius": args.volume_radius,
         "init_theta_deg": case.init_theta_deg,
@@ -135,6 +153,7 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
         "cap_center_x": cap_center_x,
         "cap_center_y": cap_center_y,
         "cap_center_z": cap_center_z,
+        "use_stage7_signed_wall_ghost": bool(args.stage7_signed_wall_ghost),
     }
     xml = f"""<?xml version="1.0"?>
 <!--
@@ -169,17 +188,18 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     int_width=args.int_width,
     wall_angle=case.wall_rad_angle_deg,
     min_gradient=args.min_gradient,
+    use_stage7_signed_wall_ghost=args.stage7_signed_wall_ghost,
     cap_radius=cap_radius,
     cap_center_x=cap_center_x,
     cap_center_y=cap_center_y,
     cap_center_z=cap_center_z,
     cap_theta_rad=theta_rad,
 )}
-  <VTK what="{VTK_WHAT}"/>
+  <VTK what="{vtk_what}"/>
   <Log Iterations="{args.log_interval}"/>
   <Failcheck Iterations="{args.failcheck_interval}"/>
   <Solve Iterations="{args.steps}">
-    <VTK Iterations="{args.vtk_interval}" what="{VTK_WHAT}"/>
+    <VTK Iterations="{args.vtk_interval}" what="{vtk_what}"/>
     <Log Iterations="{args.log_interval}"/>
     <Failcheck Iterations="{args.failcheck_interval}"/>
   </Solve>
@@ -210,6 +230,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--min-gradient", type=float, default=1.0e-8)
     parser.add_argument("--binary", default=DEFAULT_BINARY)
     parser.add_argument("--binary-sha256", default=DEFAULT_BINARY_SHA256)
+    parser.add_argument(
+        "--stage7-signed-wall-ghost",
+        action="store_true",
+        help="write UseStage7SignedWallGhost=1 and request Stage7 diagnostic VTK fields",
+    )
     parser.add_argument("--force", action="store_true")
     return parser.parse_args()
 
@@ -250,7 +275,8 @@ def main() -> None:
         "domain": [args.nx, args.ny, args.nz],
         "steps": args.steps,
         "vtk_interval": args.vtk_interval,
-        "vtk_what": VTK_WHAT,
+        "vtk_what": f"{VTK_WHAT},{STAGE7_EXTRA_VTK}" if args.stage7_signed_wall_ghost else VTK_WHAT,
+        "use_stage7_signed_wall_ghost": bool(args.stage7_signed_wall_ghost),
         "shared_parameters": {
             "Density_h": args.density_h,
             "Density_l": args.density_l,

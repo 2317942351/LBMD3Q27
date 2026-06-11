@@ -157,6 +157,8 @@ def summarize_frame(
     if boundary is None:
         boundary = scalar(arrays.get("IsItBoundary"))
     if boundary is None:
+        boundary = scalar(arrays.get("BoundaryMask"))
+    if boundary is None:
         wall_mask = np.zeros_like(phase, dtype=bool)
     else:
         wall_mask = np.isfinite(boundary) & (boundary != 0.0)
@@ -180,12 +182,31 @@ def summarize_frame(
         "WallPhaseSignedProfilePred",
         "WallSignedProfileDelta",
         "WallSignedLogitShift",
+        "WallFluidSampleCount",
+        "WallFluidSampleH",
+        "WallPhaseRawPred",
+        "WallPhaseSignedPred",
+        "WallContactResidual",
+        "WallSignedNormalGrad",
+        "WallTangentGradMag",
+        "WallSignedDeltaQ",
+        "WallSignedQClipped",
+        "BoundaryMask",
+        "WallH",
+        "WallNormalCoeff1",
+        "WallNormalCoeff2",
+        "WallActualMinusProfile",
+        "WallActualMinusRaw",
         "WallBCPath",
         "SpecialBoundaryPoint",
     ]:
         arr = scalar(arrays.get(name))
         if arr is not None:
             fields[name] = arr
+    for name in ["WallGeomNormal", "WallGrad1", "WallGrad2", "WallGradTangentVec"]:
+        mag = vector_mag(arrays.get(name))
+        if mag is not None:
+            fields[f"{name}Mag"] = mag
     u_mag = vector_mag(arrays.get("U"))
     if u_mag is not None:
         fields["UMag"] = u_mag
@@ -250,18 +271,25 @@ def plot_frame(
     out_dir.mkdir(parents=True, exist_ok=True)
     x_mid = dims[0] // 2
     phase = reshape(fields["PhaseField"], dims)
-    pred = reshape(fields.get("WallPhasePred", np.zeros_like(fields["PhaseField"])), dims)
+    pred_name = "WallPhaseRawPred" if "WallPhaseRawPred" in fields else "WallPhasePred"
+    signed_name = (
+        "WallPhaseSignedPred"
+        if "WallPhaseSignedPred" in fields
+        else "WallPhaseSignedProfilePred"
+    )
+    pred = reshape(fields.get(pred_name, np.zeros_like(fields["PhaseField"])), dims)
     profile = reshape(fields.get("WallPhaseProfilePred", np.zeros_like(fields["PhaseField"])), dims)
-    signed = reshape(fields.get("WallPhaseSignedProfilePred", np.zeros_like(fields["PhaseField"])), dims)
+    signed = reshape(fields.get(signed_name, np.zeros_like(fields["PhaseField"])), dims)
+    residual = reshape(fields.get("WallContactResidual", np.zeros_like(fields["PhaseField"])), dims)
     path_code = reshape(fields.get("WallBCPath", np.zeros_like(fields["PhaseField"])), dims)
 
     fig, axes = plt.subplots(2, 3, figsize=(13, 8), dpi=160)
     panels = [
         (section, "PhaseField x-mid", 0.0, 1.0),
-        (pred[x_mid, :, :].T, "WallPhasePred", 0.0, 1.5),
+        (pred[x_mid, :, :].T, pred_name, 0.0, 1.5),
         (profile[x_mid, :, :].T, "WallPhaseProfilePred", 0.0, 1.0),
-        (signed[x_mid, :, :].T, "WallPhaseSignedProfilePred", 0.0, 1.0),
-        ((pred - profile)[x_mid, :, :].T, "Pred - Profile", -0.5, 0.5),
+        (signed[x_mid, :, :].T, signed_name, 0.0, 1.0),
+        (residual[x_mid, :, :].T, "WallContactResidual", -0.5, 0.5),
         (path_code[x_mid, :, :].T, "WallBCPath", 0.0, 5.0),
     ]
     for ax, (arr, title, vmin, vmax) in zip(axes.ravel(), panels):
@@ -290,9 +318,16 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
     phase_fluid = rec["field_stats"]["PhaseField"]["fluid"]
     rho_fluid = rec["field_stats"].get("Rho", {}).get("fluid", {})
     wall_pred = rec["field_stats"].get("WallPhasePred", {}).get("wall", {})
+    wall_raw = rec["field_stats"].get("WallPhaseRawPred", {}).get("wall", {})
     wall_profile = rec["field_stats"].get("WallPhaseProfilePred", {}).get("wall", {})
-    wall_signed = rec["field_stats"].get("WallPhaseSignedProfilePred", {}).get("wall", {})
+    wall_signed_profile = rec["field_stats"].get("WallPhaseSignedProfilePred", {}).get("wall", {})
+    wall_signed = rec["field_stats"].get("WallPhaseSignedPred", {}).get("wall", {})
     wall_shift = rec["field_stats"].get("WallSignedLogitShift", {}).get("wall", {})
+    wall_residual = rec["field_stats"].get("WallContactResidual", {}).get("wall", {})
+    wall_signed_grad = rec["field_stats"].get("WallSignedNormalGrad", {}).get("wall", {})
+    wall_tangent_grad = rec["field_stats"].get("WallTangentGradMag", {}).get("wall", {})
+    wall_delta_q = rec["field_stats"].get("WallSignedDeltaQ", {}).get("wall", {})
+    wall_q_clipped = rec["field_stats"].get("WallSignedQClipped", {}).get("wall", {})
     phase_sum = float(phase_fluid.get("sum", math.nan))
     rho_sum = float(rho_fluid.get("sum", math.nan))
     phase_rel = (
@@ -322,9 +357,21 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "phase_fluid_max": phase_fluid.get("max", math.nan),
         "wall_phase_pred_min": wall_pred.get("min", math.nan),
         "wall_phase_pred_max": wall_pred.get("max", math.nan),
+        "wall_phase_raw_min": wall_raw.get("min", math.nan),
+        "wall_phase_raw_max": wall_raw.get("max", math.nan),
         "wall_phase_profile_max": wall_profile.get("max", math.nan),
+        "wall_phase_signed_profile_max": wall_signed_profile.get("max", math.nan),
+        "wall_phase_signed_min": wall_signed.get("min", math.nan),
         "wall_phase_signed_max": wall_signed.get("max", math.nan),
         "wall_signed_logit_shift_max": wall_shift.get("max", math.nan),
+        "wall_contact_residual_mean": wall_residual.get("mean", math.nan),
+        "wall_contact_residual_min": wall_residual.get("min", math.nan),
+        "wall_contact_residual_max": wall_residual.get("max", math.nan),
+        "wall_signed_normal_grad_mean": wall_signed_grad.get("mean", math.nan),
+        "wall_tangent_grad_mag_mean": wall_tangent_grad.get("mean", math.nan),
+        "wall_signed_delta_q_min": wall_delta_q.get("min", math.nan),
+        "wall_signed_delta_q_max": wall_delta_q.get("max", math.nan),
+        "wall_signed_q_clipped_sum": wall_q_clipped.get("sum", math.nan),
         "max_mach": rec["max_mach"],
         "nonfinite_total": rec["nonfinite_total"],
         "path_counts": json.dumps(rec["wall_bc_path_counts"], sort_keys=True),

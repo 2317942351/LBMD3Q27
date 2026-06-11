@@ -1,0 +1,63 @@
+{
+  "status": "runtime_sanity",
+  "gate_passed": true,
+  "root": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta150_wall150",
+  "output_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta150_wall150/output",
+  "out_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta150_wall150/analysis_finiteness_gate",
+  "required_arrays": [
+    "PhaseField",
+    "U",
+    "P",
+    "Rho",
+    "WallPhasePred",
+    "WallPhaseProfilePred",
+    "WallPhaseSignedProfilePred",
+    "WallPhaseRawPred",
+    "WallPhaseSignedPred",
+    "WallContactResidual",
+    "WallSignedNormalGrad",
+    "WallTangentGradMag",
+    "WallSignedDeltaQ",
+    "WallSignedQClipped",
+    "BoundaryMask"
+  ],
+  "phase_threshold": 0.5,
+  "vti_files_checked": 6,
+  "vti_steps_checked": [
+    0,
+    10000,
+    20000,
+    30000,
+    40000,
+    50000
+  ],
+  "csv_files_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta150_wall150/output/case_Log_P00_00000000.csv"
+  ],
+  "text_logs_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta150_wall150/run.log",
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage7_signedwrite_gate_20260612/cap_theta150_wall150/run.stderr"
+  ],
+  "first_bad": null,
+  "first_csv_bad": null,
+  "first_text_log_bad": null,
+  "first_vti_bad": null,
+  "max_fluid_nonfinite_count_by_array": {
+    "PhaseField": 0,
+    "U": 0,
+    "P": 0,
+    "Rho": 0,
+    "WallPhasePred": 0,
+    "WallPhaseProfilePred": 0,
+    "WallPhaseSignedProfilePred": 0,
+    "WallPhaseRawPred": 0,
+    "WallPhaseSignedPred": 0,
+    "WallContactResidual": 0,
+    "WallSignedNormalGrad": 0,
+    "WallTangentGradMag": 0,
+    "WallSignedDeltaQ": 0,
+    "WallSignedQClipped": 0,
+    "BoundaryMask": 0
+  },
+  "claim_limit": "stability gate only; passing this does not validate physical prediction"
+}

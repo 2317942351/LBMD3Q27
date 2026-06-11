@@ -27,6 +27,7 @@ Read in this order:
 9. `docs/wall_geom_profile_600k_extension_20260610.md`
 10. `docs/pre2025_sphere_theta030_profile_liftZ32_geometry_audit_20260610.md`
 11. `docs/wall_normal_path_v6diag_M0p1_control_50k_20260611.md`
+12. `docs/stage7_signed_wall_ghost_diagnostic_20260612.md`
 
 ## Source Layout
 
@@ -38,6 +39,7 @@ Read in this order:
 - `third_party/tclb_snapshots/stage4_profile_diag/`: profile diagnostic lane.
 - `third_party/tclb_snapshots/stage5_unified_special_diag/`: v5 unified special/correction diagnostic lane.
 - `third_party/tclb_snapshots/stage6_normal_path_diag/`: v6 normal-path diagnostic lane.
+- `third_party/tclb_snapshots/stage7_signed_wall_ghost_diag/`: Stage7 signed wall-ghost diagnostic lane.
 - `third_party/tclb_snapshots/patches/`: diffs against the upstream snapshot.
 - `scripts/`: local generators, postprocessors, audits, and HM570 runners.
 - `cases/`: XML case definitions and manifests.

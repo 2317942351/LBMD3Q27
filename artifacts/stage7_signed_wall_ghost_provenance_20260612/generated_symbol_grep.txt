@@ -1,0 +1,289 @@
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:157:UseStage7SignedWallGhost                      |   | Stage7 diagnostic switch: 1 writes signed normal-path wall ghost instead of profile ghost 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:299:WallPhaseSignedPred                 [      1] |   | WallPhaseSignedPred 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:300:WallContactResidual                 [      1] |   | WallContactResidual 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:301:WallSignedNormalGrad                [      1] |   | WallSignedNormalGrad 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:302:WallTangentGradMag                  [      1] |   | WallTangentGradMag 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:303:WallSignedDeltaQ                    [      1] |   | WallSignedDeltaQ 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:304:WallSignedQClipped                  [      1] |   | WallSignedQClipped 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:305:BoundaryMask                        [      1] |   | BoundaryMask 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:61:			CudaCopyToConstant("UseStage7SignedWallGhost", UseStage7SignedWallGhost, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:756:        debug1("Creating Catalyst VTK object for WallPhaseSignedPred\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:759:        myArray->SetName("WallPhaseSignedPred");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:772:        debug1("Creating Catalyst VTK object for WallContactResidual\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:775:        myArray->SetName("WallContactResidual");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:788:        debug1("Creating Catalyst VTK object for WallSignedNormalGrad\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:791:        myArray->SetName("WallSignedNormalGrad");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:804:        debug1("Creating Catalyst VTK object for WallTangentGradMag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:807:        myArray->SetName("WallTangentGradMag");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:820:        debug1("Creating Catalyst VTK object for WallSignedDeltaQ\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:823:        myArray->SetName("WallSignedDeltaQ");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:836:        debug1("Creating Catalyst VTK object for WallSignedQClipped\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:839:        myArray->SetName("WallSignedQClipped");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:852:        debug1("Creating Catalyst VTK object for BoundaryMask\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:855:        myArray->SetName("BoundaryMask");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1705:      debug2("Filling Catalyst VTK object for WallPhaseSignedPred\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1709:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallPhaseSignedPred"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1711:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallPhaseSignedPred"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1717:      solver.lattice->GetWallPhaseSignedPred(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1722://      solver.lattice->GetWallPhaseSignedPred(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1726:      debug2("Filling Catalyst VTK object for WallContactResidual\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1730:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallContactResidual"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1732:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallContactResidual"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1738:      solver.lattice->GetWallContactResidual(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1743://      solver.lattice->GetWallContactResidual(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1747:      debug2("Filling Catalyst VTK object for WallSignedNormalGrad\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1751:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallSignedNormalGrad"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1753:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallSignedNormalGrad"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1759:      solver.lattice->GetWallSignedNormalGrad(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1764://      solver.lattice->GetWallSignedNormalGrad(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1768:      debug2("Filling Catalyst VTK object for WallTangentGradMag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1772:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallTangentGradMag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1774:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallTangentGradMag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1780:      solver.lattice->GetWallTangentGradMag(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1785://      solver.lattice->GetWallTangentGradMag(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1789:      debug2("Filling Catalyst VTK object for WallSignedDeltaQ\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1793:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallSignedDeltaQ"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1795:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallSignedDeltaQ"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1801:      solver.lattice->GetWallSignedDeltaQ(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1806://      solver.lattice->GetWallSignedDeltaQ(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1810:      debug2("Filling Catalyst VTK object for WallSignedQClipped\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1814:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallSignedQClipped"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1816:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallSignedQClipped"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1822:      solver.lattice->GetWallSignedQClipped(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1827://      solver.lattice->GetWallSignedQClipped(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1831:      debug2("Filling Catalyst VTK object for BoundaryMask\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1835:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("BoundaryMask"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1837:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("BoundaryMask"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1843:      solver.lattice->GetBoundaryMask(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1848://      solver.lattice->GetBoundaryMask(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:57:			CudaCopyToConstant("UseStage7SignedWallGhost", UseStage7SignedWallGhost, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:137:	case  SETTINGS_UseStage7SignedWallGhost :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:138:	        CudaCopyToConstant("UseStage7SignedWallGhost", UseStage7SignedWallGhost, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1998:/// Calculate quantity [WallPhaseSignedPred] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2000:  Kernel to calculate quantity WallPhaseSignedPred (WallPhaseSignedPred) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2005:CudaGlobalFunction void getWallPhaseSignedPred(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2016:			w = now.getWallPhaseSignedPred(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2024:/// Calculate quantity [WallContactResidual] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2026:  Kernel to calculate quantity WallContactResidual (WallContactResidual) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2031:CudaGlobalFunction void getWallContactResidual(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2042:			w = now.getWallContactResidual(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2050:/// Calculate quantity [WallSignedNormalGrad] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2052:  Kernel to calculate quantity WallSignedNormalGrad (WallSignedNormalGrad) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2057:CudaGlobalFunction void getWallSignedNormalGrad(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2068:			w = now.getWallSignedNormalGrad(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2076:/// Calculate quantity [WallTangentGradMag] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2078:  Kernel to calculate quantity WallTangentGradMag (WallTangentGradMag) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2083:CudaGlobalFunction void getWallTangentGradMag(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2094:			w = now.getWallTangentGradMag(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2102:/// Calculate quantity [WallSignedDeltaQ] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2104:  Kernel to calculate quantity WallSignedDeltaQ (WallSignedDeltaQ) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2109:CudaGlobalFunction void getWallSignedDeltaQ(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2120:			w = now.getWallSignedDeltaQ(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2128:/// Calculate quantity [WallSignedQClipped] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2130:  Kernel to calculate quantity WallSignedQClipped (WallSignedQClipped) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2135:CudaGlobalFunction void getWallSignedQClipped(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2146:			w = now.getWallSignedQClipped(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2154:/// Calculate quantity [BoundaryMask] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2156:  Kernel to calculate quantity BoundaryMask (BoundaryMask) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2161:CudaGlobalFunction void getBoundaryMask(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2172:			w = now.getBoundaryMask(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2143:CudaDeviceFunction real_t getBoundaryMask() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2174:CudaDeviceFunction real_t getWallSignedNormalGrad() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2183:CudaDeviceFunction real_t getWallTangentGradMag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2195:	return -getWallTanCoeff() * getWallTangentGradMag();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2198:CudaDeviceFunction real_t getWallContactResidual() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2233:CudaDeviceFunction real_t getWallSignedDeltaQ() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2240:CudaDeviceFunction real_t getWallSignedQClipped() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2294:CudaDeviceFunction real_t getWallPhaseSignedPred() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2302:	if (UseStage7SignedWallGhost > 0.5 && wallDiagIsNormalPath()) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:73:	real_t setting_UseStage7SignedWallGhost; ///< Value of [Stage7 diagnostic switch: 1 writes signed normal-path wall ghost instead of profile ghost]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:74:	int ifset_UseStage7SignedWallGhost; ///< True if [Stage7 diagnostic switch: 1 writes signed normal-path wall ghost instead of profile ghost] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:366:  if (strcmp("UseStage7SignedWallGhost",str) == 0) return  SETTINGS_UseStage7SignedWallGhost ; 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2143:CudaDeviceFunction real_t getBoundaryMask() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2174:CudaDeviceFunction real_t getWallSignedNormalGrad() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2183:CudaDeviceFunction real_t getWallTangentGradMag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2195:	return -getWallTanCoeff() * getWallTangentGradMag();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2198:CudaDeviceFunction real_t getWallContactResidual() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2233:CudaDeviceFunction real_t getWallSignedDeltaQ() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2240:CudaDeviceFunction real_t getWallSignedQClipped() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2294:CudaDeviceFunction real_t getWallPhaseSignedPred() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2302:	if (UseStage7SignedWallGhost > 0.5 && wallDiagIsNormalPath()) {
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:71:CudaDeviceFunction CudaConstantMemory real_t UseStage7SignedWallGhost = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4810:		case  QUANTITIES_WallPhaseSignedPred : return GetWallPhaseSignedPred(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4811:		case  QUANTITIES_WallContactResidual : return GetWallContactResidual(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4812:		case  QUANTITIES_WallSignedNormalGrad : return GetWallSignedNormalGrad(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4813:		case  QUANTITIES_WallTangentGradMag : return GetWallTangentGradMag(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4814:		case  QUANTITIES_WallSignedDeltaQ : return GetWallSignedDeltaQ(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4815:		case  QUANTITIES_WallSignedQClipped : return GetWallSignedQClipped(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4816:		case  QUANTITIES_BoundaryMask : return GetBoundaryMask(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5714:/// Get [WallPhaseSignedPred]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5716:        Retrive the values of the Quantity WallPhaseSignedPred (WallPhaseSignedPred)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5719:void Lattice::GetWallPhaseSignedPred(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5733:		CudaKernelRun( getWallPhaseSignedPred , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5741:/// Get [WallContactResidual]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5743:        Retrive the values of the Quantity WallContactResidual (WallContactResidual)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5746:void Lattice::GetWallContactResidual(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5760:		CudaKernelRun( getWallContactResidual , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5768:/// Get [WallSignedNormalGrad]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5770:        Retrive the values of the Quantity WallSignedNormalGrad (WallSignedNormalGrad)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5773:void Lattice::GetWallSignedNormalGrad(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5787:		CudaKernelRun( getWallSignedNormalGrad , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5795:/// Get [WallTangentGradMag]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5797:        Retrive the values of the Quantity WallTangentGradMag (WallTangentGradMag)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5800:void Lattice::GetWallTangentGradMag(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5814:		CudaKernelRun( getWallTangentGradMag , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5822:/// Get [WallSignedDeltaQ]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5824:        Retrive the values of the Quantity WallSignedDeltaQ (WallSignedDeltaQ)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5827:void Lattice::GetWallSignedDeltaQ(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5841:		CudaKernelRun( getWallSignedDeltaQ , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5849:/// Get [WallSignedQClipped]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5851:        Retrive the values of the Quantity WallSignedQClipped (WallSignedQClipped)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5854:void Lattice::GetWallSignedQClipped(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5868:		CudaKernelRun( getWallSignedQClipped , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5876:/// Get [BoundaryMask]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5878:        Retrive the values of the Quantity BoundaryMask (BoundaryMask)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5881:void Lattice::GetBoundaryMask(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5895:		CudaKernelRun( getBoundaryMask , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6362:void Lattice::GetSampleWallPhaseSignedPred(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6368:	CudaKernelRun( getWallPhaseSignedPred , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6371:void Lattice::GetSampleWallContactResidual(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6377:	CudaKernelRun( getWallContactResidual , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6380:void Lattice::GetSampleWallSignedNormalGrad(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6386:	CudaKernelRun( getWallSignedNormalGrad , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6389:void Lattice::GetSampleWallTangentGradMag(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6395:	CudaKernelRun( getWallTangentGradMag , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6398:void Lattice::GetSampleWallSignedDeltaQ(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6404:	CudaKernelRun( getWallSignedDeltaQ , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6407:void Lattice::GetSampleWallSignedQClipped(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6413:	CudaKernelRun( getWallSignedQClipped , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6416:void Lattice::GetSampleBoundaryMask(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6422:	CudaKernelRun( getBoundaryMask , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6628:	 	 if (sample->quant->in("WallPhaseSignedPred"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6631:			GetSampleWallPhaseSignedPred(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallPhaseSignedPred"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6634:	 	 if (sample->quant->in("WallContactResidual"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6637:			GetSampleWallContactResidual(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallContactResidual"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6640:	 	 if (sample->quant->in("WallSignedNormalGrad"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6643:			GetSampleWallSignedNormalGrad(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallSignedNormalGrad"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6646:	 	 if (sample->quant->in("WallTangentGradMag"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6649:			GetSampleWallTangentGradMag(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallTangentGradMag"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6652:	 	 if (sample->quant->in("WallSignedDeltaQ"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6655:			GetSampleWallSignedDeltaQ(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallSignedDeltaQ"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6658:	 	 if (sample->quant->in("WallSignedQClipped"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6661:			GetSampleWallSignedQClipped(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallSignedQClipped"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6664:	 	 if (sample->quant->in("BoundaryMask"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6667:			GetSampleBoundaryMask(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["BoundaryMask"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:142:    CudaExternConstantMemory(real_t UseStage7SignedWallGhost); 
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1249:                { SETTINGS_UseStage7SignedWallGhost  , "UseStage7SignedWallGhost"  , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1357:                  { QUANTITIES_WallPhaseSignedPred         , "WallPhaseSignedPred"         , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1358:                  { QUANTITIES_WallContactResidual         , "WallContactResidual"         , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1359:                  { QUANTITIES_WallSignedNormalGrad        , "WallSignedNormalGrad"        , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1360:                  { QUANTITIES_WallTangentGradMag          , "WallTangentGradMag"          , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1361:                  { QUANTITIES_WallSignedDeltaQ            , "WallSignedDeltaQ"            , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1362:                  { QUANTITIES_WallSignedQClipped          , "WallSignedQClipped"          , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1363:                  { QUANTITIES_BoundaryMask                , "BoundaryMask"                , "1"     , false    , false     }};
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:78:#define  SETTINGS_UseStage7SignedWallGhost          12 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:319:#define  QUANTITIES_WallPhaseSignedPred             33 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:320:#define  QUANTITIES_WallContactResidual             34 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:321:#define  QUANTITIES_WallSignedNormalGrad            35 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:322:#define  QUANTITIES_WallTangentGradMag              36 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:323:#define  QUANTITIES_WallSignedDeltaQ                37 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:324:#define  QUANTITIES_WallSignedQClipped              38 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:325:#define  QUANTITIES_BoundaryMask                    39 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:28:    CudaExternConstantMemory(real_t UseStage7SignedWallGhost); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1545:CudaGlobalFunction void getWallPhaseSignedPred(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1546:CudaGlobalFunction void getWallPhaseSignedPred_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1548:CudaGlobalFunction void getWallPhaseSignedPred_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1550:CudaGlobalFunction void getWallContactResidual(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1551:CudaGlobalFunction void getWallContactResidual_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1553:CudaGlobalFunction void getWallContactResidual_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1555:CudaGlobalFunction void getWallSignedNormalGrad(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1556:CudaGlobalFunction void getWallSignedNormalGrad_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1558:CudaGlobalFunction void getWallSignedNormalGrad_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1560:CudaGlobalFunction void getWallTangentGradMag(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1561:CudaGlobalFunction void getWallTangentGradMag_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1563:CudaGlobalFunction void getWallTangentGradMag_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1565:CudaGlobalFunction void getWallSignedDeltaQ(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1566:CudaGlobalFunction void getWallSignedDeltaQ_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1568:CudaGlobalFunction void getWallSignedDeltaQ_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1570:CudaGlobalFunction void getWallSignedQClipped(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1571:CudaGlobalFunction void getWallSignedQClipped_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1573:CudaGlobalFunction void getWallSignedQClipped_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1575:CudaGlobalFunction void getBoundaryMask(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1576:CudaGlobalFunction void getBoundaryMask_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1578:CudaGlobalFunction void getBoundaryMask_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:835:  void GetWallPhaseSignedPred(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:836:  void GetSampleWallPhaseSignedPred(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:837:  inline void GetWallPhaseSignedPred(lbRegion over, real_t * tab) { GetWallPhaseSignedPred(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:839:  void GetWallPhaseSignedPred_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:841:  void GetWallContactResidual(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:842:  void GetSampleWallContactResidual(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:843:  inline void GetWallContactResidual(lbRegion over, real_t * tab) { GetWallContactResidual(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:845:  void GetWallContactResidual_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:847:  void GetWallSignedNormalGrad(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:848:  void GetSampleWallSignedNormalGrad(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:849:  inline void GetWallSignedNormalGrad(lbRegion over, real_t * tab) { GetWallSignedNormalGrad(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:851:  void GetWallSignedNormalGrad_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:853:  void GetWallTangentGradMag(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:854:  void GetSampleWallTangentGradMag(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:855:  inline void GetWallTangentGradMag(lbRegion over, real_t * tab) { GetWallTangentGradMag(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:857:  void GetWallTangentGradMag_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:859:  void GetWallSignedDeltaQ(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:860:  void GetSampleWallSignedDeltaQ(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:861:  inline void GetWallSignedDeltaQ(lbRegion over, real_t * tab) { GetWallSignedDeltaQ(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:863:  void GetWallSignedDeltaQ_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:865:  void GetWallSignedQClipped(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:866:  void GetSampleWallSignedQClipped(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:867:  inline void GetWallSignedQClipped(lbRegion over, real_t * tab) { GetWallSignedQClipped(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:869:  void GetWallSignedQClipped_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:871:  void GetBoundaryMask(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:872:  void GetSampleBoundaryMask(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:873:  inline void GetBoundaryMask(lbRegion over, real_t * tab) { GetBoundaryMask(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:875:  void GetBoundaryMask_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:157:	                    fprintf(f,",\"UseStage7SignedWallGhost\",\"UseStage7SignedWallGhost_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:456:                    LogScales[ SETTINGS_UseStage7SignedWallGhost ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1387:	if (strcmp(comp, "WallPhaseSignedPred") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1388:    	real_t* tmp_WallPhaseSignedPred = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1390:    	lattice->GetWallPhaseSignedPred(region, tmp_WallPhaseSignedPred, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1391:        buf = (real_t*)tmp_WallPhaseSignedPred;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1395:	if (strcmp(comp, "WallContactResidual") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1396:    	real_t* tmp_WallContactResidual = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1398:    	lattice->GetWallContactResidual(region, tmp_WallContactResidual, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1399:        buf = (real_t*)tmp_WallContactResidual;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1403:	if (strcmp(comp, "WallSignedNormalGrad") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1404:    	real_t* tmp_WallSignedNormalGrad = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1406:    	lattice->GetWallSignedNormalGrad(region, tmp_WallSignedNormalGrad, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1407:        buf = (real_t*)tmp_WallSignedNormalGrad;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1411:	if (strcmp(comp, "WallTangentGradMag") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1412:    	real_t* tmp_WallTangentGradMag = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1414:    	lattice->GetWallTangentGradMag(region, tmp_WallTangentGradMag, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1415:        buf = (real_t*)tmp_WallTangentGradMag;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1419:	if (strcmp(comp, "WallSignedDeltaQ") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1420:    	real_t* tmp_WallSignedDeltaQ = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1422:    	lattice->GetWallSignedDeltaQ(region, tmp_WallSignedDeltaQ, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1423:        buf = (real_t*)tmp_WallSignedDeltaQ;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1427:	if (strcmp(comp, "WallSignedQClipped") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1428:    	real_t* tmp_WallSignedQClipped = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1430:    	lattice->GetWallSignedQClipped(region, tmp_WallSignedQClipped, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1431:        buf = (real_t*)tmp_WallSignedQClipped;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1435:	if (strcmp(comp, "BoundaryMask") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1436:    	real_t* tmp_BoundaryMask = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1438:    	lattice->GetBoundaryMask(region, tmp_BoundaryMask, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1439:        buf = (real_t*)tmp_BoundaryMask;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1445:     output("-> SpecialBoundaryPoint\n") ;  output("-> Rho\n") ;  output("-> PhaseField\n") ;  output("-> U\n") ;  output("-> P\n") ;  output("-> Pstar\n") ;  output("-> Normal\n") ;  output("-> IsItBoundary\n") ;  output("-> GradPhi\n") ;  output("-> WallPfF\n") ;  output("-> WallGradTangent\n") ;  output("-> WallTanCoeff\n") ;  output("-> WallPhasePred\n") ;  output("-> WallPhaseProfilePred\n") ;  output("-> WallProfileDelta\n") ;  output("-> WallPhaseSignedProfilePred\n") ;  output("-> WallSignedProfileDelta\n") ;  output("-> WallSignedLogitShift\n") ;  output("-> WallFluidSampleCount\n") ;  output("-> WallFluidSampleH\n") ;  output("-> WallPhaseUnifiedProfilePred\n") ;  output("-> WallUnifiedProfileDelta\n") ;  output("-> WallBCPath\n") ;  output("-> WallH\n") ;  output("-> WallGeomNormal\n") ;  output("-> WallGrad1\n") ;  output("-> WallGrad2\n") ;  output("-> WallGradTangentVec\n") ;  output("-> WallNormalCoeff1\n") ;  output("-> WallNormalCoeff2\n") ;  output("-> WallActualMinusProfile\n") ;  output("-> WallActualMinusRaw\n") ;  output("-> WallPhaseRawPred\n") ;  output("-> WallPhaseSignedPred\n") ;  output("-> WallContactResidual\n") ;  output("-> WallSignedNormalGrad\n") ;  output("-> WallTangentGradMag\n") ;  output("-> WallSignedDeltaQ\n") ;  output("-> WallSignedQClipped\n") ;  output("-> BoundaryMask\n") ; 
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:972:CudaDeviceFunction real_t getBoundaryMask() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1003:CudaDeviceFunction real_t getWallSignedNormalGrad() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1012:CudaDeviceFunction real_t getWallTangentGradMag() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1024:	return -getWallTanCoeff() * getWallTangentGradMag();
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1027:CudaDeviceFunction real_t getWallContactResidual() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1062:CudaDeviceFunction real_t getWallSignedDeltaQ() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1069:CudaDeviceFunction real_t getWallSignedQClipped() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1123:CudaDeviceFunction real_t getWallPhaseSignedPred() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1131:	if (UseStage7SignedWallGhost > 0.5 && wallDiagIsNormalPath()) {
+models/multiphase/d3q27_pf_velocity/Dynamics.R:207:			AddQuantity(name="WallPhaseSignedPred", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:208:			AddQuantity(name="WallContactResidual", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:209:			AddQuantity(name="WallSignedNormalGrad", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:210:			AddQuantity(name="WallTangentGradMag", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:211:			AddQuantity(name="WallSignedDeltaQ", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:212:			AddQuantity(name="WallSignedQClipped", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:213:			AddQuantity(name="BoundaryMask", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:236:	AddSetting(name="UseStage7SignedWallGhost", default=0, comment='Stage7 diagnostic switch: 1 writes signed normal-path wall ghost instead of profile ghost')
