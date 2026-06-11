@@ -1,0 +1,27 @@
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:288:WallH                               [      1] |   | WallH 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:289:WallGeomNormal                      [      1] |   | WallGeomNormal 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:290:WallGrad1                           [      1] |   | WallGrad1 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:291:WallGrad2                           [      1] |   | WallGrad2 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:292:WallGradTangentVec                  [      1] |   | WallGradTangentVec 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:293:WallNormalCoeff1                    [      1] |   | WallNormalCoeff1 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:296:WallActualMinusRaw                  [      1] |   | WallActualMinusRaw 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1753:CudaDeviceFunction real_t getWallH() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1760:CudaDeviceFunction vector_t getWallGeomNormal() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1768:CudaDeviceFunction vector_t getWallGrad1() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1784:CudaDeviceFunction vector_t getWallGrad2() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1801:	vector_t solid_normal = getWallGeomNormal();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1810:	vector_t solid_normal = getWallGeomNormal();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1820:CudaDeviceFunction real_t getWallNormalCoeff1() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1824:	return wallDiagNormalCoeff(getWallGrad1());
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1831:	return wallDiagNormalCoeff(getWallGrad2());
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1834:CudaDeviceFunction vector_t getWallGradTangentVec() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1838:	vector_t proj_grad_1 = wallDiagProjectedTangent(getWallGrad1());
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1839:	vector_t proj_grad_2 = wallDiagProjectedTangent(getWallGrad2());
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2029:CudaDeviceFunction real_t getWallActualMinusRaw() {
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1346:                  { QUANTITIES_WallH                       , "WallH"                       , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1347:                  { QUANTITIES_WallGeomNormal              , "WallGeomNormal"              , "1"     , true     , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1348:                  { QUANTITIES_WallGrad1                   , "WallGrad1"                   , "1"     , true     , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1349:                  { QUANTITIES_WallGrad2                   , "WallGrad2"                   , "1"     , true     , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1350:                  { QUANTITIES_WallGradTangentVec          , "WallGradTangentVec"          , "1"     , true     , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1351:                  { QUANTITIES_WallNormalCoeff1            , "WallNormalCoeff1"            , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1354:                  { QUANTITIES_WallActualMinusRaw          , "WallActualMinusRaw"          , "1"     , false    , false     }};

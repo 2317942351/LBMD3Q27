@@ -1,0 +1,547 @@
+diff --git a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index 024f94c..39ee803 100644
+--- a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -530,6 +530,441 @@ CudaDeviceFunction vector_t getGradPhi() {
+ 	return gradPhi;
+ }
+ 
++
++CudaDeviceFunction real_t wallDiagRawPfF() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return gradPhi_PhaseF_dyn(nw_x, nw_y, nw_z);
++}
++
++CudaDeviceFunction real_t getWallPfF() {
++	return wallDiagRawPfF();
++}
++
++CudaDeviceFunction real_t getWallTanCoeff() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return tan(PI/2.0 - radAngle);
++}
++
++CudaDeviceFunction real_t getWallBCPath() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	if (h < 0.001) {
++		return 1.0;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return 2.0;
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
++		return 3.0;
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
++		return 4.0;
++	}
++	return 5.0;
++}
++
++CudaDeviceFunction vector_t wallDiagZeroVector() {
++	vector_t out = {0.0, 0.0, 0.0};
++	return out;
++}
++
++CudaDeviceFunction bool wallDiagIsNormalPath() {
++	return getWallBCPath() == 5.0;
++}
++
++CudaDeviceFunction real_t getWallH() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++}
++
++CudaDeviceFunction vector_t getWallGeomNormal() {
++	if (!(IamWall || IamSolid)) {
++		return wallDiagZeroVector();
++	}
++	vector_t solid_normal = {nw_x, nw_y, nw_z};
++	return solid_normal;
++}
++
++CudaDeviceFunction vector_t getWallGrad1() {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagZeroVector();
++	}
++#ifdef OPTIONS_staircaseimp
++	return wallDiagZeroVector();
++#else
++	vector_t grad_1 = {
++		gradPhiVal_x_dyn(nw_x, nw_y, nw_z),
++		gradPhiVal_y_dyn(nw_x, nw_y, nw_z),
++		gradPhiVal_z_dyn(nw_x, nw_y, nw_z)
++	};
++	return grad_1;
++#endif
++}
++
++CudaDeviceFunction vector_t getWallGrad2() {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagZeroVector();
++	}
++#ifdef OPTIONS_staircaseimp
++	return wallDiagZeroVector();
++#else
++	vector_t grad_2 = {
++		gradPhiVal_x_dyn(2*nw_x, 2*nw_y, 2*nw_z),
++		gradPhiVal_y_dyn(2*nw_x, 2*nw_y, 2*nw_z),
++		gradPhiVal_z_dyn(2*nw_x, 2*nw_y, 2*nw_z)
++	};
++	return grad_2;
++#endif
++}
++
++CudaDeviceFunction real_t wallDiagNormalCoeff(vector_t grad) {
++	vector_t solid_normal = getWallGeomNormal();
++	real_t norm = solid_normal.x*solid_normal.x + solid_normal.y*solid_normal.y + solid_normal.z*solid_normal.z;
++	if (norm < 1e-12) {
++		return 0.0;
++	}
++	return (grad.x*solid_normal.x + grad.y*solid_normal.y + grad.z*solid_normal.z)/norm;
++}
++
++CudaDeviceFunction vector_t wallDiagProjectedTangent(vector_t grad) {
++	vector_t solid_normal = getWallGeomNormal();
++	real_t coeff = wallDiagNormalCoeff(grad);
++	vector_t proj = {
++		grad.x - coeff*solid_normal.x,
++		grad.y - coeff*solid_normal.y,
++		grad.z - coeff*solid_normal.z
++	};
++	return proj;
++}
++
++CudaDeviceFunction real_t getWallNormalCoeff1() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallDiagNormalCoeff(getWallGrad1());
++}
++
++CudaDeviceFunction real_t getWallNormalCoeff2() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallDiagNormalCoeff(getWallGrad2());
++}
++
++CudaDeviceFunction vector_t getWallGradTangentVec() {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagZeroVector();
++	}
++	vector_t proj_grad_1 = wallDiagProjectedTangent(getWallGrad1());
++	vector_t proj_grad_2 = wallDiagProjectedTangent(getWallGrad2());
++	vector_t grad_tangent_v = {
++		1.5*proj_grad_1.x - 0.5*proj_grad_2.x,
++		1.5*proj_grad_1.y - 0.5*proj_grad_2.y,
++		1.5*proj_grad_1.z - 0.5*proj_grad_2.z
++	};
++	return grad_tangent_v;
++}
++
++CudaDeviceFunction real_t getWallGradTangent() {
++	if (getWallBCPath() != 5.0) {
++		return 0.0;
++	}
++
++#ifdef OPTIONS_staircaseimp
++	// This diagnostic lane is built for q27_geometric without staircase improvement.
++	return 0.0;
++#else
++	vector_t solid_normal = {nw_x, nw_y, nw_z};
++	real_t der_x_1 = gradPhiVal_x_dyn(nw_x,   nw_y,   nw_z);
++	real_t der_y_1 = gradPhiVal_y_dyn(nw_x,   nw_y,   nw_z);
++	real_t der_z_1 = gradPhiVal_z_dyn(nw_x,   nw_y,   nw_z);
++	real_t der_x_2 = gradPhiVal_x_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++	real_t der_y_2 = gradPhiVal_y_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++	real_t der_z_2 = gradPhiVal_z_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++
++	real_t norm = solid_normal.x*solid_normal.x + solid_normal.y*solid_normal.y + solid_normal.z*solid_normal.z;
++	if (norm < 1e-12) {
++		return 0.0;
++	}
++
++	real_t coeff_1 = (der_x_1*solid_normal.x + der_y_1*solid_normal.y + der_z_1*solid_normal.z)/norm;
++	real_t coeff_2 = (der_x_2*solid_normal.x + der_y_2*solid_normal.y + der_z_2*solid_normal.z)/norm;
++	vector_t proj_grad_1 = {der_x_1 - coeff_1*solid_normal.x, der_y_1 - coeff_1*solid_normal.y, der_z_1 - coeff_1*solid_normal.z};
++	vector_t proj_grad_2 = {der_x_2 - coeff_2*solid_normal.x, der_y_2 - coeff_2*solid_normal.y, der_z_2 - coeff_2*solid_normal.z};
++	vector_t grad_tangent_v = {1.5*proj_grad_1.x - 0.5*proj_grad_2.x,
++								 1.5*proj_grad_1.y - 0.5*proj_grad_2.y,
++								 1.5*proj_grad_1.z - 0.5*proj_grad_2.z};
++	return sqrt(grad_tangent_v.x*grad_tangent_v.x + grad_tangent_v.y*grad_tangent_v.y + grad_tangent_v.z*grad_tangent_v.z);
++#endif
++}
++
++CudaDeviceFunction real_t getWallPhasePred() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	real_t pf_f = wallDiagRawPfF();
++	if (h < 0.001) {
++		return 1.0;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return pf_f;
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
++		return PhaseF_dyn(nw_x, nw_y, nw_z);
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
++		real_t a = -h * (4.0/IntWidth) * cos(radAngle);
++		return (1 + a - sqrt((1+a)*(1+a) - 4*a*pf_f))/(a+1e-12) - pf_f;
++	}
++	return getWallTanCoeff() * getWallGradTangent() * 2.0*h + pf_f;
++}
++
++CudaDeviceFunction real_t wallDiagProfilePhaseValue(real_t pf_f, real_t h) {
++	if (h < 0.001) {
++		return 1.0;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return pf_f;
++	}
++	real_t a = -h * (4.0/IntWidth) * cos(radAngle);
++	return (1 + a - sqrt((1+a)*(1+a) - 4*a*pf_f))/(a+1e-12) - pf_f;
++}
++
++CudaDeviceFunction bool wallDiagUsableFluidSample(int dx, int dy, int dz) {
++	if (dx == 0 && dy == 0 && dz == 0) {
++		return false;
++	}
++	if (IsBoundary_dyn(dx, dy, dz) > 0.5) {
++		return false;
++	}
++	real_t pf = PhaseF_dyn(dx, dy, dz);
++	real_t phase_range = fabs(PhaseField_h - PhaseField_l);
++	return (pf > PhaseField_l - phase_range) && (pf < PhaseField_h + phase_range);
++}
++
++CudaDeviceFunction real_t wallDiagFluidSampleCount() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	real_t count = 0.0;
++	for (int dx = -2; dx <= 2; dx++) {
++		for (int dy = -2; dy <= 2; dy++) {
++			for (int dz = -2; dz <= 2; dz++) {
++				if (wallDiagUsableFluidSample(dx, dy, dz)) {
++					count += 1.0;
++				}
++			}
++		}
++	}
++	return count;
++}
++
++CudaDeviceFunction real_t wallDiagFluidSampleH() {
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	if (!(IamWall || IamSolid)) {
++		return h;
++	}
++	real_t min_dist = 1e9;
++	for (int dx = -2; dx <= 2; dx++) {
++		for (int dy = -2; dy <= 2; dy++) {
++			for (int dz = -2; dz <= 2; dz++) {
++				if (wallDiagUsableFluidSample(dx, dy, dz)) {
++					real_t dist = sqrt((real_t)(dx*dx + dy*dy + dz*dz));
++					if (dist < min_dist) {
++						min_dist = dist;
++					}
++				}
++			}
++		}
++	}
++	if (min_dist < 1e8) {
++		return 0.5 * min_dist;
++	}
++	return h;
++}
++
++CudaDeviceFunction real_t wallDiagFluidSamplePfF() {
++	if (!(IamWall || IamSolid)) {
++		return PhaseF(0,0,0);
++	}
++	real_t weighted_sum = 0.0;
++	real_t weight_sum = 0.0;
++	for (int dx = -2; dx <= 2; dx++) {
++		for (int dy = -2; dy <= 2; dy++) {
++			for (int dz = -2; dz <= 2; dz++) {
++				if (wallDiagUsableFluidSample(dx, dy, dz)) {
++					real_t dist = sqrt((real_t)(dx*dx + dy*dy + dz*dz));
++					real_t weight = 1.0 / (dist + 1e-12);
++					weighted_sum += weight * PhaseF_dyn(dx, dy, dz);
++					weight_sum += weight;
++				}
++			}
++		}
++	}
++	if (weight_sum > 0.0) {
++		return weighted_sum / weight_sum;
++	}
++	return wallDiagRawPfF();
++}
++
++CudaDeviceFunction real_t wallDiagUnifiedProfilePhaseValue() {
++	if (!(IamWall || IamSolid)) {
++		return PhaseF(0,0,0);
++	}
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
++		return wallDiagProfilePhaseValue(wallDiagFluidSamplePfF(), wallDiagFluidSampleH());
++	}
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	return wallDiagProfilePhaseValue(wallDiagRawPfF(), h);
++}
++
++CudaDeviceFunction real_t getWallFluidSampleCount() {
++	return wallDiagFluidSampleCount();
++}
++
++CudaDeviceFunction real_t getWallFluidSampleH() {
++	return wallDiagFluidSampleH();
++}
++
++CudaDeviceFunction real_t getWallPhaseUnifiedProfilePred() {
++	return wallDiagUnifiedProfilePhaseValue();
++}
++
++CudaDeviceFunction real_t getWallUnifiedProfileDelta() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return getWallPhasePred() - wallDiagUnifiedProfilePhaseValue();
++}
++
++CudaDeviceFunction real_t getWallActualMinusProfile() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return PhaseF(0,0,0) - wallDiagUnifiedProfilePhaseValue();
++}
++
++CudaDeviceFunction real_t getWallActualMinusRaw() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return PhaseF(0,0,0) - getWallPhasePred();
++}
++
++CudaDeviceFunction real_t wallDiagSignedLogitShift(real_t pf_f, real_t h) {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	if (h < 0.001 || fabs(radAngle - PI/2.0) < 1e-4) {
++		return 0.0;
++	}
++	real_t phase_range = PhaseField_h - PhaseField_l;
++	if (fabs(phase_range) < 1e-12) {
++		return 0.0;
++	}
++	real_t c = (pf_f - PhaseField_l) / phase_range;
++	real_t eps = 1e-12;
++	if (c < eps) {
++		c = eps;
++	}
++	if (c > 1.0 - eps) {
++		c = 1.0 - eps;
++	}
++	real_t raw_delta = getWallPhasePred() - pf_f;
++	return raw_delta / (phase_range * c * (1.0 - c));
++}
++
++CudaDeviceFunction real_t wallDiagSignedProfilePhaseValue(real_t pf_f, real_t h) {
++	if (h < 0.001) {
++		return PhaseField_h;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return pf_f;
++	}
++	real_t phase_range = PhaseField_h - PhaseField_l;
++	if (fabs(phase_range) < 1e-12) {
++		return pf_f;
++	}
++	real_t c = (pf_f - PhaseField_l) / phase_range;
++	real_t eps = 1e-12;
++	if (c < eps) {
++		c = eps;
++	}
++	if (c > 1.0 - eps) {
++		c = 1.0 - eps;
++	}
++	real_t q = log(c / (1.0 - c)) + wallDiagSignedLogitShift(pf_f, h);
++	if (q > 60.0) {
++		q = 60.0;
++	}
++	if (q < -60.0) {
++		q = -60.0;
++	}
++	real_t c_wall = 1.0 / (1.0 + exp(-q));
++	return PhaseField_l + phase_range * c_wall;
++}
++
++CudaDeviceFunction real_t getWallPhaseProfilePred() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	return wallDiagUnifiedProfilePhaseValue();
++}
++
++CudaDeviceFunction real_t getWallProfileDelta() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return getWallPhasePred() - getWallPhaseProfilePred();
++}
++
++CudaDeviceFunction real_t getWallPhaseSignedProfilePred() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	real_t pf_f = wallDiagRawPfF();
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?> ||
++		IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
++		return wallDiagUnifiedProfilePhaseValue();
++	}
++	return wallDiagSignedProfilePhaseValue(pf_f, h);
++}
++
++CudaDeviceFunction real_t getWallSignedProfileDelta() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return getWallPhasePred() - getWallPhaseSignedProfilePred();
++}
++
++CudaDeviceFunction real_t getWallSignedLogitShift() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++
++	real_t h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++	real_t pf_f = wallDiagRawPfF();
++	if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?> ||
++		IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
++		return 0.0;
++	}
++	return wallDiagSignedLogitShift(pf_f, h);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+@@ -675,9 +1110,7 @@ CudaDeviceFunction void calcWallPhase_correction() {
+ 	PhaseF = PhaseF(0,0,0);
+ 
+ 	if (IsSpecialBoundaryPoint == <?%s NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?> ) {
+-		// take the phase field calculated already from the node in front.
+-		// Might as well calculate using the neighbors, e.g. averaging
+-		PhaseF = PhaseF_dyn(nw_x, nw_y, nw_z);
++		PhaseF = wallDiagUnifiedProfilePhaseValue();
+ 	}
+ }
+ 
+@@ -706,15 +1139,9 @@ CudaDeviceFunction void calcWallPhase(){
+ 			// If I am not surrounded, but contact angle is pi/2 (90d)
+ 			PhaseF = pf_f;
+ 		} else if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
+-			// Pass for now. Dont calculate anything, just set it to some huge number, purely to make sure
+-			// that the value is corrected in calcWall_correction, and otherwise the error would be visible
+-			// and hopefulyl break the simulation
+-			PhaseF = <?%f SPECIAL_POINT_HUGE_MAGIC_NUMBER ?>;
++			PhaseF = wallDiagUnifiedProfilePhaseValue();
+ 		} else if  (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
+-			// Eventhough I am geometric boundary condition, still apply surface energy
+-			// here because otherwise we cant really apply anything else
+-			a = -h * (4.0/IntWidth) * cos( radAngle );
+-			PhaseF = (1 + a - sqrt( (1+a)*(1+a) - 4*a*pf_f))/(a+1e-12) - pf_f;
++			PhaseF = wallDiagUnifiedProfilePhaseValue();
+ 		} else {
+ 			// normal calculation with picking correct form depending on the boundary condition
+ 
+@@ -841,7 +1268,7 @@ CudaDeviceFunction void calcWallPhase(){
+ 									 grad_tangent_v.z * grad_tangent_v.z);
+ 
+ 			// apply geometric boundary condition
+-			PhaseF =  tan(PI/2.0 - radAngle) * grad_tangent * 2.0*h + pf_f;
++			PhaseF = wallDiagProfilePhaseValue(pf_f, h);
+ #endif // end boundary condition pick
+ 		}
+ 	}
+diff --git a/models/multiphase/d3q27_pf_velocity/Dynamics.R b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 2023981..6b52378 100644
+--- a/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -132,11 +132,11 @@ if (Options$thermo){
+ 
+ 		AddStage('calcPhaseGrad', "calcPhaseGrad", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
+ 		AddStage('calcPhaseGrad_init', "calcPhaseGrad_init", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
+-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "solid_boundary"))
++		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
+ 	} else {
+ 		AddStage("WallInit" , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
+ 		AddStage("calcWall" , "calcWallPhase", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
+-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "solid_boundary"))
++		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
+ 	}
+ 	if (Options$thermo){
+ 		AddStage("CopyDistributions", "TempCopy",  save=Fields$group %in% c("g","h","Vel","nw", "PF","Thermal"))
+@@ -179,6 +179,31 @@ if (Options$thermo){
+     AddQuantity(name="IsItBoundary", unit="1")
+ 	if (Options$geometric){
+ 		AddQuantity(name="GradPhi", unit=1, vector=T)
++		if (!Options$staircaseimp){
++			AddQuantity(name="WallPfF", unit=1)
++			AddQuantity(name="WallGradTangent", unit=1)
++			AddQuantity(name="WallTanCoeff", unit=1)
++			AddQuantity(name="WallPhasePred", unit=1)
++			AddQuantity(name="WallPhaseProfilePred", unit=1)
++			AddQuantity(name="WallProfileDelta", unit=1)
++			AddQuantity(name="WallPhaseSignedProfilePred", unit=1)
++			AddQuantity(name="WallSignedProfileDelta", unit=1)
++			AddQuantity(name="WallSignedLogitShift", unit=1)
++			AddQuantity(name="WallFluidSampleCount", unit=1)
++			AddQuantity(name="WallFluidSampleH", unit=1)
++			AddQuantity(name="WallPhaseUnifiedProfilePred", unit=1)
++			AddQuantity(name="WallUnifiedProfileDelta", unit=1)
++			AddQuantity(name="WallBCPath", unit=1)
++			AddQuantity(name="WallH", unit=1)
++			AddQuantity(name="WallGeomNormal", unit=1, vector=T)
++			AddQuantity(name="WallGrad1", unit=1, vector=T)
++			AddQuantity(name="WallGrad2", unit=1, vector=T)
++			AddQuantity(name="WallGradTangentVec", unit=1, vector=T)
++			AddQuantity(name="WallNormalCoeff1", unit=1)
++			AddQuantity(name="WallNormalCoeff2", unit=1)
++			AddQuantity(name="WallActualMinusProfile", unit=1)
++			AddQuantity(name="WallActualMinusRaw", unit=1)
++		}
+ 	}
+ 	if (Options$staircaseimp) {
+ 		AddQuantity(name="ActualNormal", unit=1, vector=T)
+@@ -210,6 +235,12 @@ if (Options$thermo){
+ 		AddSetting(name="CenterY", default=0.0, comment='Diffuse sphere center_y')
+ 		AddSetting(name="CenterZ", default=0.0, comment='Diffuse sphere center_z')
+ 		AddSetting(name="BubbleType",default=1.0, comment='droplet(1.0) or bubble(-1.0)?!')
++		AddSetting(name="CapInit", default=0.0, comment='Default-off spherical-cap initializer for flat-wall diagnostics')
++		AddSetting(name="CapInitRadius", default=0.0, comment='Spherical cap parent-sphere radius')
++		AddSetting(name="CapInitTheta", default='1.570796', comment='Spherical cap contact angle in radians')
++		AddSetting(name="CapInitCenterX", default=0.0, comment='Spherical cap parent-sphere center X')
++		AddSetting(name="CapInitCenterY", default=0.0, comment='Spherical cap parent-sphere center Y')
++		AddSetting(name="CapInitCenterZ", default=0.0, comment='Spherical cap parent-sphere center Z')
+ 	# Annular Taylor bubble
+ 		AddSetting(name="DonutTime", default=0.0, comment='Radius of a Torus - initialised to travel along x-axis')
+ 		AddSetting(name="Donut_h",   default=0.0, comment='Half donut thickness, i.e. the radius of the cross-section')

@@ -1,0 +1,47 @@
+{
+  "status": "runtime_sanity",
+  "gate_passed": true,
+  "root": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030",
+  "output_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030/output",
+  "out_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030/analysis_finiteness_gate",
+  "required_arrays": [
+    "PhaseField",
+    "U",
+    "P",
+    "Rho",
+    "WallPhasePred",
+    "WallPhaseProfilePred",
+    "WallPhaseSignedProfilePred"
+  ],
+  "phase_threshold": 0.5,
+  "vti_files_checked": 6,
+  "vti_steps_checked": [
+    0,
+    10000,
+    20000,
+    30000,
+    40000,
+    50000
+  ],
+  "csv_files_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030/output/case_Log_P00_00000000.csv"
+  ],
+  "text_logs_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030/run.log",
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030/run.stderr"
+  ],
+  "first_bad": null,
+  "first_csv_bad": null,
+  "first_text_log_bad": null,
+  "first_vti_bad": null,
+  "max_fluid_nonfinite_count_by_array": {
+    "PhaseField": 0,
+    "U": 0,
+    "P": 0,
+    "Rho": 0,
+    "WallPhasePred": 0,
+    "WallPhaseProfilePred": 0,
+    "WallPhaseSignedProfilePred": 0
+  },
+  "claim_limit": "stability gate only; passing this does not validate physical prediction"
+}

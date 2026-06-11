@@ -1259,3 +1259,72 @@ liquid fraction dropped from `0.1508` to `0.0406` and z-min liquid sum from
 `4866.8` to `1320.1`. Do not use the z24 touching-bottom setup as the main
 wetting calibration geometry. Continue formula work on liftZ32 or another
 separated-wall geometry, while retaining z24 as a negative diagnostic case.
+
+For TCLB generated-source lanes, do not trust `make -C CLB/<target>` alone after
+editing `.Rt` model files. In the 2026-06-11 v5 unified-special diagnostic lane,
+the first binary hash
+`895f9bc3bdd8fbf2c6a9324bef8a152fee5a02388c4a48f74541ace9ca2f0ae7` was
+superseded because generated source had not been regenerated. The valid route
+was `make d3q27_pf_velocity_q27_geometric/source` followed by
+`make -C CLB/d3q27_pf_velocity_q27_geometric`, producing binary hash
+`f23fc0809c2cdaa1845f843fc81442bcf9614c8bb7b957bf47d95c662bf48e09`. Future
+source-candidate reports must include generated-symbol grep evidence, valid
+binary hash, and any superseded invalid hash.
+
+For the separated PRE-sphere theta030 z48/gap24/outer90/sphere11 case, the
+special/correction wall branches are not the dominant failure path. The 2026-06-11
+v5 unified-special lane made the special and correction branches use the same
+profile reconstruction and added `WallFluidSampleCount`, `WallFluidSampleH`,
+`WallPhaseUnifiedProfilePred`, and `WallUnifiedProfileDelta`. The 100-step smoke
+confirmed zonal radAngle worked and bounded the unified prediction, and the 50k
+gate completed with rc 0 and nonfinite 0. However, the 50k morphology and global
+metrics were numerically identical to v3 (`107.125719 deg` fitted angle,
+`104.719123%` H1-H2 error, `-0.618564%/-0.605953%` fluid phase/rho drift, max
+Mach `4.91852e-4`) because runtime `NumSpecialPoints=0`. Do not extend v5 as a
+fix; move the next audit to the normal curved-wall PhaseF write and near-wall
+gradient-read path.
+
+For the separated PRE-sphere theta030 z48/gap24/outer90/sphere11 case, v6
+normal-path diagnostics show that raw geometric wall overrun is no longer being
+directly written in the current profile lane. The 2026-06-11 v6 passive build
+`/home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611` produced binary
+SHA256 `bef819acdf0101bb2f109e1f5cfb225c81339e3aa7df48c3a03a59fe0119b06f` and
+added `WallH`, `WallGeomNormal`, `WallGrad1/2`, `WallGradTangentVec`,
+`WallNormalCoeff1/2`, `WallActualMinusProfile`, and `WallActualMinusRaw`. The
+100-step smoke had solver/finiteness/wall-postprocess rc 0 and nonfinite 0. On
+the normal path, `WallActualMinusProfile` was zero to roundoff, while raw
+`WallPhasePred` still reached `1.38245` at step 100 with 180 raw wall-pred cells
+above 1. Therefore the next formula audit should ask why the profile/unified
+wall write imposes the wrong low-angle curved-sphere response, not whether the
+old raw geometric overrun is still directly stored as wall `PhaseF`.
+
+The v6 normal-path 50k gate on 2026-06-11 confirms the same conclusion after
+early interface relaxation. In
+`/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611`,
+solver, finiteness, PRE metrics, wall-v6, surface-film, and morphology return
+codes were all `0`, `run.stderr` was empty, and nonfinite counts stayed `0`.
+At 50k, the macroscopic contact response was still wrong (`107.125719 deg`
+fitted angle, `104.719123%` H1-H2 error), while normal-path diagnostics showed
+`WallActualMinusProfile=0`, raw `WallPhasePred_max=1.4480228`, actual wall
+`PhaseField>1` count `0`, and fluid `PhaseField>1` count `0`. Do not extend v6
+as a fix. The next candidate must audit and redesign the profile/unified
+curved-wall reconstruction itself, with a flat-wall theta030/090/150 gate
+before another curved z48 gate.
+
+The v6 M-control run on 2026-06-11 shows that reducing mobility alone does not
+fix the separated theta030 curved-sphere response. Using the same v6 binary
+SHA256 `bef819acdf0101bb2f109e1f5cfb225c81339e3aa7df48c3a03a59fe0119b06f`,
+the z48/gap24/outer90/sphere11 case with `M=0.1`, `W=6`, and 50k steps
+completed solver/finiteness/PRE/wall-v6/surface-film/morphology return codes
+`0`, with empty `run.stderr`, nonfinite counts `0`, max Mach `4.867e-4`, and
+curated tar SHA256
+`17e500fcc592c89b747718d39b3ebee7cf8cf8218753d23262609bb6b9c452bb`. Compared
+with v6/M0.2 at 50k, M0.1 reduced fluid phase/rho drift from
+`-0.6186%/-0.6060%` to `-0.4952%/-0.4851%` and reduced lower90/bottom120 film
+fractions from `0.03161/0.00813` to `0.01339/0.00211`, but the apparent angle
+remained wrong (`110.464 deg` versus `107.126 deg`) and H1-H2 error remained
+above 100% (`107.24%` versus `104.72%`). Treat M as a time-scale/film-amount
+control, not as the root fix for this failure. Do not mix this same-binary v6
+M-control conclusion with the older z48/profile M0.1 200k lane as though they
+were one continuation, because that run used a different diagnostic output lane
+and early postprocess angle behavior.

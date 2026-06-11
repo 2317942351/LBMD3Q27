@@ -1,0 +1,89 @@
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:283:WallFluidSampleCount                [      1] |   | WallFluidSampleCount 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:285:WallPhaseUnifiedProfilePred         [      1] |   | WallPhaseUnifiedProfilePred 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:516:        debug1("Creating Catalyst VTK object for WallFluidSampleCount\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:519:        myArray->SetName("WallFluidSampleCount");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:548:        debug1("Creating Catalyst VTK object for WallPhaseUnifiedProfilePred\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:551:        myArray->SetName("WallPhaseUnifiedProfilePred");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1118:      debug2("Filling Catalyst VTK object for WallFluidSampleCount\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1122:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallFluidSampleCount"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1124:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallFluidSampleCount"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1130:      solver.lattice->GetWallFluidSampleCount(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1135://      solver.lattice->GetWallFluidSampleCount(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1160:      debug2("Filling Catalyst VTK object for WallPhaseUnifiedProfilePred\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1164:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallPhaseUnifiedProfilePred"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1166:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallPhaseUnifiedProfilePred"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1172:      solver.lattice->GetWallPhaseUnifiedProfilePred(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1177://      solver.lattice->GetWallPhaseUnifiedProfilePred(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1588:/// Calculate quantity [WallFluidSampleCount] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1590:  Kernel to calculate quantity WallFluidSampleCount (WallFluidSampleCount) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1595:CudaGlobalFunction void getWallFluidSampleCount(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1606:			w = now.getWallFluidSampleCount(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1640:/// Calculate quantity [WallPhaseUnifiedProfilePred] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1642:  Kernel to calculate quantity WallPhaseUnifiedProfilePred (WallPhaseUnifiedProfilePred) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1647:CudaGlobalFunction void getWallPhaseUnifiedProfilePred(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:1658:			w = now.getWallPhaseUnifiedProfilePred(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1888:CudaDeviceFunction real_t wallDiagUnifiedProfilePhaseValue() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1899:CudaDeviceFunction real_t getWallFluidSampleCount() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1907:CudaDeviceFunction real_t getWallPhaseUnifiedProfilePred() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1908:	return wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1915:	return getWallPhasePred() - wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1976:	return wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:1995:		return wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2264:		PhaseF = wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2293:			PhaseF = wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2295:			PhaseF = wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1888:CudaDeviceFunction real_t wallDiagUnifiedProfilePhaseValue() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1899:CudaDeviceFunction real_t getWallFluidSampleCount() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1907:CudaDeviceFunction real_t getWallPhaseUnifiedProfilePred() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1908:	return wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1915:	return getWallPhasePred() - wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1976:	return wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:1995:		return wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2264:		PhaseF = wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2293:			PhaseF = wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2295:			PhaseF = wallDiagUnifiedProfilePhaseValue();
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4795:		case  QUANTITIES_WallFluidSampleCount : return GetWallFluidSampleCount(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4797:		case  QUANTITIES_WallPhaseUnifiedProfilePred : return GetWallPhaseUnifiedProfilePred(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5292:/// Get [WallFluidSampleCount]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5294:        Retrive the values of the Quantity WallFluidSampleCount (WallFluidSampleCount)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5297:void Lattice::GetWallFluidSampleCount(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5311:		CudaKernelRun( getWallFluidSampleCount , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5346:/// Get [WallPhaseUnifiedProfilePred]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5348:        Retrive the values of the Quantity WallPhaseUnifiedProfilePred (WallPhaseUnifiedProfilePred)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5351:void Lattice::GetWallPhaseUnifiedProfilePred(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5365:		CudaKernelRun( getWallPhaseUnifiedProfilePred , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5751:void Lattice::GetSampleWallFluidSampleCount(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5757:	CudaKernelRun( getWallFluidSampleCount , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5769:void Lattice::GetSampleWallPhaseUnifiedProfilePred(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5775:	CudaKernelRun( getWallPhaseUnifiedProfilePred , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5909:	 	 if (sample->quant->in("WallFluidSampleCount"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5912:			GetSampleWallFluidSampleCount(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallFluidSampleCount"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5921:	 	 if (sample->quant->in("WallPhaseUnifiedProfilePred"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5924:			GetSampleWallPhaseUnifiedProfilePred(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallPhaseUnifiedProfilePred"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1341:                  { QUANTITIES_WallFluidSampleCount        , "WallFluidSampleCount"        , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1343:                  { QUANTITIES_WallPhaseUnifiedProfilePred , "WallPhaseUnifiedProfilePred" , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:303:#define  QUANTITIES_WallFluidSampleCount            18 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:305:#define  QUANTITIES_WallPhaseUnifiedProfilePred     20 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1469:CudaGlobalFunction void getWallFluidSampleCount(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1470:CudaGlobalFunction void getWallFluidSampleCount_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1472:CudaGlobalFunction void getWallFluidSampleCount_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1479:CudaGlobalFunction void getWallPhaseUnifiedProfilePred(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1480:CudaGlobalFunction void getWallPhaseUnifiedProfilePred_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1482:CudaGlobalFunction void getWallPhaseUnifiedProfilePred_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:745:  void GetWallFluidSampleCount(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:746:  void GetSampleWallFluidSampleCount(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:747:  inline void GetWallFluidSampleCount(lbRegion over, real_t * tab) { GetWallFluidSampleCount(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:749:  void GetWallFluidSampleCount_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:757:  void GetWallPhaseUnifiedProfilePred(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:758:  void GetSampleWallPhaseUnifiedProfilePred(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:759:  inline void GetWallPhaseUnifiedProfilePred(lbRegion over, real_t * tab) { GetWallPhaseUnifiedProfilePred(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:761:  void GetWallPhaseUnifiedProfilePred_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1255:	if (strcmp(comp, "WallFluidSampleCount") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1256:    	real_t* tmp_WallFluidSampleCount = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1258:    	lattice->GetWallFluidSampleCount(region, tmp_WallFluidSampleCount, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1259:        buf = (real_t*)tmp_WallFluidSampleCount;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1271:	if (strcmp(comp, "WallPhaseUnifiedProfilePred") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1272:    	real_t* tmp_WallPhaseUnifiedProfilePred = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1274:    	lattice->GetWallPhaseUnifiedProfilePred(region, tmp_WallPhaseUnifiedProfilePred, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1275:        buf = (real_t*)tmp_WallPhaseUnifiedProfilePred;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1297:     output("-> SpecialBoundaryPoint\n") ;  output("-> Rho\n") ;  output("-> PhaseField\n") ;  output("-> U\n") ;  output("-> P\n") ;  output("-> Pstar\n") ;  output("-> Normal\n") ;  output("-> IsItBoundary\n") ;  output("-> GradPhi\n") ;  output("-> WallPfF\n") ;  output("-> WallGradTangent\n") ;  output("-> WallTanCoeff\n") ;  output("-> WallPhasePred\n") ;  output("-> WallPhaseProfilePred\n") ;  output("-> WallProfileDelta\n") ;  output("-> WallPhaseSignedProfilePred\n") ;  output("-> WallSignedProfileDelta\n") ;  output("-> WallSignedLogitShift\n") ;  output("-> WallFluidSampleCount\n") ;  output("-> WallFluidSampleH\n") ;  output("-> WallPhaseUnifiedProfilePred\n") ;  output("-> WallUnifiedProfileDelta\n") ;  output("-> WallBCPath\n") ; 

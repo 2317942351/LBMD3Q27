@@ -1,0 +1,156 @@
+diff --git a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index 2419312..39ee803 100644
+--- a/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -570,6 +570,110 @@ CudaDeviceFunction real_t getWallBCPath() {
+ 	return 5.0;
+ }
+ 
++CudaDeviceFunction vector_t wallDiagZeroVector() {
++	vector_t out = {0.0, 0.0, 0.0};
++	return out;
++}
++
++CudaDeviceFunction bool wallDiagIsNormalPath() {
++	return getWallBCPath() == 5.0;
++}
++
++CudaDeviceFunction real_t getWallH() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
++}
++
++CudaDeviceFunction vector_t getWallGeomNormal() {
++	if (!(IamWall || IamSolid)) {
++		return wallDiagZeroVector();
++	}
++	vector_t solid_normal = {nw_x, nw_y, nw_z};
++	return solid_normal;
++}
++
++CudaDeviceFunction vector_t getWallGrad1() {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagZeroVector();
++	}
++#ifdef OPTIONS_staircaseimp
++	return wallDiagZeroVector();
++#else
++	vector_t grad_1 = {
++		gradPhiVal_x_dyn(nw_x, nw_y, nw_z),
++		gradPhiVal_y_dyn(nw_x, nw_y, nw_z),
++		gradPhiVal_z_dyn(nw_x, nw_y, nw_z)
++	};
++	return grad_1;
++#endif
++}
++
++CudaDeviceFunction vector_t getWallGrad2() {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagZeroVector();
++	}
++#ifdef OPTIONS_staircaseimp
++	return wallDiagZeroVector();
++#else
++	vector_t grad_2 = {
++		gradPhiVal_x_dyn(2*nw_x, 2*nw_y, 2*nw_z),
++		gradPhiVal_y_dyn(2*nw_x, 2*nw_y, 2*nw_z),
++		gradPhiVal_z_dyn(2*nw_x, 2*nw_y, 2*nw_z)
++	};
++	return grad_2;
++#endif
++}
++
++CudaDeviceFunction real_t wallDiagNormalCoeff(vector_t grad) {
++	vector_t solid_normal = getWallGeomNormal();
++	real_t norm = solid_normal.x*solid_normal.x + solid_normal.y*solid_normal.y + solid_normal.z*solid_normal.z;
++	if (norm < 1e-12) {
++		return 0.0;
++	}
++	return (grad.x*solid_normal.x + grad.y*solid_normal.y + grad.z*solid_normal.z)/norm;
++}
++
++CudaDeviceFunction vector_t wallDiagProjectedTangent(vector_t grad) {
++	vector_t solid_normal = getWallGeomNormal();
++	real_t coeff = wallDiagNormalCoeff(grad);
++	vector_t proj = {
++		grad.x - coeff*solid_normal.x,
++		grad.y - coeff*solid_normal.y,
++		grad.z - coeff*solid_normal.z
++	};
++	return proj;
++}
++
++CudaDeviceFunction real_t getWallNormalCoeff1() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallDiagNormalCoeff(getWallGrad1());
++}
++
++CudaDeviceFunction real_t getWallNormalCoeff2() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallDiagNormalCoeff(getWallGrad2());
++}
++
++CudaDeviceFunction vector_t getWallGradTangentVec() {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagZeroVector();
++	}
++	vector_t proj_grad_1 = wallDiagProjectedTangent(getWallGrad1());
++	vector_t proj_grad_2 = wallDiagProjectedTangent(getWallGrad2());
++	vector_t grad_tangent_v = {
++		1.5*proj_grad_1.x - 0.5*proj_grad_2.x,
++		1.5*proj_grad_1.y - 0.5*proj_grad_2.y,
++		1.5*proj_grad_1.z - 0.5*proj_grad_2.z
++	};
++	return grad_tangent_v;
++}
++
+ CudaDeviceFunction real_t getWallGradTangent() {
+ 	if (getWallBCPath() != 5.0) {
+ 		return 0.0;
+@@ -744,6 +848,20 @@ CudaDeviceFunction real_t getWallUnifiedProfileDelta() {
+ 	return getWallPhasePred() - wallDiagUnifiedProfilePhaseValue();
+ }
+ 
++CudaDeviceFunction real_t getWallActualMinusProfile() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return PhaseF(0,0,0) - wallDiagUnifiedProfilePhaseValue();
++}
++
++CudaDeviceFunction real_t getWallActualMinusRaw() {
++	if (!(IamWall || IamSolid)) {
++		return 0.0;
++	}
++	return PhaseF(0,0,0) - getWallPhasePred();
++}
++
+ CudaDeviceFunction real_t wallDiagSignedLogitShift(real_t pf_f, real_t h) {
+ 	if (!(IamWall || IamSolid)) {
+ 		return 0.0;
+diff --git a/models/multiphase/d3q27_pf_velocity/Dynamics.R b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 83b6920..6b52378 100644
+--- a/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -194,6 +194,15 @@ if (Options$thermo){
+ 			AddQuantity(name="WallPhaseUnifiedProfilePred", unit=1)
+ 			AddQuantity(name="WallUnifiedProfileDelta", unit=1)
+ 			AddQuantity(name="WallBCPath", unit=1)
++			AddQuantity(name="WallH", unit=1)
++			AddQuantity(name="WallGeomNormal", unit=1, vector=T)
++			AddQuantity(name="WallGrad1", unit=1, vector=T)
++			AddQuantity(name="WallGrad2", unit=1, vector=T)
++			AddQuantity(name="WallGradTangentVec", unit=1, vector=T)
++			AddQuantity(name="WallNormalCoeff1", unit=1)
++			AddQuantity(name="WallNormalCoeff2", unit=1)
++			AddQuantity(name="WallActualMinusProfile", unit=1)
++			AddQuantity(name="WallActualMinusRaw", unit=1)
+ 		}
+ 	}
+ 	if (Options$staircaseimp) {

@@ -115,6 +115,9 @@ Known remote runs:
 
 | Status | Remote path | Purpose | Local copy |
 |---|---|---|---|
+| runtime_sanity / exploratory_not_validation | `/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611` | Passive v6 normal-path diagnostic lane for the separated PRE sphere theta030 case. Binary `/home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main`, SHA256 `bef819acdf0101bb2f109e1f5cfb225c81339e3aa7df48c3a03a59fe0119b06f`. Case: `80x80x180`, `R_drop=24`, `R_solid=24`, `solid_center_z=48`, bottom gap `24=4W`, outer/default `radAngle=90d`, sphere `radAngle=11d`, `M=0.2`, `IntWidth=6`, 50000 steps. Solver/finiteness/PRE/wall-v6/surface-film/morphology return codes all `0`, `run.stderr` empty, nonfinite `0`, max Mach `4.91852e-4`. Final morphology remains wrong: fitted angle `107.125719 deg`, H1-H2 error `104.719123%`, fluid phase/rho drift `-0.618564%/-0.605953%`. Normal-path diagnostics show `WallActualMinusProfile=0`, raw `WallPhasePred` max `1.44802`, actual/profile wall `PhaseField>1` count `0`; this proves the remaining issue is the bounded/profile curved-wall reconstruction response, not raw overrun being directly stored. | `TCLB\artifacts\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611`; report `docs\wall_normal_path_v6diag_50k_20260611.md`; curated XML/log/CSV/JSON/PNG/tar only; curated tar SHA256 `1f95c081cb66120c1f7918f969f66e16e369e64c82c66b6c23d051e7978f27a9`; local raw `.vti/.pvti/.pri` count `0`. |
+| exploratory_not_validation | `/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_signed_profile_v3diag_50k_20260611` | Diagnostic-only v3 signed-profile passive-output lane for separated PRE sphere theta030. Binary `/home/yuan/src/TCLB_clean_wall_signed_profile_v3diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main`, SHA256 `f585775753ebeee64f64e098d5ae01638ebff447e5370b7aa7b720d6afde9690`. Actual wall write remains the stable profile reconstruction; signed-logit/profile fields are passive diagnostics. Case: `80x80x180`, `R_drop=24`, `R_solid=24`, `solid_center_z=48`, bottom gap `24=4W`, outer/default `radAngle=90d`, sphere `radAngle=11d`, `M=0.2`, `IntWidth=6`, 50000 steps. Solver and all postprocess return codes `0`, nonfinite `0`, `PhaseField max=1.0`, fluid phase/rho drift `-0.6186%/-0.6060%`, max Mach `4.9185e-4`, z-min outside-sphere phi fraction `0`. Morphology/contact response remains wrong at 50k: fitted angle `107.13 deg`, H1-H2 error `104.72%`. This is not validation or a completed wall fix. | `TCLB\artifacts\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_signed_profile_v3diag_50k_20260611`; curated XML/log/CSV/JSON/morphology PNG only; local raw `.vti/.pvti` count `0`. |
+| failed_negative_evidence | `/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_signed_profile_smoke_20260611` and `/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_signed_profile_v2_smoke_20260611` | Failed signed-profile write candidates. v1 routed normal/further-next/next-node correction through bounded logit/profile reconstruction; v2 only changed the normal geometric write. Both compiled and solver returned `0`, but 100-step postprocess found `nonfinite_total=4,375,152`, physical `PhaseField` nonfinite `1,104,400/1,152,000`, and all fluid physical `Rho/U` nonfinite. These are source-candidate failures and must not be extended. See `docs\wall_signed_profile_candidate_failure_20260611.md`. | Remote-only failure diagnostics plus local report; no validation artifact. |
 | exploratory_not_validation | `/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_200k_20260610` | PRE 2025 Table II reduced spherical-surface static wetting TCLB analogue using `/home/yuan/src/TCLB/CLB/d3q27_pf_velocity_q27_geometric/main`, domain `80x80x140`, `R_drop=24`, `R_solid=24`, theta `30..130`, `M=0.2`, `tauUpdate=3`, `IntWidth=6`, density ratio `1000`, dynamic viscosity ratio `900`, 200000 steps. All 11 angles completed with `run.returncode=0`, `postprocess_returncode=0`, no run-log NaN hits, and max nonfinite count `0`; max Mach `6.218e-4`. It is stable but not Table-II-accurate: mean TCLB H1-H2 error `12.4967%`, max `32.5064%` at theta030, versus PRE scheme mean `1.9455%`; fitted apparent angles are systematically higher than target, with max offset `30.2527 deg` at theta130. `NumSpecialPoints=392` for every case. This is not PRE reproduction or validation. | `TCLB\artifacts\pre2025_sphere_tableII_q27_geometric_200k_20260610`; curated XML/config/log/TCLB CSV/postprocess CSV+JSON/summary/comparison PNG/README only; local raw `.vti/.pvti` count `0`. |
 | exploratory_not_validation / failed_negative_evidence | `/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_anglemap_screen_20260610` | Inverse-input-angle diagnostic for the same PRE 2025 Table II reduced sphere geometry. Target theta remained `30..130`, but TCLB `radAngle` was remapped from the 200k fitted-angle response: `30:10.6`, `40:23.4`, `50:36.4`, `60:49.1`, `70:60.0`, `80:70.2`, `90:79.9`, `100:88.8`, `110:96.6`, `120:105.1`, `130:112.5`. Binary `/home/yuan/src/TCLB/CLB/d3q27_pf_velocity_q27_geometric/main`; 20000-step screen with VTK interval 10000. The theta030/radAngle10.6 case is `failed_negative_evidence`: solver rc `0` and no run-log NaN, but postprocess found `max_nonfinite_count=2935400`, fluid phase/rho drift `-100%`, and no finite fit angle. Therefore this anglemap must not be extended to 200000 steps. Other finite 20k cases are screening data only, not equilibrium calibration. | `TCLB\artifacts\pre2025_sphere_tableII_q27_geometric_anglemap_screen_20260610`; curated XML/config/log/TCLB CSV/postprocess CSV+JSON/summary/comparison PNG only; local raw `.vti/.pvti` count `0`. |
 | exploratory_not_validation | `/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_theta030_radangle_threshold_20260610` and `/media/yuan/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_tableII_q27_geometric_theta030_radangle_lower_bracket_20260610` | Theta030 low-input-angle finite-field threshold screens for the PRE 2025 reduced sphere setup. Tested `radAngle=14,16,18,20,22,24,26,28,30` and then `11,12,13,13.5` for 20000 steps. All 13 added cases completed with solver rc `0`, postprocess rc `0`, no run-log NaN, and `max_nonfinite_count=0`. Combined with the failed radAngle10.6 anglemap case, the current finite bracket is `10.6 failed; 11.0 passed` at 20000 steps. Max Mach among passed cases was `6.68e-4`; fluid phase drift ranged from `-0.5638%` to `-0.2617%`. These are finite-field screens only: direct radAngle030 changed from H1-H2 error `130.5%` at 20k to `32.5%` at 200k, so 20k contact angle/H1-H2 values must not be used as equilibrium calibration. | `TCLB\artifacts\pre2025_sphere_tableII_q27_geometric_theta030_radangle_threshold_20260610`, `TCLB\artifacts\pre2025_sphere_tableII_q27_geometric_theta030_radangle_lower_bracket_20260610`, and combined table `TCLB\artifacts\pre2025_sphere_tableII_q27_geometric_theta030_radangle_threshold_combined_20260610\theta030_radangle_20k_combined_summary.csv`; curated files only; local raw `.vti/.pvti` count `0`. |
@@ -2517,3 +2520,174 @@ pre2025_sphere_theta030_profile_liftZ32_400k_20260610 =
     .vti/.pvti/.pri and local raw count is 0
   claim_limit =
     geometry-isolation exploratory control only; not validation or calibration
+
+wall_profile_unified_special_v5diag_50k_20260611 =
+  status = runtime_sanity / exploratory_not_validation
+  purpose =
+    diagnostic-only source lane to unify special/correction wall ghost
+    reconstruction and test whether those branches control the separated
+    theta030 z48 sphere morphology
+  report =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\docs\wall_profile_unified_special_v5diag_50k_20260611.md
+  source =
+    /home/yuan/src/TCLB_clean_wall_profile_unified_special_v5diag_20260611
+  binary =
+    /home/yuan/src/TCLB_clean_wall_profile_unified_special_v5diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main
+  valid_binary_sha256 =
+    f23fc0809c2cdaa1845f843fc81442bcf9614c8bb7b957bf47d95c662bf48e09
+  invalid_first_binary_sha256 =
+    895f9bc3bdd8fbf2c6a9324bef8a152fee5a02388c4a48f74541ace9ca2f0ae7
+  build_warning =
+    first make -C CLB/d3q27_pf_velocity_q27_geometric did not regenerate the
+    generated source and is superseded/invalid; correct build route is
+    make d3q27_pf_velocity_q27_geometric/source followed by
+    make -C CLB/d3q27_pf_velocity_q27_geometric
+  provenance_remote =
+    /mnt/8A0E24070E23EAC1/runs/tclb_wall_profile_unified_special_v5diag_provenance_20260611
+  run_root =
+    /mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_unified_special_v5diag_50k_20260611
+  local_artifact =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\artifacts\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_unified_special_v5diag_50k_20260611
+  local_patch =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\patches\wall_profile_unified_special_v5diag_20260611\source_diff_after_build.patch
+  curated_tar_sha256 =
+    e1c8e994c4703643b0489cd031b918af0ee0b0b5dcfc07a795855668bed8f021
+  key_findings =
+    100-step zonal smoke confirmed default/outer radAngle=90d and SolidSphere
+    radAngle=11d, solver rc 0, nonfinite 0, raw sphere WallPhasePred max
+    1.38245, and unified profile prediction max 1.0. The 50k z48 separated
+    sphere gate completed solver/postprocess/wall-film/morphology return codes
+    0 with nonfinite 0. Final metrics are numerically identical to v3: fitted
+    angle 107.125719 deg, H1-H2 error 104.719123%, fluid phase/rho drift
+    -0.618564%/-0.605953%, max Mach 4.91852e-4, lower90 fraction 0.0319182,
+    bottom120 fraction 0.0078629, and z-min outside-sphere fraction 0.
+    Runtime NumSpecialPoints=0 in this z48 case, so special/correction wall
+    branches are not the controlling path for the macroscopic curved-wall
+    response.
+  raw_policy =
+    local artifact contains curated XML/log/CSV/JSON/PNG/tar only; local raw
+    .vti/.pvti/.pri count 0, remote raw VTI/PVTI retained on HM570
+  claim_limit =
+    runtime_sanity and exploratory_not_validation only; do not extend this v5
+    branch as a wetting fix because it did not change the controlling normal
+    curved-wall path
+
+wall_normal_path_v6diag_smoke_20260611 =
+  status = runtime_sanity / exploratory_not_validation
+  purpose =
+    passive diagnostic lane for the normal curved-wall path in the separated
+    PRE sphere theta030 z48/gap24/outer90/sphere11 case; actual wall PhaseF
+    write is unchanged from the profile/unified-profile path
+  report =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\docs\wall_normal_path_v6diag_smoke_20260611.md
+  source =
+    /home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611
+  binary =
+    /home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main
+  binary_sha256 =
+    bef819acdf0101bb2f109e1f5cfb225c81339e3aa7df48c3a03a59fe0119b06f
+  provenance_remote =
+    /mnt/8A0E24070E23EAC1/runs/tclb_wall_normal_path_v6diag_provenance_20260611
+  run_root =
+    /mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611
+  local_artifact =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\artifacts\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611
+  local_patch =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\patches\wall_normal_path_v6diag_20260611\source_diff_after_build.patch
+  curated_tar_sha256 =
+    44834aa19c631e0600bfae87cb8b7436fef37dec143d30ff3374056b4adb6872
+  key_findings =
+    100-step smoke completed solver/finiteness/wall-diagnostic return codes 0
+    with nonfinite 0 and empty stderr. Normal-path wall count is 10256. At
+    step 100, raw normal-path WallPhasePred max is 1.3824500 and raw wall
+    pred>1 count is 180, while profile/unified and actual wall PhaseField>1
+    counts are 0. WallActualMinusProfile is exactly 0 to roundoff, proving
+    actual wall PhaseF equals the profile/unified-profile write in this lane.
+    The remaining issue is not raw geometric overrun being directly written,
+    but the bounded/profile write not imposing the target low-angle curved
+    wetting response.
+  raw_policy =
+    local curated CSV/JSON/PNG/tar only; local raw .vti/.pvti/.pri count 0.
+    Remote raw VTI count is 2 and about 1.27 GiB because v6 writes extra vector
+    diagnostics.
+  claim_limit =
+    passive runtime_sanity diagnostic only; not a wetting fix, not validation,
+    and not publication evidence
+
+wall_normal_path_v6diag_50k_20260611 =
+  status = runtime_sanity / exploratory_not_validation
+  purpose =
+    passive 50k normal-path diagnostic for the separated PRE sphere
+    theta030 z48/gap24/outer90/sphere11 case; actual wall PhaseF write is
+    unchanged from the profile/unified-profile path
+  report =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\docs\wall_normal_path_v6diag_50k_20260611.md
+  source =
+    /home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611
+  binary =
+    /home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main
+  binary_sha256 =
+    bef819acdf0101bb2f109e1f5cfb225c81339e3aa7df48c3a03a59fe0119b06f
+  run_root =
+    /mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611
+  local_artifact =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\artifacts\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_50k_20260611
+  curated_tar_sha256 =
+    1f95c081cb66120c1f7918f969f66e16e369e64c82c66b6c23d051e7978f27a9
+  key_findings =
+    Solver, finiteness, PRE metrics, wall-diagnostic v6, surface-film, and
+    morphology return codes were all 0; run.stderr was empty; nonfinite stayed
+    0. Final fit angle was 107.125719 deg and H1-H2 error was 104.719123%,
+    with fluid phase/rho drift -0.618564%/-0.605953% and max Mach
+    4.91852e-4. Normal-path count was 10256. Raw normal-path WallPhasePred
+    max was 1.4480228 at 50k, while actual/profile wall PhaseField>1 counts
+    were 0 and WallActualMinusProfile was exactly 0. The failure is therefore
+    the profile/unified curved-wall reconstruction response, not direct raw
+    geometric overrun storage.
+  raw_policy =
+    Local artifact contains curated XML/log/CSV/JSON/PNG/tar only; local raw
+    .vti/.pvti/.pri count 0. Remote raw count is 4 and the remote case size is
+    about 1.3 GiB.
+  claim_limit =
+    passive runtime_sanity diagnostic only; not a wetting fix, not validation,
+    and not publication evidence
+
+wall_normal_path_v6diag_M0p1_control_50k_20260611 =
+  status = runtime_sanity / exploratory_not_validation
+  purpose =
+    same-binary mobility-control run for the separated PRE sphere theta030
+    z48/gap24/outer90/sphere11 v6 normal-path diagnostic lane; only intended
+    delta from the v6/M0.2 50k case is M=0.1 and output path
+  report =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\docs\wall_normal_path_v6diag_M0p1_control_50k_20260611.md
+  source =
+    /home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611
+  binary =
+    /home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main
+  binary_sha256 =
+    bef819acdf0101bb2f109e1f5cfb225c81339e3aa7df48c3a03a59fe0119b06f
+  run_root =
+    /mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_M0p1_50k_20260611
+  local_artifact =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\artifacts\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_M0p1_50k_20260611
+  compare_artifact =
+    C:\Users\yuanz\Desktop\LBMCORE5\TCLB\artifacts\pre2025_sphere_theta030_z48_v6_M_control_compare_20260611
+  curated_tar_sha256 =
+    17e500fcc592c89b747718d39b3ebee7cf8cf8218753d23262609bb6b9c452bb
+  key_findings =
+    Solver, finiteness, PRE metrics, wall-v6, surface-film, and morphology
+    return codes were all 0; run.stderr was empty; local raw .vti/.pvti/.pri
+    count is 0. At 50k, M0.1 gave fitted angle 110.463991 deg and H1-H2 error
+    107.240435%, versus v6/M0.2 107.125719 deg and 104.719123%. Lower M
+    reduced fluid phase/rho drift to -0.495228%/-0.485131% and lower90/bottom120
+    film fractions to 0.0133860/0.0021092, but did not correct the wrong
+    curved-sphere wetting response. Normal-path WallActualMinusProfile remained
+    0, while raw WallPhasePred max was 1.484613 and actual wall/fluid
+    PhaseField>1 counts stayed 0.
+  raw_policy =
+    Local artifact and comparison artifact contain curated XML/log/CSV/JSON/PNG/tar
+    only; remote raw VTI/PVTI retained on HM570 with count 4 and case size about
+    1.3 GiB.
+  claim_limit =
+    mobility-control runtime sanity only; not validation, not a source fix, and
+    not evidence to extend v6 as a wetting solution

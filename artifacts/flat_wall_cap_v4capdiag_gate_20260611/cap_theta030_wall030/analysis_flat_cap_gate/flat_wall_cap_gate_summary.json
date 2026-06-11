@@ -1,0 +1,869 @@
+{
+  "status": "runtime_sanity",
+  "run_root": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611",
+  "case_count": 1,
+  "summaries": [
+    {
+      "status": "runtime_sanity",
+      "case_id": "cap_theta030_wall030",
+      "case_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030",
+      "case_params": {
+        "status": "runtime_sanity",
+        "case_id": "cap_theta030_wall030",
+        "purpose": "flat wall target theta030",
+        "remote_case": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030",
+        "xml": "cases\\diagnostics\\flat_wall_cap_v4capdiag_gate_20260611\\cap_theta030_wall030\\case.xml",
+        "volume_equivalent_sphere_radius": 24.0,
+        "init_theta_deg": 30.0,
+        "wall_rad_angle_deg": 30.0,
+        "cap_sphere_radius": 102.43685957667594,
+        "cap_height": 13.723936899375312,
+        "cap_base_radius": 51.218429788337964,
+        "cap_center_x": 64.0,
+        "cap_center_y": -88.71292267730063,
+        "cap_center_z": 64.0
+      },
+      "frame_count": 6,
+      "last": {
+        "status": "runtime_sanity",
+        "case_id": "cap_theta030_wall030",
+        "step": 50000,
+        "file": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030/output/case_VTK_P00_00050000.vti",
+        "dims": [
+          128,
+          96,
+          128
+        ],
+        "case_params": {
+          "status": "runtime_sanity",
+          "case_id": "cap_theta030_wall030",
+          "purpose": "flat wall target theta030",
+          "remote_case": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_v4capdiag_gate_20260611/cap_theta030_wall030",
+          "xml": "cases\\diagnostics\\flat_wall_cap_v4capdiag_gate_20260611\\cap_theta030_wall030\\case.xml",
+          "volume_equivalent_sphere_radius": 24.0,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "cap_sphere_radius": 102.43685957667594,
+          "cap_height": 13.723936899375312,
+          "cap_base_radius": 51.218429788337964,
+          "cap_center_x": 64.0,
+          "cap_center_y": -88.71292267730063,
+          "cap_center_z": 64.0
+        },
+        "cell_count": 1572864,
+        "wall_count": 80520,
+        "fluid_count": 1492344,
+        "lower_wall_count": 16384,
+        "nonfinite_total": 0,
+        "angle_apparent_deg": 29.57207998147039,
+        "angle_error_vs_init_deg": -0.42792001852960837,
+        "angle_error_vs_wall_rad_deg": -0.42792001852960837,
+        "fit_point_count": 128,
+        "fit_circle": [
+          -88.49126279554878,
+          63.5,
+          101.7450253882364
+        ],
+        "wall_bc_path_counts": {
+          "2": 64136,
+          "5": 16384
+        },
+        "field_stats": {
+          "PhaseField": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 1.5380585680968846e-08,
+              "mean": 0.038484677003719346,
+              "p01": 1.6209067612562582e-08,
+              "p50": 1.7033993872813914e-08,
+              "p99": 0.9870551761073576,
+              "max": 0.9998712181612794,
+              "sum": 60531.16301077802
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 1.5380585680968846e-08,
+              "mean": 0.03519433792964095,
+              "p01": 1.6212134761729344e-08,
+              "p50": 1.7036367612940853e-08,
+              "p99": 0.9781388302579346,
+              "max": 0.9997667183460961,
+              "sum": 52522.059043272086
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 1.618947100445587e-08,
+              "mean": 0.0994672623883001,
+              "p01": 1.619456561231016e-08,
+              "p50": 1.697120627928396e-08,
+              "p99": 0.999664144961615,
+              "max": 0.9998712181612794,
+              "sum": 8009.103967505925
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 5.371530253642175e-06,
+              "mean": 0.4885049320207425,
+              "p01": 1.5164095898627388e-05,
+              "p50": 0.4397691618464914,
+              "p99": 0.9998422979994278,
+              "max": 0.9998712181612794,
+              "sum": 8003.6648062278455
+            }
+          },
+          "Rho": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.03430803997308655,
+              "p01": 0.0,
+              "p50": 0.0010000169461480304,
+              "p99": 0.9753081317690834,
+              "max": 0.99976695162775,
+              "sum": 53961.880984228796
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0010000153652050953,
+              "mean": 0.03615914359171129,
+              "p01": 0.001000016195922627,
+              "p50": 0.0010000170193312453,
+              "p99": 0.9781606914276766,
+              "max": 0.99976695162775,
+              "sum": 53961.880984228796
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            }
+          },
+          "WallPfF": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.004715989091627517,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0006664209752542814,
+              "max": 0.9997667183460961,
+              "sum": 7417.609466613622
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 1.618947100445587e-08,
+              "mean": 0.0921213296896873,
+              "p01": 1.619456561231016e-08,
+              "p50": 1.697120627928396e-08,
+              "p99": 0.9993917274545183,
+              "max": 0.9997667183460961,
+              "sum": 7417.609466613621
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 2.964993242560149e-06,
+              "mean": 0.4524029727377651,
+              "p01": 7.767165781134424e-06,
+              "p50": 0.3048455698417144,
+              "p99": 0.9997143382832887,
+              "max": 0.9997667183460961,
+              "sum": 7412.170305335543
+            }
+          },
+          "WallGradTangent": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.00019530389982010812,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 1.0202713356959584e-05,
+              "max": 0.08003258309848883,
+              "sum": 307.18647308665453
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0038150331977974974,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.07641055242219537,
+              "max": 0.08003258309848883,
+              "sum": 307.1864730866545
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 1.0467303869156452e-07,
+              "mean": 0.018749174382730376,
+              "p01": 2.560419009623145e-06,
+              "p50": 0.0042632282807863915,
+              "p99": 0.07976101794198578,
+              "max": 0.08003258309848883,
+              "sum": 307.1864730866545
+            }
+          },
+          "WallTanCoeff": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": -1.794896453688466e-09,
+              "mean": 0.018042195764198743,
+              "p01": -1.794896453688466e-09,
+              "p50": 0.0,
+              "p99": 1.732050800389291,
+              "max": 1.732050800389291,
+              "sum": 28377.92019846069
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": -1.794896453688466e-09,
+              "mean": 0.3524331867667743,
+              "p01": -1.794896453688466e-09,
+              "p50": -1.794896453688466e-09,
+              "p99": 1.732050800389291,
+              "max": 1.732050800389291,
+              "sum": 28377.92019846067
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 1.732050800389291,
+              "mean": 1.7320508003892916,
+              "p01": 1.732050800389291,
+              "p50": 1.732050800389291,
+              "p99": 1.732050800389291,
+              "max": 1.732050800389291,
+              "sum": 28377.920313578154
+            }
+          },
+          "WallPhasePred": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.005054878064100147,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0009074863732824499,
+              "max": 0.999767833612214,
+              "sum": 7950.635731412813
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 1.618947100445587e-08,
+              "mean": 0.09874112930219589,
+              "p01": 1.619456561231016e-08,
+              "p50": 1.697120627928396e-08,
+              "p99": 0.9994577385232103,
+              "max": 0.999767833612214,
+              "sum": 7950.635731412813
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 3.1462922630050537e-06,
+              "mean": 0.4849363140951376,
+              "p01": 1.2937571078615161e-05,
+              "p50": 0.4322787413171575,
+              "p99": 0.9997285153073784,
+              "max": 0.999767833612214,
+              "sum": 7945.196570134734
+            }
+          },
+          "WallPhaseProfilePred": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.005092051167491867,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.000944781777004332,
+              "max": 0.9998712181612794,
+              "sum": 8009.103967505927
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 1.618947100445587e-08,
+              "mean": 0.0994672623883001,
+              "p01": 1.619456561231016e-08,
+              "p50": 1.697120627928396e-08,
+              "p99": 0.999664144961615,
+              "max": 0.9998712181612794,
+              "sum": 8009.103967505925
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 5.371530253642175e-06,
+              "mean": 0.4885049320207425,
+              "p01": 1.5164095898627388e-05,
+              "p50": 0.4397691618464914,
+              "p99": 0.9998422979994278,
+              "max": 0.9998712181612794,
+              "sum": 8003.6648062278455
+            }
+          },
+          "WallProfileDelta": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": -0.015635357343307208,
+              "mean": -3.717310339171804e-05,
+              "p01": -6.688902053690952e-06,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": -58.468236093111194
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": -0.015635357343307208,
+              "mean": -0.0007261330861042129,
+              "p01": -0.008878564289900552,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": -58.468236093111216
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": -0.015635357343307208,
+              "mean": -0.003568617925604933,
+              "p01": -0.009270832279816196,
+              "p50": -0.0026259870671644335,
+              "p99": -1.2782676019422846e-06,
+              "max": -1.3501651025528847e-07,
+              "sum": -58.46823609311122
+            }
+          },
+          "WallPhaseSignedProfilePred": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.005079865354182053,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.001001217273894788,
+              "max": 0.9997678309511596,
+              "sum": 7989.9373404402
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 1.618947100445587e-08,
+              "mean": 0.09922922678142321,
+              "p01": 1.619456561231016e-08,
+              "p50": 1.697120627928396e-08,
+              "p99": 0.9994542847064617,
+              "max": 0.9997678309511596,
+              "sum": 7989.937340440197
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 3.151949872077756e-06,
+              "mean": 0.48733509394300034,
+              "p01": 1.577988215739211e-05,
+              "p50": 0.44448330020765725,
+              "p99": 0.9997281692892438,
+              "max": 0.9997678309511596,
+              "sum": 7984.498179162118
+            }
+          },
+          "WallSignedProfileDelta": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": -0.021597417339480993,
+              "mean": -2.4987290081904413e-05,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.010320241038834777,
+              "sum": -39.3016090273845
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": -0.021597417339480993,
+              "mean": -0.0004880974792273288,
+              "p01": -0.018908805261686368,
+              "p50": 0.0,
+              "p99": 0.00901168476892411,
+              "max": 0.010320241038834777,
+              "sum": -39.301609027384515
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": -0.021597417339480993,
+              "mean": -0.0023987798478628244,
+              "p01": -0.020102248101703888,
+              "p50": -1.6617703852681075e-05,
+              "p99": 0.01019550015409354,
+              "max": 0.010320241038834777,
+              "sum": -39.301609027384515
+            }
+          },
+          "WallSignedLogitShift": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.005123314221069667,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.09321484748576933,
+              "max": 1.7524716977691126,
+              "sum": 8058.276499008522
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.10007794956543126,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.7415260231638511,
+              "max": 1.7524716977691126,
+              "sum": 8058.276499008524
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 0.004781886320480975,
+              "mean": 0.4918381652226883,
+              "p01": 0.044966365229062215,
+              "p50": 0.5233161760581895,
+              "p99": 1.3048734521019771,
+              "max": 1.7524716977691126,
+              "sum": 8058.276499008525
+            }
+          },
+          "WallBCPath": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.133636474609375,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 5.0,
+              "max": 5.0,
+              "sum": 210192.0
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 2.0,
+              "mean": 2.6104321907600596,
+              "p01": 2.0,
+              "p50": 2.0,
+              "p99": 5.0,
+              "max": 5.0,
+              "sum": 210192.0
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 5.0,
+              "mean": 5.0,
+              "p01": 5.0,
+              "p50": 5.0,
+              "p99": 5.0,
+              "max": 5.0,
+              "sum": 81920.0
+            }
+          },
+          "SpecialBoundaryPoint": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            }
+          },
+          "UMag": {
+            "all": {
+              "count": 1572864,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 1.7589510774870472e-07,
+              "p01": 0.0,
+              "p50": 5.485720676199536e-08,
+              "p99": 1.102153999201495e-06,
+              "max": 1.4210826510041103e-06,
+              "sum": 0.2766590827540587
+            },
+            "fluid": {
+              "count": 1492344,
+              "nonfinite": 0,
+              "min": 2.1131491886773614e-13,
+              "mean": 1.8538559658768933e-07,
+              "p01": 2.043240544938926e-10,
+              "p50": 6.571050355671296e-08,
+              "p99": 1.1083370520481822e-06,
+              "max": 1.4210826510041103e-06,
+              "sum": 0.27665908275405865
+            },
+            "wall": {
+              "count": 80520,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            },
+            "lower_wall": {
+              "count": 16384,
+              "nonfinite": 0,
+              "min": 0.0,
+              "mean": 0.0,
+              "p01": 0.0,
+              "p50": 0.0,
+              "p99": 0.0,
+              "max": 0.0,
+              "sum": 0.0
+            }
+          }
+        },
+        "max_mach": 2.4613873532937904e-06
+      },
+      "rows": [
+        {
+          "case_id": "cap_theta030_wall030",
+          "step": 0,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "angle_apparent_deg": 29.436042229566972,
+          "angle_error_vs_init_deg": -0.5639577704330279,
+          "angle_error_vs_wall_rad_deg": -0.5639577704330279,
+          "fit_point_count": 128,
+          "phase_fluid_sum": 52593.44512836894,
+          "phase_fluid_rel_change": 0.0,
+          "rho_fluid_sum": 54033.19568324057,
+          "rho_fluid_rel_change": 0.0,
+          "phase_fluid_min": 0.0,
+          "phase_fluid_max": 0.9997106094060031,
+          "wall_phase_pred_min": 0.0,
+          "wall_phase_pred_max": 0.9997120216303849,
+          "wall_phase_profile_max": 0.9998402391501913,
+          "wall_phase_signed_max": 0.999712018191151,
+          "wall_signed_logit_shift_max": 1.6337848099447816,
+          "max_mach": 0.0,
+          "nonfinite_total": 0,
+          "path_counts": "{\"2\": 64136, \"5\": 16384}"
+        },
+        {
+          "case_id": "cap_theta030_wall030",
+          "step": 10000,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "angle_apparent_deg": 29.526538253214188,
+          "angle_error_vs_init_deg": -0.4734617467858122,
+          "angle_error_vs_wall_rad_deg": -0.4734617467858122,
+          "fit_point_count": 128,
+          "phase_fluid_sum": 52521.55070794522,
+          "phase_fluid_rel_change": -0.001366984426447844,
+          "rho_fluid_sum": 53961.37315723728,
+          "rho_fluid_rel_change": -0.0013292296540137719,
+          "phase_fluid_min": 4.322595208377558e-09,
+          "phase_fluid_max": 0.9997659853060332,
+          "wall_phase_pred_min": 4.322595208377558e-09,
+          "wall_phase_pred_max": 0.9997671150881183,
+          "wall_phase_profile_max": 0.9998708134442842,
+          "wall_phase_signed_max": 0.9997671123659407,
+          "wall_signed_logit_shift_max": 1.7496516292034048,
+          "max_mach": 2.4741901536122737e-06,
+          "nonfinite_total": 0,
+          "path_counts": "{\"2\": 64136, \"5\": 16384}"
+        },
+        {
+          "case_id": "cap_theta030_wall030",
+          "step": 20000,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "angle_apparent_deg": 29.53875283052352,
+          "angle_error_vs_init_deg": -0.46124716947647926,
+          "angle_error_vs_wall_rad_deg": -0.46124716947647926,
+          "fit_point_count": 128,
+          "phase_fluid_sum": 52521.10892328368,
+          "phase_fluid_rel_change": -0.0013753844211707874,
+          "rho_fluid_sum": 53960.93181436041,
+          "rho_fluid_rel_change": -0.0013373976491006228,
+          "phase_fluid_min": 9.943025458635085e-09,
+          "phase_fluid_max": 0.9997661430883935,
+          "wall_phase_pred_min": 9.943025458635085e-09,
+          "wall_phase_pred_max": 0.9997672751318327,
+          "wall_phase_profile_max": 0.9998709005571501,
+          "wall_phase_signed_max": 0.9997672723969143,
+          "wall_signed_logit_shift_max": 1.7520920619379903,
+          "max_mach": 2.4632207848799135e-06,
+          "nonfinite_total": 0,
+          "path_counts": "{\"2\": 64136, \"5\": 16384}"
+        },
+        {
+          "case_id": "cap_theta030_wall030",
+          "step": 30000,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "angle_apparent_deg": 29.548268096364456,
+          "angle_error_vs_init_deg": -0.45173190363554383,
+          "angle_error_vs_wall_rad_deg": -0.45173190363554383,
+          "fit_point_count": 128,
+          "phase_fluid_sum": 52521.29449202414,
+          "phase_fluid_rel_change": -0.0013718560586532243,
+          "rho_fluid_sum": 53961.11719753215,
+          "rho_fluid_rel_change": -0.0013339667365033958,
+          "phase_fluid_min": 1.3211671117536008e-08,
+          "phase_fluid_max": 0.9997661460136307,
+          "wall_phase_pred_min": 1.3211671117536008e-08,
+          "wall_phase_pred_max": 0.9997672753970973,
+          "wall_phase_profile_max": 0.9998709021721964,
+          "wall_phase_signed_max": 0.999767272674972,
+          "wall_signed_logit_shift_max": 1.7524008695790365,
+          "max_mach": 2.4398976515036574e-06,
+          "nonfinite_total": 0,
+          "path_counts": "{\"2\": 64136, \"5\": 16384}"
+        },
+        {
+          "case_id": "cap_theta030_wall030",
+          "step": 40000,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "angle_apparent_deg": 29.559257531155335,
+          "angle_error_vs_init_deg": -0.4407424688446646,
+          "angle_error_vs_wall_rad_deg": -0.4407424688446646,
+          "fit_point_count": 128,
+          "phase_fluid_sum": 52521.650509338455,
+          "phase_fluid_rel_change": -0.0013650868250834633,
+          "rho_fluid_sum": 53961.47285882912,
+          "rho_fluid_rel_change": -0.0013273844625425028,
+          "phase_fluid_min": 1.50977724609571e-08,
+          "phase_fluid_max": 0.9997662986694857,
+          "wall_phase_pred_min": 1.50977724609571e-08,
+          "wall_phase_pred_max": 0.9997674210429498,
+          "wall_phase_profile_max": 0.9998709864546658,
+          "wall_phase_signed_max": 0.9997674183527311,
+          "wall_signed_logit_shift_max": 1.7524564134178064,
+          "max_mach": 2.447429104115735e-06,
+          "nonfinite_total": 0,
+          "path_counts": "{\"2\": 64136, \"5\": 16384}"
+        },
+        {
+          "case_id": "cap_theta030_wall030",
+          "step": 50000,
+          "init_theta_deg": 30.0,
+          "wall_rad_angle_deg": 30.0,
+          "angle_apparent_deg": 29.57207998147039,
+          "angle_error_vs_init_deg": -0.42792001852960837,
+          "angle_error_vs_wall_rad_deg": -0.42792001852960837,
+          "fit_point_count": 128,
+          "phase_fluid_sum": 52522.059043272086,
+          "phase_fluid_rel_change": -0.0013573190522624676,
+          "rho_fluid_sum": 53961.880984228796,
+          "rho_fluid_rel_change": -0.001319831228007386,
+          "phase_fluid_min": 1.5380585680968846e-08,
+          "phase_fluid_max": 0.9997667183460961,
+          "wall_phase_pred_min": 1.618947100445587e-08,
+          "wall_phase_pred_max": 0.999767833612214,
+          "wall_phase_profile_max": 0.9998712181612794,
+          "wall_phase_signed_max": 0.9997678309511596,
+          "wall_signed_logit_shift_max": 1.7524716977691126,
+          "max_mach": 2.4613873532937904e-06,
+          "nonfinite_total": 0,
+          "path_counts": "{\"2\": 64136, \"5\": 16384}"
+        }
+      ],
+      "claim_limit": "flat-wall runtime sanity/contact-response diagnostic only"
+    }
+  ],
+  "claim_limit": "flat-wall runtime sanity/contact-response diagnostic only"
+}

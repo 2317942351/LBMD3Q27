@@ -18,13 +18,15 @@ Read in this order:
 
 1. `AGENTS.md`
 2. `UPLOAD_RULES.md`
-3. `docs/tclb_d3q27_pf_velocity_code_compile_audit_20260610.md`
-4. `docs/pre2025_sphere_phi_overshoot_solution_plan_audit_20260610.md`
-5. `docs/wall_geom_diag_clean_lane_stage2_20260610.md`
-6. `docs/wall_geom_bounded_diag_stage3_20260610.md`
-7. `docs/wall_geom_profile_diag_stage4_20260610.md`
-8. `docs/wall_geom_profile_600k_extension_20260610.md`
-9. `docs/pre2025_sphere_theta030_profile_liftZ32_geometry_audit_20260610.md`
+3. `docs/expert_root_cause_review_packet_20260611.md`
+4. `docs/tclb_d3q27_pf_velocity_code_compile_audit_20260610.md`
+5. `docs/pre2025_sphere_phi_overshoot_solution_plan_audit_20260610.md`
+6. `docs/wall_geom_diag_clean_lane_stage2_20260610.md`
+7. `docs/wall_geom_bounded_diag_stage3_20260610.md`
+8. `docs/wall_geom_profile_diag_stage4_20260610.md`
+9. `docs/wall_geom_profile_600k_extension_20260610.md`
+10. `docs/pre2025_sphere_theta030_profile_liftZ32_geometry_audit_20260610.md`
+11. `docs/wall_normal_path_v6diag_M0p1_control_50k_20260611.md`
 
 ## Source Layout
 
@@ -34,6 +36,8 @@ Read in this order:
 - `third_party/tclb_snapshots/stage2_clean_diag/`: clean wall diagnostic lane.
 - `third_party/tclb_snapshots/stage3_bounded_diag/`: bounded diagnostic lane.
 - `third_party/tclb_snapshots/stage4_profile_diag/`: profile diagnostic lane.
+- `third_party/tclb_snapshots/stage5_unified_special_diag/`: v5 unified special/correction diagnostic lane.
+- `third_party/tclb_snapshots/stage6_normal_path_diag/`: v6 normal-path diagnostic lane.
 - `third_party/tclb_snapshots/patches/`: diffs against the upstream snapshot.
 - `scripts/`: local generators, postprocessors, audits, and HM570 runners.
 - `cases/`: XML case definitions and manifests.
@@ -64,3 +68,4 @@ Important legal boundary: TCLB source files are GPLv3-licensed upstream
 materials. GPLv3 rights are preserved for those files. Repository governance can
 prevent direct modification of this canonical GitHub repository, but it cannot
 remove GPLv3 rights from upstream TCLB code.
+

@@ -1,0 +1,144 @@
+{
+  "status": "exploratory_not_validation",
+  "created_utc": "2026-06-11T06:44:11.957289+00:00",
+  "purpose": "PRE 2025 Table II reduced sphere static wetting TCLB analogue setup",
+  "binary": "/home/yuan/src/TCLB_clean_wall_normal_path_v6diag_20260611/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "remote_root": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611",
+  "case_dir": "C:\\Users\\yuanz\\Desktop\\LBMCORE5\\TCLB\\cases\\diagnostics\\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611",
+  "reference_targets": "references\\pre2025_wetting_boundary\\table_II_sphere_targets.csv",
+  "reference_target_angles_deg": [
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+    120,
+    130
+  ],
+  "input_angle_map_deg": {
+    "30": 11.0
+  },
+  "boundary_wetting": {
+    "zonal_radAngle_enabled": true,
+    "radAngle_xml_mode": "global_default_plus_wall_zone_overrides",
+    "outer_domain_radAngle_deg": 90.0,
+    "sphere_radAngle_source": "constant --sphere-rad-angle-deg",
+    "generated_case_entries_contain_solid_sphere_radAngle_deg": true,
+    "parser_smoke_expectation": "OuterDomain tan(pi/2-radAngle) should be near 0 for 90d; SolidSphere should use the per-case low angle."
+  },
+  "domain_lu": [
+    80,
+    80,
+    180
+  ],
+  "cells": 1152000,
+  "solid_sphere": {
+    "radius_lu": 24.0,
+    "center_lu": [
+      40.0,
+      40.0,
+      48.0
+    ],
+    "xml_sphere": {
+      "dx": 16.0,
+      "dy": 16.0,
+      "dz": 24.0,
+      "nx": 48.0,
+      "ny": 48.0,
+      "nz": 48.0
+    }
+  },
+  "geometry_diagnostic": {
+    "bottom_gap_lu": 24.0,
+    "gap_over_IntWidth": 4.0,
+    "geometry_classification": "separated_geometry_outer_neutral_candidate",
+    "geometry_diagnostic_status": "exploratory_not_validation",
+    "classification_note": "z24/global low-angle wall wetting is a known-bad negative diagnostic; use separated geometry with neutral outer wall for new sphere tests."
+  },
+  "outer_domain_boundary": {
+    "node_type": "Wall",
+    "reason": "The article states that no-slip is applied at all computational domain boundaries.",
+    "boxes": [
+      "x-min",
+      "x-max",
+      "y-min",
+      "y-max",
+      "z-min",
+      "z-max"
+    ]
+  },
+  "initial_drop": {
+    "radius_lu": 24.0,
+    "center_lu": [
+      40.0,
+      40.0,
+      96.0
+    ],
+    "initial_relation_to_solid": "initial diffuse sphere tangent to the top of the solid sphere"
+  },
+  "fluid_parameters": {
+    "Density_h": 1.0,
+    "Density_l": 0.001,
+    "density_ratio_h_over_l": 1000.0,
+    "Viscosity_h": 0.09,
+    "Viscosity_l": 0.1,
+    "tauUpdate": 3,
+    "dynamic_viscosity_ratio_h_over_l": 899.9999999999999,
+    "sigma": 5e-05,
+    "M": 0.2,
+    "IntWidth": 6.0
+  },
+  "solve": {
+    "steps": 100,
+    "vtk_interval": 100,
+    "log_interval": 10,
+    "failcheck_interval": 10,
+    "vtk_extra": "SpecialBoundaryPoint,WallPfF,WallGradTangent,WallTanCoeff,WallPhasePred,WallPhaseProfilePred,WallProfileDelta,WallPhaseSignedProfilePred,WallSignedProfileDelta,WallSignedLogitShift,WallFluidSampleCount,WallFluidSampleH,WallPhaseUnifiedProfilePred,WallUnifiedProfileDelta,WallBCPath,WallH,WallGeomNormal,WallGrad1,WallGrad2,WallGradTangentVec,WallNormalCoeff1,WallNormalCoeff2,WallActualMinusProfile,WallActualMinusRaw",
+    "omit_droplet_velocity_params": true
+  },
+  "metrics_to_report": [
+    "H1_minus_H2_relative_error",
+    "Hmax_relative_error",
+    "global_spherical_cap_contact_angle",
+    "spurious_velocity",
+    "mass_drift",
+    "rho_drift",
+    "max_Mach",
+    "nonfinite_count",
+    "NumSpecialPoints",
+    "NumWallBoundaryPoints",
+    "NumBoundaryPoints"
+  ],
+  "generated": [
+    {
+      "theta_deg": 30,
+      "tclb_radAngle_deg": 11.0,
+      "boundary_wetting": {
+        "zonal_radAngle_enabled": true,
+        "radAngle_xml_mode": "global_default_plus_wall_zone_overrides",
+        "global_default_radAngle_deg": 90.0,
+        "outer_domain_radAngle_deg": 90.0,
+        "solid_sphere_radAngle_deg": 11.0
+      },
+      "geometry_diagnostic": {
+        "bottom_gap_lu": 24.0,
+        "gap_over_IntWidth": 4.0,
+        "geometry_classification": "separated_geometry_outer_neutral_candidate",
+        "geometry_diagnostic_status": "exploratory_not_validation",
+        "classification_note": "z24/global low-angle wall wetting is a known-bad negative diagnostic; use separated geometry with neutral outer wall for new sphere tests."
+      },
+      "case_tag": "theta030",
+      "case_xml": "C:\\Users\\yuanz\\Desktop\\LBMCORE5\\TCLB\\cases\\diagnostics\\pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611\\theta030\\pre2025_sphere_tableII_theta030.xml",
+      "remote_case_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611/theta030",
+      "remote_output_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_theta030_z48_gap24_outer90_sphere11_normal_path_v6diag_smoke_20260611/theta030/output",
+      "expected_Hmax_lu": 43.61373202227981,
+      "expected_H1_minus_H2_lu": 19.613732022279812,
+      "status": "exploratory_not_validation"
+    }
+  ],
+  "claim_limit": "Prepared cases only. Do not call successful execution validation without read-only audit and formula/metric review."
+}
