@@ -1,0 +1,283 @@
+diff --git a/third_party/tclb_snapshots/stage7_signed_wall_ghost_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index d7de035..f361849 100644
+--- a/third_party/tclb_snapshots/stage7_signed_wall_ghost_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -1043,10 +1043,10 @@ CudaDeviceFunction real_t wallStage7SignedDeltaPhi(real_t h) {
+ 	return -2.0 * h * wallStage7TargetNormalGrad();
+ }
+ 
+-CudaDeviceFunction real_t wallStage7SignedDeltaQ(real_t pf_f, real_t h) {
++CudaDeviceFunction real_t wallStage7NormalizedPhase(real_t pf_f) {
+ 	real_t phase_range = PhaseField_h - PhaseField_l;
+ 	if (fabs(phase_range) < 1e-12) {
+-		return 0.0;
++		return 0.5;
+ 	}
+ 	real_t c = (pf_f - PhaseField_l) / phase_range;
+ 	real_t eps = 1e-12;
+@@ -1056,9 +1056,119 @@ CudaDeviceFunction real_t wallStage7SignedDeltaQ(real_t pf_f, real_t h) {
+ 	if (c > 1.0 - eps) {
+ 		c = 1.0 - eps;
+ 	}
++	return c;
++}
++
++CudaDeviceFunction real_t wallStage7SignedDeltaQ(real_t pf_f, real_t h) {
++	real_t phase_range = PhaseField_h - PhaseField_l;
++	if (fabs(phase_range) < 1e-12) {
++		return 0.0;
++	}
++	real_t c = wallStage7NormalizedPhase(pf_f);
+ 	return wallStage7SignedDeltaPhi(h) / (phase_range * c * (1.0 - c));
+ }
+ 
++CudaDeviceFunction real_t wallStage7GradMag() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallStage7VectorMag(wallStage7InterfaceGradient());
++}
++
++CudaDeviceFunction real_t wallStage7Denom(real_t pf_f) {
++	real_t c = wallStage7NormalizedPhase(pf_f);
++	real_t denom = c * (1.0 - c);
++	if (denom < Stage7DenomFloor) {
++		return Stage7DenomFloor;
++	}
++	return denom;
++}
++
++CudaDeviceFunction real_t wallStage7SignedDeltaQRaw(real_t pf_f, real_t h) {
++	real_t phase_range = PhaseField_h - PhaseField_l;
++	if (fabs(phase_range) < 1e-12) {
++		return 0.0;
++	}
++	return wallStage7SignedDeltaPhi(h) / (phase_range * wallStage7Denom(pf_f));
++}
++
++CudaDeviceFunction real_t wallStage7SignedDeltaQLimited(real_t pf_f, real_t h) {
++	real_t scaled = Stage7DeltaQScale * wallStage7SignedDeltaQRaw(pf_f, h);
++	real_t cap = Stage7DeltaQAbsCap;
++	if (cap < 0.0) {
++		cap = -cap;
++	}
++	if (cap > 0.0 && scaled > cap) {
++		return cap;
++	}
++	if (cap > 0.0 && scaled < -cap) {
++		return -cap;
++	}
++	return scaled;
++}
++
++CudaDeviceFunction real_t wallStage7LimiterReason(real_t pf_f, real_t h) {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	real_t reason = 0.0;
++	real_t c = wallStage7NormalizedPhase(pf_f);
++	real_t denom = c * (1.0 - c);
++	if (denom < Stage7DenomFloor) {
++		reason += 1.0;
++	}
++	real_t scaled = Stage7DeltaQScale * wallStage7SignedDeltaQRaw(pf_f, h);
++	real_t cap = Stage7DeltaQAbsCap;
++	if (cap < 0.0) {
++		cap = -cap;
++	}
++	if (cap > 0.0 && (scaled > cap || scaled < -cap)) {
++		reason += 2.0;
++	}
++	real_t q = log(c / (1.0 - c)) + wallStage7SignedDeltaQLimited(pf_f, h);
++	if (q > 60.0 || q < -60.0) {
++		reason += 4.0;
++	}
++	return reason;
++}
++
++CudaDeviceFunction real_t wallStage7ActiveWeight(real_t pf_f) {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	real_t c = wallStage7NormalizedPhase(pf_f);
++	if (c < Stage7ActiveCMin || c > 1.0 - Stage7ActiveCMin) {
++		return 0.0;
++	}
++	if (wallStage7GradMag() < Stage7ActiveGradMin) {
++		return 0.0;
++	}
++	if (getWallTangentGradMag() < Stage7ActiveTangentMin) {
++		return 0.0;
++	}
++	return 1.0;
++}
++
++CudaDeviceFunction real_t wallStage7ActualCos() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	vector_t grad = wallStage7InterfaceGradient();
++	vector_t wall_normal = wallStage7UnitWallNormal();
++	real_t grad_mag = wallStage7VectorMag(grad);
++	if (grad_mag < minGradient) {
++		return 0.0;
++	}
++	return (grad.x*wall_normal.x + grad.y*wall_normal.y + grad.z*wall_normal.z) / grad_mag;
++}
++
++CudaDeviceFunction real_t wallStage7TargetCos() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return -cos(radAngle);
++}
++
+ CudaDeviceFunction real_t getWallSignedDeltaQ() {
+ 	if (!wallDiagIsNormalPath()) {
+ 		return 0.0;
+@@ -1120,6 +1230,41 @@ CudaDeviceFunction real_t wallStage7SignedWallGhostValue(real_t pf_f, real_t h)
+ 	return PhaseField_l + phase_range * c_wall;
+ }
+ 
++CudaDeviceFunction real_t wallStage7ActiveRelaxedWallGhostValue(real_t pf_f, real_t h) {
++	real_t profile = wallDiagProfilePhaseValue(pf_f, h);
++	if (h < 0.001) {
++		return PhaseField_h;
++	}
++	if (fabs(radAngle - PI/2.0) < 1e-4) {
++		return pf_f;
++	}
++	if (wallStage7ActiveWeight(pf_f) <= 0.0) {
++		return profile;
++	}
++	real_t phase_range = PhaseField_h - PhaseField_l;
++	if (fabs(phase_range) < 1e-12) {
++		return profile;
++	}
++	real_t c = wallStage7NormalizedPhase(pf_f);
++	real_t q = log(c / (1.0 - c)) + wallStage7SignedDeltaQLimited(pf_f, h);
++	if (q > 60.0) {
++		q = 60.0;
++	}
++	if (q < -60.0) {
++		q = -60.0;
++	}
++	real_t c_wall = 1.0 / (1.0 + exp(-q));
++	real_t signed_phi = PhaseField_l + phase_range * c_wall;
++	real_t alpha = 1.0 / (Stage7RelaxationTau + 1e-12);
++	if (alpha > 1.0) {
++		alpha = 1.0;
++	}
++	if (alpha < 0.0) {
++		alpha = 0.0;
++	}
++	return profile + alpha * (signed_phi - profile);
++}
++
+ CudaDeviceFunction real_t getWallPhaseSignedPred() {
+ 	if (!wallDiagIsNormalPath()) {
+ 		return 0.0;
+@@ -1127,13 +1272,102 @@ CudaDeviceFunction real_t getWallPhaseSignedPred() {
+ 	return wallStage7SignedWallGhostValue(wallDiagRawPfF(), getWallH());
+ }
+ 
++CudaDeviceFunction real_t wallStage7NormalPathWriteCandidate(real_t pf_f, real_t h) {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagProfilePhaseValue(pf_f, h);
++	}
++	if (Stage7SignedMode < 0.5) {
++		return wallDiagProfilePhaseValue(pf_f, h);
++	}
++	if (Stage7SignedMode < 1.5) {
++		return wallStage7ActiveRelaxedWallGhostValue(pf_f, h);
++	}
++	if (Stage7SignedMode < 2.5) {
++		return wallStage7SignedWallGhostValue(pf_f, h);
++	}
++	return wallStage7ActiveRelaxedWallGhostValue(pf_f, h);
++}
++
+ CudaDeviceFunction real_t wallStage7NormalPathWriteValue(real_t pf_f, real_t h) {
+-	if (UseStage7SignedWallGhost > 0.5 && wallDiagIsNormalPath()) {
++	if (!wallDiagIsNormalPath()) {
++		return wallDiagProfilePhaseValue(pf_f, h);
++	}
++	if (UseStage7SignedWallGhost > 0.5 && Stage7SignedMode < 0.5) {
+ 		return wallStage7SignedWallGhostValue(pf_f, h);
+ 	}
++	if (Stage7SignedMode > 1.5) {
++		return wallStage7NormalPathWriteCandidate(pf_f, h);
++	}
+ 	return wallDiagProfilePhaseValue(pf_f, h);
+ }
+ 
++CudaDeviceFunction real_t getWallStage7Mode() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	if (UseStage7SignedWallGhost > 0.5 && Stage7SignedMode < 0.5) {
++		return 2.0;
++	}
++	return Stage7SignedMode;
++}
++
++CudaDeviceFunction real_t getWallStage7ActiveWeight() {
++	return wallStage7ActiveWeight(wallDiagRawPfF());
++}
++
++CudaDeviceFunction real_t getWallStage7DeltaQRaw() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallStage7SignedDeltaQRaw(wallDiagRawPfF(), getWallH());
++}
++
++CudaDeviceFunction real_t getWallStage7DeltaQLimited() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallStage7SignedDeltaQLimited(wallDiagRawPfF(), getWallH());
++}
++
++CudaDeviceFunction real_t getWallStage7Denom() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallStage7Denom(wallDiagRawPfF());
++}
++
++CudaDeviceFunction real_t getWallStage7LimiterReason() {
++	return wallStage7LimiterReason(wallDiagRawPfF(), getWallH());
++}
++
++CudaDeviceFunction real_t getWallStage7GradMag() {
++	return wallStage7GradMag();
++}
++
++CudaDeviceFunction real_t getWallStage7ActualCos() {
++	return wallStage7ActualCos();
++}
++
++CudaDeviceFunction real_t getWallStage7TargetCos() {
++	return wallStage7TargetCos();
++}
++
++CudaDeviceFunction real_t getWallStage7WriteCandidate() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	return wallStage7NormalPathWriteCandidate(wallDiagRawPfF(), getWallH());
++}
++
++CudaDeviceFunction real_t getWallStage7WriteMinusProfile() {
++	if (!wallDiagIsNormalPath()) {
++		return 0.0;
++	}
++	real_t pf_f = wallDiagRawPfF();
++	real_t h = getWallH();
++	return wallStage7NormalPathWriteCandidate(pf_f, h) - wallDiagProfilePhaseValue(pf_f, h);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R

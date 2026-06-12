@@ -1,0 +1,438 @@
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2268:	real_t cap = Stage7DeltaQAbsCap;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2292:	real_t cap = Stage7DeltaQAbsCap;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2404:CudaDeviceFunction real_t wallStage7ActiveRelaxedWallGhostValue(real_t pf_f, real_t h) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2450:	if (Stage7SignedMode < 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2453:	if (Stage7SignedMode < 1.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2454:		return wallStage7ActiveRelaxedWallGhostValue(pf_f, h);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2456:	if (Stage7SignedMode < 2.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2459:	return wallStage7ActiveRelaxedWallGhostValue(pf_f, h);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2466:	if (UseStage7SignedWallGhost > 0.5 && Stage7SignedMode < 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2469:	if (Stage7SignedMode > 1.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2475:CudaDeviceFunction real_t getWallStage7Mode() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2479:	if (UseStage7SignedWallGhost > 0.5 && Stage7SignedMode < 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2482:	return Stage7SignedMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2485:CudaDeviceFunction real_t getWallStage7ActiveWeight() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2489:CudaDeviceFunction real_t getWallStage7DeltaQRaw() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2496:CudaDeviceFunction real_t getWallStage7DeltaQLimited() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2503:CudaDeviceFunction real_t getWallStage7Denom() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2510:CudaDeviceFunction real_t getWallStage7LimiterReason() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2514:CudaDeviceFunction real_t getWallStage7GradMag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2518:CudaDeviceFunction real_t getWallStage7ActualCos() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2522:CudaDeviceFunction real_t getWallStage7TargetCos() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2526:CudaDeviceFunction real_t getWallStage7WriteCandidate() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2533:CudaDeviceFunction real_t getWallStage7WriteMinusProfile() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2268:	real_t cap = Stage7DeltaQAbsCap;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2292:	real_t cap = Stage7DeltaQAbsCap;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2404:CudaDeviceFunction real_t wallStage7ActiveRelaxedWallGhostValue(real_t pf_f, real_t h) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2450:	if (Stage7SignedMode < 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2453:	if (Stage7SignedMode < 1.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2454:		return wallStage7ActiveRelaxedWallGhostValue(pf_f, h);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2456:	if (Stage7SignedMode < 2.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2459:	return wallStage7ActiveRelaxedWallGhostValue(pf_f, h);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2466:	if (UseStage7SignedWallGhost > 0.5 && Stage7SignedMode < 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2469:	if (Stage7SignedMode > 1.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2475:CudaDeviceFunction real_t getWallStage7Mode() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2479:	if (UseStage7SignedWallGhost > 0.5 && Stage7SignedMode < 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2482:	return Stage7SignedMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2485:CudaDeviceFunction real_t getWallStage7ActiveWeight() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2489:CudaDeviceFunction real_t getWallStage7DeltaQRaw() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2496:CudaDeviceFunction real_t getWallStage7DeltaQLimited() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2503:CudaDeviceFunction real_t getWallStage7Denom() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2510:CudaDeviceFunction real_t getWallStage7LimiterReason() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2514:CudaDeviceFunction real_t getWallStage7GradMag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2518:CudaDeviceFunction real_t getWallStage7ActualCos() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2522:CudaDeviceFunction real_t getWallStage7TargetCos() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2526:CudaDeviceFunction real_t getWallStage7WriteCandidate() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2533:CudaDeviceFunction real_t getWallStage7WriteMinusProfile() {
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:79:#define  SETTINGS_Stage7SignedMode                  13 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:81:#define  SETTINGS_Stage7DeltaQAbsCap                15 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:334:#define  QUANTITIES_WallStage7Mode                  40 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:335:#define  QUANTITIES_WallStage7ActiveWeight          41 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:336:#define  QUANTITIES_WallStage7DeltaQRaw             42 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:337:#define  QUANTITIES_WallStage7DeltaQLimited         43 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:338:#define  QUANTITIES_WallStage7Denom                 44 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:339:#define  QUANTITIES_WallStage7LimiterReason         45 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:340:#define  QUANTITIES_WallStage7GradMag               46 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:341:#define  QUANTITIES_WallStage7ActualCos             47 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:342:#define  QUANTITIES_WallStage7TargetCos             48 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:343:#define  QUANTITIES_WallStage7WriteCandidate        49 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:344:#define  QUANTITIES_WallStage7WriteMinusProfile     50 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:143:    CudaExternConstantMemory(real_t Stage7SignedMode); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:145:    CudaExternConstantMemory(real_t Stage7DeltaQAbsCap); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:29:    CudaExternConstantMemory(real_t Stage7SignedMode); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:31:    CudaExternConstantMemory(real_t Stage7DeltaQAbsCap); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1588:CudaGlobalFunction void getWallStage7Mode(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1589:CudaGlobalFunction void getWallStage7Mode_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1591:CudaGlobalFunction void getWallStage7Mode_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1593:CudaGlobalFunction void getWallStage7ActiveWeight(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1594:CudaGlobalFunction void getWallStage7ActiveWeight_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1596:CudaGlobalFunction void getWallStage7ActiveWeight_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1598:CudaGlobalFunction void getWallStage7DeltaQRaw(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1599:CudaGlobalFunction void getWallStage7DeltaQRaw_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1601:CudaGlobalFunction void getWallStage7DeltaQRaw_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1603:CudaGlobalFunction void getWallStage7DeltaQLimited(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1604:CudaGlobalFunction void getWallStage7DeltaQLimited_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1606:CudaGlobalFunction void getWallStage7DeltaQLimited_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1608:CudaGlobalFunction void getWallStage7Denom(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1609:CudaGlobalFunction void getWallStage7Denom_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1611:CudaGlobalFunction void getWallStage7Denom_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1613:CudaGlobalFunction void getWallStage7LimiterReason(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1614:CudaGlobalFunction void getWallStage7LimiterReason_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1616:CudaGlobalFunction void getWallStage7LimiterReason_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1618:CudaGlobalFunction void getWallStage7GradMag(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1619:CudaGlobalFunction void getWallStage7GradMag_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1621:CudaGlobalFunction void getWallStage7GradMag_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1623:CudaGlobalFunction void getWallStage7ActualCos(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1624:CudaGlobalFunction void getWallStage7ActualCos_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1626:CudaGlobalFunction void getWallStage7ActualCos_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1628:CudaGlobalFunction void getWallStage7TargetCos(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1629:CudaGlobalFunction void getWallStage7TargetCos_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1631:CudaGlobalFunction void getWallStage7TargetCos_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1633:CudaGlobalFunction void getWallStage7WriteCandidate(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1634:CudaGlobalFunction void getWallStage7WriteCandidate_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1636:CudaGlobalFunction void getWallStage7WriteCandidate_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1638:CudaGlobalFunction void getWallStage7WriteMinusProfile(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1639:CudaGlobalFunction void getWallStage7WriteMinusProfile_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1641:CudaGlobalFunction void getWallStage7WriteMinusProfile_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:877:  void GetWallStage7Mode(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:878:  void GetSampleWallStage7Mode(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:879:  inline void GetWallStage7Mode(lbRegion over, real_t * tab) { GetWallStage7Mode(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:881:  void GetWallStage7Mode_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:883:  void GetWallStage7ActiveWeight(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:884:  void GetSampleWallStage7ActiveWeight(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:885:  inline void GetWallStage7ActiveWeight(lbRegion over, real_t * tab) { GetWallStage7ActiveWeight(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:887:  void GetWallStage7ActiveWeight_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:889:  void GetWallStage7DeltaQRaw(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:890:  void GetSampleWallStage7DeltaQRaw(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:891:  inline void GetWallStage7DeltaQRaw(lbRegion over, real_t * tab) { GetWallStage7DeltaQRaw(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:893:  void GetWallStage7DeltaQRaw_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:895:  void GetWallStage7DeltaQLimited(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:896:  void GetSampleWallStage7DeltaQLimited(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:897:  inline void GetWallStage7DeltaQLimited(lbRegion over, real_t * tab) { GetWallStage7DeltaQLimited(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:899:  void GetWallStage7DeltaQLimited_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:901:  void GetWallStage7Denom(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:902:  void GetSampleWallStage7Denom(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:903:  inline void GetWallStage7Denom(lbRegion over, real_t * tab) { GetWallStage7Denom(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:905:  void GetWallStage7Denom_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:907:  void GetWallStage7LimiterReason(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:908:  void GetSampleWallStage7LimiterReason(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:909:  inline void GetWallStage7LimiterReason(lbRegion over, real_t * tab) { GetWallStage7LimiterReason(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:911:  void GetWallStage7LimiterReason_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:913:  void GetWallStage7GradMag(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:914:  void GetSampleWallStage7GradMag(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:915:  inline void GetWallStage7GradMag(lbRegion over, real_t * tab) { GetWallStage7GradMag(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:917:  void GetWallStage7GradMag_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:919:  void GetWallStage7ActualCos(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:920:  void GetSampleWallStage7ActualCos(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:921:  inline void GetWallStage7ActualCos(lbRegion over, real_t * tab) { GetWallStage7ActualCos(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:923:  void GetWallStage7ActualCos_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:925:  void GetWallStage7TargetCos(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:926:  void GetSampleWallStage7TargetCos(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:927:  inline void GetWallStage7TargetCos(lbRegion over, real_t * tab) { GetWallStage7TargetCos(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:929:  void GetWallStage7TargetCos_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:931:  void GetWallStage7WriteCandidate(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:932:  void GetSampleWallStage7WriteCandidate(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:933:  inline void GetWallStage7WriteCandidate(lbRegion over, real_t * tab) { GetWallStage7WriteCandidate(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:935:  void GetWallStage7WriteCandidate_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:937:  void GetWallStage7WriteMinusProfile(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:938:  void GetSampleWallStage7WriteMinusProfile(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:939:  inline void GetWallStage7WriteMinusProfile(lbRegion over, real_t * tab) { GetWallStage7WriteMinusProfile(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:941:  void GetWallStage7WriteMinusProfile_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:75:	real_t setting_Stage7SignedMode; ///< Value of [Stage7b mode: 0 profile write, 1 shadow diagnostics only, 2 full signed write, 3 active relaxed signed write]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:76:	int ifset_Stage7SignedMode; ///< True if [Stage7b mode: 0 profile write, 1 shadow diagnostics only, 2 full signed write, 3 active relaxed signed write] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:79:	real_t setting_Stage7DeltaQAbsCap; ///< Value of [Stage7b explicit absolute cap for signed delta-q diagnostics]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:80:	int ifset_Stage7DeltaQAbsCap; ///< True if [Stage7b explicit absolute cap for signed delta-q diagnostics] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:383:  if (strcmp("Stage7SignedMode",str) == 0) return  SETTINGS_Stage7SignedMode ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:385:  if (strcmp("Stage7DeltaQAbsCap",str) == 0) return  SETTINGS_Stage7DeltaQAbsCap ; 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:868:        debug1("Creating Catalyst VTK object for WallStage7Mode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:871:        myArray->SetName("WallStage7Mode");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:884:        debug1("Creating Catalyst VTK object for WallStage7ActiveWeight\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:887:        myArray->SetName("WallStage7ActiveWeight");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:900:        debug1("Creating Catalyst VTK object for WallStage7DeltaQRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:903:        myArray->SetName("WallStage7DeltaQRaw");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:916:        debug1("Creating Catalyst VTK object for WallStage7DeltaQLimited\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:919:        myArray->SetName("WallStage7DeltaQLimited");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:932:        debug1("Creating Catalyst VTK object for WallStage7Denom\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:935:        myArray->SetName("WallStage7Denom");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:948:        debug1("Creating Catalyst VTK object for WallStage7LimiterReason\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:951:        myArray->SetName("WallStage7LimiterReason");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:964:        debug1("Creating Catalyst VTK object for WallStage7GradMag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:967:        myArray->SetName("WallStage7GradMag");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:980:        debug1("Creating Catalyst VTK object for WallStage7ActualCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:983:        myArray->SetName("WallStage7ActualCos");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:996:        debug1("Creating Catalyst VTK object for WallStage7TargetCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:999:        myArray->SetName("WallStage7TargetCos");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1012:        debug1("Creating Catalyst VTK object for WallStage7WriteCandidate\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1015:        myArray->SetName("WallStage7WriteCandidate");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1028:        debug1("Creating Catalyst VTK object for WallStage7WriteMinusProfile\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1031:        myArray->SetName("WallStage7WriteMinusProfile");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2028:      debug2("Filling Catalyst VTK object for WallStage7Mode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2032:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7Mode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2034:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7Mode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2040:      solver.lattice->GetWallStage7Mode(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2045://      solver.lattice->GetWallStage7Mode(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2049:      debug2("Filling Catalyst VTK object for WallStage7ActiveWeight\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2053:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7ActiveWeight"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2055:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7ActiveWeight"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2061:      solver.lattice->GetWallStage7ActiveWeight(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2066://      solver.lattice->GetWallStage7ActiveWeight(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2070:      debug2("Filling Catalyst VTK object for WallStage7DeltaQRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2074:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7DeltaQRaw"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2076:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7DeltaQRaw"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2082:      solver.lattice->GetWallStage7DeltaQRaw(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2087://      solver.lattice->GetWallStage7DeltaQRaw(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2091:      debug2("Filling Catalyst VTK object for WallStage7DeltaQLimited\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2095:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7DeltaQLimited"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2097:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7DeltaQLimited"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2103:      solver.lattice->GetWallStage7DeltaQLimited(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2108://      solver.lattice->GetWallStage7DeltaQLimited(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2112:      debug2("Filling Catalyst VTK object for WallStage7Denom\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2116:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7Denom"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2118:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7Denom"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2124:      solver.lattice->GetWallStage7Denom(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2129://      solver.lattice->GetWallStage7Denom(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2133:      debug2("Filling Catalyst VTK object for WallStage7LimiterReason\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2137:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7LimiterReason"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2139:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7LimiterReason"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2145:      solver.lattice->GetWallStage7LimiterReason(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2150://      solver.lattice->GetWallStage7LimiterReason(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2154:      debug2("Filling Catalyst VTK object for WallStage7GradMag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2158:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7GradMag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2160:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7GradMag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2166:      solver.lattice->GetWallStage7GradMag(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2171://      solver.lattice->GetWallStage7GradMag(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2175:      debug2("Filling Catalyst VTK object for WallStage7ActualCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2179:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7ActualCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2181:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7ActualCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2187:      solver.lattice->GetWallStage7ActualCos(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2192://      solver.lattice->GetWallStage7ActualCos(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2196:      debug2("Filling Catalyst VTK object for WallStage7TargetCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2200:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7TargetCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2202:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7TargetCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2208:      solver.lattice->GetWallStage7TargetCos(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2213://      solver.lattice->GetWallStage7TargetCos(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2217:      debug2("Filling Catalyst VTK object for WallStage7WriteCandidate\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2221:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7WriteCandidate"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2223:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7WriteCandidate"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2229:      solver.lattice->GetWallStage7WriteCandidate(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2234://      solver.lattice->GetWallStage7WriteCandidate(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2238:      debug2("Filling Catalyst VTK object for WallStage7WriteMinusProfile\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2242:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage7WriteMinusProfile"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2244:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage7WriteMinusProfile"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2250:      solver.lattice->GetWallStage7WriteMinusProfile(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2255://      solver.lattice->GetWallStage7WriteMinusProfile(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:62:			CudaCopyToConstant("Stage7SignedMode", Stage7SignedMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:64:			CudaCopyToConstant("Stage7DeltaQAbsCap", Stage7DeltaQAbsCap, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:58:			CudaCopyToConstant("Stage7SignedMode", Stage7SignedMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:60:			CudaCopyToConstant("Stage7DeltaQAbsCap", Stage7DeltaQAbsCap, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:148:	case  SETTINGS_Stage7SignedMode :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:149:	        CudaCopyToConstant("Stage7SignedMode", Stage7SignedMode, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:154:	case  SETTINGS_Stage7DeltaQAbsCap :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:155:	        CudaCopyToConstant("Stage7DeltaQAbsCap", Stage7DeltaQAbsCap, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2212:/// Calculate quantity [WallStage7Mode] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2214:  Kernel to calculate quantity WallStage7Mode (WallStage7Mode) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2219:CudaGlobalFunction void getWallStage7Mode(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2230:			w = now.getWallStage7Mode(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2238:/// Calculate quantity [WallStage7ActiveWeight] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2240:  Kernel to calculate quantity WallStage7ActiveWeight (WallStage7ActiveWeight) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2245:CudaGlobalFunction void getWallStage7ActiveWeight(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2256:			w = now.getWallStage7ActiveWeight(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2264:/// Calculate quantity [WallStage7DeltaQRaw] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2266:  Kernel to calculate quantity WallStage7DeltaQRaw (WallStage7DeltaQRaw) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2271:CudaGlobalFunction void getWallStage7DeltaQRaw(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2282:			w = now.getWallStage7DeltaQRaw(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2290:/// Calculate quantity [WallStage7DeltaQLimited] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2292:  Kernel to calculate quantity WallStage7DeltaQLimited (WallStage7DeltaQLimited) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2297:CudaGlobalFunction void getWallStage7DeltaQLimited(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2308:			w = now.getWallStage7DeltaQLimited(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2316:/// Calculate quantity [WallStage7Denom] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2318:  Kernel to calculate quantity WallStage7Denom (WallStage7Denom) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2323:CudaGlobalFunction void getWallStage7Denom(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2334:			w = now.getWallStage7Denom(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2342:/// Calculate quantity [WallStage7LimiterReason] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2344:  Kernel to calculate quantity WallStage7LimiterReason (WallStage7LimiterReason) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2349:CudaGlobalFunction void getWallStage7LimiterReason(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2360:			w = now.getWallStage7LimiterReason(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2368:/// Calculate quantity [WallStage7GradMag] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2370:  Kernel to calculate quantity WallStage7GradMag (WallStage7GradMag) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2375:CudaGlobalFunction void getWallStage7GradMag(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2386:			w = now.getWallStage7GradMag(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2394:/// Calculate quantity [WallStage7ActualCos] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2396:  Kernel to calculate quantity WallStage7ActualCos (WallStage7ActualCos) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2401:CudaGlobalFunction void getWallStage7ActualCos(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2412:			w = now.getWallStage7ActualCos(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2420:/// Calculate quantity [WallStage7TargetCos] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2422:  Kernel to calculate quantity WallStage7TargetCos (WallStage7TargetCos) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2427:CudaGlobalFunction void getWallStage7TargetCos(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2438:			w = now.getWallStage7TargetCos(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2446:/// Calculate quantity [WallStage7WriteCandidate] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2448:  Kernel to calculate quantity WallStage7WriteCandidate (WallStage7WriteCandidate) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2453:CudaGlobalFunction void getWallStage7WriteCandidate(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2464:			w = now.getWallStage7WriteCandidate(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2472:/// Calculate quantity [WallStage7WriteMinusProfile] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2474:  Kernel to calculate quantity WallStage7WriteMinusProfile (WallStage7WriteMinusProfile) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2479:CudaGlobalFunction void getWallStage7WriteMinusProfile(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2490:			w = now.getWallStage7WriteMinusProfile(); 
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1250:                { SETTINGS_Stage7SignedMode          , "Stage7SignedMode"          , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1252:                { SETTINGS_Stage7DeltaQAbsCap        , "Stage7DeltaQAbsCap"        , "1"  , "6"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1372:                  { QUANTITIES_WallStage7Mode              , "WallStage7Mode"              , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1373:                  { QUANTITIES_WallStage7ActiveWeight      , "WallStage7ActiveWeight"      , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1374:                  { QUANTITIES_WallStage7DeltaQRaw         , "WallStage7DeltaQRaw"         , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1375:                  { QUANTITIES_WallStage7DeltaQLimited     , "WallStage7DeltaQLimited"     , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1376:                  { QUANTITIES_WallStage7Denom             , "WallStage7Denom"             , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1377:                  { QUANTITIES_WallStage7LimiterReason     , "WallStage7LimiterReason"     , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1378:                  { QUANTITIES_WallStage7GradMag           , "WallStage7GradMag"           , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1379:                  { QUANTITIES_WallStage7ActualCos         , "WallStage7ActualCos"         , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1380:                  { QUANTITIES_WallStage7TargetCos         , "WallStage7TargetCos"         , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1381:                  { QUANTITIES_WallStage7WriteCandidate    , "WallStage7WriteCandidate"    , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1382:                  { QUANTITIES_WallStage7WriteMinusProfile , "WallStage7WriteMinusProfile" , "1"     , false    , false     }};
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:159:	                    fprintf(f,",\"Stage7SignedMode\",\"Stage7SignedMode_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:163:	                    fprintf(f,",\"Stage7DeltaQAbsCap\",\"Stage7DeltaQAbsCap_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:473:                    LogScales[ SETTINGS_Stage7SignedMode ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:475:                    LogScales[ SETTINGS_Stage7DeltaQAbsCap ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1475:	if (strcmp(comp, "WallStage7Mode") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1476:    	real_t* tmp_WallStage7Mode = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1478:    	lattice->GetWallStage7Mode(region, tmp_WallStage7Mode, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1479:        buf = (real_t*)tmp_WallStage7Mode;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1483:	if (strcmp(comp, "WallStage7ActiveWeight") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1484:    	real_t* tmp_WallStage7ActiveWeight = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1486:    	lattice->GetWallStage7ActiveWeight(region, tmp_WallStage7ActiveWeight, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1487:        buf = (real_t*)tmp_WallStage7ActiveWeight;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1491:	if (strcmp(comp, "WallStage7DeltaQRaw") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1492:    	real_t* tmp_WallStage7DeltaQRaw = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1494:    	lattice->GetWallStage7DeltaQRaw(region, tmp_WallStage7DeltaQRaw, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1495:        buf = (real_t*)tmp_WallStage7DeltaQRaw;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1499:	if (strcmp(comp, "WallStage7DeltaQLimited") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1500:    	real_t* tmp_WallStage7DeltaQLimited = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1502:    	lattice->GetWallStage7DeltaQLimited(region, tmp_WallStage7DeltaQLimited, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1503:        buf = (real_t*)tmp_WallStage7DeltaQLimited;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1507:	if (strcmp(comp, "WallStage7Denom") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1508:    	real_t* tmp_WallStage7Denom = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1510:    	lattice->GetWallStage7Denom(region, tmp_WallStage7Denom, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1511:        buf = (real_t*)tmp_WallStage7Denom;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1515:	if (strcmp(comp, "WallStage7LimiterReason") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1516:    	real_t* tmp_WallStage7LimiterReason = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1518:    	lattice->GetWallStage7LimiterReason(region, tmp_WallStage7LimiterReason, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1519:        buf = (real_t*)tmp_WallStage7LimiterReason;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1523:	if (strcmp(comp, "WallStage7GradMag") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1524:    	real_t* tmp_WallStage7GradMag = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1526:    	lattice->GetWallStage7GradMag(region, tmp_WallStage7GradMag, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1527:        buf = (real_t*)tmp_WallStage7GradMag;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1531:	if (strcmp(comp, "WallStage7ActualCos") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1532:    	real_t* tmp_WallStage7ActualCos = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1534:    	lattice->GetWallStage7ActualCos(region, tmp_WallStage7ActualCos, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1535:        buf = (real_t*)tmp_WallStage7ActualCos;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1539:	if (strcmp(comp, "WallStage7TargetCos") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1540:    	real_t* tmp_WallStage7TargetCos = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1542:    	lattice->GetWallStage7TargetCos(region, tmp_WallStage7TargetCos, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1543:        buf = (real_t*)tmp_WallStage7TargetCos;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1547:	if (strcmp(comp, "WallStage7WriteCandidate") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1548:    	real_t* tmp_WallStage7WriteCandidate = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1550:    	lattice->GetWallStage7WriteCandidate(region, tmp_WallStage7WriteCandidate, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1551:        buf = (real_t*)tmp_WallStage7WriteCandidate;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1555:	if (strcmp(comp, "WallStage7WriteMinusProfile") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1556:    	real_t* tmp_WallStage7WriteMinusProfile = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1558:    	lattice->GetWallStage7WriteMinusProfile(region, tmp_WallStage7WriteMinusProfile, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1559:        buf = (real_t*)tmp_WallStage7WriteMinusProfile;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1565:     output("-> SpecialBoundaryPoint\n") ;  output("-> Rho\n") ;  output("-> PhaseField\n") ;  output("-> U\n") ;  output("-> P\n") ;  output("-> Pstar\n") ;  output("-> Normal\n") ;  output("-> IsItBoundary\n") ;  output("-> GradPhi\n") ;  output("-> WallPfF\n") ;  output("-> WallGradTangent\n") ;  output("-> WallTanCoeff\n") ;  output("-> WallPhasePred\n") ;  output("-> WallPhaseProfilePred\n") ;  output("-> WallProfileDelta\n") ;  output("-> WallPhaseSignedProfilePred\n") ;  output("-> WallSignedProfileDelta\n") ;  output("-> WallSignedLogitShift\n") ;  output("-> WallFluidSampleCount\n") ;  output("-> WallFluidSampleH\n") ;  output("-> WallPhaseUnifiedProfilePred\n") ;  output("-> WallUnifiedProfileDelta\n") ;  output("-> WallBCPath\n") ;  output("-> WallH\n") ;  output("-> WallGeomNormal\n") ;  output("-> WallGrad1\n") ;  output("-> WallGrad2\n") ;  output("-> WallGradTangentVec\n") ;  output("-> WallNormalCoeff1\n") ;  output("-> WallNormalCoeff2\n") ;  output("-> WallActualMinusProfile\n") ;  output("-> WallActualMinusRaw\n") ;  output("-> WallPhaseRawPred\n") ;  output("-> WallPhaseSignedPred\n") ;  output("-> WallContactResidual\n") ;  output("-> WallSignedNormalGrad\n") ;  output("-> WallTangentGradMag\n") ;  output("-> WallSignedDeltaQ\n") ;  output("-> WallSignedQClipped\n") ;  output("-> BoundaryMask\n") ;  output("-> WallStage7Mode\n") ;  output("-> WallStage7ActiveWeight\n") ;  output("-> WallStage7DeltaQRaw\n") ;  output("-> WallStage7DeltaQLimited\n") ;  output("-> WallStage7Denom\n") ;  output("-> WallStage7LimiterReason\n") ;  output("-> WallStage7GradMag\n") ;  output("-> WallStage7ActualCos\n") ;  output("-> WallStage7TargetCos\n") ;  output("-> WallStage7WriteCandidate\n") ;  output("-> WallStage7WriteMinusProfile\n") ; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:73:CudaDeviceFunction CudaConstantMemory real_t Stage7SignedMode = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:77:CudaDeviceFunction CudaConstantMemory real_t Stage7DeltaQAbsCap = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4817:		case  QUANTITIES_WallStage7Mode : return GetWallStage7Mode(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4818:		case  QUANTITIES_WallStage7ActiveWeight : return GetWallStage7ActiveWeight(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4819:		case  QUANTITIES_WallStage7DeltaQRaw : return GetWallStage7DeltaQRaw(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4820:		case  QUANTITIES_WallStage7DeltaQLimited : return GetWallStage7DeltaQLimited(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4821:		case  QUANTITIES_WallStage7Denom : return GetWallStage7Denom(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4822:		case  QUANTITIES_WallStage7LimiterReason : return GetWallStage7LimiterReason(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4823:		case  QUANTITIES_WallStage7GradMag : return GetWallStage7GradMag(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4824:		case  QUANTITIES_WallStage7ActualCos : return GetWallStage7ActualCos(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4825:		case  QUANTITIES_WallStage7TargetCos : return GetWallStage7TargetCos(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4826:		case  QUANTITIES_WallStage7WriteCandidate : return GetWallStage7WriteCandidate(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4827:		case  QUANTITIES_WallStage7WriteMinusProfile : return GetWallStage7WriteMinusProfile(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5914:/// Get [WallStage7Mode]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5916:        Retrive the values of the Quantity WallStage7Mode (WallStage7Mode)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5919:void Lattice::GetWallStage7Mode(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5933:		CudaKernelRun( getWallStage7Mode , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5941:/// Get [WallStage7ActiveWeight]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5943:        Retrive the values of the Quantity WallStage7ActiveWeight (WallStage7ActiveWeight)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5946:void Lattice::GetWallStage7ActiveWeight(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5960:		CudaKernelRun( getWallStage7ActiveWeight , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5968:/// Get [WallStage7DeltaQRaw]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5970:        Retrive the values of the Quantity WallStage7DeltaQRaw (WallStage7DeltaQRaw)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5973:void Lattice::GetWallStage7DeltaQRaw(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5987:		CudaKernelRun( getWallStage7DeltaQRaw , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5995:/// Get [WallStage7DeltaQLimited]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:5997:        Retrive the values of the Quantity WallStage7DeltaQLimited (WallStage7DeltaQLimited)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6000:void Lattice::GetWallStage7DeltaQLimited(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6014:		CudaKernelRun( getWallStage7DeltaQLimited , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6022:/// Get [WallStage7Denom]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6024:        Retrive the values of the Quantity WallStage7Denom (WallStage7Denom)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6027:void Lattice::GetWallStage7Denom(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6041:		CudaKernelRun( getWallStage7Denom , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6049:/// Get [WallStage7LimiterReason]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6051:        Retrive the values of the Quantity WallStage7LimiterReason (WallStage7LimiterReason)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6054:void Lattice::GetWallStage7LimiterReason(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6068:		CudaKernelRun( getWallStage7LimiterReason , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6076:/// Get [WallStage7GradMag]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6078:        Retrive the values of the Quantity WallStage7GradMag (WallStage7GradMag)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6081:void Lattice::GetWallStage7GradMag(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6095:		CudaKernelRun( getWallStage7GradMag , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6103:/// Get [WallStage7ActualCos]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6105:        Retrive the values of the Quantity WallStage7ActualCos (WallStage7ActualCos)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6108:void Lattice::GetWallStage7ActualCos(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6122:		CudaKernelRun( getWallStage7ActualCos , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6130:/// Get [WallStage7TargetCos]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6132:        Retrive the values of the Quantity WallStage7TargetCos (WallStage7TargetCos)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6135:void Lattice::GetWallStage7TargetCos(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6149:		CudaKernelRun( getWallStage7TargetCos , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6157:/// Get [WallStage7WriteCandidate]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6159:        Retrive the values of the Quantity WallStage7WriteCandidate (WallStage7WriteCandidate)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6162:void Lattice::GetWallStage7WriteCandidate(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6176:		CudaKernelRun( getWallStage7WriteCandidate , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6184:/// Get [WallStage7WriteMinusProfile]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6186:        Retrive the values of the Quantity WallStage7WriteMinusProfile (WallStage7WriteMinusProfile)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6189:void Lattice::GetWallStage7WriteMinusProfile(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6203:		CudaKernelRun( getWallStage7WriteMinusProfile , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6733:void Lattice::GetSampleWallStage7Mode(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6739:	CudaKernelRun( getWallStage7Mode , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6742:void Lattice::GetSampleWallStage7ActiveWeight(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6748:	CudaKernelRun( getWallStage7ActiveWeight , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6751:void Lattice::GetSampleWallStage7DeltaQRaw(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6757:	CudaKernelRun( getWallStage7DeltaQRaw , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6760:void Lattice::GetSampleWallStage7DeltaQLimited(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6766:	CudaKernelRun( getWallStage7DeltaQLimited , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6769:void Lattice::GetSampleWallStage7Denom(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6775:	CudaKernelRun( getWallStage7Denom , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6778:void Lattice::GetSampleWallStage7LimiterReason(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6784:	CudaKernelRun( getWallStage7LimiterReason , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6787:void Lattice::GetSampleWallStage7GradMag(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6793:	CudaKernelRun( getWallStage7GradMag , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6796:void Lattice::GetSampleWallStage7ActualCos(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6802:	CudaKernelRun( getWallStage7ActualCos , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6805:void Lattice::GetSampleWallStage7TargetCos(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6811:	CudaKernelRun( getWallStage7TargetCos , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6814:void Lattice::GetSampleWallStage7WriteCandidate(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6820:	CudaKernelRun( getWallStage7WriteCandidate , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6823:void Lattice::GetSampleWallStage7WriteMinusProfile(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6829:	CudaKernelRun( getWallStage7WriteMinusProfile , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7077:	 	 if (sample->quant->in("WallStage7Mode"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7080:			GetSampleWallStage7Mode(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7Mode"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7083:	 	 if (sample->quant->in("WallStage7ActiveWeight"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7086:			GetSampleWallStage7ActiveWeight(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7ActiveWeight"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7089:	 	 if (sample->quant->in("WallStage7DeltaQRaw"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7092:			GetSampleWallStage7DeltaQRaw(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7DeltaQRaw"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7095:	 	 if (sample->quant->in("WallStage7DeltaQLimited"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7098:			GetSampleWallStage7DeltaQLimited(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7DeltaQLimited"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7101:	 	 if (sample->quant->in("WallStage7Denom"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7104:			GetSampleWallStage7Denom(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7Denom"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7107:	 	 if (sample->quant->in("WallStage7LimiterReason"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7110:			GetSampleWallStage7LimiterReason(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7LimiterReason"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7113:	 	 if (sample->quant->in("WallStage7GradMag"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7116:			GetSampleWallStage7GradMag(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7GradMag"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7119:	 	 if (sample->quant->in("WallStage7ActualCos"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7122:			GetSampleWallStage7ActualCos(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7ActualCos"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7125:	 	 if (sample->quant->in("WallStage7TargetCos"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7128:			GetSampleWallStage7TargetCos(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7TargetCos"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7131:	 	 if (sample->quant->in("WallStage7WriteCandidate"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7134:			GetSampleWallStage7WriteCandidate(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7WriteCandidate"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7137:	 	 if (sample->quant->in("WallStage7WriteMinusProfile"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7140:			GetSampleWallStage7WriteMinusProfile(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage7WriteMinusProfile"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);

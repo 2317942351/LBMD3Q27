@@ -84,6 +84,7 @@ def stats(values: np.ndarray, mask: np.ndarray | None = None) -> dict[str, float
     finite = arr[np.isfinite(arr)]
     if finite.size == 0:
         return out
+    nonzero = finite != 0.0
     out.update(
         {
             "min": float(np.min(finite)),
@@ -93,6 +94,9 @@ def stats(values: np.ndarray, mask: np.ndarray | None = None) -> dict[str, float
             "p99": float(np.percentile(finite, 99)),
             "max": float(np.max(finite)),
             "sum": float(np.sum(finite)),
+            "nonzero_count": int(np.count_nonzero(nonzero)),
+            "positive_count": int(np.count_nonzero(finite > 0.0)),
+            "negative_count": int(np.count_nonzero(finite < 0.0)),
         }
     )
     return out
@@ -192,6 +196,17 @@ def summarize_frame(
         "WallSignedDeltaQ",
         "WallSignedQClipped",
         "BoundaryMask",
+        "WallStage7Mode",
+        "WallStage7ActiveWeight",
+        "WallStage7DeltaQRaw",
+        "WallStage7DeltaQLimited",
+        "WallStage7Denom",
+        "WallStage7LimiterReason",
+        "WallStage7GradMag",
+        "WallStage7ActualCos",
+        "WallStage7TargetCos",
+        "WallStage7WriteCandidate",
+        "WallStage7WriteMinusProfile",
         "WallH",
         "WallNormalCoeff1",
         "WallNormalCoeff2",
@@ -251,6 +266,31 @@ def summarize_frame(
             "fluid": stats(values, fluid_mask),
             "wall": stats(values, wall_mask),
             "lower_wall": stats(values, lower_wall_mask),
+        }
+    limiter = fields.get("WallStage7LimiterReason")
+    active = fields.get("WallStage7ActiveWeight")
+    path = fields.get("WallBCPath")
+    if limiter is not None and active is not None:
+        limiter_arr = np.asarray(limiter, dtype=float)
+        active_arr = np.asarray(active, dtype=float)
+        normal_path = np.isfinite(active_arr) & (active_arr > 0.0)
+        if path is not None:
+            path_arr = np.asarray(path, dtype=float)
+            normal_path = np.isfinite(path_arr) & (np.rint(path_arr).astype(int) == 5)
+        active_path = normal_path & np.isfinite(active_arr) & (active_arr > 0.0)
+        limiter_nonzero = np.isfinite(limiter_arr) & (limiter_arr != 0.0)
+        rec["stage7b_limiter_counts"] = {
+            "normal_path_count": int(np.count_nonzero(normal_path)),
+            "normal_limiter_count": int(np.count_nonzero(normal_path & limiter_nonzero)),
+            "active_path_count": int(np.count_nonzero(active_path)),
+            "active_limiter_count": int(np.count_nonzero(active_path & limiter_nonzero)),
+        }
+    else:
+        rec["stage7b_limiter_counts"] = {
+            "normal_path_count": 0,
+            "normal_limiter_count": 0,
+            "active_path_count": 0,
+            "active_limiter_count": 0,
         }
     if "UMag" in fields:
         rec["max_mach"] = float(np.nanmax(fields["UMag"][fluid_mask]) / CS)
@@ -328,6 +368,16 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
     wall_tangent_grad = rec["field_stats"].get("WallTangentGradMag", {}).get("wall", {})
     wall_delta_q = rec["field_stats"].get("WallSignedDeltaQ", {}).get("wall", {})
     wall_q_clipped = rec["field_stats"].get("WallSignedQClipped", {}).get("wall", {})
+    wall_stage7_active = rec["field_stats"].get("WallStage7ActiveWeight", {}).get("wall", {})
+    wall_stage7_dq_raw = rec["field_stats"].get("WallStage7DeltaQRaw", {}).get("wall", {})
+    wall_stage7_dq_limited = rec["field_stats"].get("WallStage7DeltaQLimited", {}).get("wall", {})
+    wall_stage7_denom = rec["field_stats"].get("WallStage7Denom", {}).get("wall", {})
+    wall_stage7_limiter = rec["field_stats"].get("WallStage7LimiterReason", {}).get("wall", {})
+    wall_stage7_actual_cos = rec["field_stats"].get("WallStage7ActualCos", {}).get("wall", {})
+    wall_stage7_target_cos = rec["field_stats"].get("WallStage7TargetCos", {}).get("wall", {})
+    wall_stage7_candidate = rec["field_stats"].get("WallStage7WriteCandidate", {}).get("wall", {})
+    wall_stage7_minus_profile = rec["field_stats"].get("WallStage7WriteMinusProfile", {}).get("wall", {})
+    limiter_counts = rec.get("stage7b_limiter_counts", {})
     phase_sum = float(phase_fluid.get("sum", math.nan))
     rho_sum = float(rho_fluid.get("sum", math.nan))
     phase_rel = (
@@ -372,6 +422,28 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "wall_signed_delta_q_min": wall_delta_q.get("min", math.nan),
         "wall_signed_delta_q_max": wall_delta_q.get("max", math.nan),
         "wall_signed_q_clipped_sum": wall_q_clipped.get("sum", math.nan),
+        "wall_stage7_active_weight_sum": wall_stage7_active.get("sum", math.nan),
+        "wall_stage7_active_weight_mean": wall_stage7_active.get("mean", math.nan),
+        "wall_stage7_delta_q_raw_p50": wall_stage7_dq_raw.get("p50", math.nan),
+        "wall_stage7_delta_q_raw_p99": wall_stage7_dq_raw.get("p99", math.nan),
+        "wall_stage7_delta_q_raw_max": wall_stage7_dq_raw.get("max", math.nan),
+        "wall_stage7_delta_q_limited_p50": wall_stage7_dq_limited.get("p50", math.nan),
+        "wall_stage7_delta_q_limited_p99": wall_stage7_dq_limited.get("p99", math.nan),
+        "wall_stage7_delta_q_limited_max": wall_stage7_dq_limited.get("max", math.nan),
+        "wall_stage7_denom_min": wall_stage7_denom.get("min", math.nan),
+        "wall_stage7_denom_p50": wall_stage7_denom.get("p50", math.nan),
+        "wall_stage7_limiter_reason_sum": wall_stage7_limiter.get("sum", math.nan),
+        "wall_stage7_limiter_reason_max": wall_stage7_limiter.get("max", math.nan),
+        "wall_stage7_normal_path_count": limiter_counts.get("normal_path_count", 0),
+        "wall_stage7_normal_limiter_count": limiter_counts.get("normal_limiter_count", 0),
+        "wall_stage7_active_path_count": limiter_counts.get("active_path_count", 0),
+        "wall_stage7_active_limiter_count": limiter_counts.get("active_limiter_count", 0),
+        "wall_stage7_actual_cos_p50": wall_stage7_actual_cos.get("p50", math.nan),
+        "wall_stage7_target_cos_p50": wall_stage7_target_cos.get("p50", math.nan),
+        "wall_stage7_write_candidate_min": wall_stage7_candidate.get("min", math.nan),
+        "wall_stage7_write_candidate_max": wall_stage7_candidate.get("max", math.nan),
+        "wall_stage7_write_minus_profile_min": wall_stage7_minus_profile.get("min", math.nan),
+        "wall_stage7_write_minus_profile_max": wall_stage7_minus_profile.get("max", math.nan),
         "max_mach": rec["max_mach"],
         "nonfinite_total": rec["nonfinite_total"],
         "path_counts": json.dumps(rec["wall_bc_path_counts"], sort_keys=True),

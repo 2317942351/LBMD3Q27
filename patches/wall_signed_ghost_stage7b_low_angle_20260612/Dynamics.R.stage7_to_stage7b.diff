@@ -1,0 +1,46 @@
+diff --git a/third_party/tclb_snapshots/stage7_signed_wall_ghost_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R b/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 391d764..03f53a9 100644
+--- a/third_party/tclb_snapshots/stage7_signed_wall_ghost_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -208,11 +208,22 @@ if (Options$thermo){
+ 			AddQuantity(name="WallContactResidual", unit=1)
+ 			AddQuantity(name="WallSignedNormalGrad", unit=1)
+ 			AddQuantity(name="WallTangentGradMag", unit=1)
+-			AddQuantity(name="WallSignedDeltaQ", unit=1)
+-			AddQuantity(name="WallSignedQClipped", unit=1)
+-			AddQuantity(name="BoundaryMask", unit=1)
++				AddQuantity(name="WallSignedDeltaQ", unit=1)
++				AddQuantity(name="WallSignedQClipped", unit=1)
++				AddQuantity(name="BoundaryMask", unit=1)
++				AddQuantity(name="WallStage7Mode", unit=1)
++				AddQuantity(name="WallStage7ActiveWeight", unit=1)
++				AddQuantity(name="WallStage7DeltaQRaw", unit=1)
++				AddQuantity(name="WallStage7DeltaQLimited", unit=1)
++				AddQuantity(name="WallStage7Denom", unit=1)
++				AddQuantity(name="WallStage7LimiterReason", unit=1)
++				AddQuantity(name="WallStage7GradMag", unit=1)
++				AddQuantity(name="WallStage7ActualCos", unit=1)
++				AddQuantity(name="WallStage7TargetCos", unit=1)
++				AddQuantity(name="WallStage7WriteCandidate", unit=1)
++				AddQuantity(name="WallStage7WriteMinusProfile", unit=1)
++			}
+ 		}
+-	}
+ 	if (Options$staircaseimp) {
+ 		AddQuantity(name="ActualNormal", unit=1, vector=T)
+ 	}
+@@ -234,6 +245,14 @@ if (Options$thermo){
+ 	AddSetting(name="radAngle", default='1.570796', comment='Contact angle in radians, can use units -> 90d where d=2pi/360', zonal=T)
+ 	AddSetting(name="minGradient", default='1e-8', comment='if the phase gradient is less than this, set phase normals to zero')
+ 	AddSetting(name="UseStage7SignedWallGhost", default=0, comment='Stage7 diagnostic switch: 1 writes signed normal-path wall ghost instead of profile ghost')
++	AddSetting(name="Stage7SignedMode", default=0, comment='Stage7b mode: 0 profile write, 1 shadow diagnostics only, 2 full signed write, 3 active relaxed signed write')
++	AddSetting(name="Stage7DeltaQScale", default=1.0, comment='Stage7b explicit scale for signed delta-q diagnostics')
++	AddSetting(name="Stage7DeltaQAbsCap", default=6.0, comment='Stage7b explicit absolute cap for signed delta-q diagnostics')
++	AddSetting(name="Stage7DenomFloor", default=0.05, comment='Stage7b floor for c*(1-c) denominator in low-angle diagnostics')
++	AddSetting(name="Stage7ActiveCMin", default=0.02, comment='Stage7b minimum normalized phase fraction for active contact-line forcing')
++	AddSetting(name="Stage7ActiveGradMin", default='1e-6', comment='Stage7b minimum interface gradient magnitude for active contact-line forcing')
++	AddSetting(name="Stage7ActiveTangentMin", default='1e-8', comment='Stage7b minimum tangent gradient magnitude for active contact-line forcing')
++	AddSetting(name="Stage7RelaxationTau", default=1.0, comment='Stage7b wall ghost relaxation time; 1 means immediate candidate update')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')

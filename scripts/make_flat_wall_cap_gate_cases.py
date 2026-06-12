@@ -40,6 +40,10 @@ STAGE7_EXTRA_VTK = (
     "WallFluidSampleCount,WallFluidSampleH,WallPhaseRawPred,"
     "WallPhaseSignedPred,WallContactResidual,WallSignedNormalGrad,"
     "WallTangentGradMag,WallSignedDeltaQ,WallSignedQClipped,BoundaryMask,"
+    "WallStage7Mode,WallStage7ActiveWeight,WallStage7DeltaQRaw,"
+    "WallStage7DeltaQLimited,WallStage7Denom,WallStage7LimiterReason,"
+    "WallStage7GradMag,WallStage7ActualCos,WallStage7TargetCos,"
+    "WallStage7WriteCandidate,WallStage7WriteMinusProfile,"
     "WallH,WallGeomNormal,WallGrad1,WallGrad2,WallGradTangentVec,"
     "WallNormalCoeff1,WallNormalCoeff2,WallActualMinusProfile,WallActualMinusRaw"
 )
@@ -65,6 +69,17 @@ DEFAULT_CASES = [
     ),
 ]
 
+STAGE7B_LOW_ANGLE_CASES = [
+    GateCase(f"cap_theta030_wall{angle:03d}", 30.0, float(angle), f"Stage7b low-angle flat wall scan wall{angle:03d}")
+    for angle in [5, 8, 11, 15, 20, 25, 30]
+]
+
+STAGE7B_WALL011_MODE_CASES = [
+    GateCase("cap_theta030_wall011_mode0", 30.0, 11.0, "Stage7b wall011 mode0 profile-write control"),
+    GateCase("cap_theta030_wall011_mode2", 30.0, 11.0, "Stage7b wall011 mode2 full signed-write control"),
+    GateCase("cap_theta030_wall011_mode3", 30.0, 11.0, "Stage7b wall011 mode3 active relaxed signed-write candidate"),
+]
+
 
 def cap_sphere_radius(volume_radius: float, theta_deg: float) -> float:
     theta = math.radians(theta_deg)
@@ -86,6 +101,14 @@ def model_xml(
     wall_angle: float,
     min_gradient: float,
     use_stage7_signed_wall_ghost: bool,
+    stage7_signed_mode: float,
+    stage7_delta_q_scale: float,
+    stage7_delta_q_abs_cap: float,
+    stage7_denom_floor: float,
+    stage7_active_c_min: float,
+    stage7_active_grad_min: float,
+    stage7_active_tangent_min: float,
+    stage7_relaxation_tau: float,
     cap_radius: float,
     cap_center_x: float,
     cap_center_y: float,
@@ -122,14 +145,78 @@ def model_xml(
     <Param name="radAngle" value="90d" zone="OuterDomain"/>
     <Param name="radAngle" value="{wall_angle:.16g}d" zone="FlatLowerY"/>
     <Param name="minGradient" value="{min_gradient:.16g}"/>
-{stage7_param_xml(use_stage7_signed_wall_ghost)}
+{stage7_param_xml(
+    use_stage7_signed_wall_ghost,
+    stage7_signed_mode,
+    stage7_delta_q_scale,
+    stage7_delta_q_abs_cap,
+    stage7_denom_floor,
+    stage7_active_c_min,
+    stage7_active_grad_min,
+    stage7_active_tangent_min,
+    stage7_relaxation_tau,
+)}
   </Model>"""
 
 
-def stage7_param_xml(use_stage7_signed_wall_ghost: bool) -> str:
-    if not use_stage7_signed_wall_ghost:
+def stage7_param_xml(
+    use_stage7_signed_wall_ghost: bool,
+    stage7_signed_mode: float,
+    stage7_delta_q_scale: float,
+    stage7_delta_q_abs_cap: float,
+    stage7_denom_floor: float,
+    stage7_active_c_min: float,
+    stage7_active_grad_min: float,
+    stage7_active_tangent_min: float,
+    stage7_relaxation_tau: float,
+) -> str:
+    if not use_stage7_signed_wall_ghost and stage7_signed_mode <= 0:
         return ""
-    return '    <Param name="UseStage7SignedWallGhost" value="1"/>'
+    lines = []
+    if use_stage7_signed_wall_ghost:
+        lines.append('    <Param name="UseStage7SignedWallGhost" value="1"/>')
+    lines.extend(
+        [
+            f'    <Param name="Stage7SignedMode" value="{stage7_signed_mode:.16g}"/>',
+            f'    <Param name="Stage7DeltaQScale" value="{stage7_delta_q_scale:.16g}"/>',
+            f'    <Param name="Stage7DeltaQAbsCap" value="{stage7_delta_q_abs_cap:.16g}"/>',
+            f'    <Param name="Stage7DenomFloor" value="{stage7_denom_floor:.16g}"/>',
+            f'    <Param name="Stage7ActiveCMin" value="{stage7_active_c_min:.16g}"/>',
+            f'    <Param name="Stage7ActiveGradMin" value="{stage7_active_grad_min:.16g}"/>',
+            f'    <Param name="Stage7ActiveTangentMin" value="{stage7_active_tangent_min:.16g}"/>',
+            f'    <Param name="Stage7RelaxationTau" value="{stage7_relaxation_tau:.16g}"/>',
+        ]
+    )
+    return "\n".join(lines)
+
+
+def select_cases(case_set: str) -> list[GateCase]:
+    if case_set == "default":
+        return DEFAULT_CASES
+    if case_set == "stage7b_low_angle":
+        return STAGE7B_LOW_ANGLE_CASES
+    if case_set == "stage7b_wall011_modes":
+        return STAGE7B_WALL011_MODE_CASES
+    raise ValueError(f"unknown case set {case_set}")
+
+
+def mode_for_case(args: argparse.Namespace, case: GateCase) -> float:
+    if args.case_set == "stage7b_wall011_modes":
+        if case.name.endswith("_mode0"):
+            return 0.0
+        if case.name.endswith("_mode2"):
+            return 2.0
+        if case.name.endswith("_mode3"):
+            return 3.0
+    return args.stage7_signed_mode
+
+
+def include_stage7_fields(args: argparse.Namespace) -> bool:
+    return (
+        bool(args.stage7_signed_wall_ghost)
+        or args.stage7_signed_mode > 0.0
+        or args.case_set.startswith("stage7b_")
+    )
 
 
 def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> tuple[str, dict[str, float]]:
@@ -141,7 +228,7 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     cap_height = cap_radius * (1.0 - math.cos(math.radians(case.init_theta_deg)))
     cap_base_radius = cap_radius * math.sin(math.radians(case.init_theta_deg))
     vtk_what = VTK_WHAT
-    if args.stage7_signed_wall_ghost:
+    if include_stage7_fields(args):
         vtk_what = f"{VTK_WHAT},{STAGE7_EXTRA_VTK}"
     meta = {
         "volume_equivalent_sphere_radius": args.volume_radius,
@@ -154,6 +241,14 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
         "cap_center_y": cap_center_y,
         "cap_center_z": cap_center_z,
         "use_stage7_signed_wall_ghost": bool(args.stage7_signed_wall_ghost),
+        "stage7_signed_mode": mode_for_case(args, case),
+        "stage7_delta_q_scale": args.stage7_delta_q_scale,
+        "stage7_delta_q_abs_cap": args.stage7_delta_q_abs_cap,
+        "stage7_denom_floor": args.stage7_denom_floor,
+        "stage7_active_c_min": args.stage7_active_c_min,
+        "stage7_active_grad_min": args.stage7_active_grad_min,
+        "stage7_active_tangent_min": args.stage7_active_tangent_min,
+        "stage7_relaxation_tau": args.stage7_relaxation_tau,
     }
     xml = f"""<?xml version="1.0"?>
 <!--
@@ -189,6 +284,14 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     wall_angle=case.wall_rad_angle_deg,
     min_gradient=args.min_gradient,
     use_stage7_signed_wall_ghost=args.stage7_signed_wall_ghost,
+    stage7_signed_mode=mode_for_case(args, case),
+    stage7_delta_q_scale=args.stage7_delta_q_scale,
+    stage7_delta_q_abs_cap=args.stage7_delta_q_abs_cap,
+    stage7_denom_floor=args.stage7_denom_floor,
+    stage7_active_c_min=args.stage7_active_c_min,
+    stage7_active_grad_min=args.stage7_active_grad_min,
+    stage7_active_tangent_min=args.stage7_active_tangent_min,
+    stage7_relaxation_tau=args.stage7_relaxation_tau,
     cap_radius=cap_radius,
     cap_center_x=cap_center_x,
     cap_center_y=cap_center_y,
@@ -236,6 +339,19 @@ def parse_args() -> argparse.Namespace:
         help="write UseStage7SignedWallGhost=1 and request Stage7 diagnostic VTK fields",
     )
     parser.add_argument("--force", action="store_true")
+    parser.add_argument(
+        "--case-set",
+        choices=["default", "stage7b_low_angle", "stage7b_wall011_modes"],
+        default="default",
+    )
+    parser.add_argument("--stage7-signed-mode", type=float, default=0.0)
+    parser.add_argument("--stage7-delta-q-scale", type=float, default=1.0)
+    parser.add_argument("--stage7-delta-q-abs-cap", type=float, default=6.0)
+    parser.add_argument("--stage7-denom-floor", type=float, default=0.05)
+    parser.add_argument("--stage7-active-c-min", type=float, default=0.02)
+    parser.add_argument("--stage7-active-grad-min", type=float, default=1.0e-6)
+    parser.add_argument("--stage7-active-tangent-min", type=float, default=1.0e-8)
+    parser.add_argument("--stage7-relaxation-tau", type=float, default=1.0)
     return parser.parse_args()
 
 
@@ -244,7 +360,8 @@ def main() -> None:
     args.out.mkdir(parents=True, exist_ok=True)
 
     generated: list[dict[str, object]] = []
-    for case in DEFAULT_CASES:
+    cases = select_cases(args.case_set)
+    for case in cases:
         remote_case = f"{args.remote_root}/{case.name}"
         xml, cap_meta = xml_for_case(args, case, remote_case)
         case_dir = args.out / case.name
@@ -275,8 +392,17 @@ def main() -> None:
         "domain": [args.nx, args.ny, args.nz],
         "steps": args.steps,
         "vtk_interval": args.vtk_interval,
-        "vtk_what": f"{VTK_WHAT},{STAGE7_EXTRA_VTK}" if args.stage7_signed_wall_ghost else VTK_WHAT,
+        "vtk_what": f"{VTK_WHAT},{STAGE7_EXTRA_VTK}" if include_stage7_fields(args) else VTK_WHAT,
         "use_stage7_signed_wall_ghost": bool(args.stage7_signed_wall_ghost),
+        "case_set": args.case_set,
+        "stage7_signed_mode": args.stage7_signed_mode,
+        "stage7_delta_q_scale": args.stage7_delta_q_scale,
+        "stage7_delta_q_abs_cap": args.stage7_delta_q_abs_cap,
+        "stage7_denom_floor": args.stage7_denom_floor,
+        "stage7_active_c_min": args.stage7_active_c_min,
+        "stage7_active_grad_min": args.stage7_active_grad_min,
+        "stage7_active_tangent_min": args.stage7_active_tangent_min,
+        "stage7_relaxation_tau": args.stage7_relaxation_tau,
         "shared_parameters": {
             "Density_h": args.density_h,
             "Density_l": args.density_l,
