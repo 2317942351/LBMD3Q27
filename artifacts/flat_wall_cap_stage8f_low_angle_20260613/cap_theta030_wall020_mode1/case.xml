@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+  Stage8f flat-wall low-angle normal-limiter root-cause diagnostic.
+  Status: runtime_sanity / exploratory_not_validation.
+  Stage8CandidateVersion=8.5; Stage8OperatorMode=1 shadow-only.
+  Raw VTI/PVTI should remain remote-only.
+-->
+<CLBConfig version="2.0" output="/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8f_low_angle_20260613/cap_theta030_wall020_mode1/output/" permissive="true">
+  <Geometry nx="128" ny="96" nz="128">
+    <MRT><Box/></MRT>
+    <Wall mask="ALL" name="OuterDomain">
+      <Box nx="1"/>
+      <Box dx="-1"/>
+      <Box dy="-1"/>
+      <Box nz="1"/>
+      <Box dz="-1"/>
+    </Wall>
+    <Wall mask="ALL" name="FlatLowerY">
+      <Box ny="1"/>
+    </Wall>
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.001"/>
+    <Param name="Viscosity_h" value="0.09"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="3"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.1"/>
+    <Param name="IntWidth" value="6"/>
+    <Param name="Radius" value="0"/>
+    <Param name="BubbleType" value="1"/>
+    <Param name="CapInit" value="1"/>
+    <Param name="CapInitRadius" value="102.4368595766759"/>
+    <Param name="CapInitTheta" value="0.5235987755982988"/>
+    <Param name="CapInitCenterX" value="64"/>
+    <Param name="CapInitCenterY" value="-88.71292267730063"/>
+    <Param name="CapInitCenterZ" value="64"/>
+    <Param name="VelocityX" value="0.0"/>
+    <Param name="VelocityY" value="0.0"/>
+    <Param name="VelocityZ" value="0.0"/>
+    <Param name="GravitationX" value="0.0"/>
+    <Param name="GravitationY" value="0.0"/>
+    <Param name="GravitationZ" value="0.0"/>
+    <Param name="BuoyancyX" value="0.0"/>
+    <Param name="BuoyancyY" value="0.0"/>
+    <Param name="BuoyancyZ" value="0.0"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <Param name="radAngle" value="20d" zone="FlatLowerY"/>
+    <Param name="minGradient" value="1e-08"/>
+    <Param name="Stage8GradientWettingMode" value="0"/>
+    <Param name="Stage8OperatorMode" value="1"/>
+    <Param name="Stage8CandidateVersion" value="8.5"/>
+    <Param name="Stage8UseLocalWallAngle" value="1"/>
+    <Param name="Stage8UseWallGeomNormal" value="1"/>
+    <Param name="Stage8NormalDotMin" value="0.25"/>
+    <Param name="Stage8MaxGradDelta" value="0.25"/>
+    <Param name="Stage8MaxNormalDelta" value="0.05"/>
+    <Param name="Stage8MaxNormalDeltaRatio" value="0.5"/>
+    <Param name="Stage8UseSmoothActiveWeight" value="1"/>
+    <Param name="Stage8ActiveCMin" value="0.02"/>
+    <Param name="Stage8ActiveCSoftWidth" value="0.05"/>
+    <Param name="Stage8ActiveGradMin" value="1e-06"/>
+    <Param name="Stage8ActiveTangentMin" value="1e-08"/>
+    <Param name="Stage8TangentSoftMin" value="0.01"/>
+    <Param name="Stage8RelaxationTau" value="1"/>
+    <Param name="Stage8CurvatureRelaxation" value="1"/>
+  </Model>
+  <VTK what="PhaseField,U,P,Rho,BOUNDARY,WallBCPath,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag,WallStage8eDnRaw,WallStage8eDnTry,WallStage8eDnLimited,WallStage8eAbsCap,WallStage8eRatioCap,WallStage8eEffectiveCap,WallStage8eCapSource,WallStage8eCapDemandRatio,WallStage8eNormalRawAbs,WallStage8eTargetNormalAbs,WallStage8eTargetMinusRawAbs,WallStage8eSmoothWeightC,WallStage8eSmoothWeightG,WallStage8eSmoothWeightT,WallStage8eSmoothWeightTotal,WallStage8eTanCoeffTimesTangent,WallStage8eLimiterClass,WallStage8eWallProfileConflict"/>
+  <Log Iterations="100"/>
+  <Failcheck Iterations="100"/>
+  <Solve Iterations="1000">
+    <VTK Iterations="100" what="PhaseField,U,P,Rho,BOUNDARY,WallBCPath,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag,WallStage8eDnRaw,WallStage8eDnTry,WallStage8eDnLimited,WallStage8eAbsCap,WallStage8eRatioCap,WallStage8eEffectiveCap,WallStage8eCapSource,WallStage8eCapDemandRatio,WallStage8eNormalRawAbs,WallStage8eTargetNormalAbs,WallStage8eTargetMinusRawAbs,WallStage8eSmoothWeightC,WallStage8eSmoothWeightG,WallStage8eSmoothWeightT,WallStage8eSmoothWeightTotal,WallStage8eTanCoeffTimesTangent,WallStage8eLimiterClass,WallStage8eWallProfileConflict"/>
+    <Log Iterations="100"/>
+    <Failcheck Iterations="100"/>
+  </Solve>
+</CLBConfig>

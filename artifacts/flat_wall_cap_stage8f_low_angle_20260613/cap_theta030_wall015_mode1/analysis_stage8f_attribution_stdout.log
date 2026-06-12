@@ -1,0 +1,37 @@
+{
+  "status": "runtime_sanity",
+  "decision": {
+    "status": "runtime_sanity",
+    "claim_limit": "runtime_sanity / exploratory_not_validation only",
+    "write_mode_allowed": false,
+    "write_mode_blocked": true,
+    "block_reason": "Stage8f is diagnostic-only; sphere Stage8OperatorMode=2 remains forbidden",
+    "root_cause_classification": "undetermined_shadow_only_normal_limiter_dominated_ratio_cap_contract_dominated",
+    "final_vector_limiter_fraction": 0.0,
+    "final_normal_limiter_fraction": 0.7810590631364562,
+    "final_limiter_ratio_p50": 0.5313861836669614,
+    "final_limiter_ratio_p10": 0.41666804618732606,
+    "final_outer90_normal_limiter_count": 0,
+    "final_ratio_cap_limiter_fraction_of_normal_limiter": 0.560625814863103,
+    "final_abs_cap_limiter_fraction_of_normal_limiter": 0.439374185136897,
+    "final_cap_demand_ratio_p50": 1.8818705317219238,
+    "final_normal_raw_abs_p50": 0.06454598473763312,
+    "final_target_minus_raw_abs_p50": 0.06022274259823181,
+    "final_tangent_mag_p95": 0.07344943965504354,
+    "final_raw_delta_p99": 0.12359354178141392,
+    "final_normal_delta_limited_p99": -1.6862805440553716e-06
+  },
+  "frames": [
+    0,
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000
+  ]
+}

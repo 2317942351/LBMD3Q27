@@ -33,7 +33,8 @@ Read in this order:
 15. `docs/stage8c_local_angle_boundary_gradient_candidate_20260612.md`
 16. `docs/stage8d_sphere_shadow_limiter_attribution_20260612.md`
 17. `docs/stage8e_normal_residual_only_wetting_candidate_20260613.md`
-18. `docs/index_current_stage.md`
+18. `docs/stage8f_normal_limiter_root_cause_diag_20260613.md`
+19. `docs/index_current_stage.md`
 
 ## Source Layout
 
@@ -51,6 +52,7 @@ Read in this order:
 - `third_party/tclb_snapshots/stage8c_local_angle_boundary_gradient_candidate_diag/`: Stage8c local wall-angle gradient candidate lane.
 - `third_party/tclb_snapshots/stage8d_sphere_shadow_limiter_attribution/`: Stage8d sphere shadow limiter attribution lane.
 - `third_party/tclb_snapshots/stage8e_normal_residual_only_wetting_candidate/`: Stage8e normal-residual-only candidate lane.
+- `third_party/tclb_snapshots/stage8f_normal_limiter_root_cause_diag/`: Stage8f normal-limiter root-cause diagnostic lane.
 - `third_party/tclb_snapshots/patches/`: diffs against the upstream snapshot.
 - `scripts/`: local generators, postprocessors, audits, and HM570 runners.
 - `cases/`: XML case definitions and manifests.

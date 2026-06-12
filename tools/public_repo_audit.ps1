@@ -58,8 +58,12 @@ $files = Get-ChildItem -Path $RepoRoot -Recurse -File |
 
 $reportDir = Join-Path $RepoRoot "reports"
 New-Item -ItemType Directory -Path $reportDir -Force | Out-Null
-$files | Sort-Object path | ConvertTo-Json -Depth 4 |
-  Set-Content -Path (Join-Path $reportDir "file_manifest.json") -Encoding UTF8
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+[System.IO.File]::WriteAllText(
+  (Join-Path $reportDir "file_manifest.json"),
+  (($files | Sort-Object path | ConvertTo-Json -Depth 4) + [Environment]::NewLine),
+  $utf8NoBom
+)
 
 $summary = [pscustomobject]@{
   file_count = @($files).Count
@@ -72,8 +76,11 @@ $summary = [pscustomobject]@{
   secret_hits = $secretHits
 }
 
-$summary | ConvertTo-Json -Depth 5 |
-  Set-Content -Path (Join-Path $reportDir "public_repo_audit_summary.json") -Encoding UTF8
+[System.IO.File]::WriteAllText(
+  (Join-Path $reportDir "public_repo_audit_summary.json"),
+  (($summary | ConvertTo-Json -Depth 5) + [Environment]::NewLine),
+  $utf8NoBom
+)
 
 if ($summary.forbidden_count -gt 0 -or $summary.large_over_100mb_count -gt 0 -or $summary.secret_hit_count -gt 0) {
   $summary | ConvertTo-Json -Depth 5

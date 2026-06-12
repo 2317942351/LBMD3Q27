@@ -1,0 +1,37 @@
+{
+  "status": "runtime_sanity",
+  "decision": {
+    "status": "runtime_sanity",
+    "claim_limit": "runtime_sanity / exploratory_not_validation only",
+    "write_mode_allowed": false,
+    "write_mode_blocked": true,
+    "block_reason": "Stage8f is diagnostic-only; sphere Stage8OperatorMode=2 remains forbidden",
+    "root_cause_classification": "undetermined_shadow_only",
+    "final_vector_limiter_fraction": 0.0,
+    "final_normal_limiter_fraction": 0.0,
+    "final_limiter_ratio_p50": 1.0,
+    "final_limiter_ratio_p10": 1.0,
+    "final_outer90_normal_limiter_count": 0,
+    "final_ratio_cap_limiter_fraction_of_normal_limiter": NaN,
+    "final_abs_cap_limiter_fraction_of_normal_limiter": NaN,
+    "final_cap_demand_ratio_p50": 0.15251934252781274,
+    "final_normal_raw_abs_p50": 0.06361076204519192,
+    "final_target_minus_raw_abs_p50": 0.0070089989882638325,
+    "final_tangent_mag_p95": 0.07536387677279424,
+    "final_raw_delta_p99": 0.018044713640583288,
+    "final_normal_delta_limited_p99": -6.917313651857517e-08
+  },
+  "frames": [
+    0,
+    100,
+    200,
+    300,
+    400,
+    500,
+    600,
+    700,
+    800,
+    900,
+    1000
+  ]
+}

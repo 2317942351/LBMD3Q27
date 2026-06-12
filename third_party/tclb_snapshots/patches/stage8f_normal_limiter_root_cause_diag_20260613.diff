@@ -1,0 +1,255 @@
+diff --git "a/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt" "b/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+index 25f1719..dbe1852 100644
+--- "a/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
++++ "b/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+@@ -1405,6 +1405,24 @@ CudaDeviceFunction void stage8ResetGradientDiagnostics() {
+ 	Stage8RegionTag = 0.0;
+ 	Stage8SphereRadialDot = 0.0;
+ 	Stage8ContactBandTag = 0.0;
++	Stage8eDnRaw = 0.0;
++	Stage8eDnTry = 0.0;
++	Stage8eDnLimited = 0.0;
++	Stage8eAbsCap = 0.0;
++	Stage8eRatioCap = 0.0;
++	Stage8eEffectiveCap = 0.0;
++	Stage8eCapSource = 0.0;
++	Stage8eCapDemandRatio = 0.0;
++	Stage8eNormalRawAbs = 0.0;
++	Stage8eTargetNormalAbs = 0.0;
++	Stage8eTargetMinusRawAbs = 0.0;
++	Stage8eSmoothWeightC = 0.0;
++	Stage8eSmoothWeightG = 0.0;
++	Stage8eSmoothWeightT = 0.0;
++	Stage8eSmoothWeightTotal = 0.0;
++	Stage8eTanCoeffTimesTangent = 0.0;
++	Stage8eLimiterClass = 0.0;
++	Stage8eWallProfileConflict = 0.0;
+ }
+ 
+ CudaDeviceFunction bool stage8IsPhysicalFluidNode() {
+@@ -1880,12 +1898,16 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	Stage8TargetNormalGrad = target_normal;
+ 	Stage8TangentGradMag = tangent_mag;
+ 	Stage8TargetCos = target_cos;
++	Stage8eNormalRawAbs = fabs(normal_raw);
++	Stage8eTargetNormalAbs = fabs(target_normal);
++	Stage8eTanCoeffTimesTangent = fabs(tan_coeff*tangent_mag);
+ 	if (grad_mag > minGradient) {
+ 		Stage8ContactResidual = normal_raw/grad_mag - target_cos;
+ 	}
+ 	Stage8LimiterReason = reason;
+ 
+ 	if (reason > 0.0) {
++		Stage8eLimiterClass = -1.0;
+ 		return;
+ 	}
+ 
+@@ -1899,8 +1921,13 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	}
+ 	real_t w = wc*wg*wt;
+ 	Stage8ActiveWeight = w;
++	Stage8eSmoothWeightC = wc;
++	Stage8eSmoothWeightG = wg;
++	Stage8eSmoothWeightT = wt;
++	Stage8eSmoothWeightTotal = w;
+ 	if (w <= 1e-12) {
+ 		Stage8LimiterReason += 512.0;
++		Stage8eLimiterClass = -2.0;
+ 		return;
+ 	}
+ 
+@@ -1910,17 +1937,32 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 
+ 	real_t dn_raw = target_normal - normal_raw;
+ 	real_t dn_try = alpha*w*dn_raw;
+-	real_t cap = Stage8MaxNormalDelta;
+-	if (cap <= 0.0) {
+-		cap = fabs(dn_try);
++	real_t abs_cap = Stage8MaxNormalDelta;
++	if (abs_cap <= 0.0) {
++		abs_cap = fabs(dn_try);
+ 	}
++	real_t ratio_cap = abs_cap;
++	real_t cap = abs_cap;
++	real_t cap_source = 1.0;
+ 	if (Stage8MaxNormalDeltaRatio > 0.0) {
+-		real_t cap_ratio = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
+-		if (cap_ratio < cap) {
+-			cap = cap_ratio;
++		ratio_cap = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
++		if (ratio_cap < cap) {
++			cap = ratio_cap;
++			cap_source = 2.0;
+ 		}
+ 	}
+ 	real_t dn_limited = stage8ScalarClamp(dn_try, -cap, cap);
++	Stage8eDnRaw = dn_raw;
++	Stage8eDnTry = dn_try;
++	Stage8eDnLimited = dn_limited;
++	Stage8eAbsCap = abs_cap;
++	Stage8eRatioCap = ratio_cap;
++	Stage8eEffectiveCap = cap;
++	Stage8eCapSource = cap_source;
++	Stage8eTargetMinusRawAbs = fabs(dn_raw);
++	if (cap > 1e-30) {
++		Stage8eCapDemandRatio = fabs(dn_try)/cap;
++	}
+ 	Stage8NormalDeltaRaw = dn_raw;
+ 	Stage8NormalDeltaLimited = dn_limited;
+ 	Stage8VectorDeltaRawMag = fabs(dn_try);
+@@ -1928,10 +1970,12 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	if (fabs(dn_limited - dn_try) > 1e-10) {
+ 		Stage8NormalLimiterHit = 1.0;
+ 		Stage8LimiterReason += 128.0;
++		Stage8eLimiterClass = cap_source;
+ 	}
+ 	if (fabs(dn_try) > 1e-12) {
+ 		Stage8LimiterRatio = fabs(dn_limited/dn_try);
+ 	}
++	Stage8eWallProfileConflict = 0.0;
+ 
+ 	vector_t corrected = {
+ 		grad.x + dn_limited*wall_normal.x,
+@@ -1948,7 +1992,9 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 		delta_mag = fabs(dn_limited);
+ 		Stage8VectorLimiterHit = 1.0;
+ 		Stage8LimiterReason += 1024.0;
++		Stage8eLimiterClass = 3.0;
+ 		Stage8NormalDeltaLimited = dn_limited;
++		Stage8eDnLimited = dn_limited;
+ 		Stage8VectorDeltaLimitedMag = delta_mag;
+ 		if (fabs(dn_try) > 1e-12) {
+ 			Stage8LimiterRatio = fabs(dn_limited/dn_try);
+@@ -2127,6 +2173,78 @@ CudaDeviceFunction real_t getWallStage8ContactBandTag() {
+ 	return Stage8ContactBandTag(0,0,0);
+ }
+ 
++CudaDeviceFunction real_t getWallStage8eDnRaw() {
++	return Stage8eDnRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eDnTry() {
++	return Stage8eDnTry(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eDnLimited() {
++	return Stage8eDnLimited(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eAbsCap() {
++	return Stage8eAbsCap(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eRatioCap() {
++	return Stage8eRatioCap(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eEffectiveCap() {
++	return Stage8eEffectiveCap(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eCapSource() {
++	return Stage8eCapSource(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eCapDemandRatio() {
++	return Stage8eCapDemandRatio(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eNormalRawAbs() {
++	return Stage8eNormalRawAbs(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eTargetNormalAbs() {
++	return Stage8eTargetNormalAbs(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eTargetMinusRawAbs() {
++	return Stage8eTargetMinusRawAbs(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eSmoothWeightC() {
++	return Stage8eSmoothWeightC(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eSmoothWeightG() {
++	return Stage8eSmoothWeightG(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eSmoothWeightT() {
++	return Stage8eSmoothWeightT(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eSmoothWeightTotal() {
++	return Stage8eSmoothWeightTotal(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eTanCoeffTimesTangent() {
++	return Stage8eTanCoeffTimesTangent(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eLimiterClass() {
++	return Stage8eLimiterClass(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8eWallProfileConflict() {
++	return Stage8eWallProfileConflict(0,0,0);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+diff --git "a/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Dynamics.R" "b/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+index 42b5b25..8eaf400 100644
+--- "a/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Dynamics.R"
++++ "b/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+@@ -137,6 +137,24 @@ if (Options$geometric){
+     AddField("Stage8RegionTag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8SphereRadialDot", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8ContactBandTag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eDnRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eDnTry", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eDnLimited", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eAbsCap", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eRatioCap", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eEffectiveCap", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eCapSource", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eCapDemandRatio", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eNormalRawAbs", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eTargetNormalAbs", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eTargetMinusRawAbs", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eSmoothWeightC", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eSmoothWeightG", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eSmoothWeightT", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eSmoothWeightTotal", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eTanCoeffTimesTangent", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eLimiterClass", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8eWallProfileConflict", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     # Fake field, to simply copy field values to PhaseF instead
+     # of accessing them directly from PhaseF field
+     # this is needed for the cases when PhaseF needs to be accessed in the dynamic manner
+@@ -296,6 +314,24 @@ if (Options$thermo){
+ 				AddQuantity(name="WallStage8RegionTag", unit=1)
+ 				AddQuantity(name="WallStage8SphereRadialDot", unit=1)
+ 				AddQuantity(name="WallStage8ContactBandTag", unit=1)
++				AddQuantity(name="WallStage8eDnRaw", unit=1)
++				AddQuantity(name="WallStage8eDnTry", unit=1)
++				AddQuantity(name="WallStage8eDnLimited", unit=1)
++				AddQuantity(name="WallStage8eAbsCap", unit=1)
++				AddQuantity(name="WallStage8eRatioCap", unit=1)
++				AddQuantity(name="WallStage8eEffectiveCap", unit=1)
++				AddQuantity(name="WallStage8eCapSource", unit=1)
++				AddQuantity(name="WallStage8eCapDemandRatio", unit=1)
++				AddQuantity(name="WallStage8eNormalRawAbs", unit=1)
++				AddQuantity(name="WallStage8eTargetNormalAbs", unit=1)
++				AddQuantity(name="WallStage8eTargetMinusRawAbs", unit=1)
++				AddQuantity(name="WallStage8eSmoothWeightC", unit=1)
++				AddQuantity(name="WallStage8eSmoothWeightG", unit=1)
++				AddQuantity(name="WallStage8eSmoothWeightT", unit=1)
++				AddQuantity(name="WallStage8eSmoothWeightTotal", unit=1)
++				AddQuantity(name="WallStage8eTanCoeffTimesTangent", unit=1)
++				AddQuantity(name="WallStage8eLimiterClass", unit=1)
++				AddQuantity(name="WallStage8eWallProfileConflict", unit=1)
+ 			}
+ 		}
+ 	if (Options$staircaseimp) {
