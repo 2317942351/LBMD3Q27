@@ -1,0 +1,73 @@
+{
+  "status": "runtime_sanity",
+  "claim_limit": "runtime_sanity / exploratory_not_validation only",
+  "created_utc": "2026-06-12T15:06:17.781915+00:00",
+  "purpose": "Stage8d z48 sphere shadow limiter-attribution gate",
+  "binary": "/home/yuan/src/TCLB_stage8d_sphere_shadow_limiter_attribution_20260612/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "remote_root": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_stage8d_shadow_limiter_attribution_20260612",
+  "case_dir": "cases\\diagnostics\\pre2025_sphere_stage8d_shadow_limiter_attribution_20260612",
+  "generated": [
+    {
+      "case_id": "theta030_shadow",
+      "xml": "cases\\diagnostics\\pre2025_sphere_stage8d_shadow_limiter_attribution_20260612\\theta030_shadow\\case.xml",
+      "status": "runtime_sanity",
+      "claim_limit": "runtime_sanity / exploratory_not_validation only",
+      "remote_case": "/mnt/8A0E24070E23EAC1/runs/tclb_pre2025_sphere_stage8d_shadow_limiter_attribution_20260612/theta030_shadow",
+      "operator_mode": 1.0,
+      "operator_mode_note": "1=shadow only; does not write gradPhiVal",
+      "domain": [
+        80,
+        80,
+        180
+      ],
+      "vtk_cell_dims_expected": [
+        96,
+        80,
+        180
+      ],
+      "solid_center": [
+        40.0,
+        40.0,
+        48.0
+      ],
+      "solid_radius": 24.0,
+      "drop_center": [
+        40.0,
+        40.0,
+        96.0
+      ],
+      "drop_radius": 24.0,
+      "bottom_gap_lu": 24.0,
+      "outer_rad_angle_deg": 90.0,
+      "sphere_rad_angle_deg": 11.0,
+      "sphere_rad_angle_rad": 0.19198621771937624,
+      "mobility": 0.1,
+      "int_width": 6.0,
+      "stage8_normal_dot_min": 0.25,
+      "stage8_max_grad_delta": 0.25,
+      "stage8_relaxation_tau": 1.0,
+      "stage8_diag_sphere_center": [
+        40.0,
+        40.0,
+        48.0
+      ],
+      "stage8_diag_sphere_radius": 24.0,
+      "steps": 1000,
+      "vtk_interval": 100,
+      "vtk_expected_steps": [
+        0,
+        100,
+        200,
+        300,
+        400,
+        500,
+        600,
+        700,
+        800,
+        900,
+        1000
+      ],
+      "vtk_what": "PhaseField,U,P,Rho,BOUNDARY,Normal,IsItBoundary,GradPhi,ActualNormal,WallBCPath,SpecialBoundaryPoint,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag"
+    }
+  ]
+}

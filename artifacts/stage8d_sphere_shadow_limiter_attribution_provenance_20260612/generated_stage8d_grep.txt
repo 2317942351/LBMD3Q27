@@ -1,0 +1,147 @@
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:216:Stage8DiagSphereCenterX                       |   | Stage8d diagnostic solid-sphere center X for region tagging 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:217:Stage8DiagSphereCenterY                       |   | Stage8d diagnostic solid-sphere center Y for region tagging 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:218:Stage8DiagSphereCenterZ                       |   | Stage8d diagnostic solid-sphere center Z for region tagging 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:219:Stage8DiagSphereRadius                        |   | Stage8d diagnostic solid-sphere radius for region tagging 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:405:WallStage8VectorDeltaRawMag         [      1] |   | WallStage8VectorDeltaRawMag 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:409:WallStage8LimiterRatio              [      1] |   | WallStage8LimiterRatio 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:80:			CudaCopyToConstant("Stage8DiagSphereCenterX", Stage8DiagSphereCenterX, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:81:			CudaCopyToConstant("Stage8DiagSphereCenterY", Stage8DiagSphereCenterY, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:82:			CudaCopyToConstant("Stage8DiagSphereCenterZ", Stage8DiagSphereCenterZ, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:83:			CudaCopyToConstant("Stage8DiagSphereRadius", Stage8DiagSphereRadius, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1460:        debug1("Creating Catalyst VTK object for WallStage8VectorDeltaRawMag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1463:        myArray->SetName("WallStage8VectorDeltaRawMag");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1524:        debug1("Creating Catalyst VTK object for WallStage8LimiterRatio\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1527:        myArray->SetName("WallStage8LimiterRatio");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3349:      debug2("Filling Catalyst VTK object for WallStage8VectorDeltaRawMag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3353:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8VectorDeltaRawMag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3355:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8VectorDeltaRawMag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3361:      solver.lattice->GetWallStage8VectorDeltaRawMag(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3366://      solver.lattice->GetWallStage8VectorDeltaRawMag(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3433:      debug2("Filling Catalyst VTK object for WallStage8LimiterRatio\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3437:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8LimiterRatio"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3439:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8LimiterRatio"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3445:      solver.lattice->GetWallStage8LimiterRatio(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3450://      solver.lattice->GetWallStage8LimiterRatio(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:76:			CudaCopyToConstant("Stage8DiagSphereCenterX", Stage8DiagSphereCenterX, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:77:			CudaCopyToConstant("Stage8DiagSphereCenterY", Stage8DiagSphereCenterY, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:78:			CudaCopyToConstant("Stage8DiagSphereCenterZ", Stage8DiagSphereCenterZ, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:79:			CudaCopyToConstant("Stage8DiagSphereRadius", Stage8DiagSphereRadius, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:216:	case  SETTINGS_Stage8DiagSphereCenterX :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:217:	        CudaCopyToConstant("Stage8DiagSphereCenterX", Stage8DiagSphereCenterX, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:219:	case  SETTINGS_Stage8DiagSphereCenterY :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:220:	        CudaCopyToConstant("Stage8DiagSphereCenterY", Stage8DiagSphereCenterY, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:222:	case  SETTINGS_Stage8DiagSphereCenterZ :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:223:	        CudaCopyToConstant("Stage8DiagSphereCenterZ", Stage8DiagSphereCenterZ, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:225:	case  SETTINGS_Stage8DiagSphereRadius :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:226:	        CudaCopyToConstant("Stage8DiagSphereRadius", Stage8DiagSphereRadius, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3242:/// Calculate quantity [WallStage8VectorDeltaRawMag] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3244:  Kernel to calculate quantity WallStage8VectorDeltaRawMag (WallStage8VectorDeltaRawMag) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3249:CudaGlobalFunction void getWallStage8VectorDeltaRawMag(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3260:			w = now.getWallStage8VectorDeltaRawMag(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3346:/// Calculate quantity [WallStage8LimiterRatio] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3348:  Kernel to calculate quantity WallStage8LimiterRatio (WallStage8LimiterRatio) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3353:CudaGlobalFunction void getWallStage8LimiterRatio(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3364:			w = now.getWallStage8LimiterRatio(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2710:	if (Stage8DiagSphereRadius <= 0.0) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2716:	real_t rx = X - Stage8DiagSphereCenterX;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2717:	real_t ry = Y - Stage8DiagSphereCenterY;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2718:	real_t rz = Z - Stage8DiagSphereCenterZ;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2727:	real_t shell_dist = fabs(rr - Stage8DiagSphereRadius);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2729:		if (Z < Stage8DiagSphereCenterZ - 0.5*Stage8DiagSphereRadius) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2731:		} else if (Z < Stage8DiagSphereCenterZ) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3037:CudaDeviceFunction real_t getWallStage8VectorDeltaRawMag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3053:CudaDeviceFunction real_t getWallStage8LimiterRatio() {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:111:	real_t setting_Stage8DiagSphereCenterX; ///< Value of [Stage8d diagnostic solid-sphere center X for region tagging]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:112:	int ifset_Stage8DiagSphereCenterX; ///< True if [Stage8d diagnostic solid-sphere center X for region tagging] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:113:	real_t setting_Stage8DiagSphereCenterY; ///< Value of [Stage8d diagnostic solid-sphere center Y for region tagging]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:114:	int ifset_Stage8DiagSphereCenterY; ///< True if [Stage8d diagnostic solid-sphere center Y for region tagging] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:115:	real_t setting_Stage8DiagSphereCenterZ; ///< Value of [Stage8d diagnostic solid-sphere center Z for region tagging]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:116:	int ifset_Stage8DiagSphereCenterZ; ///< True if [Stage8d diagnostic solid-sphere center Z for region tagging] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:117:	real_t setting_Stage8DiagSphereRadius; ///< Value of [Stage8d diagnostic solid-sphere radius for region tagging]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:118:	int ifset_Stage8DiagSphereRadius; ///< True if [Stage8d diagnostic solid-sphere radius for region tagging] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:429:  if (strcmp("Stage8DiagSphereCenterX",str) == 0) return  SETTINGS_Stage8DiagSphereCenterX ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:430:  if (strcmp("Stage8DiagSphereCenterY",str) == 0) return  SETTINGS_Stage8DiagSphereCenterY ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:431:  if (strcmp("Stage8DiagSphereCenterZ",str) == 0) return  SETTINGS_Stage8DiagSphereCenterZ ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:432:  if (strcmp("Stage8DiagSphereRadius",str) == 0) return  SETTINGS_Stage8DiagSphereRadius ; 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2710:	if (Stage8DiagSphereRadius <= 0.0) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2716:	real_t rx = X - Stage8DiagSphereCenterX;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2717:	real_t ry = Y - Stage8DiagSphereCenterY;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2718:	real_t rz = Z - Stage8DiagSphereCenterZ;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2727:	real_t shell_dist = fabs(rr - Stage8DiagSphereRadius);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2729:		if (Z < Stage8DiagSphereCenterZ - 0.5*Stage8DiagSphereRadius) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2731:		} else if (Z < Stage8DiagSphereCenterZ) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3037:CudaDeviceFunction real_t getWallStage8VectorDeltaRawMag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3053:CudaDeviceFunction real_t getWallStage8LimiterRatio() {
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:109:CudaDeviceFunction CudaConstantMemory real_t Stage8DiagSphereCenterX = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:111:CudaDeviceFunction CudaConstantMemory real_t Stage8DiagSphereCenterY = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:113:CudaDeviceFunction CudaConstantMemory real_t Stage8DiagSphereCenterZ = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:115:CudaDeviceFunction CudaConstantMemory real_t Stage8DiagSphereRadius = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4854:		case  QUANTITIES_WallStage8VectorDeltaRawMag : return GetWallStage8VectorDeltaRawMag(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4858:		case  QUANTITIES_WallStage8LimiterRatio : return GetWallStage8LimiterRatio(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6947:/// Get [WallStage8VectorDeltaRawMag]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6949:        Retrive the values of the Quantity WallStage8VectorDeltaRawMag (WallStage8VectorDeltaRawMag)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6952:void Lattice::GetWallStage8VectorDeltaRawMag(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6966:		CudaKernelRun( getWallStage8VectorDeltaRawMag , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7055:/// Get [WallStage8LimiterRatio]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7057:        Retrive the values of the Quantity WallStage8LimiterRatio (WallStage8LimiterRatio)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7060:void Lattice::GetWallStage8LimiterRatio(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7074:		CudaKernelRun( getWallStage8LimiterRatio , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8018:void Lattice::GetSampleWallStage8VectorDeltaRawMag(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8024:	CudaKernelRun( getWallStage8VectorDeltaRawMag , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8054:void Lattice::GetSampleWallStage8LimiterRatio(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8060:	CudaKernelRun( getWallStage8LimiterRatio , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8557:	 	 if (sample->quant->in("WallStage8VectorDeltaRawMag"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8560:			GetSampleWallStage8VectorDeltaRawMag(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8VectorDeltaRawMag"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8581:	 	 if (sample->quant->in("WallStage8LimiterRatio"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8584:			GetSampleWallStage8LimiterRatio(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8LimiterRatio"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:161:    CudaExternConstantMemory(real_t Stage8DiagSphereCenterX); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:162:    CudaExternConstantMemory(real_t Stage8DiagSphereCenterY); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:163:    CudaExternConstantMemory(real_t Stage8DiagSphereCenterZ); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:164:    CudaExternConstantMemory(real_t Stage8DiagSphereRadius); 
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1268:                { SETTINGS_Stage8DiagSphereCenterX   , "Stage8DiagSphereCenterX"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1269:                { SETTINGS_Stage8DiagSphereCenterY   , "Stage8DiagSphereCenterY"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1270:                { SETTINGS_Stage8DiagSphereCenterZ   , "Stage8DiagSphereCenterZ"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1271:                { SETTINGS_Stage8DiagSphereRadius    , "Stage8DiagSphereRadius"    , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1423:                  { QUANTITIES_WallStage8VectorDeltaRawMag     , "WallStage8VectorDeltaRawMag"     , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1427:                  { QUANTITIES_WallStage8LimiterRatio          , "WallStage8LimiterRatio"          , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:97:#define  SETTINGS_Stage8DiagSphereCenterX           31 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:98:#define  SETTINGS_Stage8DiagSphereCenterY           32 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:99:#define  SETTINGS_Stage8DiagSphereCenterZ           33 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:100:#define  SETTINGS_Stage8DiagSphereRadius            34 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:385:#define  QUANTITIES_WallStage8VectorDeltaRawMag     77 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:389:#define  QUANTITIES_WallStage8LimiterRatio          81 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:47:    CudaExternConstantMemory(real_t Stage8DiagSphereCenterX); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:48:    CudaExternConstantMemory(real_t Stage8DiagSphereCenterY); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:49:    CudaExternConstantMemory(real_t Stage8DiagSphereCenterZ); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:50:    CudaExternConstantMemory(real_t Stage8DiagSphereRadius); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2027:CudaGlobalFunction void getWallStage8VectorDeltaRawMag(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2028:CudaGlobalFunction void getWallStage8VectorDeltaRawMag_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2030:CudaGlobalFunction void getWallStage8VectorDeltaRawMag_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2047:CudaGlobalFunction void getWallStage8LimiterRatio(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2048:CudaGlobalFunction void getWallStage8LimiterRatio_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2050:CudaGlobalFunction void getWallStage8LimiterRatio_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1099:  void GetWallStage8VectorDeltaRawMag(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1100:  void GetSampleWallStage8VectorDeltaRawMag(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1101:  inline void GetWallStage8VectorDeltaRawMag(lbRegion over, real_t * tab) { GetWallStage8VectorDeltaRawMag(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1103:  void GetWallStage8VectorDeltaRawMag_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1123:  void GetWallStage8LimiterRatio(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1124:  void GetSampleWallStage8LimiterRatio(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1125:  inline void GetWallStage8LimiterRatio(lbRegion over, real_t * tab) { GetWallStage8LimiterRatio(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1127:  void GetWallStage8LimiterRatio_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:195:	                    fprintf(f,",\"Stage8DiagSphereCenterX\",\"Stage8DiagSphereCenterX_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:197:	                    fprintf(f,",\"Stage8DiagSphereCenterY\",\"Stage8DiagSphereCenterY_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:199:	                    fprintf(f,",\"Stage8DiagSphereCenterZ\",\"Stage8DiagSphereCenterZ_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:201:	                    fprintf(f,",\"Stage8DiagSphereRadius\",\"Stage8DiagSphereRadius_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:519:                    LogScales[ SETTINGS_Stage8DiagSphereCenterX ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:520:                    LogScales[ SETTINGS_Stage8DiagSphereCenterY ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:521:                    LogScales[ SETTINGS_Stage8DiagSphereCenterZ ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:522:                    LogScales[ SETTINGS_Stage8DiagSphereRadius ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1833:	if (strcmp(comp, "WallStage8VectorDeltaRawMag") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1834:    	real_t* tmp_WallStage8VectorDeltaRawMag = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1836:    	lattice->GetWallStage8VectorDeltaRawMag(region, tmp_WallStage8VectorDeltaRawMag, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1837:        buf = (real_t*)tmp_WallStage8VectorDeltaRawMag;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1865:	if (strcmp(comp, "WallStage8LimiterRatio") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1866:    	real_t* tmp_WallStage8LimiterRatio = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1868:    	lattice->GetWallStage8LimiterRatio(region, tmp_WallStage8LimiterRatio, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1869:        buf = (real_t*)tmp_WallStage8LimiterRatio;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1899:     output("-> SpecialBoundaryPoint\n") ;  output("-> Rho\n") ;  output("-> PhaseField\n") ;  output("-> U\n") ;  output("-> P\n") ;  output("-> Pstar\n") ;  output("-> Normal\n") ;  output("-> IsItBoundary\n") ;  output("-> GradPhi\n") ;  output("-> WallPfF\n") ;  output("-> WallGradTangent\n") ;  output("-> WallTanCoeff\n") ;  output("-> WallPhasePred\n") ;  output("-> WallPhaseProfilePred\n") ;  output("-> WallProfileDelta\n") ;  output("-> WallPhaseSignedProfilePred\n") ;  output("-> WallSignedProfileDelta\n") ;  output("-> WallSignedLogitShift\n") ;  output("-> WallFluidSampleCount\n") ;  output("-> WallFluidSampleH\n") ;  output("-> WallPhaseUnifiedProfilePred\n") ;  output("-> WallUnifiedProfileDelta\n") ;  output("-> WallBCPath\n") ;  output("-> WallH\n") ;  output("-> WallGeomNormal\n") ;  output("-> WallGrad1\n") ;  output("-> WallGrad2\n") ;  output("-> WallGradTangentVec\n") ;  output("-> WallNormalCoeff1\n") ;  output("-> WallNormalCoeff2\n") ;  output("-> WallActualMinusProfile\n") ;  output("-> WallActualMinusRaw\n") ;  output("-> WallPhaseRawPred\n") ;  output("-> WallPhaseSignedPred\n") ;  output("-> WallContactResidual\n") ;  output("-> WallSignedNormalGrad\n") ;  output("-> WallTangentGradMag\n") ;  output("-> WallSignedDeltaQ\n") ;  output("-> WallSignedQClipped\n") ;  output("-> BoundaryMask\n") ;  output("-> WallStage7Mode\n") ;  output("-> WallStage7ActiveWeight\n") ;  output("-> WallStage7DeltaQRaw\n") ;  output("-> WallStage7DeltaQLimited\n") ;  output("-> WallStage7Denom\n") ;  output("-> WallStage7LimiterReason\n") ;  output("-> WallStage7GradMag\n") ;  output("-> WallStage7ActualCos\n") ;  output("-> WallStage7TargetCos\n") ;  output("-> WallStage7WriteCandidate\n") ;  output("-> WallStage7WriteMinusProfile\n") ;  output("-> WallStage8GradMode\n") ;  output("-> WallStage8ActiveWeight\n") ;  output("-> WallStage8NormalGradRaw\n") ;  output("-> WallStage8NormalGradTarget\n") ;  output("-> WallStage8ContactResidual\n") ;  output("-> WallStage8TangentGradMag\n") ;  output("-> WallStage8TargetCos\n") ;  output("-> WallStage8GradWriteDeltaMag\n") ;  output("-> WallStage8LimiterReason\n") ;  output("-> WallStage8LocalWallAngle\n") ;  output("-> WallStage8LocalWallNormal\n") ;  output("-> WallStage8FluidWallAngle\n") ;  output("-> WallStage8FluidWallNormal\n") ;  output("-> WallStage8FluidWallDataCount\n") ;  output("-> WallStage8GradCandidate\n") ;  output("-> WallStage8GradCandidateUse\n") ;  output("-> WallStage8NormalAgreement\n") ;  output("-> WallStage8UsedGeomNormal\n") ;  output("-> WallStage8TanCoeffLocal\n") ;  output("-> WallStage8ThetaLocal\n") ;  output("-> WallStage8PhaseC\n") ;  output("-> WallStage8GradMagRaw\n") ;  output("-> WallStage8TangentGradRaw\n") ;  output("-> WallStage8TargetNormalGrad\n") ;  output("-> WallStage8NormalDeltaRaw\n") ;  output("-> WallStage8NormalDeltaLimited\n") ;  output("-> WallStage8VectorDeltaRawMag\n") ;  output("-> WallStage8VectorDeltaLimitedMag\n") ;  output("-> WallStage8NormalLimiterHit\n") ;  output("-> WallStage8VectorLimiterHit\n") ;  output("-> WallStage8LimiterRatio\n") ;  output("-> WallStage8RegionTag\n") ;  output("-> WallStage8SphereRadialDot\n") ;  output("-> WallStage8ContactBandTag\n") ; 

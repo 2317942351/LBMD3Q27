@@ -1,0 +1,290 @@
+diff --git a/third_party/tclb_snapshots/stage8c_local_angle_boundary_gradient_candidate_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/third_party/tclb_snapshots/stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index f3e0450..5919f8c 100644
+--- a/third_party/tclb_snapshots/stage8c_local_angle_boundary_gradient_candidate_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/third_party/tclb_snapshots/stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -1389,6 +1389,22 @@ CudaDeviceFunction void stage8ResetGradientDiagnostics() {
+ 	Stage8GradCandidateUse = 0.0;
+ 	Stage8NormalAgreement = 0.0;
+ 	Stage8UsedGeomNormal = 0.0;
++	Stage8TanCoeffLocal = 0.0;
++	Stage8ThetaLocal = 0.0;
++	Stage8PhaseC = 0.0;
++	Stage8GradMagRaw = 0.0;
++	Stage8TangentGradRaw = 0.0;
++	Stage8TargetNormalGrad = 0.0;
++	Stage8NormalDeltaRaw = 0.0;
++	Stage8NormalDeltaLimited = 0.0;
++	Stage8VectorDeltaRawMag = 0.0;
++	Stage8VectorDeltaLimitedMag = 0.0;
++	Stage8NormalLimiterHit = 0.0;
++	Stage8VectorLimiterHit = 0.0;
++	Stage8LimiterRatio = 1.0;
++	Stage8RegionTag = 0.0;
++	Stage8SphereRadialDot = 0.0;
++	Stage8ContactBandTag = 0.0;
+ }
+ 
+ CudaDeviceFunction bool stage8IsPhysicalFluidNode() {
+@@ -1510,6 +1526,38 @@ CudaDeviceFunction vector_t stage8GatherLocalWallNormal(real_t *angle, real_t *c
+ 	return stage8UnitVector(normal);
+ }
+ 
++CudaDeviceFunction void stage8dTagSphereRegion(vector_t wall_normal) {
++	Stage8RegionTag = 0.0;
++	Stage8SphereRadialDot = 0.0;
++	if (Stage8DiagSphereRadius <= 0.0) {
++		return;
++	}
++	if (Stage8FluidWallDataCount > 0.5) {
++		Stage8RegionTag = 4.0;
++	}
++	real_t rx = X - Stage8DiagSphereCenterX;
++	real_t ry = Y - Stage8DiagSphereCenterY;
++	real_t rz = Z - Stage8DiagSphereCenterZ;
++	real_t rr = sqrt(rx*rx + ry*ry + rz*rz);
++	if (rr < 1e-12) {
++		return;
++	}
++	real_t radial_x = rx/rr;
++	real_t radial_y = ry/rr;
++	real_t radial_z = rz/rr;
++	Stage8SphereRadialDot = wall_normal.x*radial_x + wall_normal.y*radial_y + wall_normal.z*radial_z;
++	real_t shell_dist = fabs(rr - Stage8DiagSphereRadius);
++	if (shell_dist <= 3.0) {
++		if (Z < Stage8DiagSphereCenterZ - 0.5*Stage8DiagSphereRadius) {
++			Stage8RegionTag = 3.0;
++		} else if (Z < Stage8DiagSphereCenterZ) {
++			Stage8RegionTag = 2.0;
++		} else {
++			Stage8RegionTag = 1.0;
++		}
++	}
++}
++
+ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 	stage8ResetGradientDiagnostics();
+ 	real_t mode = Stage8OperatorMode;
+@@ -1569,14 +1617,33 @@ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 	Stage8FluidWallNormal_x = wall_normal.x;
+ 	Stage8FluidWallNormal_y = wall_normal.y;
+ 	Stage8FluidWallNormal_z = wall_normal.z;
++	stage8dTagSphereRegion(wall_normal);
+ 
+ 	real_t c = wallStage7NormalizedPhase(PhaseF(0,0,0));
++	Stage8ThetaLocal = local_angle;
++	Stage8PhaseC = c;
++	if (c < 0.05) {
++		Stage8ContactBandTag = 1.0;
++	} else if (c < 0.10) {
++		Stage8ContactBandTag = 2.0;
++	} else if (c < 0.30) {
++		Stage8ContactBandTag = 3.0;
++	} else if (c <= 0.70) {
++		Stage8ContactBandTag = 4.0;
++	} else if (c <= 0.90) {
++		Stage8ContactBandTag = 5.0;
++	} else if (c <= 0.95) {
++		Stage8ContactBandTag = 6.0;
++	} else {
++		Stage8ContactBandTag = 7.0;
++	}
+ 	if (c < Stage8ActiveCMin || c > 1.0 - Stage8ActiveCMin) {
+ 		reason += 4.0;
+ 	}
+ 
+ 	vector_t grad = {gradPhiVal_x, gradPhiVal_y, gradPhiVal_z};
+ 	real_t grad_mag = wallStage7VectorMag(grad);
++	Stage8GradMagRaw = grad_mag;
+ 	if (grad_mag < Stage8ActiveGradMin) {
+ 		reason += 8.0;
+ 	}
+@@ -1588,14 +1655,18 @@ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 		grad.z - normal_raw*wall_normal.z
+ 	};
+ 	real_t tangent_mag = wallStage7VectorMag(tangent);
++	Stage8TangentGradRaw = tangent_mag;
+ 	if (tangent_mag < Stage8ActiveTangentMin) {
+ 		reason += 16.0;
+ 	}
+ 
+-	real_t target_normal = -tan(PI/2.0 - local_angle) * tangent_mag;
++	real_t tan_coeff = tan(PI/2.0 - local_angle);
++	real_t target_normal = -tan_coeff * tangent_mag;
+ 	real_t target_cos = -cos(local_angle);
++	Stage8TanCoeffLocal = tan_coeff;
+ 	Stage8NormalGradRaw = normal_raw;
+ 	Stage8NormalGradTarget = target_normal;
++	Stage8TargetNormalGrad = target_normal;
+ 	Stage8TangentGradMag = tangent_mag;
+ 	Stage8TargetCos = target_cos;
+ 	if (grad_mag > minGradient) {
+@@ -1616,7 +1687,9 @@ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 		alpha = 0.0;
+ 	}
+ 
+-	real_t corrected_normal = normal_raw + alpha*(target_normal - normal_raw);
++	real_t dn_raw = target_normal - normal_raw;
++	Stage8NormalDeltaRaw = dn_raw;
++	real_t corrected_normal = normal_raw + alpha*dn_raw;
+ 	vector_t corrected = {
+ 		tangent.x + corrected_normal*wall_normal.x,
+ 		tangent.y + corrected_normal*wall_normal.y,
+@@ -1628,6 +1701,9 @@ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 		corrected.z - grad.z
+ 	};
+ 	real_t delta_mag = wallStage7VectorMag(delta);
++	real_t delta_raw_mag = delta_mag;
++	Stage8VectorDeltaRawMag = delta_raw_mag;
++	Stage8NormalDeltaLimited = alpha*dn_raw;
+ 	if (Stage8MaxGradDelta > 0.0 && delta_mag > Stage8MaxGradDelta) {
+ 		real_t scale = Stage8MaxGradDelta/(delta_mag + 1e-12);
+ 		delta.x *= scale;
+@@ -1637,7 +1713,16 @@ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 		corrected.y = grad.y + delta.y;
+ 		corrected.z = grad.z + delta.z;
+ 		Stage8LimiterReason += 128.0;
++		Stage8VectorLimiterHit = 1.0;
+ 		delta_mag = wallStage7VectorMag(delta);
++		Stage8NormalDeltaLimited = alpha*dn_raw*scale;
++	}
++	Stage8VectorDeltaLimitedMag = delta_mag;
++	if (fabs(Stage8NormalDeltaLimited - alpha*dn_raw) > 1e-10) {
++		Stage8NormalLimiterHit = 1.0;
++	}
++	if (delta_raw_mag > 1e-12) {
++		Stage8LimiterRatio = delta_mag/delta_raw_mag;
+ 	}
+ 	Stage8GradWriteDeltaMag = delta_mag;
+ 	Stage8GradCandidate_x = corrected.x;
+@@ -1739,6 +1824,70 @@ CudaDeviceFunction real_t getWallStage8UsedGeomNormal() {
+ 	return Stage8UsedGeomNormal(0,0,0);
+ }
+ 
++CudaDeviceFunction real_t getWallStage8TanCoeffLocal() {
++	return Stage8TanCoeffLocal(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8ThetaLocal() {
++	return Stage8ThetaLocal(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8PhaseC() {
++	return Stage8PhaseC(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8GradMagRaw() {
++	return Stage8GradMagRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8TangentGradRaw() {
++	return Stage8TangentGradRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8TargetNormalGrad() {
++	return Stage8TargetNormalGrad(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8NormalDeltaRaw() {
++	return Stage8NormalDeltaRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8NormalDeltaLimited() {
++	return Stage8NormalDeltaLimited(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8VectorDeltaRawMag() {
++	return Stage8VectorDeltaRawMag(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8VectorDeltaLimitedMag() {
++	return Stage8VectorDeltaLimitedMag(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8NormalLimiterHit() {
++	return Stage8NormalLimiterHit(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8VectorLimiterHit() {
++	return Stage8VectorLimiterHit(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8LimiterRatio() {
++	return Stage8LimiterRatio(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8RegionTag() {
++	return Stage8RegionTag(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8SphereRadialDot() {
++	return Stage8SphereRadialDot(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8ContactBandTag() {
++	return Stage8ContactBandTag(0,0,0);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+diff --git a/third_party/tclb_snapshots/stage8c_local_angle_boundary_gradient_candidate_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R b/third_party/tclb_snapshots/stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 66e52a4..afc3838 100644
+--- a/third_party/tclb_snapshots/stage8c_local_angle_boundary_gradient_candidate_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/third_party/tclb_snapshots/stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -121,6 +121,22 @@ if (Options$geometric){
+     AddField("Stage8GradCandidateUse", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8NormalAgreement", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8UsedGeomNormal", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8TanCoeffLocal", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8ThetaLocal", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8PhaseC", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8GradMagRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8TangentGradRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8TargetNormalGrad", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8NormalDeltaRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8NormalDeltaLimited", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8VectorDeltaRawMag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8VectorDeltaLimitedMag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8NormalLimiterHit", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8VectorLimiterHit", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8LimiterRatio", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8RegionTag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8SphereRadialDot", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8ContactBandTag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     # Fake field, to simply copy field values to PhaseF instead
+     # of accessing them directly from PhaseF field
+     # this is needed for the cases when PhaseF needs to be accessed in the dynamic manner
+@@ -264,6 +280,22 @@ if (Options$thermo){
+ 				AddQuantity(name="WallStage8GradCandidateUse", unit=1)
+ 				AddQuantity(name="WallStage8NormalAgreement", unit=1)
+ 				AddQuantity(name="WallStage8UsedGeomNormal", unit=1)
++				AddQuantity(name="WallStage8TanCoeffLocal", unit=1)
++				AddQuantity(name="WallStage8ThetaLocal", unit=1)
++				AddQuantity(name="WallStage8PhaseC", unit=1)
++				AddQuantity(name="WallStage8GradMagRaw", unit=1)
++				AddQuantity(name="WallStage8TangentGradRaw", unit=1)
++				AddQuantity(name="WallStage8TargetNormalGrad", unit=1)
++				AddQuantity(name="WallStage8NormalDeltaRaw", unit=1)
++				AddQuantity(name="WallStage8NormalDeltaLimited", unit=1)
++				AddQuantity(name="WallStage8VectorDeltaRawMag", unit=1)
++				AddQuantity(name="WallStage8VectorDeltaLimitedMag", unit=1)
++				AddQuantity(name="WallStage8NormalLimiterHit", unit=1)
++				AddQuantity(name="WallStage8VectorLimiterHit", unit=1)
++				AddQuantity(name="WallStage8LimiterRatio", unit=1)
++				AddQuantity(name="WallStage8RegionTag", unit=1)
++				AddQuantity(name="WallStage8SphereRadialDot", unit=1)
++				AddQuantity(name="WallStage8ContactBandTag", unit=1)
+ 			}
+ 		}
+ 	if (Options$staircaseimp) {
+@@ -305,6 +337,10 @@ if (Options$thermo){
+ 	AddSetting(name="Stage8NormalDotMin", default=0.25, comment='Stage8c minimum dot product between topology and gathered geometry normals')
+ 	AddSetting(name="Stage8MaxGradDelta", default=0.25, comment='Stage8c explicit limiter for corrected gradient candidate delta magnitude')
+ 	AddSetting(name="Stage8OperatorMode", default=0, comment='Stage8c mode: 0 off, 1 shadow candidate, 2 write gradPhiVal, 3 reserved no-op')
++	AddSetting(name="Stage8DiagSphereCenterX", default=0.0, comment='Stage8d diagnostic solid-sphere center X for region tagging')
++	AddSetting(name="Stage8DiagSphereCenterY", default=0.0, comment='Stage8d diagnostic solid-sphere center Y for region tagging')
++	AddSetting(name="Stage8DiagSphereCenterZ", default=0.0, comment='Stage8d diagnostic solid-sphere center Z for region tagging')
++	AddSetting(name="Stage8DiagSphereRadius", default=0.0, comment='Stage8d diagnostic solid-sphere radius for region tagging')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')
