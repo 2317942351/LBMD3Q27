@@ -1,0 +1,72 @@
+diff --git a/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt b/third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
+index 55e0e24..e5877e5 100644
+--- a/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
++++ b/third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
+@@ -143,7 +143,66 @@ CudaDeviceFunction vector_t calcGradPhi()
+ 		    <?R
+ 			IsotropicGrad('gradPhi', 'PhaseF')
+ 		    ?>
+-	#endif	
++	#endif
++#ifdef OPTIONS_geometric
++	if (Stage8GradientWettingMode > 2.5) {
++		vector_t stage8_normal = {0.0, 0.0, 0.0};
++		if (!(IamWall || IamSolid) && IsBoundary(0,0,0) < 0.5) {
++			for (int dx=-1; dx<=1; dx++) {
++				for (int dy=-1; dy<=1; dy++) {
++					for (int dz=-1; dz<=1; dz++) {
++						if (dx == 0 && dy == 0 && dz == 0) {
++							continue;
++						}
++						if (IsBoundary_dyn(dx, dy, dz) > 0.5) {
++							real_t dist = sqrt(1.0*dx*dx + 1.0*dy*dy + 1.0*dz*dz);
++							if (dist > 1e-12) {
++								real_t weight = 1.0/dist;
++								stage8_normal.x += -weight*dx;
++								stage8_normal.y += -weight*dy;
++								stage8_normal.z += -weight*dz;
++							}
++						}
++					}
++				}
++			}
++			real_t normal_mag = sqrt(stage8_normal.x*stage8_normal.x + stage8_normal.y*stage8_normal.y + stage8_normal.z*stage8_normal.z);
++			if (normal_mag > 1e-12) {
++				stage8_normal.x /= normal_mag;
++				stage8_normal.y /= normal_mag;
++				stage8_normal.z /= normal_mag;
++				real_t phase_range = PhaseField_h - PhaseField_l;
++				real_t c = 0.5;
++				if (fabs(phase_range) > 1e-12) {
++					c = (PhaseF(0,0,0) - PhaseField_l)/phase_range;
++				}
++				real_t grad_mag = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
++				real_t normal_raw = gradPhi.x*stage8_normal.x + gradPhi.y*stage8_normal.y + gradPhi.z*stage8_normal.z;
++				vector_t tangent = {
++					gradPhi.x - normal_raw*stage8_normal.x,
++					gradPhi.y - normal_raw*stage8_normal.y,
++					gradPhi.z - normal_raw*stage8_normal.z
++				};
++				real_t tangent_mag = sqrt(tangent.x*tangent.x + tangent.y*tangent.y + tangent.z*tangent.z);
++				if (c >= Stage8ActiveCMin && c <= 1.0 - Stage8ActiveCMin &&
++					grad_mag >= Stage8ActiveGradMin && tangent_mag >= Stage8ActiveTangentMin) {
++					real_t target_normal = -tan(PI/2.0 - radAngle) * tangent_mag;
++					real_t alpha = 1.0/(Stage8RelaxationTau + 1e-12);
++					if (alpha > 1.0) {
++						alpha = 1.0;
++					}
++					if (alpha < 0.0) {
++						alpha = 0.0;
++					}
++					real_t corrected_normal = normal_raw + alpha*(target_normal - normal_raw);
++					gradPhi.x = tangent.x + corrected_normal*stage8_normal.x;
++					gradPhi.y = tangent.y + corrected_normal*stage8_normal.y;
++					gradPhi.z = tangent.z + corrected_normal*stage8_normal.z;
++				}
++			}
++		}
++	}
++#endif
+ 	return gradPhi;
+ }
+ 

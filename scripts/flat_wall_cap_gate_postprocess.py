@@ -207,6 +207,15 @@ def summarize_frame(
         "WallStage7TargetCos",
         "WallStage7WriteCandidate",
         "WallStage7WriteMinusProfile",
+        "WallStage8GradMode",
+        "WallStage8ActiveWeight",
+        "WallStage8NormalGradRaw",
+        "WallStage8NormalGradTarget",
+        "WallStage8ContactResidual",
+        "WallStage8TangentGradMag",
+        "WallStage8TargetCos",
+        "WallStage8GradWriteDeltaMag",
+        "WallStage8LimiterReason",
         "WallH",
         "WallNormalCoeff1",
         "WallNormalCoeff2",
@@ -377,6 +386,14 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
     wall_stage7_target_cos = rec["field_stats"].get("WallStage7TargetCos", {}).get("wall", {})
     wall_stage7_candidate = rec["field_stats"].get("WallStage7WriteCandidate", {}).get("wall", {})
     wall_stage7_minus_profile = rec["field_stats"].get("WallStage7WriteMinusProfile", {}).get("wall", {})
+    stage8_active = rec["field_stats"].get("WallStage8ActiveWeight", {}).get("fluid", {})
+    stage8_raw = rec["field_stats"].get("WallStage8NormalGradRaw", {}).get("fluid", {})
+    stage8_target = rec["field_stats"].get("WallStage8NormalGradTarget", {}).get("fluid", {})
+    stage8_residual = rec["field_stats"].get("WallStage8ContactResidual", {}).get("fluid", {})
+    stage8_tangent = rec["field_stats"].get("WallStage8TangentGradMag", {}).get("fluid", {})
+    stage8_target_cos = rec["field_stats"].get("WallStage8TargetCos", {}).get("fluid", {})
+    stage8_delta = rec["field_stats"].get("WallStage8GradWriteDeltaMag", {}).get("fluid", {})
+    stage8_limiter = rec["field_stats"].get("WallStage8LimiterReason", {}).get("fluid", {})
     limiter_counts = rec.get("stage7b_limiter_counts", {})
     phase_sum = float(phase_fluid.get("sum", math.nan))
     rho_sum = float(rho_fluid.get("sum", math.nan))
@@ -444,6 +461,19 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "wall_stage7_write_candidate_max": wall_stage7_candidate.get("max", math.nan),
         "wall_stage7_write_minus_profile_min": wall_stage7_minus_profile.get("min", math.nan),
         "wall_stage7_write_minus_profile_max": wall_stage7_minus_profile.get("max", math.nan),
+        "wall_stage8_active_weight_sum": stage8_active.get("sum", math.nan),
+        "wall_stage8_active_weight_mean": stage8_active.get("mean", math.nan),
+        "wall_stage8_normal_grad_raw_p50": stage8_raw.get("p50", math.nan),
+        "wall_stage8_normal_grad_target_p50": stage8_target.get("p50", math.nan),
+        "wall_stage8_contact_residual_mean": stage8_residual.get("mean", math.nan),
+        "wall_stage8_contact_residual_p50": stage8_residual.get("p50", math.nan),
+        "wall_stage8_contact_residual_p99": stage8_residual.get("p99", math.nan),
+        "wall_stage8_tangent_grad_mag_p50": stage8_tangent.get("p50", math.nan),
+        "wall_stage8_target_cos_p50": stage8_target_cos.get("p50", math.nan),
+        "wall_stage8_grad_write_delta_mag_p50": stage8_delta.get("p50", math.nan),
+        "wall_stage8_grad_write_delta_mag_max": stage8_delta.get("max", math.nan),
+        "wall_stage8_limiter_reason_sum": stage8_limiter.get("sum", math.nan),
+        "wall_stage8_limiter_reason_max": stage8_limiter.get("max", math.nan),
         "max_mach": rec["max_mach"],
         "nonfinite_total": rec["nonfinite_total"],
         "path_counts": json.dumps(rec["wall_bc_path_counts"], sort_keys=True),

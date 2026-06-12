@@ -1,0 +1,56 @@
+{
+  "status": "runtime_sanity",
+  "gate_passed": true,
+  "root": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612/cap_theta030_wall011_mode1",
+  "output_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612/cap_theta030_wall011_mode1/output",
+  "out_dir": "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612/cap_theta030_wall011_mode1/analysis_finiteness_gate",
+  "required_arrays": [
+    "PhaseField",
+    "U",
+    "P",
+    "Rho",
+    "WallStage8GradMode",
+    "WallStage8ActiveWeight",
+    "WallStage8NormalGradRaw",
+    "WallStage8NormalGradTarget",
+    "WallStage8ContactResidual",
+    "WallStage8TangentGradMag",
+    "WallStage8TargetCos",
+    "WallStage8GradWriteDeltaMag",
+    "WallStage8LimiterReason"
+  ],
+  "phase_threshold": 0.5,
+  "vti_files_checked": 3,
+  "vti_steps_checked": [
+    0,
+    1000,
+    2000
+  ],
+  "csv_files_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612/cap_theta030_wall011_mode1/output/case_Log_P00_00000000.csv"
+  ],
+  "text_logs_checked": [
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612/cap_theta030_wall011_mode1/run.log",
+    "/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612/cap_theta030_wall011_mode1/run.stderr"
+  ],
+  "first_bad": null,
+  "first_csv_bad": null,
+  "first_text_log_bad": null,
+  "first_vti_bad": null,
+  "max_fluid_nonfinite_count_by_array": {
+    "PhaseField": 0,
+    "U": 0,
+    "P": 0,
+    "Rho": 0,
+    "WallStage8GradMode": 0,
+    "WallStage8ActiveWeight": 0,
+    "WallStage8NormalGradRaw": 0,
+    "WallStage8NormalGradTarget": 0,
+    "WallStage8ContactResidual": 0,
+    "WallStage8TangentGradMag": 0,
+    "WallStage8TargetCos": 0,
+    "WallStage8GradWriteDeltaMag": 0,
+    "WallStage8LimiterReason": 0
+  },
+  "claim_limit": "stability gate only; passing this does not validate physical prediction"
+}

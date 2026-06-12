@@ -1,0 +1,48 @@
+diff --git a/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R b/third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index 03f53a9..379e12e 100644
+--- a/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -97,6 +97,15 @@ if (Options$geometric){
+     AddField("gradPhiVal_x", stencil3d=2, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("gradPhiVal_y", stencil3d=2, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("gradPhiVal_z", stencil3d=2, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8GradMode", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8ActiveWeight", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8NormalGradRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8NormalGradTarget", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8ContactResidual", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8TangentGradMag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8TargetCos", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8GradWriteDeltaMag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8LimiterReason", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     # Fake field, to simply copy field values to PhaseF instead
+     # of accessing them directly from PhaseF field
+     # this is needed for the cases when PhaseF needs to be accessed in the dynamic manner
+@@ -222,6 +231,15 @@ if (Options$thermo){
+ 				AddQuantity(name="WallStage7TargetCos", unit=1)
+ 				AddQuantity(name="WallStage7WriteCandidate", unit=1)
+ 				AddQuantity(name="WallStage7WriteMinusProfile", unit=1)
++				AddQuantity(name="WallStage8GradMode", unit=1)
++				AddQuantity(name="WallStage8ActiveWeight", unit=1)
++				AddQuantity(name="WallStage8NormalGradRaw", unit=1)
++				AddQuantity(name="WallStage8NormalGradTarget", unit=1)
++				AddQuantity(name="WallStage8ContactResidual", unit=1)
++				AddQuantity(name="WallStage8TangentGradMag", unit=1)
++				AddQuantity(name="WallStage8TargetCos", unit=1)
++				AddQuantity(name="WallStage8GradWriteDeltaMag", unit=1)
++				AddQuantity(name="WallStage8LimiterReason", unit=1)
+ 			}
+ 		}
+ 	if (Options$staircaseimp) {
+@@ -253,6 +271,11 @@ if (Options$thermo){
+ 	AddSetting(name="Stage7ActiveGradMin", default='1e-6', comment='Stage7b minimum interface gradient magnitude for active contact-line forcing')
+ 	AddSetting(name="Stage7ActiveTangentMin", default='1e-8', comment='Stage7b minimum tangent gradient magnitude for active contact-line forcing')
+ 	AddSetting(name="Stage7RelaxationTau", default=1.0, comment='Stage7b wall ghost relaxation time; 1 means immediate candidate update')
++	AddSetting(name="Stage8GradientWettingMode", default=0, comment='Stage8 diagnostic: 0 off, 1 shadow only, 2 write corrected fluid-boundary gradPhiVal')
++	AddSetting(name="Stage8ActiveCMin", default=0.02, comment='Stage8 minimum normalized phase fraction for active fluid-boundary gradient correction')
++	AddSetting(name="Stage8ActiveGradMin", default='1e-6', comment='Stage8 minimum gradient magnitude for active fluid-boundary gradient correction')
++	AddSetting(name="Stage8ActiveTangentMin", default='1e-8', comment='Stage8 minimum tangent gradient magnitude for active fluid-boundary gradient correction')
++	AddSetting(name="Stage8RelaxationTau", default=1.0, comment='Stage8 gradient correction relaxation time; 1 means immediate candidate update')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')

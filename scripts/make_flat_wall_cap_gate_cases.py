@@ -36,6 +36,7 @@ VTK_WHAT = (
     "WallPhasePred,WallBCPath,WallPhaseProfilePred,WallProfileDelta,"
     "WallPhaseSignedProfilePred,WallSignedProfileDelta,WallSignedLogitShift"
 )
+STAGE8_LIGHT_VTK = "PhaseField,U,P,Rho,BOUNDARY,WallBCPath"
 STAGE7_EXTRA_VTK = (
     "WallFluidSampleCount,WallFluidSampleH,WallPhaseRawPred,"
     "WallPhaseSignedPred,WallContactResidual,WallSignedNormalGrad,"
@@ -46,6 +47,12 @@ STAGE7_EXTRA_VTK = (
     "WallStage7WriteCandidate,WallStage7WriteMinusProfile,"
     "WallH,WallGeomNormal,WallGrad1,WallGrad2,WallGradTangentVec,"
     "WallNormalCoeff1,WallNormalCoeff2,WallActualMinusProfile,WallActualMinusRaw"
+)
+STAGE8_EXTRA_VTK = (
+    "WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,"
+    "WallStage8NormalGradTarget,WallStage8ContactResidual,"
+    "WallStage8TangentGradMag,WallStage8TargetCos,"
+    "WallStage8GradWriteDeltaMag,WallStage8LimiterReason"
 )
 
 
@@ -80,6 +87,18 @@ STAGE7B_WALL011_MODE_CASES = [
     GateCase("cap_theta030_wall011_mode3", 30.0, 11.0, "Stage7b wall011 mode3 active relaxed signed-write candidate"),
 ]
 
+STAGE8_LOW_ANGLE_CASES = [
+    GateCase(f"cap_theta030_wall{angle:03d}", 30.0, float(angle), f"Stage8 low-angle flat wall scan wall{angle:03d}")
+    for angle in [5, 8, 11, 30]
+]
+
+STAGE8_WALL011_MODE_CASES = [
+    GateCase("cap_theta030_wall011_mode0", 30.0, 11.0, "Stage8 wall011 mode0 off/profile control"),
+    GateCase("cap_theta030_wall011_mode1", 30.0, 11.0, "Stage8 wall011 mode1 shadow diagnostics"),
+    GateCase("cap_theta030_wall011_mode2", 30.0, 11.0, "Stage8 wall011 mode2 gradPhiVal write candidate"),
+    GateCase("cap_theta030_wall011_mode3", 30.0, 11.0, "Stage8 wall011 mode3 collision-gradient write candidate"),
+]
+
 
 def cap_sphere_radius(volume_radius: float, theta_deg: float) -> float:
     theta = math.radians(theta_deg)
@@ -109,12 +128,28 @@ def model_xml(
     stage7_active_grad_min: float,
     stage7_active_tangent_min: float,
     stage7_relaxation_tau: float,
+    stage8_gradient_wetting_mode: float,
+    stage8_active_c_min: float,
+    stage8_active_grad_min: float,
+    stage8_active_tangent_min: float,
+    stage8_relaxation_tau: float,
+    flat_wall_global_rad_angle: bool,
     cap_radius: float,
     cap_center_x: float,
     cap_center_y: float,
     cap_center_z: float,
     cap_theta_rad: float,
 ) -> str:
+    radangle_xml = (
+        f'    <Param name="radAngle" value="{wall_angle:.16g}d"/>\n'
+        f'    <Param name="radAngle" value="90d" zone="OuterDomain"/>\n'
+        f'    <Param name="radAngle" value="{wall_angle:.16g}d" zone="FlatLowerY"/>'
+        if flat_wall_global_rad_angle
+        else
+        f'    <Param name="radAngle" value="90d"/>\n'
+        f'    <Param name="radAngle" value="90d" zone="OuterDomain"/>\n'
+        f'    <Param name="radAngle" value="{wall_angle:.16g}d" zone="FlatLowerY"/>'
+    )
     return f"""  <Model>
     <Param name="Density_h" value="{density_h:.16g}"/>
     <Param name="Density_l" value="{density_l:.16g}"/>
@@ -141,9 +176,7 @@ def model_xml(
     <Param name="BuoyancyX" value="0.0"/>
     <Param name="BuoyancyY" value="0.0"/>
     <Param name="BuoyancyZ" value="0.0"/>
-    <Param name="radAngle" value="90d"/>
-    <Param name="radAngle" value="90d" zone="OuterDomain"/>
-    <Param name="radAngle" value="{wall_angle:.16g}d" zone="FlatLowerY"/>
+{radangle_xml}
     <Param name="minGradient" value="{min_gradient:.16g}"/>
 {stage7_param_xml(
     use_stage7_signed_wall_ghost,
@@ -155,6 +188,13 @@ def model_xml(
     stage7_active_grad_min,
     stage7_active_tangent_min,
     stage7_relaxation_tau,
+)}
+{stage8_param_xml(
+    stage8_gradient_wetting_mode,
+    stage8_active_c_min,
+    stage8_active_grad_min,
+    stage8_active_tangent_min,
+    stage8_relaxation_tau,
 )}
   </Model>"""
 
@@ -197,6 +237,10 @@ def select_cases(case_set: str) -> list[GateCase]:
         return STAGE7B_LOW_ANGLE_CASES
     if case_set == "stage7b_wall011_modes":
         return STAGE7B_WALL011_MODE_CASES
+    if case_set == "stage8_low_angle":
+        return STAGE8_LOW_ANGLE_CASES
+    if case_set == "stage8_wall011_modes":
+        return STAGE8_WALL011_MODE_CASES
     raise ValueError(f"unknown case set {case_set}")
 
 
@@ -211,11 +255,59 @@ def mode_for_case(args: argparse.Namespace, case: GateCase) -> float:
     return args.stage7_signed_mode
 
 
+def stage8_mode_for_case(args: argparse.Namespace, case: GateCase) -> float:
+    if args.case_set == "stage8_wall011_modes":
+        for mode in [0, 1, 2, 3]:
+            if case.name.endswith(f"_mode{mode}"):
+                return float(mode)
+    return args.stage8_gradient_wetting_mode
+
+
 def include_stage7_fields(args: argparse.Namespace) -> bool:
     return (
         bool(args.stage7_signed_wall_ghost)
         or args.stage7_signed_mode > 0.0
         or args.case_set.startswith("stage7b_")
+        or bool(args.full_wall_diagnostics)
+    )
+
+
+def include_stage8_fields(args: argparse.Namespace) -> bool:
+    return args.stage8_gradient_wetting_mode > 0.0 or args.case_set.startswith("stage8_")
+
+
+def base_vtk_what(args: argparse.Namespace) -> str:
+    if args.case_set.startswith("stage8_") and not args.full_wall_diagnostics:
+        return STAGE8_LIGHT_VTK
+    return VTK_WHAT
+
+
+def vtk_what_for_args(args: argparse.Namespace) -> str:
+    vtk_what = base_vtk_what(args)
+    if include_stage7_fields(args):
+        vtk_what = f"{vtk_what},{STAGE7_EXTRA_VTK}"
+    if include_stage8_fields(args):
+        vtk_what = f"{vtk_what},{STAGE8_EXTRA_VTK}"
+    return vtk_what
+
+
+def stage8_param_xml(
+    stage8_gradient_wetting_mode: float,
+    stage8_active_c_min: float,
+    stage8_active_grad_min: float,
+    stage8_active_tangent_min: float,
+    stage8_relaxation_tau: float,
+) -> str:
+    if stage8_gradient_wetting_mode <= 0:
+        return ""
+    return "\n".join(
+        [
+            f'    <Param name="Stage8GradientWettingMode" value="{stage8_gradient_wetting_mode:.16g}"/>',
+            f'    <Param name="Stage8ActiveCMin" value="{stage8_active_c_min:.16g}"/>',
+            f'    <Param name="Stage8ActiveGradMin" value="{stage8_active_grad_min:.16g}"/>',
+            f'    <Param name="Stage8ActiveTangentMin" value="{stage8_active_tangent_min:.16g}"/>',
+            f'    <Param name="Stage8RelaxationTau" value="{stage8_relaxation_tau:.16g}"/>',
+        ]
     )
 
 
@@ -227,9 +319,7 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     cap_center_z = args.nz / 2.0
     cap_height = cap_radius * (1.0 - math.cos(math.radians(case.init_theta_deg)))
     cap_base_radius = cap_radius * math.sin(math.radians(case.init_theta_deg))
-    vtk_what = VTK_WHAT
-    if include_stage7_fields(args):
-        vtk_what = f"{VTK_WHAT},{STAGE7_EXTRA_VTK}"
+    vtk_what = vtk_what_for_args(args)
     meta = {
         "volume_equivalent_sphere_radius": args.volume_radius,
         "init_theta_deg": case.init_theta_deg,
@@ -249,6 +339,12 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
         "stage7_active_grad_min": args.stage7_active_grad_min,
         "stage7_active_tangent_min": args.stage7_active_tangent_min,
         "stage7_relaxation_tau": args.stage7_relaxation_tau,
+        "stage8_gradient_wetting_mode": stage8_mode_for_case(args, case),
+        "stage8_active_c_min": args.stage8_active_c_min,
+        "stage8_active_grad_min": args.stage8_active_grad_min,
+        "stage8_active_tangent_min": args.stage8_active_tangent_min,
+        "stage8_relaxation_tau": args.stage8_relaxation_tau,
+        "flat_wall_global_rad_angle": args.flat_wall_global_rad_angle,
     }
     xml = f"""<?xml version="1.0"?>
 <!--
@@ -292,6 +388,12 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     stage7_active_grad_min=args.stage7_active_grad_min,
     stage7_active_tangent_min=args.stage7_active_tangent_min,
     stage7_relaxation_tau=args.stage7_relaxation_tau,
+    stage8_gradient_wetting_mode=stage8_mode_for_case(args, case),
+    stage8_active_c_min=args.stage8_active_c_min,
+    stage8_active_grad_min=args.stage8_active_grad_min,
+    stage8_active_tangent_min=args.stage8_active_tangent_min,
+    stage8_relaxation_tau=args.stage8_relaxation_tau,
+    flat_wall_global_rad_angle=args.flat_wall_global_rad_angle,
     cap_radius=cap_radius,
     cap_center_x=cap_center_x,
     cap_center_y=cap_center_y,
@@ -341,7 +443,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--force", action="store_true")
     parser.add_argument(
         "--case-set",
-        choices=["default", "stage7b_low_angle", "stage7b_wall011_modes"],
+        choices=[
+            "default",
+            "stage7b_low_angle",
+            "stage7b_wall011_modes",
+            "stage8_low_angle",
+            "stage8_wall011_modes",
+        ],
         default="default",
     )
     parser.add_argument("--stage7-signed-mode", type=float, default=0.0)
@@ -352,6 +460,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stage7-active-grad-min", type=float, default=1.0e-6)
     parser.add_argument("--stage7-active-tangent-min", type=float, default=1.0e-8)
     parser.add_argument("--stage7-relaxation-tau", type=float, default=1.0)
+    parser.add_argument("--stage8-gradient-wetting-mode", type=float, default=0.0)
+    parser.add_argument("--stage8-active-c-min", type=float, default=0.02)
+    parser.add_argument("--stage8-active-grad-min", type=float, default=1.0e-6)
+    parser.add_argument("--stage8-active-tangent-min", type=float, default=1.0e-8)
+    parser.add_argument("--stage8-relaxation-tau", type=float, default=1.0)
+    parser.add_argument(
+        "--flat-wall-global-rad-angle",
+        action="store_true",
+        help="set global radAngle to the flat-wall target so fluid-node Stage8 diagnostics see the target angle",
+    )
+    parser.add_argument(
+        "--full-wall-diagnostics",
+        action="store_true",
+        help="request the full pre-Stage8 wall diagnostic field set; Stage8 smoke defaults to a small VTK field list",
+    )
     return parser.parse_args()
 
 
@@ -392,7 +515,8 @@ def main() -> None:
         "domain": [args.nx, args.ny, args.nz],
         "steps": args.steps,
         "vtk_interval": args.vtk_interval,
-        "vtk_what": f"{VTK_WHAT},{STAGE7_EXTRA_VTK}" if include_stage7_fields(args) else VTK_WHAT,
+        "vtk_what": vtk_what_for_args(args),
+        "full_wall_diagnostics": bool(args.full_wall_diagnostics),
         "use_stage7_signed_wall_ghost": bool(args.stage7_signed_wall_ghost),
         "case_set": args.case_set,
         "stage7_signed_mode": args.stage7_signed_mode,
@@ -403,6 +527,12 @@ def main() -> None:
         "stage7_active_grad_min": args.stage7_active_grad_min,
         "stage7_active_tangent_min": args.stage7_active_tangent_min,
         "stage7_relaxation_tau": args.stage7_relaxation_tau,
+        "stage8_gradient_wetting_mode": args.stage8_gradient_wetting_mode,
+        "stage8_active_c_min": args.stage8_active_c_min,
+        "stage8_active_grad_min": args.stage8_active_grad_min,
+        "stage8_active_tangent_min": args.stage8_active_tangent_min,
+        "stage8_relaxation_tau": args.stage8_relaxation_tau,
+        "flat_wall_global_rad_angle": args.flat_wall_global_rad_angle,
         "shared_parameters": {
             "Density_h": args.density_h,
             "Density_l": args.density_l,

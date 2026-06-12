@@ -1,0 +1,8 @@
+/usr/lib/python3/dist-packages/matplotlib/contour.py:1480: UserWarning: Warning: converting a masked element to nan.
+  self.zmax = float(z.max())
+/usr/lib/python3/dist-packages/matplotlib/contour.py:1481: UserWarning: Warning: converting a masked element to nan.
+  self.zmin = float(z.min())
+/tmp/flat_wall_cap_gate_postprocess.py:117: UserWarning: No contour levels were found within the data range.
+  contour = ax.contour(section, levels=[threshold])
+/tmp/flat_wall_cap_gate_postprocess.py:305: RuntimeWarning: All-NaN slice encountered
+  rec["max_mach"] = float(np.nanmax(fields["UMag"][fluid_mask]) / CS)

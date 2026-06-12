@@ -1,0 +1,207 @@
+diff --git a/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index f361849..a96c02a 100644
+--- a/third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -1368,6 +1368,185 @@ CudaDeviceFunction real_t getWallStage7WriteMinusProfile() {
+ 	return wallStage7NormalPathWriteCandidate(pf_f, h) - wallDiagProfilePhaseValue(pf_f, h);
+ }
+ 
++CudaDeviceFunction void stage8ResetGradientDiagnostics() {
++	Stage8GradMode = Stage8GradientWettingMode;
++	Stage8ActiveWeight = 0.0;
++	Stage8NormalGradRaw = 0.0;
++	Stage8NormalGradTarget = 0.0;
++	Stage8ContactResidual = 0.0;
++	Stage8TangentGradMag = 0.0;
++	Stage8TargetCos = 0.0;
++	Stage8GradWriteDeltaMag = 0.0;
++	Stage8LimiterReason = 0.0;
++}
++
++CudaDeviceFunction bool stage8IsPhysicalFluidNode() {
++	if (IamWall || IamSolid) {
++		return false;
++	}
++	if (IsBoundary(0,0,0) > 0.5) {
++		return false;
++	}
++	return true;
++}
++
++CudaDeviceFunction vector_t stage8BoundaryToFluidNormalRaw() {
++	vector_t normal = {0.0, 0.0, 0.0};
++	if (!stage8IsPhysicalFluidNode()) {
++		return normal;
++	}
++	for (int dx=-1; dx<=1; dx++) {
++		for (int dy=-1; dy<=1; dy++) {
++			for (int dz=-1; dz<=1; dz++) {
++				if (dx == 0 && dy == 0 && dz == 0) {
++					continue;
++				}
++				if (IsBoundary_dyn(dx, dy, dz) > 0.5) {
++					real_t dist = sqrt(1.0*dx*dx + 1.0*dy*dy + 1.0*dz*dz);
++					if (dist > 1e-12) {
++						real_t w = 1.0/dist;
++						normal.x += -w*dx;
++						normal.y += -w*dy;
++						normal.z += -w*dz;
++					}
++				}
++			}
++		}
++	}
++	return normal;
++}
++
++CudaDeviceFunction vector_t stage8UnitBoundaryToFluidNormal() {
++	vector_t normal = stage8BoundaryToFluidNormalRaw();
++	real_t mag = wallStage7VectorMag(normal);
++	if (mag < 1e-12) {
++		return wallDiagZeroVector();
++	}
++	vector_t unit = {normal.x/mag, normal.y/mag, normal.z/mag};
++	return unit;
++}
++
++CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
++	stage8ResetGradientDiagnostics();
++	if (Stage8GradientWettingMode < 0.5) {
++		return;
++	}
++
++	real_t reason = 0.0;
++	if (!stage8IsPhysicalFluidNode()) {
++		Stage8LimiterReason = 1.0;
++		return;
++	}
++
++	vector_t wall_normal = stage8UnitBoundaryToFluidNormal();
++	real_t normal_mag = wallStage7VectorMag(wall_normal);
++	if (normal_mag < 1e-12) {
++		Stage8LimiterReason = 2.0;
++		return;
++	}
++
++	real_t c = wallStage7NormalizedPhase(PhaseF(0,0,0));
++	if (c < Stage8ActiveCMin || c > 1.0 - Stage8ActiveCMin) {
++		reason += 4.0;
++	}
++
++	vector_t grad = {gradPhiVal_x, gradPhiVal_y, gradPhiVal_z};
++	real_t grad_mag = wallStage7VectorMag(grad);
++	if (grad_mag < Stage8ActiveGradMin) {
++		reason += 8.0;
++	}
++
++	real_t normal_raw = grad.x*wall_normal.x + grad.y*wall_normal.y + grad.z*wall_normal.z;
++	vector_t tangent = {
++		grad.x - normal_raw*wall_normal.x,
++		grad.y - normal_raw*wall_normal.y,
++		grad.z - normal_raw*wall_normal.z
++	};
++	real_t tangent_mag = wallStage7VectorMag(tangent);
++	if (tangent_mag < Stage8ActiveTangentMin) {
++		reason += 16.0;
++	}
++
++	real_t target_normal = -tan(PI/2.0 - radAngle) * tangent_mag;
++	real_t target_cos = -cos(radAngle);
++	Stage8NormalGradRaw = normal_raw;
++	Stage8NormalGradTarget = target_normal;
++	Stage8TangentGradMag = tangent_mag;
++	Stage8TargetCos = target_cos;
++	if (grad_mag > minGradient) {
++		Stage8ContactResidual = normal_raw/grad_mag - target_cos;
++	}
++	Stage8LimiterReason = reason;
++
++	if (reason > 0.0) {
++		return;
++	}
++
++	Stage8ActiveWeight = 1.0;
++	real_t alpha = 1.0/(Stage8RelaxationTau + 1e-12);
++	if (alpha > 1.0) {
++		alpha = 1.0;
++	}
++	if (alpha < 0.0) {
++		alpha = 0.0;
++	}
++
++	real_t corrected_normal = normal_raw + alpha*(target_normal - normal_raw);
++	vector_t corrected = {
++		tangent.x + corrected_normal*wall_normal.x,
++		tangent.y + corrected_normal*wall_normal.y,
++		tangent.z + corrected_normal*wall_normal.z
++	};
++	vector_t delta = {
++		corrected.x - grad.x,
++		corrected.y - grad.y,
++		corrected.z - grad.z
++	};
++	Stage8GradWriteDeltaMag = wallStage7VectorMag(delta);
++
++	if (Stage8GradientWettingMode > 1.5) {
++		gradPhiVal_x = corrected.x;
++		gradPhiVal_y = corrected.y;
++		gradPhiVal_z = corrected.z;
++	}
++}
++
++CudaDeviceFunction real_t getWallStage8GradMode() {
++	return Stage8GradMode(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8ActiveWeight() {
++	return Stage8ActiveWeight(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8NormalGradRaw() {
++	return Stage8NormalGradRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8NormalGradTarget() {
++	return Stage8NormalGradTarget(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8ContactResidual() {
++	return Stage8ContactResidual(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8TangentGradMag() {
++	return Stage8TangentGradMag(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8TargetCos() {
++	return Stage8TargetCos(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8GradWriteDeltaMag() {
++	return Stage8GradWriteDeltaMag(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8LimiterReason() {
++	return Stage8LimiterReason(0,0,0);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+@@ -1377,6 +1556,7 @@ CudaDeviceFunction void calcPhaseGrad(){
+     gradPhiVal_y = gradPhi.y;
+     gradPhiVal_z = gradPhi.z;
+ 	calcPhaseGradCloseToBoundary();
++	stage8ApplyFluidGradientWetting();
+ 	// simply copy the values
+ 	gradPhi_PhaseF = PhaseF(0,0,0);
+ }
+@@ -1407,6 +1587,8 @@ CudaDeviceFunction void calcPhaseGrad_init(){
+ 		}
+ 	<?R } ?>
+ 
++	stage8ApplyFluidGradientWetting();
++
+     // simply copy the values
+ 	gradPhi_PhaseF = PhaseF(0,0,0);
+ }

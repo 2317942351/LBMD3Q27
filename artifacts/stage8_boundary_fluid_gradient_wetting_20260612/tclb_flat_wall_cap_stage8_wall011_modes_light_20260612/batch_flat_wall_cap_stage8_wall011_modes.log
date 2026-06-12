@@ -1,0 +1,28 @@
+BATCH_PREP 2026-06-12T12:27:48+08:00
+status=runtime_sanity
+purpose=flat_wall_spherical_cap_gate_stage8_wall011_modes
+run_root=/mnt/8A0E24070E23EAC1/runs/tclb_flat_wall_cap_stage8_wall011_modes_light_20260612
+case_staging=/tmp/flat_wall_cap_stage8_wall011_modes_light_cases
+binary=/home/yuan/src/TCLB_stage8_boundary_fluid_gradient_wetting_diag_20260612/CLB/d3q27_pf_velocity_q27_geometric/main
+raw_policy=remote_only
+finite_arrays=PhaseField,U,P,Rho,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason
+cap_post_plot=0
+387f5c1dd78e1b7cef1807060407bfed55dac039aac8ca3d98a28c2d710c3e84  /home/yuan/src/TCLB_stage8_boundary_fluid_gradient_wetting_diag_20260612/CLB/d3q27_pf_velocity_q27_geometric/main
+CASE_START 2026-06-12T12:27:48+08:00 case=cap_theta030_wall011_mode0
+CASE_END 2026-06-12T12:28:09+08:00 case=cap_theta030_wall011_mode0 rc=0
+FINITENESS_END 2026-06-12T12:28:20+08:00 case=cap_theta030_wall011_mode0 rc=0
+CAP_POST_END 2026-06-12T12:28:32+08:00 case=cap_theta030_wall011_mode0 rc=0
+CASE_START 2026-06-12T12:28:32+08:00 case=cap_theta030_wall011_mode1
+CASE_END 2026-06-12T12:28:53+08:00 case=cap_theta030_wall011_mode1 rc=0
+FINITENESS_END 2026-06-12T12:29:02+08:00 case=cap_theta030_wall011_mode1 rc=0
+CAP_POST_END 2026-06-12T12:29:12+08:00 case=cap_theta030_wall011_mode1 rc=0
+CASE_START 2026-06-12T12:29:12+08:00 case=cap_theta030_wall011_mode2
+CASE_END 2026-06-12T12:29:35+08:00 case=cap_theta030_wall011_mode2 rc=0
+FINITENESS_END 2026-06-12T12:29:43+08:00 case=cap_theta030_wall011_mode2 rc=0
+CAP_POST_END 2026-06-12T12:29:55+08:00 case=cap_theta030_wall011_mode2 rc=0
+CASE_START 2026-06-12T12:29:55+08:00 case=cap_theta030_wall011_mode3
+CASE_END 2026-06-12T12:30:20+08:00 case=cap_theta030_wall011_mode3 rc=0
+FINITENESS_END 2026-06-12T12:30:30+08:00 case=cap_theta030_wall011_mode3 rc=2
+CAP_POST_END 2026-06-12T12:30:40+08:00 case=cap_theta030_wall011_mode3 rc=0
+CASE_FAILED_NEGATIVE_EVIDENCE 2026-06-12T12:30:40+08:00 case=cap_theta030_wall011_mode3 numerical_failure=0 finite_rc=2 post_rc=0
+BATCH_END 2026-06-12T12:31:22+08:00
