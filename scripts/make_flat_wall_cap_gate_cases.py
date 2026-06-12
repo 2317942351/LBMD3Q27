@@ -54,6 +54,14 @@ STAGE8_EXTRA_VTK = (
     "WallStage8TangentGradMag,WallStage8TargetCos,"
     "WallStage8GradWriteDeltaMag,WallStage8LimiterReason"
 )
+STAGE8C_EXTRA_VTK = (
+    STAGE8_EXTRA_VTK
+    + ",WallStage8LocalWallAngle,WallStage8LocalWallNormal,"
+    "WallStage8FluidWallAngle,WallStage8FluidWallNormal,"
+    "WallStage8FluidWallDataCount,WallStage8GradCandidate,"
+    "WallStage8GradCandidateUse,WallStage8NormalAgreement,"
+    "WallStage8UsedGeomNormal"
+)
 
 
 @dataclass(frozen=True)
@@ -90,6 +98,11 @@ STAGE7B_WALL011_MODE_CASES = [
 STAGE8_LOW_ANGLE_CASES = [
     GateCase(f"cap_theta030_wall{angle:03d}", 30.0, float(angle), f"Stage8 low-angle flat wall scan wall{angle:03d}")
     for angle in [5, 8, 11, 30]
+]
+
+STAGE8C_LOW_ANGLE_CASES = [
+    GateCase(f"cap_theta030_wall{angle:03d}", 30.0, float(angle), f"Stage8c local wall-angle low-angle flat scan wall{angle:03d}")
+    for angle in [5, 8, 11, 15, 20, 25, 30]
 ]
 
 STAGE8_WALL011_MODE_CASES = [
@@ -133,6 +146,11 @@ def model_xml(
     stage8_active_grad_min: float,
     stage8_active_tangent_min: float,
     stage8_relaxation_tau: float,
+    stage8_operator_mode: float,
+    stage8_use_local_wall_angle: float,
+    stage8_use_wall_geom_normal: float,
+    stage8_normal_dot_min: float,
+    stage8_max_grad_delta: float,
     flat_wall_global_rad_angle: bool,
     cap_radius: float,
     cap_center_x: float,
@@ -195,6 +213,11 @@ def model_xml(
     stage8_active_grad_min,
     stage8_active_tangent_min,
     stage8_relaxation_tau,
+    stage8_operator_mode,
+    stage8_use_local_wall_angle,
+    stage8_use_wall_geom_normal,
+    stage8_normal_dot_min,
+    stage8_max_grad_delta,
 )}
   </Model>"""
 
@@ -239,6 +262,8 @@ def select_cases(case_set: str) -> list[GateCase]:
         return STAGE7B_WALL011_MODE_CASES
     if case_set == "stage8_low_angle":
         return STAGE8_LOW_ANGLE_CASES
+    if case_set == "stage8c_low_angle":
+        return STAGE8C_LOW_ANGLE_CASES
     if case_set == "stage8_wall011_modes":
         return STAGE8_WALL011_MODE_CASES
     raise ValueError(f"unknown case set {case_set}")
@@ -273,11 +298,16 @@ def include_stage7_fields(args: argparse.Namespace) -> bool:
 
 
 def include_stage8_fields(args: argparse.Namespace) -> bool:
-    return args.stage8_gradient_wetting_mode > 0.0 or args.case_set.startswith("stage8_")
+    return (
+        args.stage8_gradient_wetting_mode > 0.0
+        or args.stage8_operator_mode > 0.0
+        or args.case_set.startswith("stage8_")
+        or args.case_set.startswith("stage8c_")
+    )
 
 
 def base_vtk_what(args: argparse.Namespace) -> str:
-    if args.case_set.startswith("stage8_") and not args.full_wall_diagnostics:
+    if (args.case_set.startswith("stage8_") or args.case_set.startswith("stage8c_")) and not args.full_wall_diagnostics:
         return STAGE8_LIGHT_VTK
     return VTK_WHAT
 
@@ -287,7 +317,7 @@ def vtk_what_for_args(args: argparse.Namespace) -> str:
     if include_stage7_fields(args):
         vtk_what = f"{vtk_what},{STAGE7_EXTRA_VTK}"
     if include_stage8_fields(args):
-        vtk_what = f"{vtk_what},{STAGE8_EXTRA_VTK}"
+        vtk_what = f"{vtk_what},{STAGE8C_EXTRA_VTK if args.case_set.startswith('stage8c_') else STAGE8_EXTRA_VTK}"
     return vtk_what
 
 
@@ -297,18 +327,32 @@ def stage8_param_xml(
     stage8_active_grad_min: float,
     stage8_active_tangent_min: float,
     stage8_relaxation_tau: float,
+    stage8_operator_mode: float,
+    stage8_use_local_wall_angle: float,
+    stage8_use_wall_geom_normal: float,
+    stage8_normal_dot_min: float,
+    stage8_max_grad_delta: float,
 ) -> str:
-    if stage8_gradient_wetting_mode <= 0:
+    if stage8_gradient_wetting_mode <= 0 and stage8_operator_mode <= 0:
         return ""
-    return "\n".join(
-        [
-            f'    <Param name="Stage8GradientWettingMode" value="{stage8_gradient_wetting_mode:.16g}"/>',
-            f'    <Param name="Stage8ActiveCMin" value="{stage8_active_c_min:.16g}"/>',
-            f'    <Param name="Stage8ActiveGradMin" value="{stage8_active_grad_min:.16g}"/>',
-            f'    <Param name="Stage8ActiveTangentMin" value="{stage8_active_tangent_min:.16g}"/>',
-            f'    <Param name="Stage8RelaxationTau" value="{stage8_relaxation_tau:.16g}"/>',
-        ]
-    )
+    lines = [
+        f'    <Param name="Stage8GradientWettingMode" value="{stage8_gradient_wetting_mode:.16g}"/>',
+        f'    <Param name="Stage8ActiveCMin" value="{stage8_active_c_min:.16g}"/>',
+        f'    <Param name="Stage8ActiveGradMin" value="{stage8_active_grad_min:.16g}"/>',
+        f'    <Param name="Stage8ActiveTangentMin" value="{stage8_active_tangent_min:.16g}"/>',
+        f'    <Param name="Stage8RelaxationTau" value="{stage8_relaxation_tau:.16g}"/>',
+    ]
+    if stage8_operator_mode > 0:
+        lines.extend(
+            [
+                f'    <Param name="Stage8OperatorMode" value="{stage8_operator_mode:.16g}"/>',
+                f'    <Param name="Stage8UseLocalWallAngle" value="{stage8_use_local_wall_angle:.16g}"/>',
+                f'    <Param name="Stage8UseWallGeomNormal" value="{stage8_use_wall_geom_normal:.16g}"/>',
+                f'    <Param name="Stage8NormalDotMin" value="{stage8_normal_dot_min:.16g}"/>',
+                f'    <Param name="Stage8MaxGradDelta" value="{stage8_max_grad_delta:.16g}"/>',
+            ]
+        )
+    return "\n".join(lines)
 
 
 def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> tuple[str, dict[str, float]]:
@@ -344,6 +388,11 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
         "stage8_active_grad_min": args.stage8_active_grad_min,
         "stage8_active_tangent_min": args.stage8_active_tangent_min,
         "stage8_relaxation_tau": args.stage8_relaxation_tau,
+        "stage8_operator_mode": args.stage8_operator_mode,
+        "stage8_use_local_wall_angle": args.stage8_use_local_wall_angle,
+        "stage8_use_wall_geom_normal": args.stage8_use_wall_geom_normal,
+        "stage8_normal_dot_min": args.stage8_normal_dot_min,
+        "stage8_max_grad_delta": args.stage8_max_grad_delta,
         "flat_wall_global_rad_angle": args.flat_wall_global_rad_angle,
     }
     xml = f"""<?xml version="1.0"?>
@@ -393,6 +442,11 @@ def xml_for_case(args: argparse.Namespace, case: GateCase, remote_case: str) -> 
     stage8_active_grad_min=args.stage8_active_grad_min,
     stage8_active_tangent_min=args.stage8_active_tangent_min,
     stage8_relaxation_tau=args.stage8_relaxation_tau,
+    stage8_operator_mode=args.stage8_operator_mode,
+    stage8_use_local_wall_angle=args.stage8_use_local_wall_angle,
+    stage8_use_wall_geom_normal=args.stage8_use_wall_geom_normal,
+    stage8_normal_dot_min=args.stage8_normal_dot_min,
+    stage8_max_grad_delta=args.stage8_max_grad_delta,
     flat_wall_global_rad_angle=args.flat_wall_global_rad_angle,
     cap_radius=cap_radius,
     cap_center_x=cap_center_x,
@@ -448,6 +502,7 @@ def parse_args() -> argparse.Namespace:
             "stage7b_low_angle",
             "stage7b_wall011_modes",
             "stage8_low_angle",
+            "stage8c_low_angle",
             "stage8_wall011_modes",
         ],
         default="default",
@@ -465,6 +520,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--stage8-active-grad-min", type=float, default=1.0e-6)
     parser.add_argument("--stage8-active-tangent-min", type=float, default=1.0e-8)
     parser.add_argument("--stage8-relaxation-tau", type=float, default=1.0)
+    parser.add_argument("--stage8-operator-mode", type=float, default=0.0)
+    parser.add_argument("--stage8-use-local-wall-angle", type=float, default=1.0)
+    parser.add_argument("--stage8-use-wall-geom-normal", type=float, default=1.0)
+    parser.add_argument("--stage8-normal-dot-min", type=float, default=0.25)
+    parser.add_argument("--stage8-max-grad-delta", type=float, default=0.25)
     parser.add_argument(
         "--flat-wall-global-rad-angle",
         action="store_true",
@@ -532,6 +592,11 @@ def main() -> None:
         "stage8_active_grad_min": args.stage8_active_grad_min,
         "stage8_active_tangent_min": args.stage8_active_tangent_min,
         "stage8_relaxation_tau": args.stage8_relaxation_tau,
+        "stage8_operator_mode": args.stage8_operator_mode,
+        "stage8_use_local_wall_angle": args.stage8_use_local_wall_angle,
+        "stage8_use_wall_geom_normal": args.stage8_use_wall_geom_normal,
+        "stage8_normal_dot_min": args.stage8_normal_dot_min,
+        "stage8_max_grad_delta": args.stage8_max_grad_delta,
         "flat_wall_global_rad_angle": args.flat_wall_global_rad_angle,
         "shared_parameters": {
             "Density_h": args.density_h,

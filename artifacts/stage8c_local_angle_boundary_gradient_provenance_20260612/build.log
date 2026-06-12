@@ -1,0 +1,111 @@
+make: 进入目录“/home/yuan/src/TCLB_stage8c_local_angle_boundary_gradient_candidate_20260612/CLB/d3q27_pf_velocity_q27_geometric”
+  NVCC  cross.cu
+  C++  Geometry.cpp
+  NVCC  Lattice.cu
+  C++  vtkLattice.cpp
+vtkLattice.cpp: In function ‘int txtWriteLattice(char*, Lattice*, UnitEnv, name_set*, int)’:
+vtkLattice.cpp:141:54: warning: ‘%s’ directive writing up to 1023 bytes into a region of size 1017 [-Wformat-overflow=]
+  141 |                                 sprintf(com, "gzip > %s.gz", fn);
+      |                                                      ^~      ~~
+In file included from /usr/include/stdio.h:980,
+                 from vtkLattice.cpp:1:
+In function ‘int sprintf(char*, const char*, ...)’,
+    inlined from ‘int txtWriteLattice(char*, Lattice*, UnitEnv, name_set*, int)’ at vtkLattice.cpp:141:12:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:30:34: note: ‘__builtin___sprintf_chk’ output between 11 and 1034 bytes into a destination of size 1024
+   30 |   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   31 |                                   __glibc_objsize (__s), __fmt,
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   32 |                                   __va_arg_pack ());
+      |                                   ~~~~~~~~~~~~~~~~~
+  C++  Sampler.cpp
+  NVCC  cuda.cu
+  C++  Solver.cpp
+Solver.cpp: In member function ‘void Solver::setOutput(const char*)’:
+Solver.cpp:114:74: warning: ‘_Snap’ directive writing 5 bytes into a region of size between 1 and 1024 [-Wformat-overflow=]
+  114 |                 if (lattice != NULL) sprintf(lattice->snapFileName, "%s%s_Snap", out, _confname);
+      |                                                                          ^~~~~
+In file included from /usr/include/stdio.h:980,
+                 from /usr/include/c++/13/cstdio:42,
+                 from /usr/include/c++/13/ext/string_conversions.h:45,
+                 from /usr/include/c++/13/bits/basic_string.h:4109,
+                 from /usr/include/c++/13/string:54,
+                 from /usr/include/c++/13/bits/locale_classes.h:40,
+                 from /usr/include/c++/13/bits/ios_base.h:41,
+                 from /usr/include/c++/13/streambuf:43,
+                 from /usr/include/c++/13/bits/streambuf_iterator.h:35,
+                 from /usr/include/c++/13/iterator:66,
+                 from pugixml.hpp:36,
+                 from Solver.cpp:10:
+In function ‘int sprintf(char*, const char*, ...)’,
+    inlined from ‘void Solver::setOutput(const char*)’ at Solver.cpp:114:31:
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:30:34: note: ‘__builtin___sprintf_chk’ output 6 or more bytes (assuming 1029) into a destination of size 1024
+   30 |   return __builtin___sprintf_chk (__s, __USE_FORTIFY_LEVEL - 1,
+      |          ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   31 |                                   __glibc_objsize (__s), __fmt,
+      |                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   32 |                                   __va_arg_pack ());
+      |                                   ~~~~~~~~~~~~~~~~~
+  C++  main.cpp
+  C++  hdf5Lattice.cpp
+  C++  Handlers/vHandler.cpp
+  C++  Handlers/acRemoteForceInterface.cpp
+  C++  Handlers/Action.cpp
+  C++  Handlers/Callback.cpp
+  C++  Handlers/conControl.cpp
+  C++  Handlers/conControlParameter.cpp
+  C++  Handlers/Design.cpp
+  C++  Handlers/GenericAction.cpp
+  C++  Handlers/GenericContainer.cpp
+  C++  Handlers/GenericOptimizer.cpp
+  C++  Handlers/acGeometry.cpp
+  C++  Handlers/acInit.cpp
+  C++  Handlers/acLoadBinary.cpp
+  C++  Handlers/acLoadMemoryDump.cpp
+  C++  Handlers/acObjective.cpp
+  C++  Handlers/acOptimize.cpp
+  C++  Handlers/acOptSolve.cpp
+  C++  Handlers/acParam.cpp
+  C++  Handlers/acRepeat.cpp
+  C++  Handlers/acRunAction.cpp
+  C++  Handlers/acSAdjoint.cpp
+  C++  Handlers/acSolve.cpp
+  C++  Handlers/acSyntheticTurbulence.cpp
+  C++  Handlers/acThreshold.cpp
+  C++  Handlers/acThresholdNow.cpp
+  C++  Handlers/acUSAdjoint.cpp
+  C++  Handlers/cbAveraging.cpp
+  C++  Handlers/cbBIN.cpp
+  C++  Handlers/cbCatalyst.cpp
+  C++  Handlers/cbDumpSettings.cpp
+  C++  Handlers/cbFailcheck.cpp
+  C++  Handlers/cbHDF5.cpp
+  C++  Handlers/cbKeep.cpp
+  C++  Handlers/cbLog.cpp
+  C++  Handlers/cbPID.cpp
+  C++  Handlers/cbRunR.cpp
+  C++  Handlers/cbSample.cpp
+  C++  Handlers/cbSaveBinary.cpp
+  C++  Handlers/cbSaveCheckpoint.cpp
+  C++  Handlers/cbSaveMemoryDump.cpp
+  C++  Handlers/cbStop.cpp
+  C++  Handlers/cbTXT.cpp
+  C++  Handlers/cbVTK.cpp
+  C++  Handlers/conExtrude.cpp
+  C++  Handlers/conFieldParameter.cpp
+  C++  Handlers/Fourier.cpp
+  C++  Handlers/IfContainer.cpp
+  C++  Handlers/InternalTopology.cpp
+  C++  Handlers/MainContainer.cpp
+  C++  Handlers/OptimalControl.cpp
+  C++  Handlers/OptimalControlSecond.cpp
+  C++  Handlers/RepeatControl.cpp
+  C++  Handlers/acAndersen.cpp
+  C++  Handlers/acContainer.cpp
+  C++  Handlers/acESYSParticle.cpp
+  C++  Handlers/acFDTest.cpp
+  C++  Handlers/acModel.cpp
+  C++  Handlers/BSpline.cpp
+  LINKING    main (nvcc)
+  DONE       main empty compare simplepart
+make: 离开目录“/home/yuan/src/TCLB_stage8c_local_angle_boundary_gradient_candidate_20260612/CLB/d3q27_pf_velocity_q27_geometric”

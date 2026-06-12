@@ -1,0 +1,191 @@
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:150:Stage8LocalWallAngle [ -1|1  , -1|1  , -1|1  ] |   | Stage8LocalWallAngle 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:162:Stage8GradCandidateUse [ -1|1  , -1|1  , -1|1  ] |   | Stage8GradCandidateUse 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:199:Stage8OperatorMode                            |   | Stage8c mode: 0 off, 1 shadow candidate, 2 write gradPhiVal, 3 reserved no-op 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:368:WallStage8LocalWallAngle            [      1] |   | WallStage8LocalWallAngle 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:372:WallStage8FluidWallDataCount        [      1] |   | WallStage8FluidWallDataCount 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:374:WallStage8GradCandidateUse          [      1] |   | WallStage8GradCandidateUse 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:79:			CudaCopyToConstant("Stage8OperatorMode", Stage8OperatorMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1188:        debug1("Creating Catalyst VTK object for WallStage8LocalWallAngle\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1191:        myArray->SetName("WallStage8LocalWallAngle");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1252:        debug1("Creating Catalyst VTK object for WallStage8FluidWallDataCount\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1255:        myArray->SetName("WallStage8FluidWallDataCount");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1284:        debug1("Creating Catalyst VTK object for WallStage8GradCandidateUse\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1287:        myArray->SetName("WallStage8GradCandidateUse");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2736:      debug2("Filling Catalyst VTK object for WallStage8LocalWallAngle\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2740:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8LocalWallAngle"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2742:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8LocalWallAngle"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2748:      solver.lattice->GetWallStage8LocalWallAngle(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2753://      solver.lattice->GetWallStage8LocalWallAngle(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2820:      debug2("Filling Catalyst VTK object for WallStage8FluidWallDataCount\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2824:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8FluidWallDataCount"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2826:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8FluidWallDataCount"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2832:      solver.lattice->GetWallStage8FluidWallDataCount(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2837://      solver.lattice->GetWallStage8FluidWallDataCount(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2862:      debug2("Filling Catalyst VTK object for WallStage8GradCandidateUse\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2866:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8GradCandidateUse"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2868:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8GradCandidateUse"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2874:      solver.lattice->GetWallStage8GradCandidateUse(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2879://      solver.lattice->GetWallStage8GradCandidateUse(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:75:			CudaCopyToConstant("Stage8OperatorMode", Stage8OperatorMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:209:	case  SETTINGS_Stage8OperatorMode :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:210:	        CudaCopyToConstant("Stage8OperatorMode", Stage8OperatorMode, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2772:/// Calculate quantity [WallStage8LocalWallAngle] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2774:  Kernel to calculate quantity WallStage8LocalWallAngle (WallStage8LocalWallAngle) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2779:CudaGlobalFunction void getWallStage8LocalWallAngle(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2790:			w = now.getWallStage8LocalWallAngle(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2884:/// Calculate quantity [WallStage8FluidWallDataCount] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2886:  Kernel to calculate quantity WallStage8FluidWallDataCount (WallStage8FluidWallDataCount) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2891:CudaGlobalFunction void getWallStage8FluidWallDataCount(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2902:			w = now.getWallStage8FluidWallDataCount(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2940:/// Calculate quantity [WallStage8GradCandidateUse] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2942:  Kernel to calculate quantity WallStage8GradCandidateUse (WallStage8GradCandidateUse) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2947:CudaGlobalFunction void getWallStage8GradCandidateUse(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:2958:			w = now.getWallStage8GradCandidateUse(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:150:	 * failed_negative_evidence.  Stage8OperatorMode=3 is reserved and no longer
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2550:	Stage8GradMode = Stage8OperatorMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2567:	Stage8GradCandidateUse = 0.0;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2639:	Stage8LocalWallAngle = 0.0;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2647:	Stage8LocalWallAngle = radAngle;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2677:						angle_sum += w*Stage8LocalWallAngle_dyn(dx, dy, dz);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2693:	real_t mode = Stage8OperatorMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2824:	Stage8GradCandidateUse = 1.0;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2869:CudaDeviceFunction real_t getWallStage8LocalWallAngle() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2870:	return Stage8LocalWallAngle(0,0,0);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2895:CudaDeviceFunction real_t getWallStage8FluidWallDataCount() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2908:CudaDeviceFunction real_t getWallStage8GradCandidateUse() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2909:	return Stage8GradCandidateUse(0,0,0);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:109:	real_t setting_Stage8OperatorMode; ///< Value of [Stage8c mode: 0 off, 1 shadow candidate, 2 write gradPhiVal, 3 reserved no-op]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:110:	int ifset_Stage8OperatorMode; ///< True if [Stage8c mode: 0 off, 1 shadow candidate, 2 write gradPhiVal, 3 reserved no-op] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:420:  if (strcmp("Stage8OperatorMode",str) == 0) return  SETTINGS_Stage8OperatorMode ; 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:150:	 * failed_negative_evidence.  Stage8OperatorMode=3 is reserved and no longer
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2550:	Stage8GradMode = Stage8OperatorMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2567:	Stage8GradCandidateUse = 0.0;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2639:	Stage8LocalWallAngle = 0.0;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2647:	Stage8LocalWallAngle = radAngle;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2677:						angle_sum += w*Stage8LocalWallAngle_dyn(dx, dy, dz);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2693:	real_t mode = Stage8OperatorMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2824:	Stage8GradCandidateUse = 1.0;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2869:CudaDeviceFunction real_t getWallStage8LocalWallAngle() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2870:	return Stage8LocalWallAngle(0,0,0);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2895:CudaDeviceFunction real_t getWallStage8FluidWallDataCount() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2908:CudaDeviceFunction real_t getWallStage8GradCandidateUse() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2909:	return Stage8GradCandidateUse(0,0,0);
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.h:87:    real_t Stage8LocalWallAngle; 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.h:99:    real_t Stage8GradCandidateUse; 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:318:  CudaDeviceFunction real_t load_Stage8LocalWallAngle (const dx_t & dx, const dy_t & dy, const dz_t & dz) const;
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:354:  CudaDeviceFunction real_t load_Stage8GradCandidateUse (const dx_t & dx, const dy_t & dy, const dz_t & dz) const;
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:4209:CudaDeviceFunction real_t LatticeAccess< x_t, y_t, z_t >::load_Stage8LocalWallAngle (const dx_t & dx, const dy_t & dy, const dz_t & dz) const
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:6393:CudaDeviceFunction real_t LatticeAccess< x_t, y_t, z_t >::load_Stage8GradCandidateUse (const dx_t & dx, const dy_t & dy, const dz_t & dz) const
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:12700:  val = real_to_storage(node.Stage8LocalWallAngle); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:13157:  val = real_to_storage(node.Stage8LocalWallAngle); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:15861:  val = real_to_storage(node.Stage8GradCandidateUse); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:18458:  val = real_to_storage(node.Stage8GradCandidateUse); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:22770:  val = real_to_storage(node.Stage8LocalWallAngle); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:24054:  val = real_to_storage(node.Stage8GradCandidateUse); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:28313:  val = real_to_storage(node.Stage8LocalWallAngle); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:29597:  val = real_to_storage(node.Stage8GradCandidateUse); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31295:  CudaDeviceFunction inline real_t load_Stage8LocalWallAngle (const dx_t & dx, const dy_t & dy, const dz_t & dz = range_int<0>()) const {
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31296:    return parent::load_Stage8LocalWallAngle(
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31303:  CudaDeviceFunction inline real_t load_Stage8LocalWallAngle () const {
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31304:    return parent::load_Stage8LocalWallAngle(range_int< dx >(),range_int< dy >(),range_int< dz >());
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31463:  CudaDeviceFunction inline real_t load_Stage8GradCandidateUse (const dx_t & dx, const dy_t & dy, const dz_t & dz = range_int<0>()) const {
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31464:    return parent::load_Stage8GradCandidateUse(
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31471:  CudaDeviceFunction inline real_t load_Stage8GradCandidateUse () const {
+CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp:31472:    return parent::load_Stage8GradCandidateUse(range_int< dx >(),range_int< dy >(),range_int< dz >());
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:107:CudaDeviceFunction CudaConstantMemory real_t Stage8OperatorMode = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:367:#define Stage8LocalWallAngle(...) acc.template load_Stage8LocalWallAngle< __VA_ARGS__ >()
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:379:#define Stage8GradCandidateUse(...) acc.template load_Stage8GradCandidateUse< __VA_ARGS__ >()
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:463:#define Stage8LocalWallAngle_dyn(...) acc.template load_Stage8LocalWallAngle(__VA_ARGS__)
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:475:#define Stage8GradCandidateUse_dyn(...) acc.template load_Stage8GradCandidateUse(__VA_ARGS__)
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:6839:#undef Stage8LocalWallAngle
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:6851:#undef Stage8GradCandidateUse
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:6935:#undef Stage8LocalWallAngle_dyn
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:6947:#undef Stage8GradCandidateUse_dyn
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4837:		case  QUANTITIES_WallStage8LocalWallAngle : return GetWallStage8LocalWallAngle(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4841:		case  QUANTITIES_WallStage8FluidWallDataCount : return GetWallStage8FluidWallDataCount(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4843:		case  QUANTITIES_WallStage8GradCandidateUse : return GetWallStage8GradCandidateUse(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6472:/// Get [WallStage8LocalWallAngle]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6474:        Retrive the values of the Quantity WallStage8LocalWallAngle (WallStage8LocalWallAngle)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6477:void Lattice::GetWallStage8LocalWallAngle(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6491:		CudaKernelRun( getWallStage8LocalWallAngle , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6580:/// Get [WallStage8FluidWallDataCount]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6582:        Retrive the values of the Quantity WallStage8FluidWallDataCount (WallStage8FluidWallDataCount)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6585:void Lattice::GetWallStage8FluidWallDataCount(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6599:		CudaKernelRun( getWallStage8FluidWallDataCount , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6634:/// Get [WallStage8GradCandidateUse]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6636:        Retrive the values of the Quantity WallStage8GradCandidateUse (WallStage8GradCandidateUse)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6639:void Lattice::GetWallStage8GradCandidateUse(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6653:		CudaKernelRun( getWallStage8GradCandidateUse , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7417:void Lattice::GetSampleWallStage8LocalWallAngle(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7423:	CudaKernelRun( getWallStage8LocalWallAngle , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7453:void Lattice::GetSampleWallStage8FluidWallDataCount(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7459:	CudaKernelRun( getWallStage8FluidWallDataCount , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7471:void Lattice::GetSampleWallStage8GradCandidateUse(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7477:	CudaKernelRun( getWallStage8GradCandidateUse , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7863:	 	 if (sample->quant->in("WallStage8LocalWallAngle"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7866:			GetSampleWallStage8LocalWallAngle(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8LocalWallAngle"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7887:	 	 if (sample->quant->in("WallStage8FluidWallDataCount"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7890:			GetSampleWallStage8FluidWallDataCount(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8FluidWallDataCount"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7899:	 	 if (sample->quant->in("WallStage8GradCandidateUse"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7902:			GetSampleWallStage8GradCandidateUse(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8GradCandidateUse"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:160:    CudaExternConstantMemory(real_t Stage8OperatorMode); 
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1267:                { SETTINGS_Stage8OperatorMode        , "Stage8OperatorMode"        , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1402:                  { QUANTITIES_WallStage8LocalWallAngle     , "WallStage8LocalWallAngle"     , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1406:                  { QUANTITIES_WallStage8FluidWallDataCount , "WallStage8FluidWallDataCount" , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1408:                  { QUANTITIES_WallStage8GradCandidateUse   , "WallStage8GradCandidateUse"   , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1544:              { FIELDS_Stage8LocalWallAngle     , "Stage8LocalWallAngle"     , "Stage8LocalWallAngle"     , false       , false     , 27         , false        },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1556:              { FIELDS_Stage8GradCandidateUse   , "Stage8GradCandidateUse"   , "Stage8GradCandidateUse"   , false       , false     , 27         , false        },
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:96:#define  SETTINGS_Stage8OperatorMode                30 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:364:#define  QUANTITIES_WallStage8LocalWallAngle        60 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:368:#define  QUANTITIES_WallStage8FluidWallDataCount     64 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:370:#define  QUANTITIES_WallStage8GradCandidateUse      66 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:457:#define  FIELDS_Stage8LocalWallAngle                79 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:469:#define  FIELDS_Stage8GradCandidateUse              91 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:46:    CudaExternConstantMemory(real_t Stage8OperatorMode); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1147:  CudaDeviceFunction real_t load_Stage8LocalWallAngle (const int & x, const int & y, const int & z, const flag_t & nt, const int & dx, const int & dy, const int & dz);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1149:  CudaDeviceFunction real_t load_Stage8LocalWallAngle (const int & x, const int & y, const int & z, const flag_t & nt) {
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1150:    return load_Stage8LocalWallAngle(x,y,z,nt,DX,DY,DZ);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1219:  CudaDeviceFunction real_t load_Stage8GradCandidateUse (const int & x, const int & y, const int & z, const flag_t & nt, const int & dx, const int & dy, const int & dz);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1221:  CudaDeviceFunction real_t load_Stage8GradCandidateUse (const int & x, const int & y, const int & z, const flag_t & nt) {
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1222:    return load_Stage8GradCandidateUse(x,y,z,nt,DX,DY,DZ);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1842:CudaGlobalFunction void getWallStage8LocalWallAngle(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1843:CudaGlobalFunction void getWallStage8LocalWallAngle_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1845:CudaGlobalFunction void getWallStage8LocalWallAngle_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1862:CudaGlobalFunction void getWallStage8FluidWallDataCount(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1863:CudaGlobalFunction void getWallStage8FluidWallDataCount_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1865:CudaGlobalFunction void getWallStage8FluidWallDataCount_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1872:CudaGlobalFunction void getWallStage8GradCandidateUse(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1873:CudaGlobalFunction void getWallStage8GradCandidateUse_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:1875:CudaGlobalFunction void getWallStage8GradCandidateUse_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:997:  void GetWallStage8LocalWallAngle(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:998:  void GetSampleWallStage8LocalWallAngle(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:999:  inline void GetWallStage8LocalWallAngle(lbRegion over, real_t * tab) { GetWallStage8LocalWallAngle(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1001:  void GetWallStage8LocalWallAngle_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1021:  void GetWallStage8FluidWallDataCount(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1022:  void GetSampleWallStage8FluidWallDataCount(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1023:  inline void GetWallStage8FluidWallDataCount(lbRegion over, real_t * tab) { GetWallStage8FluidWallDataCount(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1025:  void GetWallStage8FluidWallDataCount_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1033:  void GetWallStage8GradCandidateUse(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1034:  void GetSampleWallStage8GradCandidateUse(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1035:  inline void GetWallStage8GradCandidateUse(lbRegion over, real_t * tab) { GetWallStage8GradCandidateUse(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1037:  void GetWallStage8GradCandidateUse_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:193:	                    fprintf(f,",\"Stage8OperatorMode\",\"Stage8OperatorMode_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:510:                    LogScales[ SETTINGS_Stage8OperatorMode ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1675:	if (strcmp(comp, "WallStage8LocalWallAngle") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1676:    	real_t* tmp_WallStage8LocalWallAngle = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1678:    	lattice->GetWallStage8LocalWallAngle(region, tmp_WallStage8LocalWallAngle, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1679:        buf = (real_t*)tmp_WallStage8LocalWallAngle;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1711:	if (strcmp(comp, "WallStage8FluidWallDataCount") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1712:    	real_t* tmp_WallStage8FluidWallDataCount = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1714:    	lattice->GetWallStage8FluidWallDataCount(region, tmp_WallStage8FluidWallDataCount, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1715:        buf = (real_t*)tmp_WallStage8FluidWallDataCount;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1729:	if (strcmp(comp, "WallStage8GradCandidateUse") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1730:    	real_t* tmp_WallStage8GradCandidateUse = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1732:    	lattice->GetWallStage8GradCandidateUse(region, tmp_WallStage8GradCandidateUse, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1733:        buf = (real_t*)tmp_WallStage8GradCandidateUse;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1755:     output("-> SpecialBoundaryPoint\n") ;  output("-> Rho\n") ;  output("-> PhaseField\n") ;  output("-> U\n") ;  output("-> P\n") ;  output("-> Pstar\n") ;  output("-> Normal\n") ;  output("-> IsItBoundary\n") ;  output("-> GradPhi\n") ;  output("-> WallPfF\n") ;  output("-> WallGradTangent\n") ;  output("-> WallTanCoeff\n") ;  output("-> WallPhasePred\n") ;  output("-> WallPhaseProfilePred\n") ;  output("-> WallProfileDelta\n") ;  output("-> WallPhaseSignedProfilePred\n") ;  output("-> WallSignedProfileDelta\n") ;  output("-> WallSignedLogitShift\n") ;  output("-> WallFluidSampleCount\n") ;  output("-> WallFluidSampleH\n") ;  output("-> WallPhaseUnifiedProfilePred\n") ;  output("-> WallUnifiedProfileDelta\n") ;  output("-> WallBCPath\n") ;  output("-> WallH\n") ;  output("-> WallGeomNormal\n") ;  output("-> WallGrad1\n") ;  output("-> WallGrad2\n") ;  output("-> WallGradTangentVec\n") ;  output("-> WallNormalCoeff1\n") ;  output("-> WallNormalCoeff2\n") ;  output("-> WallActualMinusProfile\n") ;  output("-> WallActualMinusRaw\n") ;  output("-> WallPhaseRawPred\n") ;  output("-> WallPhaseSignedPred\n") ;  output("-> WallContactResidual\n") ;  output("-> WallSignedNormalGrad\n") ;  output("-> WallTangentGradMag\n") ;  output("-> WallSignedDeltaQ\n") ;  output("-> WallSignedQClipped\n") ;  output("-> BoundaryMask\n") ;  output("-> WallStage7Mode\n") ;  output("-> WallStage7ActiveWeight\n") ;  output("-> WallStage7DeltaQRaw\n") ;  output("-> WallStage7DeltaQLimited\n") ;  output("-> WallStage7Denom\n") ;  output("-> WallStage7LimiterReason\n") ;  output("-> WallStage7GradMag\n") ;  output("-> WallStage7ActualCos\n") ;  output("-> WallStage7TargetCos\n") ;  output("-> WallStage7WriteCandidate\n") ;  output("-> WallStage7WriteMinusProfile\n") ;  output("-> WallStage8GradMode\n") ;  output("-> WallStage8ActiveWeight\n") ;  output("-> WallStage8NormalGradRaw\n") ;  output("-> WallStage8NormalGradTarget\n") ;  output("-> WallStage8ContactResidual\n") ;  output("-> WallStage8TangentGradMag\n") ;  output("-> WallStage8TargetCos\n") ;  output("-> WallStage8GradWriteDeltaMag\n") ;  output("-> WallStage8LimiterReason\n") ;  output("-> WallStage8LocalWallAngle\n") ;  output("-> WallStage8LocalWallNormal\n") ;  output("-> WallStage8FluidWallAngle\n") ;  output("-> WallStage8FluidWallNormal\n") ;  output("-> WallStage8FluidWallDataCount\n") ;  output("-> WallStage8GradCandidate\n") ;  output("-> WallStage8GradCandidateUse\n") ;  output("-> WallStage8NormalAgreement\n") ;  output("-> WallStage8UsedGeomNormal\n") ; 
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lattice.o: 匹配到二进制文件

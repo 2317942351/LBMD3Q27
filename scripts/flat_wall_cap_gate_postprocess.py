@@ -90,6 +90,7 @@ def stats(values: np.ndarray, mask: np.ndarray | None = None) -> dict[str, float
             "min": float(np.min(finite)),
             "mean": float(np.mean(finite)),
             "p01": float(np.percentile(finite, 1)),
+            "p05": float(np.percentile(finite, 5)),
             "p50": float(np.percentile(finite, 50)),
             "p99": float(np.percentile(finite, 99)),
             "max": float(np.max(finite)),
@@ -216,6 +217,12 @@ def summarize_frame(
         "WallStage8TargetCos",
         "WallStage8GradWriteDeltaMag",
         "WallStage8LimiterReason",
+        "WallStage8LocalWallAngle",
+        "WallStage8FluidWallAngle",
+        "WallStage8FluidWallDataCount",
+        "WallStage8GradCandidateUse",
+        "WallStage8NormalAgreement",
+        "WallStage8UsedGeomNormal",
         "WallH",
         "WallNormalCoeff1",
         "WallNormalCoeff2",
@@ -227,7 +234,15 @@ def summarize_frame(
         arr = scalar(arrays.get(name))
         if arr is not None:
             fields[name] = arr
-    for name in ["WallGeomNormal", "WallGrad1", "WallGrad2", "WallGradTangentVec"]:
+    for name in [
+        "WallGeomNormal",
+        "WallGrad1",
+        "WallGrad2",
+        "WallGradTangentVec",
+        "WallStage8LocalWallNormal",
+        "WallStage8FluidWallNormal",
+        "WallStage8GradCandidate",
+    ]:
         mag = vector_mag(arrays.get(name))
         if mag is not None:
             fields[f"{name}Mag"] = mag
@@ -276,6 +291,37 @@ def summarize_frame(
             "wall": stats(values, wall_mask),
             "lower_wall": stats(values, lower_wall_mask),
         }
+    stage8_data_mask = np.zeros_like(fluid_mask, dtype=bool)
+    stage8_active_mask = np.zeros_like(fluid_mask, dtype=bool)
+    if "WallStage8FluidWallDataCount" in fields:
+        data_count = np.asarray(fields["WallStage8FluidWallDataCount"], dtype=float)
+        stage8_data_mask = fluid_mask & np.isfinite(data_count) & (data_count > 0.0)
+    if "WallStage8ActiveWeight" in fields:
+        active_weight = np.asarray(fields["WallStage8ActiveWeight"], dtype=float)
+        stage8_active_mask = fluid_mask & np.isfinite(active_weight) & (active_weight > 0.0)
+    rec["stage8c_mask_counts"] = {
+        "data_fluid_count": int(np.count_nonzero(stage8_data_mask)),
+        "active_fluid_count": int(np.count_nonzero(stage8_active_mask)),
+    }
+    rec["stage8c_field_stats"] = {}
+    for name in [
+        "WallStage8FluidWallAngle",
+        "WallStage8FluidWallNormalMag",
+        "WallStage8FluidWallDataCount",
+        "WallStage8GradCandidateUse",
+        "WallStage8GradCandidateMag",
+        "WallStage8NormalAgreement",
+        "WallStage8UsedGeomNormal",
+        "WallStage8GradWriteDeltaMag",
+        "WallStage8LimiterReason",
+        "WallStage8ContactResidual",
+    ]:
+        values = fields.get(name)
+        if values is not None:
+            rec["stage8c_field_stats"][name] = {
+                "data_fluid": stats(values, stage8_data_mask),
+                "active_fluid": stats(values, stage8_active_mask),
+            }
     limiter = fields.get("WallStage7LimiterReason")
     active = fields.get("WallStage7ActiveWeight")
     path = fields.get("WallBCPath")
@@ -300,6 +346,50 @@ def summarize_frame(
             "normal_limiter_count": 0,
             "active_path_count": 0,
             "active_limiter_count": 0,
+        }
+    stage8_limiter_arr = fields.get("WallStage8LimiterReason")
+    stage8_active_arr = fields.get("WallStage8ActiveWeight")
+    stage8_data_count_arr = fields.get("WallStage8FluidWallDataCount")
+    stage8_agreement_arr = fields.get("WallStage8NormalAgreement")
+    if stage8_limiter_arr is not None:
+        limiter_arr = np.asarray(stage8_limiter_arr, dtype=float)
+        active_arr = (
+            np.asarray(stage8_active_arr, dtype=float)
+            if stage8_active_arr is not None
+            else np.zeros_like(limiter_arr)
+        )
+        data_count_arr = (
+            np.asarray(stage8_data_count_arr, dtype=float)
+            if stage8_data_count_arr is not None
+            else np.zeros_like(limiter_arr)
+        )
+        agreement_arr = (
+            np.asarray(stage8_agreement_arr, dtype=float)
+            if stage8_agreement_arr is not None
+            else np.zeros_like(limiter_arr)
+        )
+        finite_fluid = fluid_mask & np.isfinite(limiter_arr)
+        limiter_nonzero = finite_fluid & (limiter_arr != 0.0)
+        active_fluid = finite_fluid & np.isfinite(active_arr) & (active_arr > 0.0)
+        delta_limited = finite_fluid & (np.floor(limiter_arr / 128.0).astype(int) % 2 == 1)
+        missing_wall_data = finite_fluid & (data_count_arr < 0.5)
+        normal_low = finite_fluid & np.isfinite(agreement_arr) & (agreement_arr > 0.0) & (agreement_arr < 0.25)
+        rec["stage8c_limiter_counts"] = {
+            "fluid_count": int(np.count_nonzero(finite_fluid)),
+            "active_count": int(np.count_nonzero(active_fluid)),
+            "limiter_nonzero_count": int(np.count_nonzero(limiter_nonzero)),
+            "delta_limiter_count": int(np.count_nonzero(delta_limited)),
+            "missing_wall_data_count": int(np.count_nonzero(missing_wall_data)),
+            "normal_low_agreement_count": int(np.count_nonzero(normal_low)),
+        }
+    else:
+        rec["stage8c_limiter_counts"] = {
+            "fluid_count": 0,
+            "active_count": 0,
+            "limiter_nonzero_count": 0,
+            "delta_limiter_count": 0,
+            "missing_wall_data_count": 0,
+            "normal_low_agreement_count": 0,
         }
     if "UMag" in fields:
         rec["max_mach"] = float(np.nanmax(fields["UMag"][fluid_mask]) / CS)
@@ -394,6 +484,28 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
     stage8_target_cos = rec["field_stats"].get("WallStage8TargetCos", {}).get("fluid", {})
     stage8_delta = rec["field_stats"].get("WallStage8GradWriteDeltaMag", {}).get("fluid", {})
     stage8_limiter = rec["field_stats"].get("WallStage8LimiterReason", {}).get("fluid", {})
+    stage8_local_angle_wall = rec["field_stats"].get("WallStage8LocalWallAngle", {}).get("wall", {})
+    stage8_local_normal_wall = rec["field_stats"].get("WallStage8LocalWallNormalMag", {}).get("wall", {})
+    stage8_fluid_angle = rec["field_stats"].get("WallStage8FluidWallAngle", {}).get("fluid", {})
+    stage8_fluid_normal = rec["field_stats"].get("WallStage8FluidWallNormalMag", {}).get("fluid", {})
+    stage8_data_count = rec["field_stats"].get("WallStage8FluidWallDataCount", {}).get("fluid", {})
+    stage8_candidate_use = rec["field_stats"].get("WallStage8GradCandidateUse", {}).get("fluid", {})
+    stage8_candidate_mag = rec["field_stats"].get("WallStage8GradCandidateMag", {}).get("fluid", {})
+    stage8_normal_agreement = rec["field_stats"].get("WallStage8NormalAgreement", {}).get("fluid", {})
+    stage8_used_geom = rec["field_stats"].get("WallStage8UsedGeomNormal", {}).get("fluid", {})
+    stage8c_limiter_counts = rec.get("stage8c_limiter_counts", {})
+    stage8c_mask_counts = rec.get("stage8c_mask_counts", {})
+    stage8c_stats = rec.get("stage8c_field_stats", {})
+    stage8_fluid_angle_data = stage8c_stats.get("WallStage8FluidWallAngle", {}).get("data_fluid", {})
+    stage8_fluid_angle_active = stage8c_stats.get("WallStage8FluidWallAngle", {}).get("active_fluid", {})
+    stage8_data_count_data = stage8c_stats.get("WallStage8FluidWallDataCount", {}).get("data_fluid", {})
+    stage8_data_count_active = stage8c_stats.get("WallStage8FluidWallDataCount", {}).get("active_fluid", {})
+    stage8_normal_agreement_data = stage8c_stats.get("WallStage8NormalAgreement", {}).get("data_fluid", {})
+    stage8_normal_agreement_active = stage8c_stats.get("WallStage8NormalAgreement", {}).get("active_fluid", {})
+    stage8_used_geom_data = stage8c_stats.get("WallStage8UsedGeomNormal", {}).get("data_fluid", {})
+    stage8_used_geom_active = stage8c_stats.get("WallStage8UsedGeomNormal", {}).get("active_fluid", {})
+    stage8_delta_active = stage8c_stats.get("WallStage8GradWriteDeltaMag", {}).get("active_fluid", {})
+    stage8_residual_active = stage8c_stats.get("WallStage8ContactResidual", {}).get("active_fluid", {})
     limiter_counts = rec.get("stage7b_limiter_counts", {})
     phase_sum = float(phase_fluid.get("sum", math.nan))
     rho_sum = float(rho_fluid.get("sum", math.nan))
@@ -474,6 +586,42 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "wall_stage8_grad_write_delta_mag_max": stage8_delta.get("max", math.nan),
         "wall_stage8_limiter_reason_sum": stage8_limiter.get("sum", math.nan),
         "wall_stage8_limiter_reason_max": stage8_limiter.get("max", math.nan),
+        "wall_stage8_limiter_nonzero_count": stage8c_limiter_counts.get("limiter_nonzero_count", 0),
+        "wall_stage8_active_count": stage8c_limiter_counts.get("active_count", 0),
+        "wall_stage8_delta_limiter_count": stage8c_limiter_counts.get("delta_limiter_count", 0),
+        "wall_stage8_missing_wall_data_count": stage8c_limiter_counts.get("missing_wall_data_count", 0),
+        "wall_stage8_normal_low_agreement_count": stage8c_limiter_counts.get("normal_low_agreement_count", 0),
+        "wall_stage8_local_wall_angle_wall_p50": stage8_local_angle_wall.get("p50", math.nan),
+        "wall_stage8_local_wall_angle_wall_min": stage8_local_angle_wall.get("min", math.nan),
+        "wall_stage8_local_wall_angle_wall_max": stage8_local_angle_wall.get("max", math.nan),
+        "wall_stage8_local_wall_normal_mag_wall_p50": stage8_local_normal_wall.get("p50", math.nan),
+        "wall_stage8_fluid_wall_angle_p50": stage8_fluid_angle.get("p50", math.nan),
+        "wall_stage8_fluid_wall_angle_min": stage8_fluid_angle.get("min", math.nan),
+        "wall_stage8_fluid_wall_angle_max": stage8_fluid_angle.get("max", math.nan),
+        "wall_stage8_fluid_wall_normal_mag_p50": stage8_fluid_normal.get("p50", math.nan),
+        "wall_stage8_fluid_wall_data_count_p50": stage8_data_count.get("p50", math.nan),
+        "wall_stage8_fluid_wall_data_count_p05": stage8_data_count.get("p05", math.nan),
+        "wall_stage8_grad_candidate_use_sum": stage8_candidate_use.get("sum", math.nan),
+        "wall_stage8_grad_candidate_mag_p50": stage8_candidate_mag.get("p50", math.nan),
+        "wall_stage8_grad_candidate_mag_max": stage8_candidate_mag.get("max", math.nan),
+        "wall_stage8_normal_agreement_p05": stage8_normal_agreement.get("p05", math.nan),
+        "wall_stage8_normal_agreement_p50": stage8_normal_agreement.get("p50", math.nan),
+        "wall_stage8_used_geom_normal_sum": stage8_used_geom.get("sum", math.nan),
+        "wall_stage8_data_fluid_count": stage8c_mask_counts.get("data_fluid_count", 0),
+        "wall_stage8_active_fluid_count": stage8c_mask_counts.get("active_fluid_count", 0),
+        "wall_stage8_fluid_wall_angle_data_p50": stage8_fluid_angle_data.get("p50", math.nan),
+        "wall_stage8_fluid_wall_angle_active_p50": stage8_fluid_angle_active.get("p50", math.nan),
+        "wall_stage8_fluid_wall_data_count_data_p50": stage8_data_count_data.get("p50", math.nan),
+        "wall_stage8_fluid_wall_data_count_active_p50": stage8_data_count_active.get("p50", math.nan),
+        "wall_stage8_normal_agreement_data_p05": stage8_normal_agreement_data.get("p05", math.nan),
+        "wall_stage8_normal_agreement_data_p50": stage8_normal_agreement_data.get("p50", math.nan),
+        "wall_stage8_normal_agreement_active_p05": stage8_normal_agreement_active.get("p05", math.nan),
+        "wall_stage8_normal_agreement_active_p50": stage8_normal_agreement_active.get("p50", math.nan),
+        "wall_stage8_used_geom_normal_data_sum": stage8_used_geom_data.get("sum", math.nan),
+        "wall_stage8_used_geom_normal_active_sum": stage8_used_geom_active.get("sum", math.nan),
+        "wall_stage8_grad_write_delta_mag_active_p50": stage8_delta_active.get("p50", math.nan),
+        "wall_stage8_grad_write_delta_mag_active_max": stage8_delta_active.get("max", math.nan),
+        "wall_stage8_contact_residual_active_p99": stage8_residual_active.get("p99", math.nan),
         "max_mach": rec["max_mach"],
         "nonfinite_total": rec["nonfinite_total"],
         "path_counts": json.dumps(rec["wall_bc_path_counts"], sort_keys=True),
