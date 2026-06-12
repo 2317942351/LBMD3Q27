@@ -1,0 +1,323 @@
+diff --git "a/third_party\\tclb_snapshots\\stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt" "b/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+index 5919f8c..25f1719 100644
+--- "a/third_party\\tclb_snapshots\\stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
++++ "b/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+@@ -1558,7 +1558,39 @@ CudaDeviceFunction void stage8dTagSphereRegion(vector_t wall_normal) {
+ 	}
+ }
+ 
+-CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
++CudaDeviceFunction real_t stage8ScalarClamp(real_t value, real_t lo, real_t hi) {
++	if (value < lo) {
++		return lo;
++	}
++	if (value > hi) {
++		return hi;
++	}
++	return value;
++}
++
++CudaDeviceFunction real_t stage8SmoothStep01(real_t x) {
++	x = stage8ScalarClamp(x, 0.0, 1.0);
++	return x*x*(3.0 - 2.0*x);
++}
++
++CudaDeviceFunction real_t stage8eSmoothBandWeight(real_t c) {
++	real_t width = Stage8ActiveCSoftWidth;
++	if (width < 1e-12) {
++		width = 1e-12;
++	}
++	real_t low = stage8SmoothStep01((c - Stage8ActiveCMin)/width);
++	real_t high = stage8SmoothStep01(((1.0 - Stage8ActiveCMin) - c)/width);
++	return low*high;
++}
++
++CudaDeviceFunction real_t stage8eSmoothRamp(real_t value, real_t scale) {
++	if (scale < 1e-12) {
++		scale = 1e-12;
++	}
++	return stage8SmoothStep01(value/scale);
++}
++
++CudaDeviceFunction void stage8dVectorCandidate() {
+ 	stage8ResetGradientDiagnostics();
+ 	real_t mode = Stage8OperatorMode;
+ 	if (mode < 0.5) {
+@@ -1737,6 +1769,213 @@ CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
+ 	}
+ }
+ 
++CudaDeviceFunction void stage8eNormalResidualCandidate() {
++	stage8ResetGradientDiagnostics();
++	real_t mode = Stage8OperatorMode;
++	if (mode < 0.5) {
++		return;
++	}
++	if (mode > 2.5) {
++		Stage8LimiterReason = 256.0;
++		return;
++	}
++
++	real_t reason = 0.0;
++	if (!stage8IsPhysicalFluidNode()) {
++		Stage8LimiterReason = 1.0;
++		return;
++	}
++
++	vector_t topo_normal = stage8UnitBoundaryToFluidNormal();
++	real_t topo_mag = wallStage7VectorMag(topo_normal);
++	if (topo_mag < 1e-12) {
++		Stage8LimiterReason = 2.0;
++		return;
++	}
++	real_t local_angle = radAngle;
++	real_t local_count = 0.0;
++	vector_t geom_normal = stage8GatherLocalWallNormal(&local_angle, &local_count);
++	Stage8FluidWallDataCount = local_count;
++	if (Stage8UseLocalWallAngle > 0.5 && local_count < 0.5) {
++		reason += 32.0;
++	}
++	if (Stage8UseWallGeomNormal > 0.5 && local_count < 0.5) {
++		reason += 32.0;
++	}
++	if (Stage8UseLocalWallAngle < 0.5) {
++		local_angle = radAngle;
++	}
++
++	vector_t wall_normal = topo_normal;
++	real_t normal_agreement = 0.0;
++	if (local_count >= 0.5 && wallStage7VectorMag(geom_normal) > 1e-12) {
++		normal_agreement = geom_normal.x*topo_normal.x + geom_normal.y*topo_normal.y + geom_normal.z*topo_normal.z;
++		if (normal_agreement < 0.0) {
++			geom_normal.x *= -1.0;
++			geom_normal.y *= -1.0;
++			geom_normal.z *= -1.0;
++			normal_agreement *= -1.0;
++		}
++		if (Stage8UseWallGeomNormal > 0.5 && normal_agreement >= Stage8NormalDotMin) {
++			wall_normal = geom_normal;
++			Stage8UsedGeomNormal = 1.0;
++		} else if (Stage8UseWallGeomNormal > 0.5) {
++			reason += 64.0;
++		}
++	}
++	Stage8NormalAgreement = normal_agreement;
++	Stage8FluidWallAngle = local_angle;
++	Stage8FluidWallNormal_x = wall_normal.x;
++	Stage8FluidWallNormal_y = wall_normal.y;
++	Stage8FluidWallNormal_z = wall_normal.z;
++	stage8dTagSphereRegion(wall_normal);
++
++	real_t c = wallStage7NormalizedPhase(PhaseF(0,0,0));
++	Stage8ThetaLocal = local_angle;
++	Stage8PhaseC = c;
++	if (c < 0.05) {
++		Stage8ContactBandTag = 1.0;
++	} else if (c < 0.10) {
++		Stage8ContactBandTag = 2.0;
++	} else if (c < 0.30) {
++		Stage8ContactBandTag = 3.0;
++	} else if (c <= 0.70) {
++		Stage8ContactBandTag = 4.0;
++	} else if (c <= 0.90) {
++		Stage8ContactBandTag = 5.0;
++	} else if (c <= 0.95) {
++		Stage8ContactBandTag = 6.0;
++	} else {
++		Stage8ContactBandTag = 7.0;
++	}
++	if (c < Stage8ActiveCMin || c > 1.0 - Stage8ActiveCMin) {
++		reason += 4.0;
++	}
++
++	vector_t grad = {gradPhiVal_x, gradPhiVal_y, gradPhiVal_z};
++	real_t grad_mag = wallStage7VectorMag(grad);
++	Stage8GradMagRaw = grad_mag;
++	if (grad_mag < Stage8ActiveGradMin) {
++		reason += 8.0;
++	}
++
++	real_t normal_raw = grad.x*wall_normal.x + grad.y*wall_normal.y + grad.z*wall_normal.z;
++	vector_t tangent = {
++		grad.x - normal_raw*wall_normal.x,
++		grad.y - normal_raw*wall_normal.y,
++		grad.z - normal_raw*wall_normal.z
++	};
++	real_t tangent_mag = wallStage7VectorMag(tangent);
++	Stage8TangentGradRaw = tangent_mag;
++	if (tangent_mag < Stage8ActiveTangentMin) {
++		reason += 16.0;
++	}
++
++	real_t tan_coeff = tan(PI/2.0 - local_angle);
++	real_t target_normal = -tan_coeff*tangent_mag;
++	real_t target_cos = -cos(local_angle);
++	Stage8TanCoeffLocal = tan_coeff;
++	Stage8NormalGradRaw = normal_raw;
++	Stage8NormalGradTarget = target_normal;
++	Stage8TargetNormalGrad = target_normal;
++	Stage8TangentGradMag = tangent_mag;
++	Stage8TargetCos = target_cos;
++	if (grad_mag > minGradient) {
++		Stage8ContactResidual = normal_raw/grad_mag - target_cos;
++	}
++	Stage8LimiterReason = reason;
++
++	if (reason > 0.0) {
++		return;
++	}
++
++	real_t wc = 1.0;
++	real_t wg = 1.0;
++	real_t wt = 1.0;
++	if (Stage8UseSmoothActiveWeight > 0.5) {
++		wc = stage8eSmoothBandWeight(c);
++		wg = stage8eSmoothRamp(grad_mag, Stage8ActiveGradMin);
++		wt = stage8eSmoothRamp(tangent_mag, Stage8TangentSoftMin);
++	}
++	real_t w = wc*wg*wt;
++	Stage8ActiveWeight = w;
++	if (w <= 1e-12) {
++		Stage8LimiterReason += 512.0;
++		return;
++	}
++
++	real_t alpha = 1.0/(Stage8RelaxationTau + 1e-12);
++	alpha *= Stage8CurvatureRelaxation;
++	alpha = stage8ScalarClamp(alpha, 0.0, 1.0);
++
++	real_t dn_raw = target_normal - normal_raw;
++	real_t dn_try = alpha*w*dn_raw;
++	real_t cap = Stage8MaxNormalDelta;
++	if (cap <= 0.0) {
++		cap = fabs(dn_try);
++	}
++	if (Stage8MaxNormalDeltaRatio > 0.0) {
++		real_t cap_ratio = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
++		if (cap_ratio < cap) {
++			cap = cap_ratio;
++		}
++	}
++	real_t dn_limited = stage8ScalarClamp(dn_try, -cap, cap);
++	Stage8NormalDeltaRaw = dn_raw;
++	Stage8NormalDeltaLimited = dn_limited;
++	Stage8VectorDeltaRawMag = fabs(dn_try);
++	Stage8VectorDeltaLimitedMag = fabs(dn_limited);
++	if (fabs(dn_limited - dn_try) > 1e-10) {
++		Stage8NormalLimiterHit = 1.0;
++		Stage8LimiterReason += 128.0;
++	}
++	if (fabs(dn_try) > 1e-12) {
++		Stage8LimiterRatio = fabs(dn_limited/dn_try);
++	}
++
++	vector_t corrected = {
++		grad.x + dn_limited*wall_normal.x,
++		grad.y + dn_limited*wall_normal.y,
++		grad.z + dn_limited*wall_normal.z
++	};
++	real_t delta_mag = fabs(dn_limited);
++	if (Stage8MaxGradDelta > 0.0 && delta_mag > Stage8MaxGradDelta) {
++		real_t scale = Stage8MaxGradDelta/(delta_mag + 1e-12);
++		dn_limited *= scale;
++		corrected.x = grad.x + dn_limited*wall_normal.x;
++		corrected.y = grad.y + dn_limited*wall_normal.y;
++		corrected.z = grad.z + dn_limited*wall_normal.z;
++		delta_mag = fabs(dn_limited);
++		Stage8VectorLimiterHit = 1.0;
++		Stage8LimiterReason += 1024.0;
++		Stage8NormalDeltaLimited = dn_limited;
++		Stage8VectorDeltaLimitedMag = delta_mag;
++		if (fabs(dn_try) > 1e-12) {
++			Stage8LimiterRatio = fabs(dn_limited/dn_try);
++		}
++	}
++
++	Stage8GradWriteDeltaMag = delta_mag;
++	Stage8GradCandidate_x = corrected.x;
++	Stage8GradCandidate_y = corrected.y;
++	Stage8GradCandidate_z = corrected.z;
++	Stage8GradCandidateUse = 1.0;
++
++	if (mode > 1.5 && mode < 2.5) {
++		gradPhiVal_x = corrected.x;
++		gradPhiVal_y = corrected.y;
++		gradPhiVal_z = corrected.z;
++	}
++}
++
++CudaDeviceFunction void stage8ApplyFluidGradientWetting() {
++	if (Stage8CandidateVersion >= 8.5) {
++		stage8eNormalResidualCandidate();
++	} else {
++		stage8dVectorCandidate();
++	}
++}
++
+ CudaDeviceFunction real_t getWallStage8GradMode() {
+ 	return Stage8GradMode(0,0,0);
+ }
+diff --git "a/third_party\\tclb_snapshots\\stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Dynamics.R" "b/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+index afc3838..42b5b25 100644
+--- "a/third_party\\tclb_snapshots\\stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Dynamics.R"
++++ "b/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+@@ -341,6 +341,13 @@ if (Options$thermo){
+ 	AddSetting(name="Stage8DiagSphereCenterY", default=0.0, comment='Stage8d diagnostic solid-sphere center Y for region tagging')
+ 	AddSetting(name="Stage8DiagSphereCenterZ", default=0.0, comment='Stage8d diagnostic solid-sphere center Z for region tagging')
+ 	AddSetting(name="Stage8DiagSphereRadius", default=0.0, comment='Stage8d diagnostic solid-sphere radius for region tagging')
++	AddSetting(name="Stage8CandidateVersion", default=8.0, comment='Stage8 candidate version: <8.5 keeps Stage8d vector candidate; >=8.5 uses Stage8e normal-residual-only candidate')
++	AddSetting(name="Stage8MaxNormalDelta", default=0.05, comment='Stage8e normal-only limiter absolute cap for wall-normal gradient residual update')
++	AddSetting(name="Stage8MaxNormalDeltaRatio", default=0.5, comment='Stage8e normal-only limiter cap ratio relative to abs(normal_raw)')
++	AddSetting(name="Stage8UseSmoothActiveWeight", default=1, comment='Stage8e diagnostic: use smooth phase/gradient/tangent active weight')
++	AddSetting(name="Stage8ActiveCSoftWidth", default=0.05, comment='Stage8e smooth active phase-band transition width')
++	AddSetting(name="Stage8TangentSoftMin", default=0.01, comment='Stage8e smooth tangent-gradient ramp scale')
++	AddSetting(name="Stage8CurvatureRelaxation", default=1, comment='Stage8e curvature diagnostic relaxation multiplier')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')
+@@ -357,6 +364,15 @@ if (Options$thermo){
+ 		AddSetting(name="CapInitCenterX", default=0.0, comment='Spherical cap parent-sphere center X')
+ 		AddSetting(name="CapInitCenterY", default=0.0, comment='Spherical cap parent-sphere center Y')
+ 		AddSetting(name="CapInitCenterZ", default=0.0, comment='Spherical cap parent-sphere center Z')
++		AddSetting(name="SphereCapInit", default=0.0, comment='Default-off sphere cap-on-sphere approximate initializer for Stage8e diagnostics')
++		AddSetting(name="SphereCapInitParentRadius", default=0.0, comment='Stage8e sphere-cap liquid parent-sphere radius')
++		AddSetting(name="SphereCapInitCenterX", default=0.0, comment='Stage8e sphere-cap liquid parent-sphere center X')
++		AddSetting(name="SphereCapInitCenterY", default=0.0, comment='Stage8e sphere-cap liquid parent-sphere center Y')
++		AddSetting(name="SphereCapInitCenterZ", default=0.0, comment='Stage8e sphere-cap liquid parent-sphere center Z')
++		AddSetting(name="SphereCapInitSolidCenterX", default=0.0, comment='Stage8e sphere-cap solid sphere center X')
++		AddSetting(name="SphereCapInitSolidCenterY", default=0.0, comment='Stage8e sphere-cap solid sphere center Y')
++		AddSetting(name="SphereCapInitSolidCenterZ", default=0.0, comment='Stage8e sphere-cap solid sphere center Z')
++		AddSetting(name="SphereCapInitSolidRadius", default=0.0, comment='Stage8e sphere-cap solid sphere radius')
+ 	# Annular Taylor bubble
+ 		AddSetting(name="DonutTime", default=0.0, comment='Radius of a Torus - initialised to travel along x-axis')
+ 		AddSetting(name="Donut_h",   default=0.0, comment='Half donut thickness, i.e. the radius of the cross-section')
+diff --git "a/third_party\\tclb_snapshots\\stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt" "b/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt"
+index e2fd64e..1f2b6c2 100644
+--- "a/third_party\\tclb_snapshots\\stage8d_sphere_shadow_limiter_attribution/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt"
++++ "b/third_party\\tclb_snapshots\\stage8e_normal_residual_only_wetting_candidate/models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt"
+@@ -343,6 +343,25 @@ CudaDeviceFunction void specialCases_Init()
+ 		PhaseF = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+ 		         (1.0 - tanh(2.0*(Ri - CapInitRadius)/IntWidth));
+ 	}
++
++	// Default-off cap-on-sphere approximate initialisation for Stage8e diagnostics.
++	if (SphereCapInit > 0.5 && SphereCapInitParentRadius > 0.0 && SphereCapInitSolidRadius > 0.0) {
++		real_t Ri;
++		Ri = sqrt((X - SphereCapInitCenterX)*(X - SphereCapInitCenterX) +
++		          (Y - SphereCapInitCenterY)*(Y - SphereCapInitCenterY) +
++		          (Z - SphereCapInitCenterZ)*(Z - SphereCapInitCenterZ));
++		real_t Rs;
++		Rs = sqrt((X - SphereCapInitSolidCenterX)*(X - SphereCapInitSolidCenterX) +
++		          (Y - SphereCapInitSolidCenterY)*(Y - SphereCapInitSolidCenterY) +
++		          (Z - SphereCapInitSolidCenterZ)*(Z - SphereCapInitSolidCenterZ));
++		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
++		                (1.0 - tanh(2.0*(Ri - SphereCapInitParentRadius)/IntWidth));
++		if (Rs < SphereCapInitSolidRadius) {
++			PhaseF = PhaseField_l;
++		} else {
++			PhaseF = cap_pf;
++		}
++	}
+  	// Rayleigh-Taylor Instability
+ 	    // Initialises with a sharp interface
+ 	if (RTI_Characteristic_Length > 0){

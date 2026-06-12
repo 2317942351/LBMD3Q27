@@ -1,0 +1,124 @@
+{
+  "status": "runtime_sanity",
+  "claim_limit": "exploratory_not_validation only",
+  "decision": "Stage8e shadow did not pass write gate; sphere Stage8OperatorMode=2 remains forbidden",
+  "binary_sha256": "db8af1bcf2da18a7373f2d29573499963e83de28beecf9bbafb1a0207102f880",
+  "flat_shadow": [
+    {
+      "case_id": "cap_theta030_wall005_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.476409823874466,
+      "max_mach": 1.1635696682809229e-05,
+      "nonfinite_total": 0,
+      "active_count": 7984,
+      "normal_limiter_fraction": 0.8877755511022044,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 0.10356944893568075,
+      "normal_delta_limited_p99": -7.625541959810584e-06
+    },
+    {
+      "case_id": "cap_theta030_wall008_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.47654947637532,
+      "max_mach": 1.1221795779905838e-05,
+      "nonfinite_total": 0,
+      "active_count": 7952,
+      "normal_limiter_fraction": 0.852112676056338,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 0.18885334203365164,
+      "normal_delta_limited_p99": -3.943679792359245e-06
+    },
+    {
+      "case_id": "cap_theta030_wall011_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.476761740014496,
+      "max_mach": 1.0613458082881765e-05,
+      "nonfinite_total": 0,
+      "active_count": 7896,
+      "normal_limiter_fraction": 0.8318135764944276,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 0.3017112655314392,
+      "normal_delta_limited_p99": -3.3333871603891114e-06
+    },
+    {
+      "case_id": "cap_theta030_wall015_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.477180399852635,
+      "max_mach": 9.492780825878539e-06,
+      "nonfinite_total": 0,
+      "active_count": 7856,
+      "normal_limiter_fraction": 0.7810590631364562,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 0.5313861836669614,
+      "normal_delta_limited_p99": -1.6862805440553716e-06
+    },
+    {
+      "case_id": "cap_theta030_wall020_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.492623931639816,
+      "max_mach": 7.574215570511628e-06,
+      "nonfinite_total": 0,
+      "active_count": 7760,
+      "normal_limiter_fraction": 0.33298969072164947,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 1.0,
+      "normal_delta_limited_p99": -1.0828996787245382e-06
+    },
+    {
+      "case_id": "cap_theta030_wall025_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.48717697042463,
+      "max_mach": 5.042724225605722e-06,
+      "nonfinite_total": 0,
+      "active_count": 7656,
+      "normal_limiter_fraction": 0.0,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 1.0,
+      "normal_delta_limited_p99": -6.917313651857517e-08
+    },
+    {
+      "case_id": "cap_theta030_wall030_mode1",
+      "step": 1000,
+      "angle_apparent_deg": 29.48025328779166,
+      "max_mach": 1.8458367665547906e-06,
+      "nonfinite_total": 0,
+      "active_count": 7508,
+      "normal_limiter_fraction": 0.0,
+      "vector_limiter_fraction": 0.0,
+      "limiter_ratio_p50": 1.0,
+      "normal_delta_limited_p99": 0.019982619812245007
+    }
+  ],
+  "sphere_shadow": [
+    {
+      "case_id": "theta030_cap_on_sphere_shadow",
+      "step": 1000,
+      "active_count": 5460,
+      "normal_limiter_fraction": 0.7304029304029304,
+      "vector_limiter_fraction": 0.0,
+      "outer90_limiter_count": 0,
+      "max_mach": 1.892877581620868e-05,
+      "nonfinite_total": 0,
+      "write_mode_allowed": false,
+      "root_cause": "undetermined_shadow_only_normal_limiter_dominated",
+      "raw_delta_p99": 0.4794265072846032,
+      "normal_delta_limited_p99": 0.008925232203090985,
+      "limiter_ratio_p50": 0.4122576787348907
+    },
+    {
+      "case_id": "theta030_free_sphere_shadow",
+      "step": 1000,
+      "active_count": 924,
+      "normal_limiter_fraction": 0.8528138528138528,
+      "vector_limiter_fraction": 0.0,
+      "outer90_limiter_count": 0,
+      "max_mach": 0.0003084275362609073,
+      "nonfinite_total": 0,
+      "write_mode_allowed": false,
+      "root_cause": "undetermined_shadow_only_normal_limiter_dominated",
+      "raw_delta_p99": 0.6470816609500727,
+      "normal_delta_limited_p99": -2.941689785117156e-05,
+      "limiter_ratio_p50": 0.13520012159572392
+    }
+  ]
+}

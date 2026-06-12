@@ -29,6 +29,11 @@ Read in this order:
 11. `docs/wall_normal_path_v6diag_M0p1_control_50k_20260611.md`
 12. `docs/stage7_signed_wall_ghost_diagnostic_20260612.md`
 13. `docs/stage7b_low_angle_signed_wall_stability_diagnostic_20260612.md`
+14. `docs/stage8_boundary_fluid_gradient_wetting_diagnostic_20260612.md`
+15. `docs/stage8c_local_angle_boundary_gradient_candidate_20260612.md`
+16. `docs/stage8d_sphere_shadow_limiter_attribution_20260612.md`
+17. `docs/stage8e_normal_residual_only_wetting_candidate_20260613.md`
+18. `docs/index_current_stage.md`
 
 ## Source Layout
 
@@ -42,6 +47,10 @@ Read in this order:
 - `third_party/tclb_snapshots/stage6_normal_path_diag/`: v6 normal-path diagnostic lane.
 - `third_party/tclb_snapshots/stage7_signed_wall_ghost_diag/`: Stage7 signed wall-ghost diagnostic lane.
 - `third_party/tclb_snapshots/stage7b_low_angle_signed_wall_stability_diag/`: Stage7b active relaxed signed-wall diagnostic lane.
+- `third_party/tclb_snapshots/stage8_boundary_fluid_gradient_wetting_diag/`: Stage8 boundary-gradient wetting diagnostic lane.
+- `third_party/tclb_snapshots/stage8c_local_angle_boundary_gradient_candidate_diag/`: Stage8c local wall-angle gradient candidate lane.
+- `third_party/tclb_snapshots/stage8d_sphere_shadow_limiter_attribution/`: Stage8d sphere shadow limiter attribution lane.
+- `third_party/tclb_snapshots/stage8e_normal_residual_only_wetting_candidate/`: Stage8e normal-residual-only candidate lane.
 - `third_party/tclb_snapshots/patches/`: diffs against the upstream snapshot.
 - `scripts/`: local generators, postprocessors, audits, and HM570 runners.
 - `cases/`: XML case definitions and manifests.

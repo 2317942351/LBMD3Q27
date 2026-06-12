@@ -223,6 +223,22 @@ def summarize_frame(
         "WallStage8GradCandidateUse",
         "WallStage8NormalAgreement",
         "WallStage8UsedGeomNormal",
+        "WallStage8TanCoeffLocal",
+        "WallStage8ThetaLocal",
+        "WallStage8PhaseC",
+        "WallStage8GradMagRaw",
+        "WallStage8TangentGradRaw",
+        "WallStage8TargetNormalGrad",
+        "WallStage8NormalDeltaRaw",
+        "WallStage8NormalDeltaLimited",
+        "WallStage8VectorDeltaRawMag",
+        "WallStage8VectorDeltaLimitedMag",
+        "WallStage8NormalLimiterHit",
+        "WallStage8VectorLimiterHit",
+        "WallStage8LimiterRatio",
+        "WallStage8RegionTag",
+        "WallStage8SphereRadialDot",
+        "WallStage8ContactBandTag",
         "WallH",
         "WallNormalCoeff1",
         "WallNormalCoeff2",
@@ -315,6 +331,15 @@ def summarize_frame(
         "WallStage8GradWriteDeltaMag",
         "WallStage8LimiterReason",
         "WallStage8ContactResidual",
+        "WallStage8NormalDeltaRaw",
+        "WallStage8NormalDeltaLimited",
+        "WallStage8VectorDeltaRawMag",
+        "WallStage8VectorDeltaLimitedMag",
+        "WallStage8NormalLimiterHit",
+        "WallStage8VectorLimiterHit",
+        "WallStage8LimiterRatio",
+        "WallStage8PhaseC",
+        "WallStage8TangentGradRaw",
     ]:
         values = fields.get(name)
         if values is not None:
@@ -351,6 +376,8 @@ def summarize_frame(
     stage8_active_arr = fields.get("WallStage8ActiveWeight")
     stage8_data_count_arr = fields.get("WallStage8FluidWallDataCount")
     stage8_agreement_arr = fields.get("WallStage8NormalAgreement")
+    stage8_normal_limiter_arr = fields.get("WallStage8NormalLimiterHit")
+    stage8_vector_limiter_arr = fields.get("WallStage8VectorLimiterHit")
     if stage8_limiter_arr is not None:
         limiter_arr = np.asarray(stage8_limiter_arr, dtype=float)
         active_arr = (
@@ -374,13 +401,30 @@ def summarize_frame(
         delta_limited = finite_fluid & (np.floor(limiter_arr / 128.0).astype(int) % 2 == 1)
         missing_wall_data = finite_fluid & (data_count_arr < 0.5)
         normal_low = finite_fluid & np.isfinite(agreement_arr) & (agreement_arr > 0.0) & (agreement_arr < 0.25)
+        normal_limiter_arr = (
+            np.asarray(stage8_normal_limiter_arr, dtype=float)
+            if stage8_normal_limiter_arr is not None
+            else np.zeros_like(limiter_arr)
+        )
+        vector_limiter_arr = (
+            np.asarray(stage8_vector_limiter_arr, dtype=float)
+            if stage8_vector_limiter_arr is not None
+            else np.zeros_like(limiter_arr)
+        )
+        active_count = int(np.count_nonzero(active_fluid))
+        normal_limiter_count = int(np.count_nonzero(active_fluid & (normal_limiter_arr > 0.5)))
+        vector_limiter_count = int(np.count_nonzero(active_fluid & (vector_limiter_arr > 0.5)))
         rec["stage8c_limiter_counts"] = {
             "fluid_count": int(np.count_nonzero(finite_fluid)),
-            "active_count": int(np.count_nonzero(active_fluid)),
+            "active_count": active_count,
             "limiter_nonzero_count": int(np.count_nonzero(limiter_nonzero)),
             "delta_limiter_count": int(np.count_nonzero(delta_limited)),
             "missing_wall_data_count": int(np.count_nonzero(missing_wall_data)),
             "normal_low_agreement_count": int(np.count_nonzero(normal_low)),
+            "normal_limiter_count": normal_limiter_count,
+            "normal_limiter_fraction": normal_limiter_count / active_count if active_count else math.nan,
+            "vector_limiter_count": vector_limiter_count,
+            "vector_limiter_fraction": vector_limiter_count / active_count if active_count else math.nan,
         }
     else:
         rec["stage8c_limiter_counts"] = {
@@ -390,6 +434,10 @@ def summarize_frame(
             "delta_limiter_count": 0,
             "missing_wall_data_count": 0,
             "normal_low_agreement_count": 0,
+            "normal_limiter_count": 0,
+            "normal_limiter_fraction": math.nan,
+            "vector_limiter_count": 0,
+            "vector_limiter_fraction": math.nan,
         }
     if "UMag" in fields:
         rec["max_mach"] = float(np.nanmax(fields["UMag"][fluid_mask]) / CS)
@@ -589,6 +637,10 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "wall_stage8_limiter_nonzero_count": stage8c_limiter_counts.get("limiter_nonzero_count", 0),
         "wall_stage8_active_count": stage8c_limiter_counts.get("active_count", 0),
         "wall_stage8_delta_limiter_count": stage8c_limiter_counts.get("delta_limiter_count", 0),
+        "wall_stage8_normal_limiter_count": stage8c_limiter_counts.get("normal_limiter_count", 0),
+        "wall_stage8_normal_limiter_fraction": stage8c_limiter_counts.get("normal_limiter_fraction", math.nan),
+        "wall_stage8_vector_limiter_count": stage8c_limiter_counts.get("vector_limiter_count", 0),
+        "wall_stage8_vector_limiter_fraction": stage8c_limiter_counts.get("vector_limiter_fraction", math.nan),
         "wall_stage8_missing_wall_data_count": stage8c_limiter_counts.get("missing_wall_data_count", 0),
         "wall_stage8_normal_low_agreement_count": stage8c_limiter_counts.get("normal_low_agreement_count", 0),
         "wall_stage8_local_wall_angle_wall_p50": stage8_local_angle_wall.get("p50", math.nan),
@@ -622,6 +674,11 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "wall_stage8_grad_write_delta_mag_active_p50": stage8_delta_active.get("p50", math.nan),
         "wall_stage8_grad_write_delta_mag_active_max": stage8_delta_active.get("max", math.nan),
         "wall_stage8_contact_residual_active_p99": stage8_residual_active.get("p99", math.nan),
+        "wall_stage8_normal_delta_raw_active_p99": stage8c_stats.get("WallStage8NormalDeltaRaw", {}).get("active_fluid", {}).get("p99", math.nan),
+        "wall_stage8_normal_delta_limited_active_p99": stage8c_stats.get("WallStage8NormalDeltaLimited", {}).get("active_fluid", {}).get("p99", math.nan),
+        "wall_stage8_vector_delta_raw_active_p99": stage8c_stats.get("WallStage8VectorDeltaRawMag", {}).get("active_fluid", {}).get("p99", math.nan),
+        "wall_stage8_vector_delta_limited_active_p99": stage8c_stats.get("WallStage8VectorDeltaLimitedMag", {}).get("active_fluid", {}).get("p99", math.nan),
+        "wall_stage8_limiter_ratio_active_p50": stage8c_stats.get("WallStage8LimiterRatio", {}).get("active_fluid", {}).get("p50", math.nan),
         "max_mach": rec["max_mach"],
         "nonfinite_total": rec["nonfinite_total"],
         "path_counts": json.dumps(rec["wall_bc_path_counts"], sort_keys=True),

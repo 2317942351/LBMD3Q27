@@ -1,0 +1,283 @@
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:220:Stage8CandidateVersion                        |   | Stage8 candidate version: <8.5 keeps Stage8d vector candidate; >=8.5 uses Stage8e normal-residual-only candidate 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:221:Stage8MaxNormalDelta                          |   | Stage8e normal-only limiter absolute cap for wall-normal gradient residual update 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:222:Stage8MaxNormalDeltaRatio                     |   | Stage8e normal-only limiter cap ratio relative to abs(normal_raw) 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:240:SphereCapInit                                 |   | Default-off sphere cap-on-sphere approximate initializer for Stage8e diagnostics 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:241:SphereCapInitParentRadius                     |   | Stage8e sphere-cap liquid parent-sphere radius 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:242:SphereCapInitCenterX                          |   | Stage8e sphere-cap liquid parent-sphere center X 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:243:SphereCapInitCenterY                          |   | Stage8e sphere-cap liquid parent-sphere center Y 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:244:SphereCapInitCenterZ                          |   | Stage8e sphere-cap liquid parent-sphere center Z 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:245:SphereCapInitSolidCenterX                     |   | Stage8e sphere-cap solid sphere center X 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:246:SphereCapInitSolidCenterY                     |   | Stage8e sphere-cap solid sphere center Y 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:247:SphereCapInitSolidCenterZ                     |   | Stage8e sphere-cap solid sphere center Z 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:248:SphereCapInitSolidRadius                      |   | Stage8e sphere-cap solid sphere radius 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:419:WallStage8NormalDeltaRaw            [      1] |   | WallStage8NormalDeltaRaw 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:420:WallStage8NormalDeltaLimited        [      1] |   | WallStage8NormalDeltaLimited 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:84:			CudaCopyToConstant("Stage8CandidateVersion", Stage8CandidateVersion, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:85:			CudaCopyToConstant("Stage8MaxNormalDelta", Stage8MaxNormalDelta, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:86:			CudaCopyToConstant("Stage8MaxNormalDeltaRatio", Stage8MaxNormalDeltaRatio, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:104:			CudaCopyToConstant("SphereCapInit", SphereCapInit, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:105:			CudaCopyToConstant("SphereCapInitParentRadius", SphereCapInitParentRadius, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:106:			CudaCopyToConstant("SphereCapInitCenterX", SphereCapInitCenterX, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:107:			CudaCopyToConstant("SphereCapInitCenterY", SphereCapInitCenterY, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:108:			CudaCopyToConstant("SphereCapInitCenterZ", SphereCapInitCenterZ, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:109:			CudaCopyToConstant("SphereCapInitSolidCenterX", SphereCapInitSolidCenterX, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:110:			CudaCopyToConstant("SphereCapInitSolidCenterY", SphereCapInitSolidCenterY, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:111:			CudaCopyToConstant("SphereCapInitSolidCenterZ", SphereCapInitSolidCenterZ, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:112:			CudaCopyToConstant("SphereCapInitSolidRadius", SphereCapInitSolidRadius, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1428:        debug1("Creating Catalyst VTK object for WallStage8NormalDeltaRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1431:        myArray->SetName("WallStage8NormalDeltaRaw");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1444:        debug1("Creating Catalyst VTK object for WallStage8NormalDeltaLimited\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1447:        myArray->SetName("WallStage8NormalDeltaLimited");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3307:      debug2("Filling Catalyst VTK object for WallStage8NormalDeltaRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3311:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8NormalDeltaRaw"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3313:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8NormalDeltaRaw"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3319:      solver.lattice->GetWallStage8NormalDeltaRaw(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3324://      solver.lattice->GetWallStage8NormalDeltaRaw(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3328:      debug2("Filling Catalyst VTK object for WallStage8NormalDeltaLimited\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3332:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8NormalDeltaLimited"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3334:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8NormalDeltaLimited"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3340:      solver.lattice->GetWallStage8NormalDeltaLimited(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:3345://      solver.lattice->GetWallStage8NormalDeltaLimited(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:80:			CudaCopyToConstant("Stage8CandidateVersion", Stage8CandidateVersion, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:81:			CudaCopyToConstant("Stage8MaxNormalDelta", Stage8MaxNormalDelta, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:82:			CudaCopyToConstant("Stage8MaxNormalDeltaRatio", Stage8MaxNormalDeltaRatio, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:100:			CudaCopyToConstant("SphereCapInit", SphereCapInit, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:101:			CudaCopyToConstant("SphereCapInitParentRadius", SphereCapInitParentRadius, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:102:			CudaCopyToConstant("SphereCapInitCenterX", SphereCapInitCenterX, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:103:			CudaCopyToConstant("SphereCapInitCenterY", SphereCapInitCenterY, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:104:			CudaCopyToConstant("SphereCapInitCenterZ", SphereCapInitCenterZ, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:105:			CudaCopyToConstant("SphereCapInitSolidCenterX", SphereCapInitSolidCenterX, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:106:			CudaCopyToConstant("SphereCapInitSolidCenterY", SphereCapInitSolidCenterY, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:107:			CudaCopyToConstant("SphereCapInitSolidCenterZ", SphereCapInitSolidCenterZ, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:108:			CudaCopyToConstant("SphereCapInitSolidRadius", SphereCapInitSolidRadius, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:244:	case  SETTINGS_Stage8CandidateVersion :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:245:	        CudaCopyToConstant("Stage8CandidateVersion", Stage8CandidateVersion, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:247:	case  SETTINGS_Stage8MaxNormalDelta :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:248:	        CudaCopyToConstant("Stage8MaxNormalDelta", Stage8MaxNormalDelta, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:250:	case  SETTINGS_Stage8MaxNormalDeltaRatio :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:251:	        CudaCopyToConstant("Stage8MaxNormalDeltaRatio", Stage8MaxNormalDeltaRatio, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:304:	case  SETTINGS_SphereCapInit :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:305:	        CudaCopyToConstant("SphereCapInit", SphereCapInit, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:307:	case  SETTINGS_SphereCapInitParentRadius :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:308:	        CudaCopyToConstant("SphereCapInitParentRadius", SphereCapInitParentRadius, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:310:	case  SETTINGS_SphereCapInitCenterX :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:311:	        CudaCopyToConstant("SphereCapInitCenterX", SphereCapInitCenterX, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:313:	case  SETTINGS_SphereCapInitCenterY :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:314:	        CudaCopyToConstant("SphereCapInitCenterY", SphereCapInitCenterY, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:316:	case  SETTINGS_SphereCapInitCenterZ :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:317:	        CudaCopyToConstant("SphereCapInitCenterZ", SphereCapInitCenterZ, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:319:	case  SETTINGS_SphereCapInitSolidCenterX :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:320:	        CudaCopyToConstant("SphereCapInitSolidCenterX", SphereCapInitSolidCenterX, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:322:	case  SETTINGS_SphereCapInitSolidCenterY :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:323:	        CudaCopyToConstant("SphereCapInitSolidCenterY", SphereCapInitSolidCenterY, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:325:	case  SETTINGS_SphereCapInitSolidCenterZ :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:326:	        CudaCopyToConstant("SphereCapInitSolidCenterZ", SphereCapInitSolidCenterZ, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:328:	case  SETTINGS_SphereCapInitSolidRadius :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:329:	        CudaCopyToConstant("SphereCapInitSolidRadius", SphereCapInitSolidRadius, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3254:/// Calculate quantity [WallStage8NormalDeltaRaw] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3256:  Kernel to calculate quantity WallStage8NormalDeltaRaw (WallStage8NormalDeltaRaw) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3261:CudaGlobalFunction void getWallStage8NormalDeltaRaw(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3272:			w = now.getWallStage8NormalDeltaRaw(); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3280:/// Calculate quantity [WallStage8NormalDeltaLimited] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3282:  Kernel to calculate quantity WallStage8NormalDeltaLimited (WallStage8NormalDeltaLimited) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3287:CudaGlobalFunction void getWallStage8NormalDeltaLimited(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:3298:			w = now.getWallStage8NormalDeltaLimited(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:348:	if (SphereCapInit > 0.5 && SphereCapInitParentRadius > 0.0 && SphereCapInitSolidRadius > 0.0) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:350:		Ri = sqrt((X - SphereCapInitCenterX)*(X - SphereCapInitCenterX) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:351:		          (Y - SphereCapInitCenterY)*(Y - SphereCapInitCenterY) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:352:		          (Z - SphereCapInitCenterZ)*(Z - SphereCapInitCenterZ));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:354:		Rs = sqrt((X - SphereCapInitSolidCenterX)*(X - SphereCapInitSolidCenterX) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:355:		          (Y - SphereCapInitSolidCenterY)*(Y - SphereCapInitSolidCenterY) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:356:		          (Z - SphereCapInitSolidCenterZ)*(Z - SphereCapInitSolidCenterZ));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:358:		                (1.0 - tanh(2.0*(Ri - SphereCapInitParentRadius)/IntWidth));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:359:		if (Rs < SphereCapInitSolidRadius) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2969:CudaDeviceFunction void stage8eNormalResidualCandidate() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3110:	real_t cap = Stage8MaxNormalDelta;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3114:	if (Stage8MaxNormalDeltaRatio > 0.0) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3115:		real_t cap_ratio = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3169:	if (Stage8CandidateVersion >= 8.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3170:		stage8eNormalResidualCandidate();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3287:CudaDeviceFunction real_t getWallStage8NormalDeltaRaw() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3291:CudaDeviceFunction real_t getWallStage8NormalDeltaLimited() {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:119:	real_t setting_Stage8CandidateVersion; ///< Value of [Stage8 candidate version: <8.5 keeps Stage8d vector candidate; >=8.5 uses Stage8e normal-residual-only candidate]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:120:	int ifset_Stage8CandidateVersion; ///< True if [Stage8 candidate version: <8.5 keeps Stage8d vector candidate; >=8.5 uses Stage8e normal-residual-only candidate] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:121:	real_t setting_Stage8MaxNormalDelta; ///< Value of [Stage8e normal-only limiter absolute cap for wall-normal gradient residual update]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:122:	int ifset_Stage8MaxNormalDelta; ///< True if [Stage8e normal-only limiter absolute cap for wall-normal gradient residual update] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:123:	real_t setting_Stage8MaxNormalDeltaRatio; ///< Value of [Stage8e normal-only limiter cap ratio relative to abs(normal_raw)]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:124:	int ifset_Stage8MaxNormalDeltaRatio; ///< True if [Stage8e normal-only limiter cap ratio relative to abs(normal_raw)] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:159:	real_t setting_SphereCapInit; ///< Value of [Default-off sphere cap-on-sphere approximate initializer for Stage8e diagnostics]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:160:	int ifset_SphereCapInit; ///< True if [Default-off sphere cap-on-sphere approximate initializer for Stage8e diagnostics] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:161:	real_t setting_SphereCapInitParentRadius; ///< Value of [Stage8e sphere-cap liquid parent-sphere radius]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:162:	int ifset_SphereCapInitParentRadius; ///< True if [Stage8e sphere-cap liquid parent-sphere radius] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:163:	real_t setting_SphereCapInitCenterX; ///< Value of [Stage8e sphere-cap liquid parent-sphere center X]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:164:	int ifset_SphereCapInitCenterX; ///< True if [Stage8e sphere-cap liquid parent-sphere center X] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:165:	real_t setting_SphereCapInitCenterY; ///< Value of [Stage8e sphere-cap liquid parent-sphere center Y]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:166:	int ifset_SphereCapInitCenterY; ///< True if [Stage8e sphere-cap liquid parent-sphere center Y] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:167:	real_t setting_SphereCapInitCenterZ; ///< Value of [Stage8e sphere-cap liquid parent-sphere center Z]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:168:	int ifset_SphereCapInitCenterZ; ///< True if [Stage8e sphere-cap liquid parent-sphere center Z] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:169:	real_t setting_SphereCapInitSolidCenterX; ///< Value of [Stage8e sphere-cap solid sphere center X]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:170:	int ifset_SphereCapInitSolidCenterX; ///< True if [Stage8e sphere-cap solid sphere center X] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:171:	real_t setting_SphereCapInitSolidCenterY; ///< Value of [Stage8e sphere-cap solid sphere center Y]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:172:	int ifset_SphereCapInitSolidCenterY; ///< True if [Stage8e sphere-cap solid sphere center Y] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:173:	real_t setting_SphereCapInitSolidCenterZ; ///< Value of [Stage8e sphere-cap solid sphere center Z]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:174:	int ifset_SphereCapInitSolidCenterZ; ///< True if [Stage8e sphere-cap solid sphere center Z] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:175:	real_t setting_SphereCapInitSolidRadius; ///< Value of [Stage8e sphere-cap solid sphere radius]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:176:	int ifset_SphereCapInitSolidRadius; ///< True if [Stage8e sphere-cap solid sphere radius] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:465:  if (strcmp("Stage8CandidateVersion",str) == 0) return  SETTINGS_Stage8CandidateVersion ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:466:  if (strcmp("Stage8MaxNormalDelta",str) == 0) return  SETTINGS_Stage8MaxNormalDelta ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:467:  if (strcmp("Stage8MaxNormalDeltaRatio",str) == 0) return  SETTINGS_Stage8MaxNormalDeltaRatio ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:485:  if (strcmp("SphereCapInit",str) == 0) return  SETTINGS_SphereCapInit ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:486:  if (strcmp("SphereCapInitParentRadius",str) == 0) return  SETTINGS_SphereCapInitParentRadius ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:487:  if (strcmp("SphereCapInitCenterX",str) == 0) return  SETTINGS_SphereCapInitCenterX ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:488:  if (strcmp("SphereCapInitCenterY",str) == 0) return  SETTINGS_SphereCapInitCenterY ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:489:  if (strcmp("SphereCapInitCenterZ",str) == 0) return  SETTINGS_SphereCapInitCenterZ ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:490:  if (strcmp("SphereCapInitSolidCenterX",str) == 0) return  SETTINGS_SphereCapInitSolidCenterX ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:491:  if (strcmp("SphereCapInitSolidCenterY",str) == 0) return  SETTINGS_SphereCapInitSolidCenterY ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:492:  if (strcmp("SphereCapInitSolidCenterZ",str) == 0) return  SETTINGS_SphereCapInitSolidCenterZ ; 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:493:  if (strcmp("SphereCapInitSolidRadius",str) == 0) return  SETTINGS_SphereCapInitSolidRadius ; 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:348:	if (SphereCapInit > 0.5 && SphereCapInitParentRadius > 0.0 && SphereCapInitSolidRadius > 0.0) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:350:		Ri = sqrt((X - SphereCapInitCenterX)*(X - SphereCapInitCenterX) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:351:		          (Y - SphereCapInitCenterY)*(Y - SphereCapInitCenterY) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:352:		          (Z - SphereCapInitCenterZ)*(Z - SphereCapInitCenterZ));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:354:		Rs = sqrt((X - SphereCapInitSolidCenterX)*(X - SphereCapInitSolidCenterX) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:355:		          (Y - SphereCapInitSolidCenterY)*(Y - SphereCapInitSolidCenterY) +
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:356:		          (Z - SphereCapInitSolidCenterZ)*(Z - SphereCapInitSolidCenterZ));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:358:		                (1.0 - tanh(2.0*(Ri - SphereCapInitParentRadius)/IntWidth));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:359:		if (Rs < SphereCapInitSolidRadius) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:2969:CudaDeviceFunction void stage8eNormalResidualCandidate() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3110:	real_t cap = Stage8MaxNormalDelta;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3114:	if (Stage8MaxNormalDeltaRatio > 0.0) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3115:		real_t cap_ratio = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3169:	if (Stage8CandidateVersion >= 8.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3170:		stage8eNormalResidualCandidate();
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3287:CudaDeviceFunction real_t getWallStage8NormalDeltaRaw() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3291:CudaDeviceFunction real_t getWallStage8NormalDeltaLimited() {
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:117:CudaDeviceFunction CudaConstantMemory real_t Stage8CandidateVersion = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:119:CudaDeviceFunction CudaConstantMemory real_t Stage8MaxNormalDelta = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:121:CudaDeviceFunction CudaConstantMemory real_t Stage8MaxNormalDeltaRatio = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:157:CudaDeviceFunction CudaConstantMemory real_t SphereCapInit = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:159:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitParentRadius = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:161:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitCenterX = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:163:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitCenterY = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:165:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitCenterZ = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:167:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitSolidCenterX = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:169:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitSolidCenterY = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:171:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitSolidCenterZ = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:173:CudaDeviceFunction CudaConstantMemory real_t SphereCapInitSolidRadius = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4852:		case  QUANTITIES_WallStage8NormalDeltaRaw : return GetWallStage8NormalDeltaRaw(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4853:		case  QUANTITIES_WallStage8NormalDeltaLimited : return GetWallStage8NormalDeltaLimited(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6893:/// Get [WallStage8NormalDeltaRaw]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6895:        Retrive the values of the Quantity WallStage8NormalDeltaRaw (WallStage8NormalDeltaRaw)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6898:void Lattice::GetWallStage8NormalDeltaRaw(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6912:		CudaKernelRun( getWallStage8NormalDeltaRaw , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6920:/// Get [WallStage8NormalDeltaLimited]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6922:        Retrive the values of the Quantity WallStage8NormalDeltaLimited (WallStage8NormalDeltaLimited)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6925:void Lattice::GetWallStage8NormalDeltaLimited(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:6939:		CudaKernelRun( getWallStage8NormalDeltaLimited , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8000:void Lattice::GetSampleWallStage8NormalDeltaRaw(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8006:	CudaKernelRun( getWallStage8NormalDeltaRaw , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8009:void Lattice::GetSampleWallStage8NormalDeltaLimited(lbRegion over, real_t scale,real_t* buf)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8015:	CudaKernelRun( getWallStage8NormalDeltaLimited , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8545:	 	 if (sample->quant->in("WallStage8NormalDeltaRaw"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8548:			GetSampleWallStage8NormalDeltaRaw(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8NormalDeltaRaw"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8551:	 	 if (sample->quant->in("WallStage8NormalDeltaLimited"))
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8554:			GetSampleWallStage8NormalDeltaLimited(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallStage8NormalDeltaLimited"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:165:    CudaExternConstantMemory(real_t Stage8CandidateVersion); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:166:    CudaExternConstantMemory(real_t Stage8MaxNormalDelta); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:167:    CudaExternConstantMemory(real_t Stage8MaxNormalDeltaRatio); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:185:    CudaExternConstantMemory(real_t SphereCapInit); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:186:    CudaExternConstantMemory(real_t SphereCapInitParentRadius); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:187:    CudaExternConstantMemory(real_t SphereCapInitCenterX); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:188:    CudaExternConstantMemory(real_t SphereCapInitCenterY); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:189:    CudaExternConstantMemory(real_t SphereCapInitCenterZ); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:190:    CudaExternConstantMemory(real_t SphereCapInitSolidCenterX); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:191:    CudaExternConstantMemory(real_t SphereCapInitSolidCenterY); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:192:    CudaExternConstantMemory(real_t SphereCapInitSolidCenterZ); 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:193:    CudaExternConstantMemory(real_t SphereCapInitSolidRadius); 
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1272:                { SETTINGS_Stage8CandidateVersion      , "Stage8CandidateVersion"      , "1"  , "8"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1273:                { SETTINGS_Stage8MaxNormalDelta        , "Stage8MaxNormalDelta"        , "1"  , "0.05"       },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1274:                { SETTINGS_Stage8MaxNormalDeltaRatio   , "Stage8MaxNormalDeltaRatio"   , "1"  , "0.5"        },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1292:                { SETTINGS_SphereCapInit               , "SphereCapInit"               , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1293:                { SETTINGS_SphereCapInitParentRadius   , "SphereCapInitParentRadius"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1294:                { SETTINGS_SphereCapInitCenterX        , "SphereCapInitCenterX"        , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1295:                { SETTINGS_SphereCapInitCenterY        , "SphereCapInitCenterY"        , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1296:                { SETTINGS_SphereCapInitCenterZ        , "SphereCapInitCenterZ"        , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1297:                { SETTINGS_SphereCapInitSolidCenterX   , "SphereCapInitSolidCenterX"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1298:                { SETTINGS_SphereCapInitSolidCenterY   , "SphereCapInitSolidCenterY"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1299:                { SETTINGS_SphereCapInitSolidCenterZ   , "SphereCapInitSolidCenterZ"   , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1300:                { SETTINGS_SphereCapInitSolidRadius    , "SphereCapInitSolidRadius"    , "1"  , "0"          },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1437:                  { QUANTITIES_WallStage8NormalDeltaRaw        , "WallStage8NormalDeltaRaw"        , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1438:                  { QUANTITIES_WallStage8NormalDeltaLimited    , "WallStage8NormalDeltaLimited"    , "1"     , false    , false     },
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:101:#define  SETTINGS_Stage8CandidateVersion            35 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:102:#define  SETTINGS_Stage8MaxNormalDelta              36 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:103:#define  SETTINGS_Stage8MaxNormalDeltaRatio         37 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:121:#define  SETTINGS_SphereCapInit                     55 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:122:#define  SETTINGS_SphereCapInitParentRadius         56 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:123:#define  SETTINGS_SphereCapInitCenterX              57 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:124:#define  SETTINGS_SphereCapInitCenterY              58 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:125:#define  SETTINGS_SphereCapInitCenterZ              59 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:126:#define  SETTINGS_SphereCapInitSolidCenterX         60 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:127:#define  SETTINGS_SphereCapInitSolidCenterY         61 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:128:#define  SETTINGS_SphereCapInitSolidCenterZ         62 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:129:#define  SETTINGS_SphereCapInitSolidRadius          63 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:399:#define  QUANTITIES_WallStage8NormalDeltaRaw        75 
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:400:#define  QUANTITIES_WallStage8NormalDeltaLimited     76 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:51:    CudaExternConstantMemory(real_t Stage8CandidateVersion); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:52:    CudaExternConstantMemory(real_t Stage8MaxNormalDelta); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:53:    CudaExternConstantMemory(real_t Stage8MaxNormalDeltaRatio); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:71:    CudaExternConstantMemory(real_t SphereCapInit); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:72:    CudaExternConstantMemory(real_t SphereCapInitParentRadius); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:73:    CudaExternConstantMemory(real_t SphereCapInitCenterX); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:74:    CudaExternConstantMemory(real_t SphereCapInitCenterY); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:75:    CudaExternConstantMemory(real_t SphereCapInitCenterZ); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:76:    CudaExternConstantMemory(real_t SphereCapInitSolidCenterX); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:77:    CudaExternConstantMemory(real_t SphereCapInitSolidCenterY); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:78:    CudaExternConstantMemory(real_t SphereCapInitSolidCenterZ); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:79:    CudaExternConstantMemory(real_t SphereCapInitSolidRadius); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2033:CudaGlobalFunction void getWallStage8NormalDeltaRaw(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2034:CudaGlobalFunction void getWallStage8NormalDeltaRaw_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2036:CudaGlobalFunction void getWallStage8NormalDeltaRaw_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2038:CudaGlobalFunction void getWallStage8NormalDeltaLimited(lbRegion r, real_t * tab, real_t scale); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2039:CudaGlobalFunction void getWallStage8NormalDeltaLimited_float(lbRegion , float *, int);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:2041:CudaGlobalFunction void getWallStage8NormalDeltaLimited_double(lbRegion , double *, int);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1087:  void GetWallStage8NormalDeltaRaw(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1088:  void GetSampleWallStage8NormalDeltaRaw(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1089:  inline void GetWallStage8NormalDeltaRaw(lbRegion over, real_t * tab) { GetWallStage8NormalDeltaRaw(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1091:  void GetWallStage8NormalDeltaRaw_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1093:  void GetWallStage8NormalDeltaLimited(lbRegion over, real_t * tab, real_t scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1094:  void GetSampleWallStage8NormalDeltaLimited(lbRegion over, real_t scale,real_t* tab);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1095:  inline void GetWallStage8NormalDeltaLimited(lbRegion over, real_t * tab) { GetWallStage8NormalDeltaLimited(over, tab, 1.0); };
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.h:1097:  void GetWallStage8NormalDeltaLimited_double(lbRegion over, double * tab, int row);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:203:	                    fprintf(f,",\"Stage8CandidateVersion\",\"Stage8CandidateVersion_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:205:	                    fprintf(f,",\"Stage8MaxNormalDelta\",\"Stage8MaxNormalDelta_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:207:	                    fprintf(f,",\"Stage8MaxNormalDeltaRatio\",\"Stage8MaxNormalDeltaRatio_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:243:	                    fprintf(f,",\"SphereCapInit\",\"SphereCapInit_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:245:	                    fprintf(f,",\"SphereCapInitParentRadius\",\"SphereCapInitParentRadius_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:247:	                    fprintf(f,",\"SphereCapInitCenterX\",\"SphereCapInitCenterX_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:249:	                    fprintf(f,",\"SphereCapInitCenterY\",\"SphereCapInitCenterY_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:251:	                    fprintf(f,",\"SphereCapInitCenterZ\",\"SphereCapInitCenterZ_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:253:	                    fprintf(f,",\"SphereCapInitSolidCenterX\",\"SphereCapInitSolidCenterX_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:255:	                    fprintf(f,",\"SphereCapInitSolidCenterY\",\"SphereCapInitSolidCenterY_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:257:	                    fprintf(f,",\"SphereCapInitSolidCenterZ\",\"SphereCapInitSolidCenterZ_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:259:	                    fprintf(f,",\"SphereCapInitSolidRadius\",\"SphereCapInitSolidRadius_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:555:                    LogScales[ SETTINGS_Stage8CandidateVersion ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:556:                    LogScales[ SETTINGS_Stage8MaxNormalDelta ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:557:                    LogScales[ SETTINGS_Stage8MaxNormalDeltaRatio ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:575:                    LogScales[ SETTINGS_SphereCapInit ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:576:                    LogScales[ SETTINGS_SphereCapInitParentRadius ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:577:                    LogScales[ SETTINGS_SphereCapInitCenterX ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:578:                    LogScales[ SETTINGS_SphereCapInitCenterY ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:579:                    LogScales[ SETTINGS_SphereCapInitCenterZ ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:580:                    LogScales[ SETTINGS_SphereCapInitSolidCenterX ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:581:                    LogScales[ SETTINGS_SphereCapInitSolidCenterY ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:582:                    LogScales[ SETTINGS_SphereCapInitSolidCenterZ ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:583:                    LogScales[ SETTINGS_SphereCapInitSolidRadius ] = 1/units.alt("1"); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1881:	if (strcmp(comp, "WallStage8NormalDeltaRaw") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1882:    	real_t* tmp_WallStage8NormalDeltaRaw = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1884:    	lattice->GetWallStage8NormalDeltaRaw(region, tmp_WallStage8NormalDeltaRaw, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1885:        buf = (real_t*)tmp_WallStage8NormalDeltaRaw;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1889:	if (strcmp(comp, "WallStage8NormalDeltaLimited") == 0) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1890:    	real_t* tmp_WallStage8NormalDeltaLimited = new real_t[n];
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1892:    	lattice->GetWallStage8NormalDeltaLimited(region, tmp_WallStage8NormalDeltaLimited, 1);
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1893:        buf = (real_t*)tmp_WallStage8NormalDeltaLimited;
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:1963:     output("-> SpecialBoundaryPoint\n") ;  output("-> Rho\n") ;  output("-> PhaseField\n") ;  output("-> U\n") ;  output("-> P\n") ;  output("-> Pstar\n") ;  output("-> Normal\n") ;  output("-> IsItBoundary\n") ;  output("-> GradPhi\n") ;  output("-> WallPfF\n") ;  output("-> WallGradTangent\n") ;  output("-> WallTanCoeff\n") ;  output("-> WallPhasePred\n") ;  output("-> WallPhaseProfilePred\n") ;  output("-> WallProfileDelta\n") ;  output("-> WallPhaseSignedProfilePred\n") ;  output("-> WallSignedProfileDelta\n") ;  output("-> WallSignedLogitShift\n") ;  output("-> WallFluidSampleCount\n") ;  output("-> WallFluidSampleH\n") ;  output("-> WallPhaseUnifiedProfilePred\n") ;  output("-> WallUnifiedProfileDelta\n") ;  output("-> WallBCPath\n") ;  output("-> WallH\n") ;  output("-> WallGeomNormal\n") ;  output("-> WallGrad1\n") ;  output("-> WallGrad2\n") ;  output("-> WallGradTangentVec\n") ;  output("-> WallNormalCoeff1\n") ;  output("-> WallNormalCoeff2\n") ;  output("-> WallActualMinusProfile\n") ;  output("-> WallActualMinusRaw\n") ;  output("-> WallPhaseRawPred\n") ;  output("-> WallPhaseSignedPred\n") ;  output("-> WallContactResidual\n") ;  output("-> WallSignedNormalGrad\n") ;  output("-> WallTangentGradMag\n") ;  output("-> WallSignedDeltaQ\n") ;  output("-> WallSignedQClipped\n") ;  output("-> BoundaryMask\n") ;  output("-> WallStage7Mode\n") ;  output("-> WallStage7ActiveWeight\n") ;  output("-> WallStage7DeltaQRaw\n") ;  output("-> WallStage7DeltaQLimited\n") ;  output("-> WallStage7Denom\n") ;  output("-> WallStage7LimiterReason\n") ;  output("-> WallStage7GradMag\n") ;  output("-> WallStage7ActualCos\n") ;  output("-> WallStage7TargetCos\n") ;  output("-> WallStage7WriteCandidate\n") ;  output("-> WallStage7WriteMinusProfile\n") ;  output("-> WallStage8GradMode\n") ;  output("-> WallStage8ActiveWeight\n") ;  output("-> WallStage8NormalGradRaw\n") ;  output("-> WallStage8NormalGradTarget\n") ;  output("-> WallStage8ContactResidual\n") ;  output("-> WallStage8TangentGradMag\n") ;  output("-> WallStage8TargetCos\n") ;  output("-> WallStage8GradWriteDeltaMag\n") ;  output("-> WallStage8LimiterReason\n") ;  output("-> WallStage8LocalWallAngle\n") ;  output("-> WallStage8LocalWallNormal\n") ;  output("-> WallStage8FluidWallAngle\n") ;  output("-> WallStage8FluidWallNormal\n") ;  output("-> WallStage8FluidWallDataCount\n") ;  output("-> WallStage8GradCandidate\n") ;  output("-> WallStage8GradCandidateUse\n") ;  output("-> WallStage8NormalAgreement\n") ;  output("-> WallStage8UsedGeomNormal\n") ;  output("-> WallStage8TanCoeffLocal\n") ;  output("-> WallStage8ThetaLocal\n") ;  output("-> WallStage8PhaseC\n") ;  output("-> WallStage8GradMagRaw\n") ;  output("-> WallStage8TangentGradRaw\n") ;  output("-> WallStage8TargetNormalGrad\n") ;  output("-> WallStage8NormalDeltaRaw\n") ;  output("-> WallStage8NormalDeltaLimited\n") ;  output("-> WallStage8VectorDeltaRawMag\n") ;  output("-> WallStage8VectorDeltaLimitedMag\n") ;  output("-> WallStage8NormalLimiterHit\n") ;  output("-> WallStage8VectorLimiterHit\n") ;  output("-> WallStage8LimiterRatio\n") ;  output("-> WallStage8RegionTag\n") ;  output("-> WallStage8SphereRadialDot\n") ;  output("-> WallStage8ContactBandTag\n") ; 
