@@ -581,6 +581,8 @@ def write_wp1_plane_outputs(out_dir: Path, summary: dict[str, Any], rows: list[d
 
     eligible = [row for row in plane_rows if row.get("case_recommendation") == "eligible_for_short_write"]
     smoke_ready = WP1_SMOKE_CASES <= {row["case_id"] for row in eligible}
+    write100_summary = out_dir / "wp1_write100" / "wp1_write100_summary.json"
+    write100_ran = write100_summary.exists()
     payload = {
         "status": STATUS,
         "claim_limit": CLAIM_LIMIT,
@@ -589,17 +591,18 @@ def write_wp1_plane_outputs(out_dir: Path, summary: dict[str, Any], rows: list[d
         "not_production_fix": True,
         "solver_physics_modified": False,
         "simulations_run_by_this_script": False,
-        "wp1_objective": "flat-wall closure from existing Track A shadow outputs",
+        "wp1_objective": "flat-wall closure from raw-retained Track A shadow outputs",
         "metrics_root": summary.get("metrics_root"),
         "selected_cases": [row["case_id"] for row in plane_rows],
         "eligible_for_short_write": [row["case_id"] for row in eligible],
         "plane030_and_plane090_eligible": smoke_ready,
-        "short_write_templates_generated": False,
-        "short_write_100_ran": False,
+        "short_write_templates_generated": write100_ran,
+        "short_write_100_ran": write100_ran,
+        "short_write_100_summary": str(write100_summary) if write100_ran else "",
         "block_reason": (
             "geometry metrics remain pending"
             if not eligible
-            else "short-write template generation requires explicit template step"
+            else "" if write100_ran else "short-write template generation requires explicit template step"
         ),
         "rows": plane_rows,
     }
@@ -643,20 +646,20 @@ def write_wp1_plane_outputs(out_dir: Path, summary: dict[str, Any], rows: list[d
             "",
             "## Interpretation",
             "",
-            "The lightweight Track A metrics include fitted apparent contact angle for the",
-            "flat-wall shadow cases, so WP1 can compute `theta_fit_error_deg`.",
-            "However, the local `runtime_outputs/track_a_overnight_20260613` tree does not",
-            "contain raw VTI/PVTI/PRI/VTK fields or precomputed `h_sim`, `a_sim`,",
-            "`height_error`, `contact_radius_error`, or internal-void metrics.",
-            "Those values are therefore reported as `unknown` and the cases remain",
-            "`geometry_pending` rather than `eligible_for_short_write`.",
+            "The raw-retained WP1 flat-wall rerun provides PhaseField/VTI-derived",
+            "`theta_fit`, `h_sim`, `a_sim`, mass drift, and internal-void metrics for",
+            "the selected flat-wall cases. These are planning-gate metrics only, not",
+            "validation or publication-ready evidence.",
             "",
             "## Short Write Decision",
             "",
         ]
     )
     if smoke_ready:
-        lines.append("Plane030 and plane090 are eligible, so a later explicitly approved 100-step short-write smoke may be planned.")
+        if write100_ran:
+            lines.append("Plane030 and plane090 are eligible, and the 100-step short-write smoke summary is present under `wp1_write100/`.")
+        else:
+            lines.append("Plane030 and plane090 are eligible, so a later explicitly approved 100-step short-write smoke may be planned.")
     else:
         lines.append("Plane030 and plane090 are not both eligible because required geometry metrics are pending. No 100-step short-write is run.")
     lines.extend(

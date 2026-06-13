@@ -2,20 +2,13 @@
 
 Status: `runtime_sanity / exploratory_not_validation`.
 
-This is not PRE reproduction, not validation, and not a production fix. This
-WP1 pass did not modify solver physics code, did not run GPU jobs, did not run
-write mode, did not run 50k, did not run cylinder/sphere/sphere11, and did not
-run liquid impact.
+This is not PRE reproduction, not validation, not a production fix, and not a
+publication-ready result. Solver physics code was not modified. WP1 only closes
+the flat-wall planning gate needed before WP2 cylinder blocker attribution.
 
 ## Scope
 
-WP1 reprocessed the existing Track A flat-wall shadow outputs:
-
-```text
-runtime_outputs/track_a_overnight_20260613
-```
-
-Selected WP1 cases:
+Selected flat-wall shadow cases:
 
 ```text
 plane020
@@ -36,123 +29,104 @@ liquid impact
 50k or longer runs
 ```
 
-## Commands Run
+WP1 first checked whether old Track A raw fields could be recovered. Remote
+`track_a_overnight_20260613` contained no retained flat-wall raw VTI/PVTI/PRI
+fields, so the selected flat-wall shadow cases were rerun with raw retention.
 
-```powershell
-python -m py_compile scripts/postprocess_track_a_shadow_matrix_20260613.py
-python scripts/postprocess_track_a_shadow_matrix_20260613.py --input runtime_outputs/track_a_overnight_20260613 --output artifacts/track_a_usable_angle_ladder_summary_20260613 --case-group plane
+Remote retained raw:
+
+```text
+/media/yuan/新加卷1/RUNS/runs/track_a_wp1_flat_raw_20260614
+raw field files: 30
+remote size: 28G
 ```
 
-## Outputs
+The public repository contains only lightweight CSV/JSON/Markdown/log summaries,
+not raw fields.
 
-WP1 generated:
+## Shadow Results
+
+All five selected flat-wall shadow cases completed with:
+
+```text
+solver_returncode = 0
+postprocess_returncode = 0
+nonfinite_total = 0
+internal_void_count = 0
+center_bubble_count = 0
+```
+
+| case | theta fit error deg | h error | a error | phase mass drift | max Mach | normal limiter |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| plane020 | -0.4726 | 0.0478 | 0.0243 | -0.00234 | 1.09e-05 | 0.0244 |
+| plane030 | -0.5418 | 0.0363 | 0.0177 | -0.00131 | 1.85e-06 | 0 |
+| plane060 | -0.7456 | 0.0226 | 0.00776 | -0.000296 | 3.66e-06 | 0 |
+| plane090 | -0.9576 | 0.0168 | 0.000213 | 1.78e-05 | 6.28e-06 | 0 |
+| plane120 | -1.3036 | 0.0134 | 0.0127 | 0.000184 | 1.20e-05 | 0 |
+
+All selected cases meet the WP1 planning gate:
+
+```text
+abs(theta_fit - theta_target) < 3 deg
+height error < 5%
+contact radius error < 5%
+mass drift < 1%
+nonfinite_total = 0
+internal void count = 0
+```
+
+## Write Smoke
+
+Because `plane030` and `plane090` passed the shadow geometry gate, WP1 ran only
+the approved 100-step flat-wall write smoke:
+
+```text
+/media/yuan/新加卷1/RUNS/runs/wp1_plane_short_write_100_20260614
+Stage8OperatorMode = 2
+iterations = 100
+raw field files: 8
+```
+
+| case | theta fit error deg | h error | a error | phase mass drift | max Mach | internal void |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| plane030 write100 | -0.5501 | 0.0364 | 0.0176 | -0.00129 | 1.18e-05 | 0 |
+| plane090 write100 | -0.9531 | 0.0168 | 0.000282 | 2.32e-06 | 6.60e-06 | 0 |
+
+Both write-smoke cases completed with solver and postprocess return code 0 and
+`nonfinite_total = 0`.
+
+## Artifacts
+
+Shadow summaries:
 
 ```text
 artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_plane_geometry_summary.csv
 artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_plane_geometry_summary.json
 artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_plane_geometry_report.md
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_flat_raw_plane_summary.csv
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_flat_raw_plane_summary.json
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_flat_raw_plane_report.md
 ```
 
-The standard plane summary was also regenerated:
+Write-smoke summaries:
 
 ```text
-artifacts/track_a_usable_angle_ladder_summary_20260613/track_a_plane_summary.csv
-artifacts/track_a_usable_angle_ladder_summary_20260613/track_a_plane_summary.json
-artifacts/track_a_usable_angle_ladder_summary_20260613/track_a_plane_report.md
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_write100/wp1_write100_summary.csv
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_write100/wp1_write100_summary.json
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_write100/solver.log
+artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_write100/postprocess.log
 ```
 
-## Geometry Metrics
+## Decision
 
-The current lightweight Track A metrics contain fitted apparent contact angle
-for flat cases. WP1 can therefore compute angle error. The local runtime output
-tree does not contain raw `.vti/.pvti/.pri/.vtk` fields and does not contain
-precomputed `h_sim`, `a_sim`, `height_error`, `contact_radius_error`,
-`phase_mass_relative_change`, or `internal_void_count`. Those values are
-reported as `unknown`; they are not fabricated.
-
-| case | theta target | theta fit | theta error | h error | a error | mass drift | internal void | recommendation |
-| --- | ---: | ---: | ---: | --- | --- | --- | --- | --- |
-| plane020 | 20 | 19.5877 | -0.4123 | unknown | unknown | unknown | unknown | geometry_pending |
-| plane030 | 30 | 29.4803 | -0.5197 | unknown | unknown | unknown | unknown | geometry_pending |
-| plane060 | 60 | 59.2824 | -0.7176 | unknown | unknown | unknown | unknown | geometry_pending |
-| plane090 | 90 | 89.0716 | -0.9284 | unknown | unknown | unknown | unknown | geometry_pending |
-| plane120 | 120 | 118.7521 | -1.2479 | unknown | unknown | unknown | unknown | geometry_pending |
-
-All selected flat-wall angle errors are below the 3 deg threshold. That is a
-useful runtime-sanity signal, but it is not enough for WP1 closure because the
-height, contact radius, mass-drift, and internal-void gates remain unresolved.
-
-## Short-Write Eligibility
-
-No WP1 selected case is `eligible_for_short_write`.
-
-Reason:
+WP1 is closed for planning:
 
 ```text
-height_error unknown
-contact_radius_error unknown
-phase_mass_relative_change unknown
-internal_void_count unknown
+flat_wall_middle_angle_closed_for_planning
 ```
 
-Because no case is eligible, no short-write templates were generated under:
+It is now reasonable to proceed to WP2 cylinder blocker attribution, still under
+`runtime_sanity / exploratory_not_validation`.
 
-```text
-cases/track_a_usable_angle_ladder_20260613/short_write_candidates/plane
-```
-
-Because plane030 and plane090 are not both eligible, the 100-step short-write
-smoke was not run, and no files were generated under:
-
-```text
-runtime_outputs/wp1_plane_short_write_20260614
-```
-
-## Internal Bubble / Void
-
-No internal bubble or void can be confirmed from the current local lightweight
-outputs. The required raw PhaseField/interface data is absent, so
-`internal_void_count` and `center_bubble_count` remain `unknown`.
-
-This is a WP1 stop condition for closure and write-mode promotion.
-
-## Proceed-To-WP2 Decision
-
-It is not safe to proceed to WP2 cylinder blocker attribution as a closed
-flat-wall baseline yet.
-
-Current WP1 interpretation:
-
-```text
-flat-wall angle response is encouraging
-flat-wall geometry closure is incomplete
-short-write gate is not passed
-WP2 should wait for flat h/a/mass/void closure or an explicit decision to treat
-WP2 as transfer-only work without flat closure promotion
-```
-
-The next WP1 action should be one of:
-
-```text
-recover retained raw flat-wall VTI/PVTI/PRI/VTK fields if they exist remotely
-rerun only selected flat-wall shadow cases while retaining raw fields long enough
-to compute h_sim, a_sim, mass drift, and internal void count
-```
-
-No longer flat run, no cylinder run, no sphere run, and no write run is
-authorized by this report.
-
-## Repository Safety
-
-Expected committed artifacts are lightweight only:
-
-```text
-scripts/postprocess_track_a_shadow_matrix_20260613.py
-artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_plane_geometry_summary.csv
-artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_plane_geometry_summary.json
-artifacts/track_a_usable_angle_ladder_summary_20260613/wp1_plane_geometry_report.md
-docs/wp1_flat_wall_closure_report_20260614.md
-```
-
-Raw simulation fields, binaries, archives, credentials, and `runtime_outputs/`
-must not be committed.
+This does not authorize cylinder write mode, sphere write mode, sphere11, 50k,
+dynamic impact, validation claims, or publication claims.

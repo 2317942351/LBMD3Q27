@@ -13,6 +13,8 @@ import csv
 import json
 import math
 import re
+import xml.etree.ElementTree as ET
+from collections import deque
 from pathlib import Path
 from typing import Any
 
@@ -103,6 +105,223 @@ def stats(values: np.ndarray, mask: np.ndarray | None = None) -> dict[str, float
     return out
 
 
+def parse_numeric_param(value: Any) -> float | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if text.endswith("d"):
+        try:
+            return math.radians(float(text[:-1]))
+        except ValueError:
+            return None
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def load_case_params_from_xml(case_dir: Path) -> dict[str, Any]:
+    path = case_dir / "case.xml"
+    if not path.exists():
+        return {}
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError:
+        return {"xml_parse_error": True}
+    params: dict[str, Any] = {}
+    geometry = root.find(".//Geometry")
+    if geometry is not None:
+        for key, value in geometry.attrib.items():
+            params[f"geometry_{key}"] = value
+    for elem in root.findall(".//Param"):
+        name = elem.attrib.get("name")
+        value = elem.attrib.get("value")
+        zone = elem.attrib.get("zone")
+        if not name:
+            continue
+        key = name if zone is None else f"{name}:{zone}"
+        params[key] = value
+    theta = parse_numeric_param(params.get("CapInitTheta"))
+    if theta is not None:
+        params.setdefault("init_theta_rad", theta)
+        params.setdefault("init_theta_deg", math.degrees(theta))
+    wall_angle = parse_numeric_param(params.get("radAngle:FlatLowerY"))
+    if wall_angle is None:
+        wall_angle = parse_numeric_param(params.get("radAngle"))
+    if wall_angle is not None:
+        params.setdefault("wall_rad_angle_rad", wall_angle)
+        params.setdefault("wall_rad_angle_deg", math.degrees(wall_angle))
+    for key in ["CapInitRadius", "CapInitCenterX", "CapInitCenterY", "CapInitCenterZ"]:
+        value = parse_numeric_param(params.get(key))
+        if value is not None:
+            params.setdefault(key, value)
+    return params
+
+
+def plane_theory_from_params(case_params: dict[str, Any]) -> dict[str, float]:
+    radius = parse_numeric_param(case_params.get("CapInitRadius"))
+    theta = parse_numeric_param(case_params.get("CapInitTheta"))
+    if radius is None:
+        radius = parse_numeric_param(case_params.get("cap_init_radius"))
+    if theta is None:
+        theta_deg = parse_numeric_param(case_params.get("init_theta_deg"))
+        theta = math.radians(theta_deg) if theta_deg is not None else None
+    if radius is None or theta is None or radius <= 0.0 or theta <= 0.0:
+        return {}
+    height = radius * (1.0 - math.cos(theta))
+    contact_radius = radius * math.sin(theta)
+    volume = math.pi * height * (3.0 * contact_radius * contact_radius + height * height) / 6.0
+    return {
+        "h_theory": float(height),
+        "a_theory": float(contact_radius),
+        "volume_theory": float(volume),
+        "cap_radius_theory": float(radius),
+        "theta_theory_deg": float(math.degrees(theta)),
+    }
+
+
+def safe_rel_error(sim: float, theory: float) -> float:
+    if not math.isfinite(sim) or not math.isfinite(theory) or theory == 0.0:
+        return math.nan
+    return abs(sim - theory) / abs(theory)
+
+
+def cap_geometry_from_fit(
+    fit: tuple[float, float, float] | None,
+    points: np.ndarray,
+    *,
+    wall_y: float = 0.0,
+) -> dict[str, Any]:
+    if fit is None:
+        return {
+            "h_sim": math.nan,
+            "a_sim": math.nan,
+            "h_sim_contour": math.nan,
+            "a_sim_contour": math.nan,
+            "volume_sim_fit": math.nan,
+        }
+    y_center, z_center, radius = fit
+    h_fit = y_center + radius - wall_y
+    delta = radius * radius - (wall_y - y_center) * (wall_y - y_center)
+    a_fit = math.sqrt(max(delta, 0.0)) if radius > 0.0 else math.nan
+    volume_fit = (
+        math.pi * h_fit * (3.0 * a_fit * a_fit + h_fit * h_fit) / 6.0
+        if math.isfinite(h_fit) and math.isfinite(a_fit) and h_fit > 0.0
+        else math.nan
+    )
+    if points.size:
+        h_contour = float(np.max(points[:, 0]) - wall_y)
+        near_wall = points[:, 0] <= wall_y + 2.0
+        if np.count_nonzero(near_wall) >= 2:
+            a_contour = 0.5 * float(np.max(points[near_wall, 1]) - np.min(points[near_wall, 1]))
+        else:
+            a_contour = math.nan
+    else:
+        h_contour = math.nan
+        a_contour = math.nan
+    return {
+        "h_sim": float(h_fit),
+        "a_sim": float(a_fit),
+        "h_sim_contour": h_contour,
+        "a_sim_contour": a_contour,
+        "volume_sim_fit": float(volume_fit),
+        "fit_center_y": float(y_center),
+        "fit_center_z": float(z_center),
+        "fit_radius": float(radius),
+    }
+
+
+def count_internal_voids(
+    phase_arr: np.ndarray,
+    fluid_mask_arr: np.ndarray,
+    *,
+    threshold: float,
+    center_x: float,
+    center_z: float,
+    center_radius: float = 2.5,
+) -> dict[str, Any]:
+    gas = fluid_mask_arr & np.isfinite(phase_arr) & (phase_arr < threshold)
+    wall = ~fluid_mask_arr
+    nx, ny, nz = gas.shape
+    exterior = np.zeros_like(gas, dtype=bool)
+    q: deque[tuple[int, int, int]] = deque()
+
+    def maybe_seed(i: int, j: int, k: int) -> None:
+        if gas[i, j, k] and not exterior[i, j, k]:
+            exterior[i, j, k] = True
+            q.append((i, j, k))
+
+    for i in range(nx):
+        for j in range(ny):
+            maybe_seed(i, j, 0)
+            maybe_seed(i, j, nz - 1)
+    for i in range(nx):
+        for k in range(nz):
+            maybe_seed(i, 0, k)
+            maybe_seed(i, ny - 1, k)
+    for j in range(ny):
+        for k in range(nz):
+            maybe_seed(0, j, k)
+            maybe_seed(nx - 1, j, k)
+
+    adjacent_to_wall = np.zeros_like(gas, dtype=bool)
+    adjacent_to_wall[1:, :, :] |= wall[:-1, :, :]
+    adjacent_to_wall[:-1, :, :] |= wall[1:, :, :]
+    adjacent_to_wall[:, 1:, :] |= wall[:, :-1, :]
+    adjacent_to_wall[:, :-1, :] |= wall[:, 1:, :]
+    adjacent_to_wall[:, :, 1:] |= wall[:, :, :-1]
+    adjacent_to_wall[:, :, :-1] |= wall[:, :, 1:]
+    for si, sj, sk in np.argwhere(gas & adjacent_to_wall):
+        maybe_seed(int(si), int(sj), int(sk))
+
+    neighbors = ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
+    while q:
+        i, j, k = q.popleft()
+        for di, dj, dk in neighbors:
+            ni, nj, nk = i + di, j + dj, k + dk
+            if 0 <= ni < nx and 0 <= nj < ny and 0 <= nk < nz and gas[ni, nj, nk] and not exterior[ni, nj, nk]:
+                exterior[ni, nj, nk] = True
+                q.append((ni, nj, nk))
+
+    internal = gas & ~exterior
+    visited = np.zeros_like(gas, dtype=bool)
+    component_count = 0
+    center_count = 0
+    component_sizes: list[int] = []
+    internal_indices = np.argwhere(internal)
+    center_radius_sq = center_radius * center_radius
+    for si, sj, sk in internal_indices:
+        i, j, k = int(si), int(sj), int(sk)
+        if visited[i, j, k]:
+            continue
+        component_count += 1
+        size = 0
+        touches_center = False
+        visited[i, j, k] = True
+        q.append((i, j, k))
+        while q:
+            ci, cj, ck = q.popleft()
+            size += 1
+            if (ci - center_x) * (ci - center_x) + (ck - center_z) * (ck - center_z) <= center_radius_sq:
+                touches_center = True
+            for di, dj, dk in neighbors:
+                ni, nj, nk = ci + di, cj + dj, ck + dk
+                if 0 <= ni < nx and 0 <= nj < ny and 0 <= nk < nz and internal[ni, nj, nk] and not visited[ni, nj, nk]:
+                    visited[ni, nj, nk] = True
+                    q.append((ni, nj, nk))
+        component_sizes.append(size)
+        if touches_center:
+            center_count += 1
+    return {
+        "internal_void_count": int(component_count),
+        "center_bubble_count": int(center_count),
+        "internal_void_cell_count": int(np.count_nonzero(internal)),
+        "internal_void_largest_size": int(max(component_sizes) if component_sizes else 0),
+    }
+
+
 def circle_fit(points: np.ndarray) -> tuple[float, float, float]:
     x = points[:, 0]
     y = points[:, 1]
@@ -132,7 +351,8 @@ def contour_points(section: np.ndarray, threshold: float, min_y: float) -> np.nd
     if not pts:
         return np.empty((0, 2))
     points = np.vstack(pts)
-    return points[points[:, 1] >= min_y]
+    # Contour vertices are (normal y, tangential z) for phase[x_mid, y, z].T.
+    return points[points[:, 0] >= min_y]
 
 
 def angle_from_fit(fit: tuple[float, float, float], wall_y: float) -> float:
@@ -168,6 +388,8 @@ def summarize_frame(
     else:
         wall_mask = np.isfinite(boundary) & (boundary != 0.0)
     fluid_mask = ~wall_mask
+    wall_mask_arr = reshape(wall_mask.astype(float), dims) > 0.5
+    fluid_mask_arr = ~wall_mask_arr
     y0_mask = np.zeros_like(phase, dtype=bool)
     idx = np.arange(phase.size)
     nx, ny, _nz = dims
@@ -272,6 +494,38 @@ def summarize_frame(
     points = contour_points(section, threshold, min_wall_distance)
     fit = circle_fit(points) if points.shape[0] >= 12 else None
     apparent = angle_from_fit(fit, 0.0) if fit is not None else math.nan
+    cap_geometry = cap_geometry_from_fit(fit, points, wall_y=0.0)
+    theory = plane_theory_from_params(case_params)
+    phase_fluid = phase[fluid_mask & np.isfinite(phase)]
+    volume_sim = float(np.sum(np.clip(phase_fluid, 0.0, 1.0))) if phase_fluid.size else math.nan
+    cap_geometry["volume_sim"] = volume_sim
+    if theory:
+        cap_geometry.update(theory)
+        cap_geometry["height_error"] = safe_rel_error(cap_geometry["h_sim"], theory["h_theory"])
+        cap_geometry["contact_radius_error"] = safe_rel_error(cap_geometry["a_sim"], theory["a_theory"])
+        cap_geometry["volume_error"] = safe_rel_error(volume_sim, theory["volume_theory"])
+        cap_geometry["volume_fit_error"] = safe_rel_error(cap_geometry["volume_sim_fit"], theory["volume_theory"])
+    else:
+        cap_geometry.update(
+            {
+                "h_theory": math.nan,
+                "a_theory": math.nan,
+                "volume_theory": math.nan,
+                "height_error": math.nan,
+                "contact_radius_error": math.nan,
+                "volume_error": math.nan,
+                "volume_fit_error": math.nan,
+            }
+        )
+    center_x = parse_numeric_param(case_params.get("CapInitCenterX")) or (dims[0] - 1) / 2.0
+    center_z = parse_numeric_param(case_params.get("CapInitCenterZ")) or (dims[2] - 1) / 2.0
+    void_metrics = count_internal_voids(
+        phase_arr,
+        fluid_mask_arr,
+        threshold=threshold,
+        center_x=center_x,
+        center_z=center_z,
+    )
 
     path_code = fields.get("WallBCPath")
     path_counts: dict[str, int] = {}
@@ -297,6 +551,8 @@ def summarize_frame(
         "angle_error_vs_wall_rad_deg": apparent - float(case_params.get("wall_rad_angle_deg", math.nan)),
         "fit_point_count": int(points.shape[0]),
         "fit_circle": list(fit) if fit is not None else None,
+        "cap_geometry": cap_geometry,
+        "void_metrics": void_metrics,
         "wall_bc_path_counts": path_counts,
         "field_stats": {},
     }
@@ -567,6 +823,8 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         if baseline.get("rho_fluid_sum", 0.0)
         else math.nan
     )
+    cap = rec.get("cap_geometry", {})
+    voids = rec.get("void_metrics", {})
     return {
         "case_id": rec["case_id"],
         "step": rec["step"],
@@ -576,10 +834,32 @@ def row_from_rec(rec: dict[str, Any], baseline: dict[str, float]) -> dict[str, A
         "angle_error_vs_init_deg": rec["angle_error_vs_init_deg"],
         "angle_error_vs_wall_rad_deg": rec["angle_error_vs_wall_rad_deg"],
         "fit_point_count": rec["fit_point_count"],
+        "h_sim": cap.get("h_sim", math.nan),
+        "h_sim_contour": cap.get("h_sim_contour", math.nan),
+        "h_theory": cap.get("h_theory", math.nan),
+        "height_error": cap.get("height_error", math.nan),
+        "a_sim": cap.get("a_sim", math.nan),
+        "a_sim_contour": cap.get("a_sim_contour", math.nan),
+        "a_theory": cap.get("a_theory", math.nan),
+        "contact_radius_error": cap.get("contact_radius_error", math.nan),
+        "volume_sim": cap.get("volume_sim", math.nan),
+        "volume_sim_fit": cap.get("volume_sim_fit", math.nan),
+        "volume_theory": cap.get("volume_theory", math.nan),
+        "volume_error": cap.get("volume_error", math.nan),
+        "volume_fit_error": cap.get("volume_fit_error", math.nan),
+        "fit_center_y": cap.get("fit_center_y", math.nan),
+        "fit_center_z": cap.get("fit_center_z", math.nan),
+        "fit_radius": cap.get("fit_radius", math.nan),
+        "internal_void_count": voids.get("internal_void_count", math.nan),
+        "center_bubble_count": voids.get("center_bubble_count", math.nan),
+        "internal_void_cell_count": voids.get("internal_void_cell_count", math.nan),
+        "internal_void_largest_size": voids.get("internal_void_largest_size", math.nan),
         "phase_fluid_sum": phase_sum,
         "phase_fluid_rel_change": phase_rel,
+        "phase_mass_relative_change": phase_rel,
         "rho_fluid_sum": rho_sum,
         "rho_fluid_rel_change": rho_rel,
+        "rho_relative_change": rho_rel,
         "phase_fluid_min": phase_fluid.get("min", math.nan),
         "phase_fluid_max": phase_fluid.get("max", math.nan),
         "wall_phase_pred_min": wall_pred.get("min", math.nan),
@@ -699,6 +979,8 @@ def process_case(case_dir: Path, out_dir: Path, args: argparse.Namespace) -> dic
     params: dict[str, Any] = {}
     if params_path.exists():
         params = json.loads(params_path.read_text(encoding="utf-8"))
+    else:
+        params = load_case_params_from_xml(case_dir)
     frames = sorted((case_dir / "output").glob(args.glob), key=step_of)
     if not frames:
         raise SystemExit(f"no VTI files matched {case_dir / 'output' / args.glob}")

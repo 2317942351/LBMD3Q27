@@ -185,10 +185,29 @@ flat = p / "analysis_flat_cap_gate" / f"{case_id}_flat_gate_summary.json"
 if flat.exists():
     payload = json.loads(flat.read_text(encoding="utf-8"))
     last = payload.get("last", {})
+    rows = payload.get("rows", [])
+    last_row = rows[-1] if rows else {}
     metrics.update({
         "theta_fit_deg": last.get("angle_apparent_deg"),
         "theta_fit_error_deg": last.get("angle_error_vs_init_deg"),
         "fitted_apparent_contact_angle_deg": last.get("angle_apparent_deg"),
+        "h_sim": last_row.get("h_sim"),
+        "h_theory": last_row.get("h_theory"),
+        "height_error": last_row.get("height_error"),
+        "a_sim": last_row.get("a_sim"),
+        "a_theory": last_row.get("a_theory"),
+        "contact_radius_error": last_row.get("contact_radius_error"),
+        "volume_sim": last_row.get("volume_sim"),
+        "volume_sim_fit": last_row.get("volume_sim_fit"),
+        "volume_theory": last_row.get("volume_theory"),
+        "volume_error": last_row.get("volume_error"),
+        "volume_fit_error": last_row.get("volume_fit_error"),
+        "phase_mass_relative_change": last_row.get("phase_mass_relative_change"),
+        "rho_relative_change": last_row.get("rho_relative_change"),
+        "internal_void_count": last_row.get("internal_void_count"),
+        "center_bubble_count": last_row.get("center_bubble_count"),
+        "internal_void_cell_count": last_row.get("internal_void_cell_count"),
+        "internal_void_largest_size": last_row.get("internal_void_largest_size"),
     })
 (p / "track_a_metrics.json").write_text(json.dumps(clean(metrics), indent=2, allow_nan=False), encoding="utf-8")
 PY

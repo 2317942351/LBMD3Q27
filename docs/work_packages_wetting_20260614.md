@@ -29,12 +29,12 @@ plane 150 deg
 
 Tasks:
 
-- [ ] Freeze current flat shadow results and missing metrics.
-- [ ] Implement or verify spherical-cap contact-angle fitting.
-- [ ] Report theta_fit, height error, contact radius error, and volume error.
-- [ ] Report mass drift, max Mach, nonfinite_total, and internal void count.
+- [x] Freeze current flat shadow results and missing metrics.
+- [x] Implement or verify spherical-cap contact-angle fitting.
+- [x] Report theta_fit, height error, contact radius error, and volume error.
+- [x] Report mass drift, max Mach, nonfinite_total, and internal void count.
 - [ ] Audit plane 150 as high-angle stiffness, not as middle-angle blocker.
-- [ ] Draft `plane_static_closure_report.md`.
+- [x] Draft `plane_static_closure_report.md`.
 
 Pass gate:
 
@@ -68,6 +68,14 @@ Completion flag:
 
 ```text
 flat_wall_middle_angle_closed_for_planning
+```
+
+Current WP1 decision on 2026-06-14:
+
+```text
+flat_wall_middle_angle_closed_for_planning = true
+plane030/plane090 100-step write smoke passed
+continue to WP2 cylinder blocker attribution
 ```
 
 ## WP2: Cylinder Blocker Attribution

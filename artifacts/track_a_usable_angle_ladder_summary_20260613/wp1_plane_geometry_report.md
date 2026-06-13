@@ -12,28 +12,30 @@ Plane150, cylinder, sphere, sphere11, liquid impact, write mode, and 50k runs ar
 
 ## Result
 
-No selected flat-wall case is eligible for short write yet.
+Eligible for short write:
+- `track_a_plane_theta020_shadow`
+- `track_a_plane_theta030_shadow`
+- `track_a_plane_theta060_shadow`
+- `track_a_plane_theta090_shadow`
+- `track_a_plane_theta120_shadow`
 
 ## Cases
 
-- `track_a_plane_theta020_shadow`: `geometry_pending`; theta_fit=19.58769239431891; theta_error=-0.4123076056810895; h_error=unknown; a_error=unknown; internal_void=unknown; normal_limiter=0.024431625381744145; reason=runtime shadow gates pass; geometry metrics pending: height_error,contact_radius_error,phase_mass_relative_change,internal_void_count
-- `track_a_plane_theta030_shadow`: `geometry_pending`; theta_fit=29.480253287791694; theta_error=-0.5197467122083061; h_error=unknown; a_error=unknown; internal_void=unknown; normal_limiter=0.0; reason=runtime shadow gates pass; geometry metrics pending: height_error,contact_radius_error,phase_mass_relative_change,internal_void_count
-- `track_a_plane_theta060_shadow`: `geometry_pending`; theta_fit=59.28239371527601; theta_error=-0.7176062847239919; h_error=unknown; a_error=unknown; internal_void=unknown; normal_limiter=0.0; reason=runtime shadow gates pass; geometry metrics pending: height_error,contact_radius_error,phase_mass_relative_change,internal_void_count
-- `track_a_plane_theta090_shadow`: `geometry_pending`; theta_fit=89.07161210372264; theta_error=-0.9283878962773571; h_error=unknown; a_error=unknown; internal_void=unknown; normal_limiter=0.0; reason=runtime shadow gates pass; geometry metrics pending: height_error,contact_radius_error,phase_mass_relative_change,internal_void_count
-- `track_a_plane_theta120_shadow`: `geometry_pending`; theta_fit=118.75206151754159; theta_error=-1.2479384824584088; h_error=unknown; a_error=unknown; internal_void=unknown; normal_limiter=0.0; reason=runtime shadow gates pass; geometry metrics pending: height_error,contact_radius_error,phase_mass_relative_change,internal_void_count
+- `track_a_plane_theta020_shadow`: `eligible_for_short_write`; theta_fit=19.52739006480535; theta_error=-0.4726099351946509; h_error=0.04783438656527848; a_error=0.02432060891103927; internal_void=0; normal_limiter=0.024431625381744145; reason=shadow and geometric metrics meet Track A planning gates
+- `track_a_plane_theta030_shadow`: `eligible_for_short_write`; theta_fit=29.458158463653998; theta_error=-0.5418415363460021; h_error=0.03629187899555706; a_error=0.017736884531857063; internal_void=0; normal_limiter=0.0; reason=shadow and geometric metrics meet Track A planning gates
+- `track_a_plane_theta060_shadow`: `eligible_for_short_write`; theta_fit=59.25440044959029; theta_error=-0.7455995504097075; h_error=0.02260960230506943; a_error=0.007755417898413806; internal_void=0; normal_limiter=0.0; reason=shadow and geometric metrics meet Track A planning gates
+- `track_a_plane_theta090_shadow`: `eligible_for_short_write`; theta_fit=89.04242824425802; theta_error=-0.9575717557419807; h_error=0.016784315281038804; a_error=0.00021318736172948539; internal_void=0; normal_limiter=0.0; reason=shadow and geometric metrics meet Track A planning gates
+- `track_a_plane_theta120_shadow`: `eligible_for_short_write`; theta_fit=118.69644164613136; theta_error=-1.3035583538686382; h_error=0.013368369606272544; a_error=0.012723959932024615; internal_void=0; normal_limiter=0.0; reason=shadow and geometric metrics meet Track A planning gates
 
 ## Interpretation
 
-The lightweight Track A metrics include fitted apparent contact angle for the
-flat-wall shadow cases, so WP1 can compute `theta_fit_error_deg`.
-However, the local `runtime_outputs/track_a_overnight_20260613` tree does not
-contain raw VTI/PVTI/PRI/VTK fields or precomputed `h_sim`, `a_sim`,
-`height_error`, `contact_radius_error`, or internal-void metrics.
-Those values are therefore reported as `unknown` and the cases remain
-`geometry_pending` rather than `eligible_for_short_write`.
+The raw-retained WP1 flat-wall rerun provides PhaseField/VTI-derived
+`theta_fit`, `h_sim`, `a_sim`, mass drift, and internal-void metrics for
+the selected flat-wall cases. These are planning-gate metrics only, not
+validation or publication-ready evidence.
 
 ## Short Write Decision
 
-Plane030 and plane090 are not both eligible because required geometry metrics are pending. No 100-step short-write is run.
+Plane030 and plane090 are eligible, and the 100-step short-write smoke summary is present under `wp1_write100/`.
 
 No validation claim is made; this remains `runtime_sanity / exploratory_not_validation`.
