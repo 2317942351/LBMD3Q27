@@ -441,10 +441,10 @@ CudaDeviceFunction real_t getWallH() {
 	stage9_analytic_wall_normal_and_distance(&h);
 	return h;
 }
-CudaDeviceFunction real_t getWallGhostValue() {
+CudaDeviceFunction real_t getWallGhost() {
 	return WallGhost(0,0,0);
 }
-CudaDeviceFunction real_t getAnalyticFlagValue() {
+CudaDeviceFunction real_t getAnalyticFlag() {
 	return AnalyticFlag(0,0,0);
 }
 
@@ -884,48 +884,46 @@ CudaDeviceFunction void calcWallPhase(){
 		// Result goes into the dedicated WallGhost field, and PhaseF on
 		// this wall node is set to the mirrored fluid value (NOT -999)
 		// so that downstream gradient stencils never see a sentinel.
+		//
+		// GUARDS: only take this branch when the fluid-side probe along nw
+		// is a real fluid node (not another wall/solid). Otherwise fall
+		// through to the legacy lattice path, which has its own special-
+		// point handling for corner/edge nodes.
 		// ----------------------------------------------------------
 		if (AnalyticFlag(0,0,0) > 0.5) {
 			real_t h = WallH(0,0,0);
-			if (h < 0.001) {
-				// Surrounded by solid (degenerate): keep physical bound.
-				WallGhost = PhaseField_h;
-				PhaseF = PhaseField_h;
-				return;
-			}
-			if (fabs(radAngle - PI/2.0) < 1e-4) {
-				// 90 deg: neutral wetting, ghost = mirror fluid value.
-				real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
-				WallGhost = pf_f;
+			// fluid-side probe along the analytic normal nw
+			real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
+			bool probe_is_fluid = (pf_f > -100.0);
+			if (h > 0.001 && probe_is_fluid) {
+				if (fabs(radAngle - PI/2.0) < 1e-4) {
+					// 90 deg: neutral wetting, ghost = mirror fluid value.
+					WallGhost = pf_f;
+					PhaseF = pf_f;
+					return;
+				}
+#ifdef OPTIONS_geometric
+				vector_t grad = {
+					gradPhiVal_x_dyn(nw_x, nw_y, nw_z),
+					gradPhiVal_y_dyn(nw_x, nw_y, nw_z),
+					gradPhiVal_z_dyn(nw_x, nw_y, nw_z)
+				};
+#else
+				vector_t grad = {0.0, 0.0, 0.0};
+				real_t phi_nn = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+				real_t inv2h = 1.0/(2.0*h + 1e-30);
+				grad.x = (pf_f - phi_nn) * (nw_x) * inv2h;
+				grad.y = (pf_f - phi_nn) * (nw_y) * inv2h;
+				grad.z = (pf_f - phi_nn) * (nw_z) * inv2h;
+#endif
+				vector_t n_w = {nw_x, nw_y, nw_z};
+				real_t ghost = stage9_calc_wall_ghost(n_w, h, pf_f, grad);
+				WallGhost = ghost;
 				PhaseF = pf_f;
 				return;
 			}
-			// fluid-side phase and gradient along the analytic normal nw.
-			real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
-#ifdef OPTIONS_geometric
-			vector_t grad = {
-				gradPhiVal_x_dyn(nw_x, nw_y, nw_z),
-				gradPhiVal_y_dyn(nw_x, nw_y, nw_z),
-				gradPhiVal_z_dyn(nw_x, nw_y, nw_z)
-			};
-#else
-			// Without the geometric build option there is no gradPhiVal field.
-			// Fall back to a 2-point difference along nw using PhaseF only.
-			vector_t grad = {0.0, 0.0, 0.0};
-			real_t phi_n  = PhaseF_dyn( nw_x,  nw_y,  nw_z);
-			real_t phi_nn = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z);
-			real_t inv2h = 1.0/(2.0*h + 1e-30);
-			grad.x = (phi_n - phi_nn) * (nw_x) * inv2h;
-			grad.y = (phi_n - phi_nn) * (nw_y) * inv2h;
-			grad.z = (phi_n - phi_nn) * (nw_z) * inv2h;
-#endif
-			vector_t n_w = {nw_x, nw_y, nw_z};
-			real_t ghost = stage9_calc_wall_ghost(n_w, h, pf_f, grad);
-			WallGhost = ghost;
-			// Mirror fluid value into PhaseF so gradient stencils that read
-			// PhaseF on this wall node see a physical value, not -999.
-			PhaseF = pf_f;
-			return;
+			// else: probe hit a non-fluid node (corner/edge) or degenerate
+			// h. Fall through to the legacy lattice path below.
 		}
 
 		real_t a, h, pf_f;
@@ -1308,21 +1306,46 @@ CudaDeviceFunction void Init_wallNorm(){
 		real_t sd = 0.0;
 		vector_t n_w = stage9_analytic_wall_normal_and_distance(&sd);
 		real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+		// Only tag this node as analytic if (a) the analytic geometry is
+		// valid (unit normal) AND (b) this node is actually close to the
+		// analytic surface (within ~1.5 lattice units). Without the
+		// distance gate, EVERY wall node in the domain (including outer
+		// domain walls far from the analytic surface) would be tagged with
+		// the analytic normal, producing wrong normals and NaNs.
 		if (nmag > 0.5) {
-			// This wall node is on the analytic-solid side of the surface.
-			// Tag it and overwrite nw_* with the analytic unit normal.
-			AnalyticFlag = 1.0;
-			nw_x = n_w.x;
-			nw_y = n_w.y;
-			nw_z = n_w.z;
-			// WallH: distance from this solid node to the analytic surface
-			// along the normal, plus the half-step to the first fluid node.
-			// sd < 0 inside the solid; we use |sd| + 0.5.
 			real_t d_to_surface = (sd < 0.0) ? -sd : sd;
-			WallH = d_to_surface + 0.5;
-			// Clear any legacy special-point flag: analytic normal cannot
-			// point into the solid.
-			IsSpecialBoundaryPoint = 0.0;
+			if (d_to_surface < 1.5) {
+				// The fluid-side probe along the analytic normal must be a
+				// real fluid node. This excludes corner/edge wall nodes where
+				// the analytic normal (correct for the analytic surface) would
+				// point along another wall, which would corrupt the gradient
+				// read. Corner nodes are left to the legacy lattice path.
+				//
+				// IMPORTANT: we cannot use IsBoundary_dyn here as the gate,
+				// because during the Init action the IsBoundary field is being
+				// populated by this very stage and neighbours read stale/zero
+				// values. We gate on PhaseF_dyn instead: solid nodes carry
+				// the -999 sentinel (set by PhaseInit), fluid nodes carry a
+				// finite phase value. This is reliable during Init.
+				real_t ix = (real_t)(n_w.x > 0.5) - (real_t)(n_w.x < -0.5);
+				real_t iy = (real_t)(n_w.y > 0.5) - (real_t)(n_w.y < -0.5);
+				real_t iz = (real_t)(n_w.z > 0.5) - (real_t)(n_w.z < -0.5);
+				int probe_dx = (int)(ix);
+				int probe_dy = (int)(iy);
+				int probe_dz = (int)(iz);
+				real_t probe_pf = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
+				bool probe_is_fluid_node = (probe_pf > -100.0);
+				if (probe_is_fluid_node) {
+					// This wall node is genuinely on the analytic surface and
+					// the fluid-side probe is a real fluid node. Safe to use
+					// the analytic normal.
+					AnalyticFlag = 1.0;
+					nw_x = n_w.x;
+					nw_y = n_w.y;
+					nw_z = n_w.z;
+					WallH = d_to_surface + 0.5;
+				}
+			}
 		}
 	}
 }

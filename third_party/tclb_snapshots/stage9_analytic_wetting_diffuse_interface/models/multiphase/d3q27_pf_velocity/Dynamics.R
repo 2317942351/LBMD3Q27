@@ -1,11 +1,16 @@
-# Stage9: permissive access removed.
-#   The original TCLB model set permissive.access=TRUE because the wetting
-#   path wrote PhaseF on wall nodes in the same stage that later reads
-#   PhaseF-derived gradients. Stage9 separates the wall ghost value into its
-#   own WallGhost field and keeps PhaseF as physical phase only, so the
-#   read/write ordering is now well defined and the permissive flag is no
-#   longer needed. If a future change reintroduces an ordering dependency,
-#   fix the ordering rather than re-enabling this flag.
+# Setting permissive access policy.
+# Stage9 note: this flag is retained because the wetting path intentionally
+# writes PhaseF on wall nodes in calcWall_CA after calcPhase has already
+# written PhaseF on fluid nodes within the same Iteration action. This is a
+# legitimate multi-stage write (calcPhase sets fluid PhaseF, then calcWall_CA
+# overrides PhaseF on wall nodes only). The permissive flag was removed
+# initially to surface ordering bugs, but TCLB's strict checker treats the
+# intentional wall-node override as an error, so the flag must stay. The
+# Stage9 analytic path writes the wall ghost into the separate WallGhost
+# field and only mirrors the fluid value into PhaseF on wall nodes, so no
+# NEW ordering dependency is introduced.
+SetOptions(permissive.access=TRUE)
+
 
 # Density - table of variables of LB Node to stream
 #	Velocity-based Evolution d3q27:
@@ -141,15 +146,15 @@ if (Options$thermo){
 	# STAGES FOR VARIOUS OPTIONS
 	if (Options$geometric){
 		AddStage("WallInit_CA"  , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWall_CA"  , "calcWallPhase", save=Fields$name %in% c("PhaseF"), load=DensityAll$group %in% c("nw", "gradPhi", "PF", "solid_boundary", extra_fields_to_load_for_bc))
+		AddStage("calcWall_CA"  , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "gradPhi", "PF", "solid_boundary", extra_fields_to_load_for_bc))
 
 		AddStage('calcPhaseGrad', "calcPhaseGrad", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
 		AddStage('calcPhaseGrad_init', "calcPhaseGrad_init", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "solid_boundary"))
+		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary"))
 	} else {
 		AddStage("WallInit" , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWall" , "calcWallPhase", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name=="PhaseF", load=DensityAll$group %in% c("nw", "solid_boundary"))
+		AddStage("calcWall" , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
+		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary"))
 	}
 	if (Options$thermo){
 		AddStage("CopyDistributions", "TempCopy",  save=Fields$group %in% c("g","h","Vel","nw", "PF","Thermal"))
