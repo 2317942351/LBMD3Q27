@@ -1,0 +1,293 @@
+diff --git "a/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt" "b/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+index dbe1852..a3ebd51 100644
+--- "a/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
++++ "b/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+@@ -1423,6 +1423,19 @@ CudaDeviceFunction void stage8ResetGradientDiagnostics() {
+ 	Stage8eTanCoeffTimesTangent = 0.0;
+ 	Stage8eLimiterClass = 0.0;
+ 	Stage8eWallProfileConflict = 0.0;
++	Stage8gScaleRawNormal = 0.0;
++	Stage8gScaleTarget = 0.0;
++	Stage8gScaleTangent = 0.0;
++	Stage8gScaleFloor = 0.0;
++	Stage8gEffectiveScale = 0.0;
++	Stage8gTanRaw = 0.0;
++	Stage8gTanEff = 0.0;
++	Stage8gRegularizationRatio = 1.0;
++	Stage8gCapSource = 0.0;
++	Stage8gCapDemandRatio = 0.0;
++	Stage8gProfileTargetMismatch = 0.0;
++	Stage8gProfileConflictSign = 0.0;
++	Stage8gWriteAllowedFlag = 0.0;
+ }
+ 
+ CudaDeviceFunction bool stage8IsPhysicalFluidNode() {
+@@ -1608,6 +1621,60 @@ CudaDeviceFunction real_t stage8eSmoothRamp(real_t value, real_t scale) {
+ 	return stage8SmoothStep01(value/scale);
+ }
+ 
++CudaDeviceFunction real_t stage8gProfileNormalGradient(vector_t wall_normal, real_t *sample_count) {
++	real_t weighted_sum = 0.0;
++	real_t weight_sum = 0.0;
++	*sample_count = 0.0;
++	for (int dx=-1; dx<=1; dx++) {
++		for (int dy=-1; dy<=1; dy++) {
++			for (int dz=-1; dz<=1; dz++) {
++				if (dx == 0 && dy == 0 && dz == 0) {
++					continue;
++				}
++				if (IsBoundary_dyn(dx, dy, dz) > 0.5) {
++					real_t dist = sqrt(1.0*dx*dx + 1.0*dy*dy + 1.0*dz*dz);
++					if (dist < 1e-12) {
++						continue;
++					}
++					real_t projection = -(dx*wall_normal.x + dy*wall_normal.y + dz*wall_normal.z)/dist;
++					if (projection <= 1e-6) {
++						continue;
++					}
++					real_t profile_grad = (PhaseF(0,0,0) - PhaseF_dyn(dx, dy, dz))/(dist + 1e-12);
++					real_t weight = projection/(dist + 1e-12);
++					weighted_sum += weight*profile_grad;
++					weight_sum += weight;
++					*sample_count += 1.0;
++				}
++			}
++		}
++	}
++	if (weight_sum > 1e-12) {
++		return weighted_sum/weight_sum;
++	}
++	return 0.0;
++}
++
++CudaDeviceFunction real_t stage8gEffectiveTanCoeff(real_t tan_raw) {
++	real_t mode = Stage8gMode;
++	Stage8gTanRaw = tan_raw;
++	Stage8gTanEff = tan_raw;
++	Stage8gRegularizationRatio = 1.0;
++	if ((mode > 1.5 && mode < 2.5) || mode > 2.5) {
++		real_t tan_cap = fabs(Stage8gTanCap);
++		if (tan_cap > 1e-12) {
++			real_t scaled = tan_raw/tan_cap;
++			real_t tan_eff = tan_raw/sqrt(1.0 + scaled*scaled);
++			Stage8gTanEff = tan_eff;
++			if (fabs(tan_raw) > 1e-12) {
++				Stage8gRegularizationRatio = tan_eff/tan_raw;
++			}
++			return tan_eff;
++		}
++	}
++	return tan_raw;
++}
++
+ CudaDeviceFunction void stage8dVectorCandidate() {
+ 	stage8ResetGradientDiagnostics();
+ 	real_t mode = Stage8OperatorMode;
+@@ -1889,7 +1956,8 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 		reason += 16.0;
+ 	}
+ 
+-	real_t tan_coeff = tan(PI/2.0 - local_angle);
++	real_t tan_raw = tan(PI/2.0 - local_angle);
++	real_t tan_coeff = stage8gEffectiveTanCoeff(tan_raw);
+ 	real_t target_normal = -tan_coeff*tangent_mag;
+ 	real_t target_cos = -cos(local_angle);
+ 	Stage8TanCoeffLocal = tan_coeff;
+@@ -1945,10 +2013,33 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	real_t cap = abs_cap;
+ 	real_t cap_source = 1.0;
+ 	if (Stage8MaxNormalDeltaRatio > 0.0) {
+-		ratio_cap = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
++		real_t cap_scale = stage8ScalarClamp(fabs(normal_raw), 1e-12, 1e12);
++		real_t ratio_source = 2.0;
++		Stage8gScaleRawNormal = fabs(normal_raw);
++		Stage8gScaleTarget = Stage8gKTarget*fabs(target_normal);
++		Stage8gScaleTangent = Stage8gKTangent*tangent_mag;
++		Stage8gScaleFloor = Stage8gNormalFloor;
++		Stage8gEffectiveScale = cap_scale;
++		real_t stage8g_mode = Stage8gMode;
++		if ((stage8g_mode > 0.5 && stage8g_mode < 1.5) || stage8g_mode > 2.5) {
++			if (Stage8gScaleTarget > cap_scale) {
++				cap_scale = Stage8gScaleTarget;
++				ratio_source = 4.0;
++			}
++			if (Stage8gScaleTangent > cap_scale) {
++				cap_scale = Stage8gScaleTangent;
++				ratio_source = 5.0;
++			}
++			if (Stage8gScaleFloor > cap_scale) {
++				cap_scale = Stage8gScaleFloor;
++				ratio_source = 6.0;
++			}
++			Stage8gEffectiveScale = cap_scale;
++		}
++		ratio_cap = Stage8MaxNormalDeltaRatio*stage8ScalarClamp(cap_scale, 1e-12, 1e12);
+ 		if (ratio_cap < cap) {
+ 			cap = ratio_cap;
+-			cap_source = 2.0;
++			cap_source = ratio_source;
+ 		}
+ 	}
+ 	real_t dn_limited = stage8ScalarClamp(dn_try, -cap, cap);
+@@ -1963,6 +2054,8 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	if (cap > 1e-30) {
+ 		Stage8eCapDemandRatio = fabs(dn_try)/cap;
+ 	}
++	Stage8gCapSource = cap_source;
++	Stage8gCapDemandRatio = Stage8eCapDemandRatio;
+ 	Stage8NormalDeltaRaw = dn_raw;
+ 	Stage8NormalDeltaLimited = dn_limited;
+ 	Stage8VectorDeltaRawMag = fabs(dn_try);
+@@ -1975,7 +2068,21 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	if (fabs(dn_try) > 1e-12) {
+ 		Stage8LimiterRatio = fabs(dn_limited/dn_try);
+ 	}
+-	Stage8eWallProfileConflict = 0.0;
++	real_t profile_count = 0.0;
++	if (Stage8gProfileConflictDiag > 0.5) {
++		real_t profile_normal = stage8gProfileNormalGradient(wall_normal, &profile_count);
++		if (profile_count > 0.5) {
++			Stage8gProfileTargetMismatch = profile_normal - target_normal;
++			if (fabs(Stage8gProfileTargetMismatch) > 1e-12) {
++				Stage8gProfileConflictSign = (Stage8gProfileTargetMismatch > 0.0) ? 1.0 : -1.0;
++			}
++			if (profile_normal*target_normal < 0.0) {
++				Stage8eWallProfileConflict = 1.0;
++			} else {
++				Stage8eWallProfileConflict = 0.0;
++			}
++		}
++	}
+ 
+ 	vector_t corrected = {
+ 		grad.x + dn_limited*wall_normal.x,
+@@ -2007,7 +2114,7 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 	Stage8GradCandidate_z = corrected.z;
+ 	Stage8GradCandidateUse = 1.0;
+ 
+-	if (mode > 1.5 && mode < 2.5) {
++	if (Stage8gMode < -0.5 && mode > 1.5 && mode < 2.5) {
+ 		gradPhiVal_x = corrected.x;
+ 		gradPhiVal_y = corrected.y;
+ 		gradPhiVal_z = corrected.z;
+@@ -2245,6 +2352,62 @@ CudaDeviceFunction real_t getWallStage8eWallProfileConflict() {
+ 	return Stage8eWallProfileConflict(0,0,0);
+ }
+ 
++CudaDeviceFunction real_t getWallStage8gMode() {
++	return Stage8gMode;
++}
++
++CudaDeviceFunction real_t getWallStage8gScaleRawNormal() {
++	return Stage8gScaleRawNormal(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gScaleTarget() {
++	return Stage8gScaleTarget(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gScaleTangent() {
++	return Stage8gScaleTangent(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gScaleFloor() {
++	return Stage8gScaleFloor(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gEffectiveScale() {
++	return Stage8gEffectiveScale(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gTanRaw() {
++	return Stage8gTanRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gTanEff() {
++	return Stage8gTanEff(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gRegularizationRatio() {
++	return Stage8gRegularizationRatio(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gCapSource() {
++	return Stage8gCapSource(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gCapDemandRatio() {
++	return Stage8gCapDemandRatio(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gProfileTargetMismatch() {
++	return Stage8gProfileTargetMismatch(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gProfileConflictSign() {
++	return Stage8gProfileConflictSign(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8gWriteAllowedFlag() {
++	return Stage8gWriteAllowedFlag(0,0,0);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+diff --git "a/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R" "b/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+index 8eaf400..7f810f1 100644
+--- "a/third_party\\tclb_snapshots\\stage8f_normal_limiter_root_cause_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R"
++++ "b/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+@@ -155,6 +155,19 @@ if (Options$geometric){
+     AddField("Stage8eTanCoeffTimesTangent", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8eLimiterClass", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8eWallProfileConflict", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gScaleRawNormal", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gScaleTarget", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gScaleTangent", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gScaleFloor", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gEffectiveScale", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gTanRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gTanEff", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gRegularizationRatio", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gCapSource", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gCapDemandRatio", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gProfileTargetMismatch", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gProfileConflictSign", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8gWriteAllowedFlag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     # Fake field, to simply copy field values to PhaseF instead
+     # of accessing them directly from PhaseF field
+     # this is needed for the cases when PhaseF needs to be accessed in the dynamic manner
+@@ -332,6 +345,20 @@ if (Options$thermo){
+ 				AddQuantity(name="WallStage8eTanCoeffTimesTangent", unit=1)
+ 				AddQuantity(name="WallStage8eLimiterClass", unit=1)
+ 				AddQuantity(name="WallStage8eWallProfileConflict", unit=1)
++				AddQuantity(name="WallStage8gMode", unit=1)
++				AddQuantity(name="WallStage8gScaleRawNormal", unit=1)
++				AddQuantity(name="WallStage8gScaleTarget", unit=1)
++				AddQuantity(name="WallStage8gScaleTangent", unit=1)
++				AddQuantity(name="WallStage8gScaleFloor", unit=1)
++				AddQuantity(name="WallStage8gEffectiveScale", unit=1)
++				AddQuantity(name="WallStage8gTanRaw", unit=1)
++				AddQuantity(name="WallStage8gTanEff", unit=1)
++				AddQuantity(name="WallStage8gRegularizationRatio", unit=1)
++				AddQuantity(name="WallStage8gCapSource", unit=1)
++				AddQuantity(name="WallStage8gCapDemandRatio", unit=1)
++				AddQuantity(name="WallStage8gProfileTargetMismatch", unit=1)
++				AddQuantity(name="WallStage8gProfileConflictSign", unit=1)
++				AddQuantity(name="WallStage8gWriteAllowedFlag", unit=1)
+ 			}
+ 		}
+ 	if (Options$staircaseimp) {
+@@ -384,6 +411,12 @@ if (Options$thermo){
+ 	AddSetting(name="Stage8ActiveCSoftWidth", default=0.05, comment='Stage8e smooth active phase-band transition width')
+ 	AddSetting(name="Stage8TangentSoftMin", default=0.01, comment='Stage8e smooth tangent-gradient ramp scale')
+ 	AddSetting(name="Stage8CurvatureRelaxation", default=1, comment='Stage8e curvature diagnostic relaxation multiplier')
++	AddSetting(name="Stage8gMode", default=0, comment='Stage8g shadow diagnostic mode: 0 Stage8e baseline, 1 revised normal-cap scale, 2 low-angle tan regularization, 3 combined')
++	AddSetting(name="Stage8gNormalFloor", default=0.02, comment='Stage8g revised cap scale floor')
++	AddSetting(name="Stage8gKTarget", default=0.5, comment='Stage8g revised cap scale multiplier for abs(target_normal)')
++	AddSetting(name="Stage8gKTangent", default=0.5, comment='Stage8g revised cap scale multiplier for tangent magnitude')
++	AddSetting(name="Stage8gTanCap", default=4.0, comment='Stage8g low-angle tan regularization cap')
++	AddSetting(name="Stage8gProfileConflictDiag", default=1, comment='Stage8g profile-path conflict diagnostic switch')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')

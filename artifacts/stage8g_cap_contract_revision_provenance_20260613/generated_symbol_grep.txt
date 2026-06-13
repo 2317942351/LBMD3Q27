@@ -1,0 +1,141 @@
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:258:Stage8gMode                                   |   | Stage8g shadow diagnostic mode: 0 Stage8e baseline, 1 revised normal-cap scale, 2 low-angle tan regularization, 3 combined 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:484:WallStage8gMode                     [      1] |   | WallStage8gMode 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:91:			CudaCopyToConstant("Stage8gMode", Stage8gMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1876:        debug1("Creating Catalyst VTK object for WallStage8gMode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1879:        myArray->SetName("WallStage8gMode");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4407:      debug2("Filling Catalyst VTK object for WallStage8gMode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4411:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8gMode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4413:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8gMode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4419:      solver.lattice->GetWallStage8gMode(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4424://      solver.lattice->GetWallStage8gMode(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:87:			CudaCopyToConstant("Stage8gMode", Stage8gMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:271:	case  SETTINGS_Stage8gMode :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:272:	        CudaCopyToConstant("Stage8gMode", Stage8gMode, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4006:/// Calculate quantity [WallStage8gMode] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4008:  Kernel to calculate quantity WallStage8gMode (WallStage8gMode) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4013:CudaGlobalFunction void getWallStage8gMode(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4024:			w = now.getWallStage8gMode(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:2856:	real_t mode = Stage8gMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3220:		real_t stage8g_mode = Stage8gMode;
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3314:	if (Stage8gMode < -0.5 && mode > 1.5 && mode < 2.5) {
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:484:WallStage8gMode                     [      1] |   | WallStage8gMode 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1876:        debug1("Creating Catalyst VTK object for WallStage8gMode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1879:        myArray->SetName("WallStage8gMode");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4407:      debug2("Filling Catalyst VTK object for WallStage8gMode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4411:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8gMode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4413:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8gMode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4419:      solver.lattice->GetWallStage8gMode(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4424://      solver.lattice->GetWallStage8gMode(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4006:/// Calculate quantity [WallStage8gMode] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4008:  Kernel to calculate quantity WallStage8gMode (WallStage8gMode) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4013:CudaGlobalFunction void getWallStage8gMode(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4024:			w = now.getWallStage8gMode(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3552:CudaDeviceFunction real_t getWallStage8gMode() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3552:CudaDeviceFunction real_t getWallStage8gMode() {
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4880:		case  QUANTITIES_WallStage8gMode : return GetWallStage8gMode(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7681:/// Get [WallStage8gMode]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7683:        Retrive the values of the Quantity WallStage8gMode (WallStage8gMode)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7686:void Lattice::GetWallStage8gMode(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7700:		CudaKernelRun( getWallStage8gMode , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:9148:void Lattice::GetSampleWallStage8gMode(lbRegion over, real_t scale,real_t* buf)
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:489:WallStage8gEffectiveScale           [      1] |   | WallStage8gEffectiveScale 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1956:        debug1("Creating Catalyst VTK object for WallStage8gEffectiveScale\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1959:        myArray->SetName("WallStage8gEffectiveScale");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4512:      debug2("Filling Catalyst VTK object for WallStage8gEffectiveScale\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4516:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8gEffectiveScale"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4518:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8gEffectiveScale"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4524:      solver.lattice->GetWallStage8gEffectiveScale(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4529://      solver.lattice->GetWallStage8gEffectiveScale(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4136:/// Calculate quantity [WallStage8gEffectiveScale] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4138:  Kernel to calculate quantity WallStage8gEffectiveScale (WallStage8gEffectiveScale) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4143:CudaGlobalFunction void getWallStage8gEffectiveScale(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4154:			w = now.getWallStage8gEffectiveScale(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3572:CudaDeviceFunction real_t getWallStage8gEffectiveScale() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3572:CudaDeviceFunction real_t getWallStage8gEffectiveScale() {
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4885:		case  QUANTITIES_WallStage8gEffectiveScale : return GetWallStage8gEffectiveScale(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7816:/// Get [WallStage8gEffectiveScale]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7818:        Retrive the values of the Quantity WallStage8gEffectiveScale (WallStage8gEffectiveScale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7821:void Lattice::GetWallStage8gEffectiveScale(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7835:		CudaKernelRun( getWallStage8gEffectiveScale , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:9193:void Lattice::GetSampleWallStage8gEffectiveScale(lbRegion over, real_t scale,real_t* buf)
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:491:WallStage8gTanEff                   [      1] |   | WallStage8gTanEff 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1988:        debug1("Creating Catalyst VTK object for WallStage8gTanEff\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:1991:        myArray->SetName("WallStage8gTanEff");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4554:      debug2("Filling Catalyst VTK object for WallStage8gTanEff\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4558:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8gTanEff"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4560:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8gTanEff"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4566:      solver.lattice->GetWallStage8gTanEff(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4571://      solver.lattice->GetWallStage8gTanEff(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4188:/// Calculate quantity [WallStage8gTanEff] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4190:  Kernel to calculate quantity WallStage8gTanEff (WallStage8gTanEff) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4195:CudaGlobalFunction void getWallStage8gTanEff(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4206:			w = now.getWallStage8gTanEff(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3580:CudaDeviceFunction real_t getWallStage8gTanEff() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3580:CudaDeviceFunction real_t getWallStage8gTanEff() {
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4887:		case  QUANTITIES_WallStage8gTanEff : return GetWallStage8gTanEff(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7870:/// Get [WallStage8gTanEff]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7872:        Retrive the values of the Quantity WallStage8gTanEff (WallStage8gTanEff)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7875:void Lattice::GetWallStage8gTanEff(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:7889:		CudaKernelRun( getWallStage8gTanEff , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:9211:void Lattice::GetSampleWallStage8gTanEff(lbRegion over, real_t scale,real_t* buf)
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:497:WallStage8gWriteAllowedFlag         [      1] |   | WallStage8gWriteAllowedFlag 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2084:        debug1("Creating Catalyst VTK object for WallStage8gWriteAllowedFlag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2087:        myArray->SetName("WallStage8gWriteAllowedFlag");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4680:      debug2("Filling Catalyst VTK object for WallStage8gWriteAllowedFlag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4684:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8gWriteAllowedFlag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4686:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8gWriteAllowedFlag"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4692:      solver.lattice->GetWallStage8gWriteAllowedFlag(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4697://      solver.lattice->GetWallStage8gWriteAllowedFlag(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4344:/// Calculate quantity [WallStage8gWriteAllowedFlag] kernel
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4346:  Kernel to calculate quantity WallStage8gWriteAllowedFlag (WallStage8gWriteAllowedFlag) over a region
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4351:CudaGlobalFunction void getWallStage8gWriteAllowedFlag(lbRegion r, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:4362:			w = now.getWallStage8gWriteAllowedFlag(); 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3604:CudaDeviceFunction real_t getWallStage8gWriteAllowedFlag() {
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3604:CudaDeviceFunction real_t getWallStage8gWriteAllowedFlag() {
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:4893:		case  QUANTITIES_WallStage8gWriteAllowedFlag : return GetWallStage8gWriteAllowedFlag(over, (real_t *) tab, scale); 
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8032:/// Get [WallStage8gWriteAllowedFlag]
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8034:        Retrive the values of the Quantity WallStage8gWriteAllowedFlag (WallStage8gWriteAllowedFlag)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8037:void Lattice::GetWallStage8gWriteAllowedFlag(lbRegion over, real_t * tab, real_t scale)
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:8051:		CudaKernelRun( getWallStage8gWriteAllowedFlag , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu:9265:void Lattice::GetSampleWallStage8gWriteAllowedFlag(lbRegion over, real_t scale,real_t* buf)
+grep: CLB/d3q27_pf_velocity_q27_geometric/main: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/cuda.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Solver.o: 匹配到二进制文件
+grep: CLB/d3q27_pf_velocity_q27_geometric/Lists.o: 匹配到二进制文件
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:263:Stage8gProfileConflictDiag                    |   | Stage8g profile-path conflict diagnostic switch 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:96:			CudaCopyToConstant("Stage8gProfileConflictDiag", Stage8gProfileConflictDiag, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:92:			CudaCopyToConstant("Stage8gProfileConflictDiag", Stage8gProfileConflictDiag, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:286:	case  SETTINGS_Stage8gProfileConflictDiag :
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp:287:	        CudaCopyToConstant("Stage8gProfileConflictDiag", Stage8gProfileConflictDiag, &tmp, sizeof(real_t));
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c:3269:	if (Stage8gProfileConflictDiag > 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:143:	real_t setting_Stage8gProfileConflictDiag; ///< Value of [Stage8g profile-path conflict diagnostic switch]
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:144:	int ifset_Stage8gProfileConflictDiag; ///< True if [Stage8g profile-path conflict diagnostic switch] was set
+CLB/d3q27_pf_velocity_q27_geometric/Solver.h:489:  if (strcmp("Stage8gProfileConflictDiag",str) == 0) return  SETTINGS_Stage8gProfileConflictDiag ; 
+CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c:3269:	if (Stage8gProfileConflictDiag > 0.5) {
+CLB/d3q27_pf_velocity_q27_geometric/cuda.cu:141:CudaDeviceFunction CudaConstantMemory real_t Stage8gProfileConflictDiag = 0.0f; 
+CLB/d3q27_pf_velocity_q27_geometric/Global.h:177:    CudaExternConstantMemory(real_t Stage8gProfileConflictDiag); 
+CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp:1284:                { SETTINGS_Stage8gProfileConflictDiag  , "Stage8gProfileConflictDiag"  , "1"  , "1"          },
+CLB/d3q27_pf_velocity_q27_geometric/Consts.h:113:#define  SETTINGS_Stage8gProfileConflictDiag        47 
+CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h:63:    CudaExternConstantMemory(real_t Stage8gProfileConflictDiag); 
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:227:	                    fprintf(f,",\"Stage8gProfileConflictDiag\",\"Stage8gProfileConflictDiag_si\"");
+CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp:579:                    LogScales[ SETTINGS_Stage8gProfileConflictDiag ] = 1/units.alt("1"); 
