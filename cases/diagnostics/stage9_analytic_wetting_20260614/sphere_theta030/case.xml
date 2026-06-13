@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<!--
+  Stage9 gate B/C: sphere theta=30 (wetting) static contact angle.
+  Status: exploratory_not_validation.
+
+  THIS IS THE CASE THAT WAS FAILING IN STAGE5-8. The original symptom was a
+  fitted angle of ~107 deg for a requested 30 deg (sign reversal driven by
+  lattice-normal quantisation on the sphere). The analytic path replaces the
+  lattice normal with the exact radial normal (x-c)/|x-c| and the exact
+  signed distance |x-c|-R, eliminating the 392 special points and the sign
+  flip.
+
+  Geometry: 80 x 80 x 180 domain. Solid sphere centred at (40,40,48) with
+  R_solid=24, sitting above the bottom wall with a 24-lu gap. The droplet
+  starts as a free sphere centred at (40,40,96) with R_drop=24 and falls under
+  zero gravity (static case) or settles onto the sphere. For the static gate
+  we use zero gravity and a cap-on-sphere initialiser so the droplet starts in
+  near-equilibrium.
+
+  Gate B (1000-step smoke) pass criteria:
+    - NumSpecialPoints (legacy) == 0 within the analytic zone
+    - two-row near-wall contact angle in [28, 32] deg
+    - nonfinite_total == 0, max Mach < 1e-2
+
+  Gate C (200000-step long) pass criteria:
+    - H1-H2 relative error < 5% (was ~105%)
+    - fitted angle in [28, 32] deg
+    - fluid phase drift < 1%, max Mach < 1e-3, nonfinite == 0
+-->
+<CLBConfig version="2.0" output="stage9/sphere_theta030/output/" permissive="false">
+  <Geometry nx="80" ny="80" nz="180">
+    <MRT><Box/></MRT>
+    <!-- outer domain walls, neutral wetting -->
+    <Wall mask="ALL" name="OuterDomain">
+      <Box nx="1"/>
+      <Box dx="-1"/>
+      <Box dy="-1"/>
+      <Box nz="1"/>
+      <Box dz="-1"/>
+    </Wall>
+    <!-- Solid sphere: declared analytic via Model params. The lattice solid
+         mask must still mark the sphere interior as solid for bounce-back.
+         TCLB's native geometry supports a sphere via the Wall/Solid node
+         helpers; the user must supply the solid mask through the standard
+         TCLB sphere geometry tool or an STL. The analytic wetting BC then
+         overrides the wetting formula on those nodes. -->
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.001"/>
+    <Param name="Viscosity_h" value="0.09"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="3"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.1"/>
+    <Param name="IntWidth" value="6"/>
+    <!-- cap-on-sphere approximate initialiser: droplet body radius solved
+         from Radius, sitting on top of the solid sphere -->
+    <Param name="SphereCapInit" value="1"/>
+    <Param name="SphereCapInitParentRadius" value="24"/>
+    <Param name="SphereCapInitSolidRadius" value="24"/>
+    <Param name="SphereCapInitCenterX" value="40"/>
+    <Param name="SphereCapInitCenterY" value="40"/>
+    <Param name="SphereCapInitCenterZ" value="90"/>
+    <Param name="SphereCapInitSolidCenterX" value="40"/>
+    <Param name="SphereCapInitSolidCenterY" value="40"/>
+    <Param name="SphereCapInitSolidCenterZ" value="48"/>
+    <!-- outer walls neutral -->
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <!-- Stage9 analytic sphere: center (40,40,48), R=24 -->
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="AnalyticSolidType" value="3"/>
+    <Param name="AnalyticSolidCenterX" value="40"/>
+    <Param name="AnalyticSolidCenterY" value="40"/>
+    <Param name="AnalyticSolidCenterZ" value="48"/>
+    <Param name="AnalyticSolidRadius" value="24"/>
+    <!-- contact angle on the analytic sphere surface: 30 deg wetting -->
+    <Param name="radAngle" value="30d"/>
+    <Param name="minGradient" value="1e-08"/>
+    <Param name="VelocityX" value="0.0"/>
+    <Param name="VelocityY" value="0.0"/>
+    <Param name="VelocityZ" value="0.0"/>
+    <Param name="GravitationX" value="0.0"/>
+    <Param name="GravitationY" value="0.0"/>
+    <Param name="GravitationZ" value="0.0"/>
+  </Model>
+  <VTK what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+  <Log Iterations="1000"/>
+  <Failcheck Iterations="1000"/>
+  <Solve Iterations="200000">
+    <VTK Iterations="10000" what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+    <Log Iterations="1000"/>
+    <Failcheck Iterations="1000"/>
+  </Solve>
+</CLBConfig>

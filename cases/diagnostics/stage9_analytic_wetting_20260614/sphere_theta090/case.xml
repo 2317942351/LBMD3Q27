@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+  Stage9 gate B/C: sphere theta=90 (neutral) static contact angle.
+  Status: exploratory_not_validation.
+  See sphere_theta030/case.xml for full commentary; only the angle differs.
+-->
+<CLBConfig version="2.0" output="stage9/sphere_theta090/output/" permissive="false">
+  <Geometry nx="80" ny="80" nz="180">
+    <MRT><Box/></MRT>
+    <Wall mask="ALL" name="OuterDomain">
+      <Box nx="1"/>
+      <Box dx="-1"/>
+      <Box dy="-1"/>
+      <Box nz="1"/>
+      <Box dz="-1"/>
+    </Wall>
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.001"/>
+    <Param name="Viscosity_h" value="0.09"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="3"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.1"/>
+    <Param name="IntWidth" value="6"/>
+    <Param name="SphereCapInit" value="1"/>
+    <Param name="SphereCapInitParentRadius" value="24"/>
+    <Param name="SphereCapInitSolidRadius" value="24"/>
+    <Param name="SphereCapInitCenterX" value="40"/>
+    <Param name="SphereCapInitCenterY" value="40"/>
+    <Param name="SphereCapInitCenterZ" value="90"/>
+    <Param name="SphereCapInitSolidCenterX" value="40"/>
+    <Param name="SphereCapInitSolidCenterY" value="40"/>
+    <Param name="SphereCapInitSolidCenterZ" value="48"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="AnalyticSolidType" value="3"/>
+    <Param name="AnalyticSolidCenterX" value="40"/>
+    <Param name="AnalyticSolidCenterY" value="40"/>
+    <Param name="AnalyticSolidCenterZ" value="48"/>
+    <Param name="AnalyticSolidRadius" value="24"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="minGradient" value="1e-08"/>
+    <Param name="VelocityX" value="0.0"/>
+    <Param name="VelocityY" value="0.0"/>
+    <Param name="VelocityZ" value="0.0"/>
+    <Param name="GravitationX" value="0.0"/>
+    <Param name="GravitationY" value="0.0"/>
+    <Param name="GravitationZ" value="0.0"/>
+  </Model>
+  <VTK what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+  <Log Iterations="1000"/>
+  <Failcheck Iterations="1000"/>
+  <Solve Iterations="200000">
+    <VTK Iterations="10000" what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+    <Log Iterations="1000"/>
+    <Failcheck Iterations="1000"/>
+  </Solve>
+</CLBConfig>

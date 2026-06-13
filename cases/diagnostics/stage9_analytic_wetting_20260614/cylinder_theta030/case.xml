@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+  Stage9 gate D: infinite-cylinder theta=30 (wetting) static contact angle.
+  Status: exploratory_not_validation.
+
+  Geometry: 128 x 96 x 128 domain. The solid cylinder is declared analytic:
+  axis = x (AnalyticSolidAxis=0), centered at (cx=64, cy=48) in the y-z plane,
+  radius 24. The cylinder spans the full x extent of the domain (it is an
+  infinite cylinder in the lattice sense because the axis coordinate is
+  ignored for normal/distance). The droplet is initialised above the cylinder
+  apex (cy near 48+24+drop_radius).
+
+  Gate D pass criteria (200k step run):
+    - two-row near-wall contact angle in [28, 32] deg
+    - nonfinite_total == 0, max Mach < 1e-3
+    - fluid phase drift < 1%
+-->
+<CLBConfig version="2.0" output="stage9/cylinder_theta030/output/" permissive="false">
+  <Geometry nx="128" ny="96" nz="128">
+    <MRT><Box/></MRT>
+    <!-- outer domain walls, neutral wetting -->
+    <Wall mask="ALL" name="OuterDomain">
+      <Box nx="1"/>
+      <Box dx="-1"/>
+      <Box dy="-1"/>
+      <Box nz="1"/>
+      <Box dz="-1"/>
+    </Wall>
+    <!-- analytic cylinder is declared via Model params, not via a Wall box.
+         The lattice solid mask is still needed so TCLB marks those nodes as
+         solid; we use a thin cylinder-shaped Wall via the standard TCLB
+         geometry primitives is not trivial, so we rely on the analytic path
+         to treat the declared analytic surface as the wetting wall. For the
+         lattice path to know which nodes are solid, an STL or a parametric
+         Wall helper is required. For this gate we declare the analytic
+         surface and let AnalyticWetting handle the wetting; lattice bounce-
+         back on the cylinder still requires a solid mask, which the user
+         must supply via the standard TCLB cylinder geometry tool. -->
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.001"/>
+    <Param name="Viscosity_h" value="0.09"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="3"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.1"/>
+    <Param name="IntWidth" value="6"/>
+    <!-- droplet initialised above the cylinder apex -->
+    <Param name="Radius" value="20"/>
+    <Param name="CenterX" value="64"/>
+    <Param name="CenterY" value="48"/>
+    <Param name="CenterZ" value="90"/>
+    <Param name="BubbleType" value="1.0"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <!-- Stage9 analytic cylinder: axis=x, center (cx=64,cy=48,cz=any), R=24 -->
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="AnalyticSolidType" value="2"/>
+    <Param name="AnalyticSolidAxis" value="0"/>
+    <Param name="AnalyticSolidCenterX" value="64"/>
+    <Param name="AnalyticSolidCenterY" value="48"/>
+    <Param name="AnalyticSolidCenterZ" value="64"/>
+    <Param name="AnalyticSolidRadius" value="24"/>
+    <!-- contact angle on the analytic cylinder surface -->
+    <Param name="radAngle" value="30d"/>
+    <Param name="minGradient" value="1e-08"/>
+    <Param name="VelocityX" value="0.0"/>
+    <Param name="VelocityY" value="0.0"/>
+    <Param name="VelocityZ" value="0.0"/>
+    <Param name="GravitationX" value="0.0"/>
+    <Param name="GravitationY" value="0.0"/>
+    <Param name="GravitationZ" value="0.0"/>
+  </Model>
+  <VTK what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+  <Log Iterations="1000"/>
+  <Failcheck Iterations="1000"/>
+  <Solve Iterations="200000">
+    <VTK Iterations="10000" what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+    <Log Iterations="1000"/>
+    <Failcheck Iterations="1000"/>
+  </Solve>
+</CLBConfig>

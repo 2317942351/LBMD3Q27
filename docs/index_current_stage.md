@@ -126,3 +126,67 @@ Best shadow mode is Stage8hMode 4:
 This is planning evidence for a separate short write-gate proposal only.
 It is not validation and does not authorize sphere Stage8OperatorMode=2 yet.
 ```
+
+## Stage9 (new, 2026-06-14): analytic-geometry diffuse-interface wetting BC
+
+Status: `exploratory_not_validation`.
+
+Stage9 abandons the stage7/8 limiter-relaxation approach and replaces the root
+cause directly: the wetting boundary condition now uses the **analytic** wall
+normal and signed distance for parameterisable solids (plane, cylinder,
+sphere), instead of the lattice-recovered normal that introduced the sign-flip
+and the 392 special points on the theta030 sphere.
+
+Stage9 is built from `upstream_base` (not from stage8h), so all stage5/6/7/8
+diagnostic machinery is removed from the write path. The new path is:
+
+```text
+source = third_party/tclb_snapshots/stage9_analytic_wetting_diffuse_interface/
+patch  = third_party/tclb_snapshots/patches/stage9_analytic_wetting_diffuse_interface_20260614.diff
+design = docs/stage9/analytic_wetting_bc_design_20260614.md
+cases  = cases/diagnostics/stage9_analytic_wetting_20260614/
+```
+
+Key source changes vs upstream:
+
+```text
+- removed SetOptions(permissive.access=TRUE) in Dynamics.R
+- added WallGhost, WallH, AnalyticFlag fields (separate from PhaseF)
+- added analytic geometry primitives: plane/cylinder/sphere normal + distance
+- added diffuse-interface wetting BC stage9_calc_wall_ghost with O(h^2/R)
+  curvature correction
+- Init_wallNorm tags analytic nodes and overwrites nw_* with the analytic unit
+  normal, clearing legacy special-point flags on analytic nodes
+- calcWallPhase takes an early analytic branch that writes WallGhost and
+  mirrors the fluid value into PhaseF (replaces -999 on analytic nodes)
+```
+
+The analytic path is fully opt-in: `AnalyticWetting=0` (default) leaves all
+behaviour identical to upstream TCLB. No unmodified case is affected.
+
+Stage9 gates (not yet run; this is the plan):
+
+```text
+gate A = plane theta030/090/150 regression (analytic normal = lattice normal)
+gate B = sphere theta030 1000-step smoke (special points -> 0, angle in [28,32])
+gate C = sphere theta030 200000-step long (H1-H2 < 5%, angle in [28,32])
+gate D = cylinder theta030/090 (curved-wall wetting)
+gate E = dynamic plane impact theta090 (post-validation extension)
+```
+
+Stage9 does NOT authorise:
+
+```text
+validation, production, or publication-ready claims
+promotion of any stage5/6/7/8 result
+reuse of the stage8h Stage8OperatorMode=2 write path
+```
+
+Stage9 authorises only:
+
+```text
+building d3q27_pf_velocity_q27_geometric from the stage9 snapshot
+running the gate A/B/C/D cases in cases/diagnostics/stage9_analytic_wetting_20260614/
+reporting the resulting metrics as exploratory_not_validation
+```
+

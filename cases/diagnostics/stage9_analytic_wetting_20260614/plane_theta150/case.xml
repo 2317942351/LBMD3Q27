@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!--
+  Stage9 gate A: flat-wall theta=150 (non-wetting / hydrophobic) regression.
+  Status: exploratory_not_validation.
+  See plane_theta030/case.xml for full commentary; only the angle differs.
+-->
+<CLBConfig version="2.0" output="stage9/plane_theta150/output/" permissive="false">
+  <Geometry nx="128" ny="96" nz="128">
+    <MRT><Box/></MRT>
+    <Wall mask="ALL" name="OuterDomain">
+      <Box nx="1"/>
+      <Box dx="-1"/>
+      <Box dy="-1"/>
+      <Box nz="1"/>
+      <Box dz="-1"/>
+    </Wall>
+    <Wall mask="ALL" name="FlatLowerY">
+      <Box ny="1"/>
+    </Wall>
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.001"/>
+    <Param name="Viscosity_h" value="0.09"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="3"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.1"/>
+    <Param name="IntWidth" value="6"/>
+    <Param name="CapInit" value="1"/>
+    <Param name="CapInitRadius" value="60.0"/>
+    <Param name="CapInitTheta" value="0.5235987755982988"/>
+    <Param name="CapInitCenterX" value="64"/>
+    <Param name="CapInitCenterY" value="-86.0"/>
+    <Param name="CapInitCenterZ" value="64"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <Param name="radAngle" value="150d" zone="FlatLowerY"/>
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="AnalyticSolidType" value="1"/>
+    <Param name="AnalyticSolidAxis" value="1"/>
+    <Param name="AnalyticSolidPlaneOffset" value="0.0"/>
+    <Param name="minGradient" value="1e-08"/>
+    <Param name="VelocityX" value="0.0"/>
+    <Param name="VelocityY" value="0.0"/>
+    <Param name="VelocityZ" value="0.0"/>
+    <Param name="GravitationX" value="0.0"/>
+    <Param name="GravitationY" value="0.0"/>
+    <Param name="GravitationZ" value="0.0"/>
+  </Model>
+  <VTK what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+  <Log Iterations="1000"/>
+  <Failcheck Iterations="1000"/>
+  <Solve Iterations="200000">
+    <VTK Iterations="10000" what="PhaseField,U,P,Rho,BOUNDARY,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"/>
+    <Log Iterations="1000"/>
+    <Failcheck Iterations="1000"/>
+  </Solve>
+</CLBConfig>

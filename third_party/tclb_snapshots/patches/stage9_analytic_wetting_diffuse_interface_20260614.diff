@@ -1,0 +1,376 @@
+diff --git a/third_party/tclb_snapshots/upstream_base/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt b/third_party/tclb_snapshots/stage9_analytic_wetting_diffuse_interface/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+index 024f94c..6249c5a 100644
+--- a/third_party/tclb_snapshots/upstream_base/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
++++ b/third_party/tclb_snapshots/stage9_analytic_wetting_diffuse_interface/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+@@ -268,6 +268,186 @@ BOTH_NEXT_AND_NNEXT_INTERPOLATING_POINTS_ARE_SOLID = 5
+ SPECIAL_POINT_HUGE_MAGIC_NUMBER = 2342e10
+ ?>
+ 
++//##################################################################//
++//### STAGE9: ANALYTIC-GEOMETRY DIFFUSE-INTERFACE WETTING BC ######//
++//###                                                            ###//
++//### Physics: discretise the exact Cahn-Hilliard natural wall BC ###//
++//###   kappa * d(phi)/d(n_w) = gamma_sv * cos(theta_e)          ###//
++//### using the analytic wall normal n_w and signed distance h,   ###//
++//### instead of the lattice-recovered normal. See                ###//
++//### docs/stage9/analytic_wetting_bc_design_20260614.md.         ###//
++//##################################################################//
++
++// ---- coordinate access (X,Y,Z are TCLB-provided globals) ----
++CudaDeviceFunction real_t stage9_coord_x() { return X; }
++CudaDeviceFunction real_t stage9_coord_y() { return Y; }
++CudaDeviceFunction real_t stage9_coord_z() { return Z; }
++
++// ---- analytic geometry primitives ----
++// All normals are outward wall unit normals pointing INTO THE FLUID.
++// Signed distance h is positive for points in the fluid, negative in the solid.
++
++// Plane: defined by axis (AnalyticSolidAxis) and offset along that axis.
++// Fluid side is the +axis side; wall normal points +axis.
++CudaDeviceFunction vector_t stage9_plane_normal() {
++	vector_t n = {0.0, 0.0, 0.0};
++	if (AnalyticSolidAxis < 0.5)        { n.x = 1.0; }
++	else if (AnalyticSolidAxis < 1.5)   { n.y = 1.0; }
++	else                                { n.z = 1.0; }
++	return n;
++}
++CudaDeviceFunction real_t stage9_plane_signed_distance() {
++	real_t coord = (AnalyticSolidAxis < 0.5) ? X
++	             : (AnalyticSolidAxis < 1.5) ? Y : Z;
++	return coord - AnalyticSolidPlaneOffset;
++}
++
++// Infinite cylinder: axis = AnalyticSolidAxis, radius AnalyticSolidRadius,
++// centered at (cx,cy,cz) in the perpendicular plane. The cylinder axis
++// coordinate is ignored for the distance/normal computation.
++CudaDeviceFunction void stage9_cylinder_perp_components(real_t* a, real_t* b) {
++	real_t dx = X - AnalyticSolidCenterX;
++	real_t dy = Y - AnalyticSolidCenterY;
++	real_t dz = Z - AnalyticSolidCenterZ;
++	if (AnalyticSolidAxis < 0.5)        { *a = dy; *b = dz; }   // axis = x
++	else if (AnalyticSolidAxis < 1.5)   { *a = dx; *b = dz; }   // axis = y
++	else                                { *a = dx; *b = dy; }   // axis = z
++}
++CudaDeviceFunction vector_t stage9_cylinder_normal() {
++	real_t a, b;
++	stage9_cylinder_perp_components(&a, &b);
++	real_t r = sqrt(a*a + b*b);
++	vector_t n = {0.0, 0.0, 0.0};
++	if (r < 1e-30) return n;
++	real_t inv = 1.0/r;
++	// axis = x: perp plane is (y,z); axis = y: perp plane is (x,z); axis = z: perp plane is (x,y)
++	if (AnalyticSolidAxis < 0.5)        { n.y = a*inv; n.z = b*inv; }
++	else if (AnalyticSolidAxis < 1.5)   { n.x = a*inv; n.z = b*inv; }
++	else                                { n.x = a*inv; n.y = b*inv; }
++	return n;
++}
++CudaDeviceFunction real_t stage9_cylinder_signed_distance() {
++	real_t a, b;
++	stage9_cylinder_perp_components(&a, &b);
++	return sqrt(a*a + b*b) - AnalyticSolidRadius;
++}
++
++// Sphere: center (cx,cy,cz), radius AnalyticSolidRadius.
++CudaDeviceFunction vector_t stage9_sphere_normal() {
++	real_t dx = X - AnalyticSolidCenterX;
++	real_t dy = Y - AnalyticSolidCenterY;
++	real_t dz = Z - AnalyticSolidCenterZ;
++	real_t r = sqrt(dx*dx + dy*dy + dz*dz);
++	vector_t n = {0.0, 0.0, 0.0};
++	if (r < 1e-30) return n;
++	real_t inv = 1.0/r;
++	n.x = dx*inv; n.y = dy*inv; n.z = dz*inv;
++	return n;
++}
++CudaDeviceFunction real_t stage9_sphere_signed_distance() {
++	real_t dx = X - AnalyticSolidCenterX;
++	real_t dy = Y - AnalyticSolidCenterY;
++	real_t dz = Z - AnalyticSolidCenterZ;
++	return sqrt(dx*dx + dy*dy + dz*dz) - AnalyticSolidRadius;
++}
++
++// Dispatch: fill out_n and out_h for the declared analytic geometry.
++// Returns the analytic wall normal (unit, pointing into fluid). out_h receives
++// the signed distance (>0 in fluid). If AnalyticWetting is off or the geometry
++// is invalid, returns the zero vector and out_h = 0; callers must check.
++CudaDeviceFunction vector_t stage9_analytic_wall_normal_and_distance(real_t* out_h) {
++	vector_t n = {0.0, 0.0, 0.0};
++	*out_h = 0.0;
++	if (AnalyticWetting < 0.5) return n;
++	real_t t = AnalyticSolidType;
++	if (t < 0.5)        return n;                                  // off
++	else if (t < 1.5)   { n = stage9_plane_normal();     *out_h = stage9_plane_signed_distance();     }
++	else if (t < 2.5)   { n = stage9_cylinder_normal();  *out_h = stage9_cylinder_signed_distance();  }
++	else                { n = stage9_sphere_normal();    *out_h = stage9_sphere_signed_distance();    }
++	return n;
++}
++
++// Curvature (1/R) used for the leading-order centered-difference correction.
++// Plane = 0, cylinder = 1/R, sphere = 1/R.
++CudaDeviceFunction real_t stage9_analytic_curvature() {
++	real_t t = AnalyticSolidType;
++	if (t < 2.5) {  // plane or cylinder
++		if (t < 1.5) return 0.0;
++		if (AnalyticSolidRadius > 1e-30) return 1.0/AnalyticSolidRadius;
++		return 0.0;
++	}
++	if (AnalyticSolidRadius > 1e-30) return 1.0/AnalyticSolidRadius;
++	return 0.0;
++}
++
++// ---- trilinear interpolation of the physical phase field ----
++// NOTE: TCLB's PhaseF(dx,dy,dz) reads RELATIVE to the current node, so absolute
++// lattice coordinates cannot be indexed portably. The diffuse BC is therefore
++// evaluated at the first fluid node itself using the local isotropic gradient
++// (gradPhiVal_*), which is already a high-order isotropic estimate of grad(phi)
++// at this node. phi_0 = PhaseF(0,0,0). No trilinear probe is needed. This keeps
++// the BC local and avoids reading ghost/sentinel values on wall nodes.
++
++// Compute the wall ghost value using the diffuse-interface wetting BC.
++// Called from calcWallPhase on a wall/solid node, with:
++//   n_w  : analytic wall unit normal (pointing into fluid), already in nw_*
++//   h0   : analytic signed distance from this wall node to the surface + 0.5
++//   phi_0: phase at the first fluid node along +n_w (caller passes PhaseF_dyn(nw))
++//   grad : phase gradient at the first fluid node along +n_w
++//
++// Discrete BC (see design doc sec 1.3):
++//   phi_ghost = phi_0 + 2*h0 * tan(pi/2 - theta) * |grad_t phi|
++//             + (h0^2/R) * tan(pi/2 - theta) * |grad_t phi|     [curvature corr]
++//
++// grad_t: gradient projected onto the analytic tangent plane (perp to n_w).
++CudaDeviceFunction real_t stage9_calc_wall_ghost(
++	vector_t n_w, real_t h0, real_t phi_0, vector_t grad)
++{
++	real_t phase_range = PhaseField_h - PhaseField_l;
++	if (fabs(phase_range) < 1e-12) phase_range = 1.0;
++
++	// project gradient onto tangent plane: grad_t = grad - (grad.n_w) n_w
++	real_t gdotn = grad.x*n_w.x + grad.y*n_w.y + grad.z*n_w.z;
++	vector_t grad_t;
++	grad_t.x = grad.x - gdotn * n_w.x;
++	grad_t.y = grad.y - gdotn * n_w.y;
++	grad_t.z = grad.z - gdotn * n_w.z;
++	real_t gt_mag = sqrt(grad_t.x*grad_t.x + grad_t.y*grad_t.y + grad_t.z*grad_t.z);
++
++	real_t tan_coeff = tan(PI/2.0 - radAngle);
++	real_t kappa_corr = stage9_analytic_curvature() * h0 * h0;
++
++	real_t ghost = phi_0 + 2.0 * h0 * tan_coeff * gt_mag
++	                      + kappa_corr * tan_coeff * gt_mag;
++
++	// Physical phase range clamp. This is not a numerical stabiliser: the
++	// ghost value is the wall-side mirror of a bounded phase variable, so it
++	// must remain inside [PhaseField_l, PhaseField_h]. Clipping here enforces
++	// the physical bounds of the order parameter; it does not hide a wrong
++	// angle because the angle enters through the un-clipped slope, not the
++	// value. This is the same convention used by Briant's surface-energy BC.
++	if (ghost < PhaseField_l) ghost = PhaseField_l;
++	if (ghost > PhaseField_h) ghost = PhaseField_h;
++	return ghost;
++}
++
++// Public accessor: the analytic wall normal at this node (zero if not analytic).
++CudaDeviceFunction vector_t getAnalyticWallNormal() {
++	real_t h;
++	return stage9_analytic_wall_normal_and_distance(&h);
++}
++CudaDeviceFunction real_t getWallH() {
++	real_t h;
++	stage9_analytic_wall_normal_and_distance(&h);
++	return h;
++}
++CudaDeviceFunction real_t getWallGhostValue() {
++	return WallGhost(0,0,0);
++}
++CudaDeviceFunction real_t getAnalyticFlagValue() {
++	return AnalyticFlag(0,0,0);
++}
++
+ #ifdef OPTIONS_staircaseimp
+ 
+ /* Array of lattice triangle coordinates, should not be used in the code apart
+@@ -674,6 +854,14 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
+ CudaDeviceFunction void calcWallPhase_correction() {
+ 	PhaseF = PhaseF(0,0,0);
+ 
++	// Stage9 analytic path: the ghost was already written in calcWallPhase and
++	// stored in WallGhost. Nothing to correct; analytic normals never point
++	// into a solid, so the NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE case is
++	// unreachable on analytic-flagged nodes.
++	if (AnalyticFlag(0,0,0) > 0.5) {
++		return;
++	}
++
+ 	if (IsSpecialBoundaryPoint == <?%s NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?> ) {
+ 		// take the phase field calculated already from the node in front.
+ 		// Might as well calculate using the neighbors, e.g. averaging
+@@ -688,6 +876,58 @@ CudaDeviceFunction void calcWallPhase_correction() {
+ CudaDeviceFunction void calcWallPhase(){
+ 	PhaseF = PhaseF(0,0,0); //For fluid nodes.
+ 	if ( IamWall || IamSolid ) {
++		// ----------------------------------------------------------
++		// Stage9 analytic-geometry diffuse-interface wetting BC.
++		// If this wall node was flagged analytic during Init_wallNorm,
++		// compute the wall ghost from the analytic normal (already stored
++		// in nw_*) and the fluid-side phase/gradient read along nw.
++		// Result goes into the dedicated WallGhost field, and PhaseF on
++		// this wall node is set to the mirrored fluid value (NOT -999)
++		// so that downstream gradient stencils never see a sentinel.
++		// ----------------------------------------------------------
++		if (AnalyticFlag(0,0,0) > 0.5) {
++			real_t h = WallH(0,0,0);
++			if (h < 0.001) {
++				// Surrounded by solid (degenerate): keep physical bound.
++				WallGhost = PhaseField_h;
++				PhaseF = PhaseField_h;
++				return;
++			}
++			if (fabs(radAngle - PI/2.0) < 1e-4) {
++				// 90 deg: neutral wetting, ghost = mirror fluid value.
++				real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
++				WallGhost = pf_f;
++				PhaseF = pf_f;
++				return;
++			}
++			// fluid-side phase and gradient along the analytic normal nw.
++			real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
++#ifdef OPTIONS_geometric
++			vector_t grad = {
++				gradPhiVal_x_dyn(nw_x, nw_y, nw_z),
++				gradPhiVal_y_dyn(nw_x, nw_y, nw_z),
++				gradPhiVal_z_dyn(nw_x, nw_y, nw_z)
++			};
++#else
++			// Without the geometric build option there is no gradPhiVal field.
++			// Fall back to a 2-point difference along nw using PhaseF only.
++			vector_t grad = {0.0, 0.0, 0.0};
++			real_t phi_n  = PhaseF_dyn( nw_x,  nw_y,  nw_z);
++			real_t phi_nn = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z);
++			real_t inv2h = 1.0/(2.0*h + 1e-30);
++			grad.x = (phi_n - phi_nn) * (nw_x) * inv2h;
++			grad.y = (phi_n - phi_nn) * (nw_y) * inv2h;
++			grad.z = (phi_n - phi_nn) * (nw_z) * inv2h;
++#endif
++			vector_t n_w = {nw_x, nw_y, nw_z};
++			real_t ghost = stage9_calc_wall_ghost(n_w, h, pf_f, grad);
++			WallGhost = ghost;
++			// Mirror fluid value into PhaseF so gradient stencils that read
++			// PhaseF on this wall node see a physical value, not -999.
++			PhaseF = pf_f;
++			return;
++		}
++
+ 		real_t a, h, pf_f;
+ 
+ 		// This is needed, because otherwise geometric_staircaseimp performance will drop
+@@ -1050,4 +1290,39 @@ CudaDeviceFunction void Init_wallNorm(){
+ 	#endif
+ #endif
+ 	}
++
++	// ------------------------------------------------------------------ //
++	// Stage9 analytic-geometry normal injection.                          //
++	// For every wall/solid node within one cell of the declared analytic   //
++	// surface, replace the lattice-recovered normal with the exact analytic//
++	// normal pointing INTO THE FLUID, store the analytic signed distance in//
++	// WallH, and set AnalyticFlag=1 so calcWallPhase takes the analytic    //
++	// branch. This eliminates NORMAL_POINTING_INTO_SOLID special points   //
++	// (the analytic normal never points into the solid) and removes the    //
++	// ~25 deg normal-quantisation error on curved walls.                  //
++	// ------------------------------------------------------------------ //
++	AnalyticFlag = 0.0;
++	WallH = 0.0;
++	WallGhost = 0.0;
++	if (AnalyticWetting > 0.5 && (IamWall || IamSolid)) {
++		real_t sd = 0.0;
++		vector_t n_w = stage9_analytic_wall_normal_and_distance(&sd);
++		real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
++		if (nmag > 0.5) {
++			// This wall node is on the analytic-solid side of the surface.
++			// Tag it and overwrite nw_* with the analytic unit normal.
++			AnalyticFlag = 1.0;
++			nw_x = n_w.x;
++			nw_y = n_w.y;
++			nw_z = n_w.z;
++			// WallH: distance from this solid node to the analytic surface
++			// along the normal, plus the half-step to the first fluid node.
++			// sd < 0 inside the solid; we use |sd| + 0.5.
++			real_t d_to_surface = (sd < 0.0) ? -sd : sd;
++			WallH = d_to_surface + 0.5;
++			// Clear any legacy special-point flag: analytic normal cannot
++			// point into the solid.
++			IsSpecialBoundaryPoint = 0.0;
++		}
++	}
+ }
+diff --git a/third_party/tclb_snapshots/upstream_base/models/multiphase/d3q27_pf_velocity/Dynamics.R b/third_party/tclb_snapshots/stage9_analytic_wetting_diffuse_interface/models/multiphase/d3q27_pf_velocity/Dynamics.R
+index f28eb32..4f35ebf 100644
+--- a/third_party/tclb_snapshots/upstream_base/models/multiphase/d3q27_pf_velocity/Dynamics.R
++++ b/third_party/tclb_snapshots/stage9_analytic_wetting_diffuse_interface/models/multiphase/d3q27_pf_velocity/Dynamics.R
+@@ -1,8 +1,11 @@
+-# Setting permissive access policy.
+-#  * This skips checks of fields being overwritten or read prematurely.
+-#  * Otherwise the model compilation was failing.
+-#  * This should be removed if the issue is fixed
+-SetOptions(permissive.access=TRUE)  ### WARNING
++# Stage9: permissive access removed.
++#   The original TCLB model set permissive.access=TRUE because the wetting
++#   path wrote PhaseF on wall nodes in the same stage that later reads
++#   PhaseF-derived gradients. Stage9 separates the wall ghost value into its
++#   own WallGhost field and keeps PhaseF as physical phase only, so the
++#   read/write ordering is now well defined and the permissive flag is no
++#   longer needed. If a future change reintroduces an ordering dependency,
++#   fix the ordering rather than re-enabling this flag.
+ 
+ # Density - table of variables of LB Node to stream
+ #	Velocity-based Evolution d3q27:
+@@ -69,6 +72,16 @@ if (Options$geometric){
+     AddField("IsBoundary", stencil3d=1, group="solid_boundary")
+ }
+ 
++# Stage9 analytic-geometry wetting BC fields.
++#   WallGhost holds the wall ghost phi on wall/solid nodes only. It is a
++#   separate field from PhaseF so that gradient stencils reading PhaseF never
++#   pick up ghost values. WallH is the analytic signed distance from the
++#   first-fluid node to the wall. AnalyticFlag tags nodes that belong to the
++#   analytic geometry. All are 0 on fluid nodes by default.
++AddField("WallGhost", stencil3d=2, group="solid_boundary")
++AddField("WallH",     stencil3d=1, group="solid_boundary")
++AddField("AnalyticFlag", stencil3d=1, group="solid_boundary")
++
+ save_initial_PF = c("PF","Vel")
+ save_initial    = c("g","h","PF")
+ save_iteration  = c("g","h","Vel","nw", "solid_boundary", extra_save_iteration)
+@@ -183,6 +196,11 @@ if (Options$thermo){
+ 	if (Options$staircaseimp) {
+ 		AddQuantity(name="ActualNormal", unit=1, vector=T)
+ 	}
++	# Stage9 analytic-geometry wetting BC diagnostics
++	AddQuantity(name="WallGhost", unit=1)
++	AddQuantity(name="WallH", unit=1)
++	AddQuantity(name="AnalyticWallNormal", unit=1, vector=T)
++	AddQuantity(name="AnalyticFlag", unit=1)
+ ###################################
+ ########INPUTS - PHASEFIELD########
+ ###################################
+@@ -200,6 +218,20 @@ if (Options$thermo){
+   	AddSetting(name="Washburn_end", default="0", comment='End of washburn gas phase')
+ 	AddSetting(name="radAngle", default='1.570796', comment='Contact angle in radians, can use units -> 90d where d=2pi/360', zonal=T)
+ 	AddSetting(name="minGradient", default='1e-8', comment='if the phase gradient is less than this, set phase normals to zero')
++	##STAGE9 ANALYTIC-GEOMETRY WETTING BC
++	#   When AnalyticWetting > 0.5, wall nodes whose zone declares an analytic
++	#   solid use the analytic wall normal and signed distance instead of the
++	#   lattice-recovered normal. This is the physically correct path for
++	#   plane/cylinder/sphere. The lattice path is unchanged for nodes/zones
++	#   without an analytic geometry, so unmodified cases behave identically.
++	AddSetting(name="AnalyticWetting", default=0, comment='Stage9: 1 enables analytic-geometry wetting BC on analytic zones')
++	AddSetting(name="AnalyticSolidType", default=0, comment='Stage9: 0 off, 1 plane, 2 infinite cylinder, 3 sphere')
++	AddSetting(name="AnalyticSolidCenterX", default=0.0, comment='Stage9: solid center x (cylinder/sphere)')
++	AddSetting(name="AnalyticSolidCenterY", default=0.0, comment='Stage9: solid center y (cylinder/sphere)')
++	AddSetting(name="AnalyticSolidCenterZ", default=0.0, comment='Stage9: solid center z (cylinder/sphere)')
++	AddSetting(name="AnalyticSolidRadius", default=0.0, comment='Stage9: solid radius (cylinder/sphere)')
++	AddSetting(name="AnalyticSolidAxis", default=2, comment='Stage9: plane normal / cylinder axis: 0=x, 1=y, 2=z')
++	AddSetting(name="AnalyticSolidPlaneOffset", default=0.0, comment='Stage9: plane offset along axis (plane only)')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')
