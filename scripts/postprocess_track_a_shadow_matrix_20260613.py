@@ -11,6 +11,7 @@ import argparse
 import csv
 import json
 import math
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
@@ -21,10 +22,17 @@ SUMMARY_DIR = Path("artifacts") / "track_a_usable_angle_ladder_summary_20260613"
 MANIFEST = Path("cases") / "track_a_usable_angle_ladder_20260613" / "manifest.json"
 
 PASS_MAX_MACH_DEFAULT = 1.0e-3
+WP1_CASE_FILTERS = {"plane030", "plane060", "plane090", "plane120", "plane020"}
+WP1_PRIMARY_CASES = {"track_a_plane_theta030_shadow", "track_a_plane_theta060_shadow", "track_a_plane_theta090_shadow", "track_a_plane_theta120_shadow"}
+WP1_SMOKE_CASES = {"track_a_plane_theta030_shadow", "track_a_plane_theta090_shadow"}
 
 
 def unknown() -> str:
     return "unknown"
+
+
+def is_unknown_value(value: Any) -> bool:
+    return value is None or value == "" or value == unknown()
 
 
 def clean(value: Any) -> Any:
@@ -66,6 +74,30 @@ def load_metric_file(case_id: str, metrics_root: Path) -> tuple[dict[str, Any], 
     return {}, None
 
 
+def load_case_xml(case_id: str, metrics_root: Path) -> tuple[dict[str, Any], str | None]:
+    path = metrics_root / case_id / "case.xml"
+    if not path.exists():
+        return {}, None
+    try:
+        root = ET.parse(path).getroot()
+    except ET.ParseError:
+        return {"xml_parse_error": True}, str(path)
+    params: dict[str, Any] = {}
+    for elem in root.findall(".//Param"):
+        name = elem.attrib.get("name")
+        value = elem.attrib.get("value")
+        zone = elem.attrib.get("zone")
+        if not name:
+            continue
+        key = name if zone is None else f"{name}:{zone}"
+        params[key] = value
+    geometry = root.find(".//Geometry")
+    if geometry is not None:
+        for key, value in geometry.attrib.items():
+            params[f"Geometry:{key}"] = value
+    return params, str(path)
+
+
 def parse_filter(value: str | None) -> set[str]:
     out: set[str] = set()
     if not value:
@@ -91,6 +123,23 @@ def selected_by_filter(row: dict[str, Any], filters: set[str]) -> bool:
         f"theta{angle3}",
     }
     return bool(candidates & filters)
+
+
+def parse_numeric_param(value: Any) -> float | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    if text.endswith("d"):
+        try:
+            return float(text[:-1])
+        except ValueError:
+            return None
+    try:
+        return float(text)
+    except ValueError:
+        return None
 
 
 def to_float(value: Any) -> float | None:
@@ -169,12 +218,124 @@ def compute_internal_void_count(*_: Any, **__: Any) -> dict[str, Any]:
     return {"status": "pending", "reason": "phase-field data not provided"}
 
 
+def plane_theory_from_case_xml(params: dict[str, Any], theta_deg: float) -> dict[str, Any]:
+    radius = parse_numeric_param(params.get("CapInitRadius"))
+    if radius is None or radius <= 0.0:
+        return {"status": "pending", "reason": "CapInitRadius missing or nonpositive"}
+    theta = math.radians(theta_deg)
+    h = radius * (1.0 - math.cos(theta))
+    a = radius * math.sin(theta)
+    volume = math.pi * h * (3.0 * a * a + h * h) / 6.0
+    from_volume = compute_plane_cap_theory(volume, theta_deg)
+    return {
+        "status": "computed_from_case_xml",
+        "theta_theory_deg": theta_deg,
+        "cap_init_radius": radius,
+        "h_theory": h,
+        "a_theory": a,
+        "volume_theory": volume,
+        "h_over_a_theory": h / a if a else math.nan,
+        "cap_theory_from_volume": from_volume,
+    }
+
+
+def compute_wp1_plane_geometry(
+    row: dict[str, Any],
+    metrics: dict[str, Any],
+    case_params: dict[str, Any],
+) -> dict[str, Any]:
+    if row.get("case_group") != "plane":
+        return {}
+
+    theta_target = to_float(row.get("theta_target_deg"))
+    out: dict[str, Any] = {
+        "wp1_selected_case": row["case_id"] in {f"track_a_plane_theta{angle:03d}_shadow" for angle in [20, 30, 60, 90, 120]},
+        "geometry_source": "lightweight_metrics_only",
+        "raw_interface_data_present": False,
+    }
+
+    theta_fit = pick(
+        metrics,
+        "theta_fit_deg",
+        "fitted_apparent_contact_angle_deg",
+        "angle_apparent_deg",
+        "apparent_contact_angle_deg",
+    )
+    theta_fit_f = to_float(theta_fit)
+    out["theta_fit"] = theta_fit_f if theta_fit_f is not None else unknown()
+    out["theta_fit_deg"] = theta_fit_f if theta_fit_f is not None else unknown()
+    if theta_fit_f is not None and theta_target is not None:
+        out["theta_fit_error_deg"] = theta_fit_f - theta_target
+        out["theta_fit_abs_error_deg"] = abs(theta_fit_f - theta_target)
+    else:
+        out["theta_fit_error_deg"] = unknown()
+        out["theta_fit_abs_error_deg"] = unknown()
+
+    theory = plane_theory_from_case_xml(case_params, theta_target or math.nan) if theta_target is not None else {}
+    out["geometry_theory_status"] = theory.get("status", "pending")
+    for key in ["h_theory", "a_theory", "volume_theory", "h_over_a_theory", "cap_init_radius"]:
+        out[key] = theory.get(key, unknown())
+
+    h_sim = pick(metrics, "h_sim", "height_sim", "cap_height_sim")
+    a_sim = pick(metrics, "a_sim", "contact_radius_sim", "base_radius_sim")
+    volume_sim = pick(metrics, "volume_sim", "phase_volume_sim", "liquid_volume_sim")
+    out["h_sim"] = h_sim if h_sim is not None and h_sim != "" else unknown()
+    out["a_sim"] = a_sim if a_sim is not None and a_sim != "" else unknown()
+    out["volume_sim"] = volume_sim if volume_sim is not None and volume_sim != "" else unknown()
+
+    h_error = pick(metrics, "height_error")
+    a_error = pick(metrics, "contact_radius_error")
+    volume_error = pick(metrics, "volume_error", "volume_relative_error")
+    if h_error is None and to_float(h_sim) is not None and to_float(out.get("h_theory")):
+        h_error = abs(to_float(h_sim) - to_float(out["h_theory"])) / to_float(out["h_theory"])
+    if a_error is None and to_float(a_sim) is not None and to_float(out.get("a_theory")):
+        a_error = abs(to_float(a_sim) - to_float(out["a_theory"])) / to_float(out["a_theory"])
+    out["height_error"] = h_error if h_error is not None and h_error != "" else unknown()
+    out["contact_radius_error"] = a_error if a_error is not None and a_error != "" else unknown()
+    out["volume_error"] = volume_error if volume_error is not None and volume_error != "" else unknown()
+
+    internal_void = pick(metrics, "internal_void_count")
+    center_bubble = pick(metrics, "center_bubble_count")
+    if internal_void is None and center_bubble is not None:
+        internal_void = center_bubble
+    out["internal_void_count"] = internal_void if internal_void is not None and internal_void != "" else unknown()
+    out["center_bubble_count"] = center_bubble if center_bubble is not None and center_bubble != "" else unknown()
+
+    spurious = pick(metrics, "spurious_current", "spurious_current_estimate", "max_spurious_current")
+    out["spurious_current"] = spurious if spurious is not None and spurious != "" else unknown()
+    phase_mass = pick(metrics, "phase_mass_relative_change", "phase_drift", "fluid_phase_drift")
+    out["phase_mass_relative_change"] = phase_mass if phase_mass is not None and phase_mass != "" else unknown()
+    rho_drift = pick(metrics, "rho_relative_change", "rho_drift", "fluid_rho_drift")
+    out["rho_relative_change"] = rho_drift if rho_drift is not None and rho_drift != "" else unknown()
+
+    missing = []
+    for key in [
+        "theta_fit_error_deg",
+        "h_sim",
+        "height_error",
+        "a_sim",
+        "contact_radius_error",
+        "phase_mass_relative_change",
+        "internal_void_count",
+    ]:
+        if is_unknown_value(out.get(key)):
+            missing.append(key)
+    out["geometry_missing_metrics"] = ",".join(missing)
+    out["geometry_status"] = "complete" if not missing else "geometry_pending"
+    if missing:
+        out["geometry_pending_reason"] = "missing required flat-wall metrics: " + ",".join(missing)
+    else:
+        out["geometry_pending_reason"] = ""
+    return out
+
+
 def geometry_requirements(group: str) -> list[str]:
     if group == "plane":
         return [
             "theta_fit_error_deg",
             "height_error",
             "contact_radius_error",
+            "phase_mass_relative_change",
             "internal_void_count",
         ]
     if group == "cylinder":
@@ -232,27 +393,37 @@ def classify_track_a_case(row: dict[str, Any]) -> tuple[str, str]:
     max_mach = to_float(row.get("max_mach"))
     if max_mach is None or max_mach > PASS_MAX_MACH_DEFAULT:
         return "blocked", "max Mach is missing or elevated"
-    if (to_float(row.get("candidate_demand_p50")) or math.inf) >= 1.2:
+    demand_p50 = to_float(row.get("candidate_demand_p50"))
+    if demand_p50 is None or demand_p50 >= 1.2:
         return "blocked", "candidate demand p50 is too high"
-    if (to_float(row.get("candidate_demand_p95")) or math.inf) >= 3.0:
+    demand_p95 = to_float(row.get("candidate_demand_p95"))
+    if demand_p95 is None or demand_p95 >= 3.0:
         return "blocked", "candidate demand p95 is too high"
 
-    missing_geometry = [key for key in geometry_requirements(str(row.get("case_group"))) if row.get(key) == unknown()]
+    missing_geometry = [key for key in geometry_requirements(str(row.get("case_group"))) if is_unknown_value(row.get(key))]
     if missing_geometry:
-        return "shadow_pass", "runtime shadow gates pass; geometry metrics pending: " + ",".join(missing_geometry)
+        return "geometry_pending", "runtime shadow gates pass; geometry metrics pending: " + ",".join(missing_geometry)
 
     group = str(row.get("case_group"))
     if group == "plane":
-        if abs(to_float(row.get("theta_fit_error_deg")) or math.inf) >= 3.0:
+        theta_error = to_float(row.get("theta_fit_error_deg"))
+        if theta_error is None or abs(theta_error) >= 3.0:
             return "blocked", "plane fitted angle error is too high"
-        if (to_float(row.get("height_error")) or math.inf) >= 0.05:
+        height_error = to_float(row.get("height_error"))
+        if height_error is None or height_error >= 0.05:
             return "blocked", "plane height error is too high"
-        if (to_float(row.get("contact_radius_error")) or math.inf) >= 0.05:
+        radius_error = to_float(row.get("contact_radius_error"))
+        if radius_error is None or radius_error >= 0.05:
             return "blocked", "plane contact radius error is too high"
+        mass_drift = to_float(row.get("phase_mass_relative_change"))
+        if mass_drift is None or abs(mass_drift) >= 0.01:
+            return "blocked", "plane phase mass drift is too high"
     if group in {"cylinder", "sphere"}:
-        if (to_float(row.get("local_angle_error_mean_deg")) or math.inf) >= 5.0:
+        mean_angle_error = to_float(row.get("local_angle_error_mean_deg"))
+        if mean_angle_error is None or mean_angle_error >= 5.0:
             return "blocked", "mean local angle error is too high"
-        if (to_float(row.get("local_angle_error_p95_deg")) or math.inf) >= 10.0:
+        p95_angle_error = to_float(row.get("local_angle_error_p95_deg"))
+        if p95_angle_error is None or p95_angle_error >= 10.0:
             return "blocked", "p95 local angle error is too high"
     if to_int(row.get("internal_void_count")) not in (0, None):
         return "blocked", "internal void count is nonzero"
@@ -271,6 +442,7 @@ def build_case_rows(manifest: dict[str, Any], metrics_root: Path) -> list[dict[s
             angle_int = int(angle)
             case_id = f"track_a_{group}_theta{angle_int:03d}_shadow"
             metrics, source = load_metric_file(case_id, metrics_root)
+            case_params, case_xml_source = load_case_xml(case_id, metrics_root)
             row: dict[str, Any] = {
                 "status": STATUS,
                 "claim_limit": CLAIM_LIMIT,
@@ -280,14 +452,16 @@ def build_case_rows(manifest: dict[str, Any], metrics_root: Path) -> list[dict[s
                 "stage8_operator_mode": manifest.get("stage8_operator_mode", 1),
                 "steps": "/".join(str(s) for s in manifest.get("steps", [])),
                 "metrics_source": source or "",
+                "case_xml_source": case_xml_source or "",
             }
+            wp1_geometry = compute_wp1_plane_geometry(row, metrics, case_params)
             fields = {
                 "solver_returncode": pick(metrics, "solver_returncode", "solver_rc", "run_returncode"),
                 "postprocess_returncode": pick(metrics, "postprocess_returncode", "postprocess_rc"),
                 "nonfinite_total": pick(metrics, "nonfinite_total"),
                 "max_mach": pick(metrics, "max_mach", "mach_max", "maxMach"),
-                "phase_mass_relative_change": pick(metrics, "phase_mass_relative_change", "phase_drift", "fluid_phase_drift"),
-                "rho_relative_change": pick(metrics, "rho_relative_change", "rho_drift", "fluid_rho_drift"),
+                "phase_mass_relative_change": pick(wp1_geometry, "phase_mass_relative_change") if wp1_geometry else pick(metrics, "phase_mass_relative_change", "phase_drift", "fluid_phase_drift"),
+                "rho_relative_change": pick(wp1_geometry, "rho_relative_change") if wp1_geometry else pick(metrics, "rho_relative_change", "rho_drift", "fluid_rho_drift"),
                 "normal_limiter_fraction": pick(metrics, "normal_limiter_fraction"),
                 "vector_limiter_fraction": pick(metrics, "vector_limiter_fraction", "limiter_fraction"),
                 "outer90_limiter_count": pick(metrics, "outer90_limiter_count", "outer90_normal_limiter_count"),
@@ -304,7 +478,17 @@ def build_case_rows(manifest: dict[str, Any], metrics_root: Path) -> list[dict[s
                 "candidate_demand_p50": pick(metrics, "candidate_demand_p50", "cap_demand_ratio_p50"),
                 "candidate_demand_p95": pick(metrics, "candidate_demand_p95", "cap_demand_ratio_p95"),
                 "candidate_demand_p99": pick(metrics, "candidate_demand_p99", "cap_demand_ratio_p99"),
-                "theta_fit_error_deg": pick(metrics, "theta_fit_error_deg"),
+                "theta_fit": pick(wp1_geometry, "theta_fit", "theta_fit_deg") if wp1_geometry else pick(metrics, "theta_fit_deg", "fitted_apparent_contact_angle_deg"),
+                "theta_fit_deg": pick(wp1_geometry, "theta_fit_deg") if wp1_geometry else pick(metrics, "theta_fit_deg", "fitted_apparent_contact_angle_deg"),
+                "theta_fit_error_deg": pick(wp1_geometry, "theta_fit_error_deg") if wp1_geometry else pick(metrics, "theta_fit_error_deg"),
+                "theta_fit_abs_error_deg": pick(wp1_geometry, "theta_fit_abs_error_deg") if wp1_geometry else None,
+                "h_sim": pick(wp1_geometry, "h_sim") if wp1_geometry else pick(metrics, "h_sim", "height_sim"),
+                "h_theory": pick(wp1_geometry, "h_theory") if wp1_geometry else pick(metrics, "h_theory"),
+                "a_sim": pick(wp1_geometry, "a_sim") if wp1_geometry else pick(metrics, "a_sim", "contact_radius_sim"),
+                "a_theory": pick(wp1_geometry, "a_theory") if wp1_geometry else pick(metrics, "a_theory"),
+                "volume_sim": pick(wp1_geometry, "volume_sim") if wp1_geometry else pick(metrics, "volume_sim"),
+                "volume_theory": pick(wp1_geometry, "volume_theory") if wp1_geometry else pick(metrics, "volume_theory"),
+                "volume_error": pick(wp1_geometry, "volume_error") if wp1_geometry else pick(metrics, "volume_error"),
                 "height_error": pick(metrics, "height_error"),
                 "contact_radius_error": pick(metrics, "contact_radius_error"),
                 "local_angle_error_mean_deg": pick(metrics, "local_angle_error_mean_deg"),
@@ -314,11 +498,21 @@ def build_case_rows(manifest: dict[str, Any], metrics_root: Path) -> list[dict[s
                 "axial_symmetry_error": pick(metrics, "axial_symmetry_error"),
                 "circumferential_symmetry_error": pick(metrics, "circumferential_symmetry_error"),
                 "contact_line_height_variation": pick(metrics, "contact_line_height_variation"),
-                "internal_void_count": pick(metrics, "internal_void_count", "center_bubble_count"),
+                "internal_void_count": pick(wp1_geometry, "internal_void_count") if wp1_geometry else pick(metrics, "internal_void_count", "center_bubble_count"),
+                "center_bubble_count": pick(wp1_geometry, "center_bubble_count") if wp1_geometry else pick(metrics, "center_bubble_count"),
+                "spurious_current": pick(wp1_geometry, "spurious_current") if wp1_geometry else pick(metrics, "spurious_current", "spurious_current_estimate"),
+                "geometry_status": pick(wp1_geometry, "geometry_status") if wp1_geometry else pick(metrics, "geometry_status"),
+                "geometry_missing_metrics": pick(wp1_geometry, "geometry_missing_metrics") if wp1_geometry else pick(metrics, "geometry_missing_metrics"),
+                "geometry_pending_reason": pick(wp1_geometry, "geometry_pending_reason") if wp1_geometry else pick(metrics, "geometry_pending_reason"),
+                "geometry_source": pick(wp1_geometry, "geometry_source") if wp1_geometry else None,
+                "geometry_theory_status": pick(wp1_geometry, "geometry_theory_status") if wp1_geometry else None,
                 "lower_side_film_fraction": pick(metrics, "lower_side_film_fraction"),
                 "bottom_outer_wall_contamination": pick(metrics, "bottom_outer_wall_contamination"),
                 "write_run_present": pick(metrics, "write_run_present"),
             }
+            if wp1_geometry:
+                fields["height_error"] = pick(wp1_geometry, "height_error")
+                fields["contact_radius_error"] = pick(wp1_geometry, "contact_radius_error")
             for key, value in fields.items():
                 row[key] = value if value is not None and value != "" else unknown()
             classification, reason = classify_track_a_case(row)
@@ -331,11 +525,155 @@ def build_case_rows(manifest: dict[str, Any], metrics_root: Path) -> list[dict[s
     return rows
 
 
+def write_wp1_plane_outputs(out_dir: Path, summary: dict[str, Any], rows: list[dict[str, Any]]) -> None:
+    plane_rows = [
+        row for row in rows
+        if row.get("case_id") in {
+            "track_a_plane_theta020_shadow",
+            "track_a_plane_theta030_shadow",
+            "track_a_plane_theta060_shadow",
+            "track_a_plane_theta090_shadow",
+            "track_a_plane_theta120_shadow",
+        }
+    ]
+    if not plane_rows:
+        return
+
+    keys = [
+        "status",
+        "claim_limit",
+        "case_id",
+        "theta_target_deg",
+        "case_recommendation",
+        "classification_reason",
+        "geometry_status",
+        "geometry_missing_metrics",
+        "theta_fit",
+        "theta_fit_deg",
+        "theta_fit_error_deg",
+        "theta_fit_abs_error_deg",
+        "h_sim",
+        "h_theory",
+        "height_error",
+        "a_sim",
+        "a_theory",
+        "contact_radius_error",
+        "volume_sim",
+        "volume_theory",
+        "volume_error",
+        "phase_mass_relative_change",
+        "rho_relative_change",
+        "max_mach",
+        "nonfinite_total",
+        "normal_limiter_fraction",
+        "vector_limiter_fraction",
+        "internal_void_count",
+        "center_bubble_count",
+        "spurious_current",
+        "metrics_source",
+        "case_xml_source",
+    ]
+    with (out_dir / "wp1_plane_geometry_summary.csv").open("w", newline="", encoding="utf-8") as fh:
+        writer = csv.DictWriter(fh, fieldnames=keys)
+        writer.writeheader()
+        for row in plane_rows:
+            writer.writerow({key: row.get(key, unknown()) for key in keys})
+
+    eligible = [row for row in plane_rows if row.get("case_recommendation") == "eligible_for_short_write"]
+    smoke_ready = WP1_SMOKE_CASES <= {row["case_id"] for row in eligible}
+    payload = {
+        "status": STATUS,
+        "claim_limit": CLAIM_LIMIT,
+        "not_pre_reproduction": True,
+        "not_validation": True,
+        "not_production_fix": True,
+        "solver_physics_modified": False,
+        "simulations_run_by_this_script": False,
+        "wp1_objective": "flat-wall closure from existing Track A shadow outputs",
+        "metrics_root": summary.get("metrics_root"),
+        "selected_cases": [row["case_id"] for row in plane_rows],
+        "eligible_for_short_write": [row["case_id"] for row in eligible],
+        "plane030_and_plane090_eligible": smoke_ready,
+        "short_write_templates_generated": False,
+        "short_write_100_ran": False,
+        "block_reason": (
+            "geometry metrics remain pending"
+            if not eligible
+            else "short-write template generation requires explicit template step"
+        ),
+        "rows": plane_rows,
+    }
+    (out_dir / "wp1_plane_geometry_summary.json").write_text(json.dumps(clean(payload), indent=2), encoding="utf-8")
+
+    lines = [
+        "# WP1 Plane Geometry Summary",
+        "",
+        "Status: `runtime_sanity / exploratory_not_validation`.",
+        "",
+        "This is not PRE reproduction, not validation, and not a production fix.",
+        "No solver physics code was modified and no solver run is launched by this report.",
+        "",
+        "## Scope",
+        "",
+        "Selected flat-wall cases: plane020, plane030, plane060, plane090, plane120.",
+        "Plane150, cylinder, sphere, sphere11, liquid impact, write mode, and 50k runs are excluded.",
+        "",
+        "## Result",
+        "",
+    ]
+    if eligible:
+        lines.append("Eligible for short write:")
+        lines.extend(f"- `{row['case_id']}`" for row in eligible)
+    else:
+        lines.append("No selected flat-wall case is eligible for short write yet.")
+    lines.extend(["", "## Cases", ""])
+    for row in plane_rows:
+        lines.append(
+            f"- `{row['case_id']}`: `{row['case_recommendation']}`; "
+            f"theta_fit={row.get('theta_fit_deg')}; "
+            f"theta_error={row.get('theta_fit_error_deg')}; "
+            f"h_error={row.get('height_error')}; "
+            f"a_error={row.get('contact_radius_error')}; "
+            f"internal_void={row.get('internal_void_count')}; "
+            f"normal_limiter={row.get('normal_limiter_fraction')}; "
+            f"reason={row.get('classification_reason')}"
+        )
+    lines.extend(
+        [
+            "",
+            "## Interpretation",
+            "",
+            "The lightweight Track A metrics include fitted apparent contact angle for the",
+            "flat-wall shadow cases, so WP1 can compute `theta_fit_error_deg`.",
+            "However, the local `runtime_outputs/track_a_overnight_20260613` tree does not",
+            "contain raw VTI/PVTI/PRI/VTK fields or precomputed `h_sim`, `a_sim`,",
+            "`height_error`, `contact_radius_error`, or internal-void metrics.",
+            "Those values are therefore reported as `unknown` and the cases remain",
+            "`geometry_pending` rather than `eligible_for_short_write`.",
+            "",
+            "## Short Write Decision",
+            "",
+        ]
+    )
+    if smoke_ready:
+        lines.append("Plane030 and plane090 are eligible, so a later explicitly approved 100-step short-write smoke may be planned.")
+    else:
+        lines.append("Plane030 and plane090 are not both eligible because required geometry metrics are pending. No 100-step short-write is run.")
+    lines.extend(
+        [
+            "",
+            "No validation claim is made; this remains `runtime_sanity / exploratory_not_validation`.",
+        ]
+    )
+    (out_dir / "wp1_plane_geometry_report.md").write_text("\n".join(lines), encoding="utf-8")
+
+
 def write_report(path: Path, summary: dict[str, Any], rows: list[dict[str, Any]]) -> None:
     counts = summary.get("classification_counts", {})
     ran = [r for r in rows if r.get("metrics_source")]
     pending = [r for r in rows if r.get("case_recommendation") == "pending"]
     blocked = [r for r in rows if r.get("case_recommendation") == "blocked"]
+    geometry_pending = [r for r in rows if r.get("case_recommendation") == "geometry_pending"]
     shadow_pass = [r for r in rows if r.get("case_recommendation") == "shadow_pass"]
     eligible = [r for r in rows if r.get("case_recommendation") == "eligible_for_short_write"]
     lines = [
@@ -357,7 +695,7 @@ def write_report(path: Path, summary: dict[str, Any], rows: list[dict[str, Any]]
         "## Classification Counts",
         "",
     ]
-    for key in ["pending", "incomplete", "blocked", "shadow_pass", "eligible_for_short_write", "short_write_pass"]:
+    for key in ["pending", "incomplete", "blocked", "geometry_pending", "shadow_pass", "eligible_for_short_write", "short_write_pass"]:
         lines.append(f"- `{key}`: {counts.get(key, 0)}")
     lines.extend(
         [
@@ -390,6 +728,12 @@ def write_report(path: Path, summary: dict[str, Any], rows: list[dict[str, Any]]
         lines.append("- none")
     lines.extend(["", "## Shadow Pass", ""])
     lines.extend([f"- `{r['case_id']}`" for r in shadow_pass] or ["- none"])
+    lines.extend(["", "## Geometry Pending", ""])
+    if geometry_pending:
+        for row in geometry_pending:
+            lines.append(f"- `{row['case_id']}`: {row.get('classification_reason')}")
+    else:
+        lines.append("- none")
     lines.extend(["", "## Eligible For Short Write", ""])
     lines.extend([f"- `{r['case_id']}`" for r in eligible] or ["- none"])
     if not eligible:
@@ -474,6 +818,9 @@ def main() -> None:
         if (args.case_group == "all" or row.get("case_group") == args.case_group)
         and selected_by_filter(row, filters)
     ]
+    summary_prefix = args.summary_prefix
+    if summary_prefix == "track_a_summary" and args.case_group != "all":
+        summary_prefix = f"track_a_{args.case_group}_summary"
     summary = {
         "status": STATUS,
         "claim_limit": CLAIM_LIMIT,
@@ -493,9 +840,11 @@ def main() -> None:
         key = row["case_recommendation"]
         summary["classification_counts"][key] = summary["classification_counts"].get(key, 0) + 1
 
-    write_csv(out_dir / f"{args.summary_prefix}.csv", rows)
-    (out_dir / f"{args.summary_prefix}.json").write_text(json.dumps(clean(summary), indent=2), encoding="utf-8")
-    write_report(out_dir / f"{args.summary_prefix.replace('_summary', '_report')}.md", summary, rows)
+    write_csv(out_dir / f"{summary_prefix}.csv", rows)
+    (out_dir / f"{summary_prefix}.json").write_text(json.dumps(clean(summary), indent=2), encoding="utf-8")
+    write_report(out_dir / f"{summary_prefix.replace('_summary', '_report')}.md", summary, rows)
+    if args.case_group in {"plane", "all"}:
+        write_wp1_plane_outputs(out_dir, summary, rows)
     print(json.dumps({"status": STATUS, "rows": len(rows), "out_dir": str(out_dir)}, indent=2))
 
 
