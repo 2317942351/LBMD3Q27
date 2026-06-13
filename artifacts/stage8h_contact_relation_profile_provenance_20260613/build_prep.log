@@ -1,0 +1,53 @@
+BUILD_START 2026-06-13T19:59:54+08:00
+pwd=/home/yuan/src/TCLB_stage8h_contact_relation_and_profile_path_audit_20260613
+ded67cd768cf7e727bd078af139e3ec7895076e5
+ M models/multiphase/d3q27_pf_velocity/Boundary.c.Rt
+ M models/multiphase/d3q27_pf_velocity/Dynamics.R
+ M models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
+ M models/multiphase/d3q27_pf_velocity/conf.mk
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:1455:	Stage8hWriteAllowedFlag = 0.0;
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2150:	real_t stage8h_mode = Stage8hMode;
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2182:	Stage8hWriteAllowedFlag = 0.0;
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2508:CudaDeviceFunction real_t getWallStage8hMode() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2509:	return Stage8hMode;
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2512:CudaDeviceFunction real_t getWallStage8hActualCos() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2516:CudaDeviceFunction real_t getWallStage8hTargetCos() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2520:CudaDeviceFunction real_t getWallStage8hResidualCos() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2524:CudaDeviceFunction real_t getWallStage8hDnTanRaw() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2528:CudaDeviceFunction real_t getWallStage8hDnCosRaw() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2532:CudaDeviceFunction real_t getWallStage8hDnRelaxed() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2536:CudaDeviceFunction real_t getWallStage8hBetaRelaxation() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2540:CudaDeviceFunction real_t getWallStage8hBetaSource() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2544:CudaDeviceFunction real_t getWallStage8hProfileNormal() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2548:CudaDeviceFunction real_t getWallStage8hProfileTargetMismatch() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2552:CudaDeviceFunction real_t getWallStage8hProfileConsistencyWeight() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2556:CudaDeviceFunction real_t getWallStage8hCandidateDemandRatio() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2560:CudaDeviceFunction real_t getWallStage8hCandidateNormalDelta() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2564:CudaDeviceFunction real_t getWallStage8hLimiterEquivalent() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2568:CudaDeviceFunction real_t getWallStage8hCosToTanRatio() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2572:CudaDeviceFunction real_t getWallStage8hEffectiveCap() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2576:CudaDeviceFunction real_t getWallStage8hWriteAllowedFlag() {
+models/multiphase/d3q27_pf_velocity/Boundary.c.Rt:2577:	return Stage8hWriteAllowedFlag(0,0,0);
+models/multiphase/d3q27_pf_velocity/Dynamics.R:187:    AddField("Stage8hWriteAllowedFlag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:379:				AddQuantity(name="WallStage8hMode", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:380:				AddQuantity(name="WallStage8hActualCos", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:381:				AddQuantity(name="WallStage8hTargetCos", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:382:				AddQuantity(name="WallStage8hResidualCos", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:383:				AddQuantity(name="WallStage8hDnTanRaw", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:384:				AddQuantity(name="WallStage8hDnCosRaw", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:385:				AddQuantity(name="WallStage8hDnRelaxed", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:386:				AddQuantity(name="WallStage8hBetaRelaxation", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:387:				AddQuantity(name="WallStage8hBetaSource", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:388:				AddQuantity(name="WallStage8hProfileNormal", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:389:				AddQuantity(name="WallStage8hProfileTargetMismatch", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:390:				AddQuantity(name="WallStage8hProfileConsistencyWeight", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:391:				AddQuantity(name="WallStage8hCandidateDemandRatio", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:392:				AddQuantity(name="WallStage8hCandidateNormalDelta", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:393:				AddQuantity(name="WallStage8hLimiterEquivalent", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:394:				AddQuantity(name="WallStage8hCosToTanRatio", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:395:				AddQuantity(name="WallStage8hEffectiveCap", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:396:				AddQuantity(name="WallStage8hWriteAllowedFlag", unit=1)
+models/multiphase/d3q27_pf_velocity/Dynamics.R:455:	AddSetting(name="Stage8hMode", default=0, comment='Stage8h shadow mode: 0 Stage8g baseline, 1 residual relaxation, 2 cosine residual, 3 profile conflict shadow, 4 combined')
+make_source_rc=0
+make_build_rc=2
+make_build_rc=0

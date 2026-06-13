@@ -1,0 +1,270 @@
+diff --git "a/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt" "b/third_party\\tclb_snapshots\\stage8h_contact_relation_and_profile_path_audit/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+index a3ebd51..5dc9c18 100644
+--- "a/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
++++ "b/third_party\\tclb_snapshots\\stage8h_contact_relation_and_profile_path_audit/models/multiphase/d3q27_pf_velocity/Boundary.c.Rt"
+@@ -1436,6 +1436,23 @@ CudaDeviceFunction void stage8ResetGradientDiagnostics() {
+ 	Stage8gProfileTargetMismatch = 0.0;
+ 	Stage8gProfileConflictSign = 0.0;
+ 	Stage8gWriteAllowedFlag = 0.0;
++	Stage8hActualCos = 0.0;
++	Stage8hTargetCos = 0.0;
++	Stage8hResidualCos = 0.0;
++	Stage8hDnTanRaw = 0.0;
++	Stage8hDnCosRaw = 0.0;
++	Stage8hDnRelaxed = 0.0;
++	Stage8hBetaRelaxation = 0.0;
++	Stage8hBetaSource = 0.0;
++	Stage8hProfileNormal = 0.0;
++	Stage8hProfileTargetMismatch = 0.0;
++	Stage8hProfileConsistencyWeight = 1.0;
++	Stage8hCandidateDemandRatio = 0.0;
++	Stage8hCandidateNormalDelta = 0.0;
++	Stage8hLimiterEquivalent = 0.0;
++	Stage8hCosToTanRatio = 0.0;
++	Stage8hEffectiveCap = 0.0;
++	Stage8hWriteAllowedFlag = 0.0;
+ }
+ 
+ CudaDeviceFunction bool stage8IsPhysicalFluidNode() {
+@@ -2069,8 +2086,9 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 		Stage8LimiterRatio = fabs(dn_limited/dn_try);
+ 	}
+ 	real_t profile_count = 0.0;
++	real_t profile_normal = 0.0;
+ 	if (Stage8gProfileConflictDiag > 0.5) {
+-		real_t profile_normal = stage8gProfileNormalGradient(wall_normal, &profile_count);
++		profile_normal = stage8gProfileNormalGradient(wall_normal, &profile_count);
+ 		if (profile_count > 0.5) {
+ 			Stage8gProfileTargetMismatch = profile_normal - target_normal;
+ 			if (fabs(Stage8gProfileTargetMismatch) > 1e-12) {
+@@ -2084,6 +2102,85 @@ CudaDeviceFunction void stage8eNormalResidualCandidate() {
+ 		}
+ 	}
+ 
++	real_t actual_cos = 0.0;
++	if (grad_mag > minGradient) {
++		actual_cos = normal_raw/grad_mag;
++	}
++	real_t residual_cos = target_cos - actual_cos;
++	real_t dn_cos_raw = Stage8hCosUpdateScale*residual_cos*grad_mag;
++	real_t profile_mismatch = profile_normal - target_normal;
++	real_t profile_scale = fabs(Stage8hProfileMismatchScale);
++	if (profile_scale < 1e-12) {
++		profile_scale = 1e-12;
++	}
++	real_t profile_weight = 1.0;
++	if (profile_count > 0.5) {
++		profile_weight = 1.0/(1.0 + fabs(profile_mismatch)/profile_scale);
++	}
++	real_t beta = Stage8hBetaMax;
++	real_t beta_source = 1.0;
++	if (beta < 0.0) {
++		beta = 0.0;
++	}
++	if (beta > 1.0) {
++		beta = 1.0;
++	}
++	real_t grad_beta = Stage8hKGrad*grad_mag/(fabs(target_normal) + fabs(normal_raw) + 1e-12);
++	grad_beta = stage8ScalarClamp(grad_beta, 0.0, 1.0);
++	if (grad_beta < beta) {
++		beta = grad_beta;
++		beta_source = 2.0;
++	}
++	real_t curvature_penalty = 0.0;
++	if (Stage8DiagSphereRadius > 1e-12 && Stage8RegionTag > 0.5 && Stage8RegionTag < 3.5) {
++		curvature_penalty = IntWidth/(Stage8DiagSphereRadius + 1e-12);
++	}
++	real_t curvature_beta = Stage8hKCurvature/(1.0 + curvature_penalty);
++	curvature_beta = stage8ScalarClamp(curvature_beta, 0.0, 1.0);
++	if (curvature_beta < beta) {
++		beta = curvature_beta;
++		beta_source = 3.0;
++	}
++	if (profile_weight < beta) {
++		beta = profile_weight;
++		beta_source = 4.0;
++	}
++	beta *= w;
++	real_t stage8h_delta = dn_try;
++	real_t stage8h_mode = Stage8hMode;
++	if (stage8h_mode > 0.5 && stage8h_mode < 1.5) {
++		stage8h_delta = beta*dn_raw;
++	} else if (stage8h_mode > 1.5 && stage8h_mode < 2.5) {
++		stage8h_delta = w*dn_cos_raw;
++	} else if (stage8h_mode > 2.5 && stage8h_mode < 3.5) {
++		stage8h_delta = dn_try;
++	} else if (stage8h_mode > 3.5) {
++		stage8h_delta = beta*dn_cos_raw;
++	}
++	Stage8hActualCos = actual_cos;
++	Stage8hTargetCos = target_cos;
++	Stage8hResidualCos = residual_cos;
++	Stage8hDnTanRaw = dn_raw;
++	Stage8hDnCosRaw = dn_cos_raw;
++	Stage8hDnRelaxed = stage8h_delta;
++	Stage8hBetaRelaxation = beta;
++	Stage8hBetaSource = beta_source;
++	Stage8hProfileNormal = profile_normal;
++	Stage8hProfileTargetMismatch = profile_mismatch;
++	Stage8hProfileConsistencyWeight = profile_weight;
++	Stage8hCandidateNormalDelta = stage8h_delta;
++	Stage8hEffectiveCap = cap;
++	if (cap > 1e-30) {
++		Stage8hCandidateDemandRatio = fabs(stage8h_delta)/cap;
++		if (fabs(stage8h_delta) > cap) {
++			Stage8hLimiterEquivalent = 1.0;
++		}
++	}
++	if (fabs(dn_raw) > 1e-12) {
++		Stage8hCosToTanRatio = fabs(dn_cos_raw/dn_raw);
++	}
++	Stage8hWriteAllowedFlag = 0.0;
++
+ 	vector_t corrected = {
+ 		grad.x + dn_limited*wall_normal.x,
+ 		grad.y + dn_limited*wall_normal.y,
+@@ -2408,6 +2505,78 @@ CudaDeviceFunction real_t getWallStage8gWriteAllowedFlag() {
+ 	return Stage8gWriteAllowedFlag(0,0,0);
+ }
+ 
++CudaDeviceFunction real_t getWallStage8hMode() {
++	return Stage8hMode;
++}
++
++CudaDeviceFunction real_t getWallStage8hActualCos() {
++	return Stage8hActualCos(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hTargetCos() {
++	return Stage8hTargetCos(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hResidualCos() {
++	return Stage8hResidualCos(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hDnTanRaw() {
++	return Stage8hDnTanRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hDnCosRaw() {
++	return Stage8hDnCosRaw(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hDnRelaxed() {
++	return Stage8hDnRelaxed(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hBetaRelaxation() {
++	return Stage8hBetaRelaxation(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hBetaSource() {
++	return Stage8hBetaSource(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hProfileNormal() {
++	return Stage8hProfileNormal(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hProfileTargetMismatch() {
++	return Stage8hProfileTargetMismatch(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hProfileConsistencyWeight() {
++	return Stage8hProfileConsistencyWeight(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hCandidateDemandRatio() {
++	return Stage8hCandidateDemandRatio(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hCandidateNormalDelta() {
++	return Stage8hCandidateNormalDelta(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hLimiterEquivalent() {
++	return Stage8hLimiterEquivalent(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hCosToTanRatio() {
++	return Stage8hCosToTanRatio(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hEffectiveCap() {
++	return Stage8hEffectiveCap(0,0,0);
++}
++
++CudaDeviceFunction real_t getWallStage8hWriteAllowedFlag() {
++	return Stage8hWriteAllowedFlag(0,0,0);
++}
++
+ CudaDeviceFunction void calcPhaseGrad(){
+     vector_t gradPhi;
+     <?R
+diff --git "a/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R" "b/third_party\\tclb_snapshots\\stage8h_contact_relation_and_profile_path_audit/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+index 7f810f1..6bfb00b 100644
+--- "a/third_party\\tclb_snapshots\\stage8g_cap_contract_revision_diag/models/multiphase/d3q27_pf_velocity/Dynamics.R"
++++ "b/third_party\\tclb_snapshots\\stage8h_contact_relation_and_profile_path_audit/models/multiphase/d3q27_pf_velocity/Dynamics.R"
+@@ -168,6 +168,23 @@ if (Options$geometric){
+     AddField("Stage8gProfileTargetMismatch", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8gProfileConflictSign", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     AddField("Stage8gWriteAllowedFlag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hActualCos", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hTargetCos", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hResidualCos", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hDnTanRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hDnCosRaw", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hDnRelaxed", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hBetaRelaxation", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hBetaSource", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hProfileNormal", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hProfileTargetMismatch", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hProfileConsistencyWeight", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hCandidateDemandRatio", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hCandidateNormalDelta", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hLimiterEquivalent", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hCosToTanRatio", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hEffectiveCap", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
++    AddField("Stage8hWriteAllowedFlag", stencil3d=1, group="gradPhi", optimise_for_static_access = FALSE)
+     # Fake field, to simply copy field values to PhaseF instead
+     # of accessing them directly from PhaseF field
+     # this is needed for the cases when PhaseF needs to be accessed in the dynamic manner
+@@ -359,6 +376,24 @@ if (Options$thermo){
+ 				AddQuantity(name="WallStage8gProfileTargetMismatch", unit=1)
+ 				AddQuantity(name="WallStage8gProfileConflictSign", unit=1)
+ 				AddQuantity(name="WallStage8gWriteAllowedFlag", unit=1)
++				AddQuantity(name="WallStage8hMode", unit=1)
++				AddQuantity(name="WallStage8hActualCos", unit=1)
++				AddQuantity(name="WallStage8hTargetCos", unit=1)
++				AddQuantity(name="WallStage8hResidualCos", unit=1)
++				AddQuantity(name="WallStage8hDnTanRaw", unit=1)
++				AddQuantity(name="WallStage8hDnCosRaw", unit=1)
++				AddQuantity(name="WallStage8hDnRelaxed", unit=1)
++				AddQuantity(name="WallStage8hBetaRelaxation", unit=1)
++				AddQuantity(name="WallStage8hBetaSource", unit=1)
++				AddQuantity(name="WallStage8hProfileNormal", unit=1)
++				AddQuantity(name="WallStage8hProfileTargetMismatch", unit=1)
++				AddQuantity(name="WallStage8hProfileConsistencyWeight", unit=1)
++				AddQuantity(name="WallStage8hCandidateDemandRatio", unit=1)
++				AddQuantity(name="WallStage8hCandidateNormalDelta", unit=1)
++				AddQuantity(name="WallStage8hLimiterEquivalent", unit=1)
++				AddQuantity(name="WallStage8hCosToTanRatio", unit=1)
++				AddQuantity(name="WallStage8hEffectiveCap", unit=1)
++				AddQuantity(name="WallStage8hWriteAllowedFlag", unit=1)
+ 			}
+ 		}
+ 	if (Options$staircaseimp) {
+@@ -417,6 +452,12 @@ if (Options$thermo){
+ 	AddSetting(name="Stage8gKTangent", default=0.5, comment='Stage8g revised cap scale multiplier for tangent magnitude')
+ 	AddSetting(name="Stage8gTanCap", default=4.0, comment='Stage8g low-angle tan regularization cap')
+ 	AddSetting(name="Stage8gProfileConflictDiag", default=1, comment='Stage8g profile-path conflict diagnostic switch')
++	AddSetting(name="Stage8hMode", default=0, comment='Stage8h shadow mode: 0 Stage8g baseline, 1 residual relaxation, 2 cosine residual, 3 profile conflict shadow, 4 combined')
++	AddSetting(name="Stage8hBetaMax", default=0.25, comment='Stage8h maximum residual-relaxation beta for shadow candidate')
++	AddSetting(name="Stage8hKGrad", default=1.0, comment='Stage8h gradient-scale multiplier for residual-relaxation beta')
++	AddSetting(name="Stage8hKCurvature", default=1.0, comment='Stage8h curvature relaxation multiplier for residual-relaxation beta')
++	AddSetting(name="Stage8hProfileMismatchScale", default=0.05, comment='Stage8h profile consistency weight mismatch scale')
++	AddSetting(name="Stage8hCosUpdateScale", default=1.0, comment='Stage8h cosine-residual update multiplier')
+ 	##SPECIAL INITIALISATIONS
+ 	# RTI
+ 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')

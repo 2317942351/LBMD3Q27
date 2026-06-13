@@ -5,7 +5,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $forbiddenPatterns = @(
-  "*.vti", "*.pvti", "*.pri",
+  "*.vti", "*.pvti", "*.pri", "*.vtk",
   "*.exe", "*.dll", "*.so", "*.o", "*.obj", "*.lib", "*.a",
   "*.tar", "*.tgz", "*.gz", "*.zip", "*.7z", "*.rar",
   "*.pem", "*.key", ".env"

@@ -1,0 +1,94 @@
+LAUNCH_PREP 2026-06-13T20:16:55+08:00
+status=runtime_sanity
+claim_limit=exploratory_not_validation
+purpose=flat_wall_spherical_cap_stage8h_shadow
+run_root=/media/yuan/新加卷1/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/flat
+case_staging=/tmp/flat_wall_cap_stage8h_contact_relation_cases
+queue_script=/tmp/hm570_stage8h_run_queue_20260613.sh
+gpu_a=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2
+gpu_b=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7
+delete_raw_after_analysis=1
+QUEUE_START 2026-06-13T20:16:55+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 kind=flat
+status=runtime_sanity
+claim_limit=exploratory_not_validation
+run_root=/media/yuan/新加卷1/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/flat
+case_staging=/tmp/flat_wall_cap_stage8h_contact_relation_cases
+case_list=/media/yuan/新加卷1/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/flat/case_queue_b.txt
+binary=/home/yuan/src/TCLB_stage8h_contact_relation_and_profile_path_audit_20260613/CLB/d3q27_pf_velocity_q27_geometric/main
+cuda_device_order=PCI_BUS_ID
+cuda_visible_devices=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7
+QUEUE_START 2026-06-13T20:16:55+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 kind=flat
+status=runtime_sanity
+claim_limit=exploratory_not_validation
+run_root=/media/yuan/新加卷1/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/flat
+case_staging=/tmp/flat_wall_cap_stage8h_contact_relation_cases
+case_list=/media/yuan/新加卷1/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/flat/case_queue_a.txt
+binary=/home/yuan/src/TCLB_stage8h_contact_relation_and_profile_path_audit_20260613/CLB/d3q27_pf_velocity_q27_geometric/main
+cuda_device_order=PCI_BUS_ID
+cuda_visible_devices=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2
+f083f1b436b137165a7dec2b49cdb77529a37c05de0105f7616bc2288eadf2e5  /home/yuan/src/TCLB_stage8h_contact_relation_and_profile_path_audit_20260613/CLB/d3q27_pf_velocity_q27_geometric/main
+f083f1b436b137165a7dec2b49cdb77529a37c05de0105f7616bc2288eadf2e5  /home/yuan/src/TCLB_stage8h_contact_relation_and_profile_path_audit_20260613/CLB/d3q27_pf_velocity_q27_geometric/main
+CASE_START 2026-06-13T20:16:55+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode0
+CASE_START 2026-06-13T20:16:55+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall005_stage8h_mode1
+CASE_END 2026-06-13T20:18:03+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode0 rc=0
+CASE_END 2026-06-13T20:18:04+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall005_stage8h_mode1 rc=0
+RAW_DELETE 2026-06-13T20:21:31+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall005_stage8h_mode1 count=6
+CASE_START 2026-06-13T20:21:31+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall005_stage8h_mode3
+RAW_DELETE 2026-06-13T20:21:32+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode0 count=6
+CASE_START 2026-06-13T20:21:32+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode2
+CASE_END 2026-06-13T20:22:02+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall005_stage8h_mode3 rc=0
+CASE_END 2026-06-13T20:22:03+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode2 rc=0
+RAW_DELETE 2026-06-13T20:25:28+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode2 count=6
+RAW_DELETE 2026-06-13T20:25:28+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall005_stage8h_mode3 count=6
+CASE_START 2026-06-13T20:25:28+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode4
+CASE_START 2026-06-13T20:25:28+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode0
+CASE_END 2026-06-13T20:25:56+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode4 rc=0
+CASE_END 2026-06-13T20:25:57+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode0 rc=0
+RAW_DELETE 2026-06-13T20:29:24+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall005_stage8h_mode4 count=6
+CASE_START 2026-06-13T20:29:24+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall008_stage8h_mode1
+RAW_DELETE 2026-06-13T20:29:25+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode0 count=6
+CASE_START 2026-06-13T20:29:25+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode2
+CASE_END 2026-06-13T20:29:54+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall008_stage8h_mode1 rc=0
+CASE_END 2026-06-13T20:29:55+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode2 rc=0
+RAW_DELETE 2026-06-13T20:33:22+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall008_stage8h_mode1 count=6
+CASE_START 2026-06-13T20:33:22+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall008_stage8h_mode3
+RAW_DELETE 2026-06-13T20:33:23+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode2 count=6
+CASE_START 2026-06-13T20:33:23+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode4
+CASE_END 2026-06-13T20:33:51+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall008_stage8h_mode3 rc=0
+CASE_END 2026-06-13T20:33:53+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode4 rc=0
+RAW_DELETE 2026-06-13T20:37:22+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall008_stage8h_mode4 count=6
+CASE_START 2026-06-13T20:37:22+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall011_stage8h_mode1
+RAW_DELETE 2026-06-13T20:37:22+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall008_stage8h_mode3 count=6
+CASE_START 2026-06-13T20:37:22+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode0
+CASE_END 2026-06-13T20:37:51+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode0 rc=0
+CASE_END 2026-06-13T20:37:51+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall011_stage8h_mode1 rc=0
+RAW_DELETE 2026-06-13T20:41:27+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode0 count=6
+CASE_START 2026-06-13T20:41:27+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode2
+RAW_DELETE 2026-06-13T20:41:29+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall011_stage8h_mode1 count=6
+CASE_START 2026-06-13T20:41:29+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall011_stage8h_mode3
+CASE_END 2026-06-13T20:41:57+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode2 rc=0
+CASE_END 2026-06-13T20:41:59+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall011_stage8h_mode3 rc=0
+RAW_DELETE 2026-06-13T20:45:27+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode2 count=6
+CASE_START 2026-06-13T20:45:27+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode4
+RAW_DELETE 2026-06-13T20:45:29+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall011_stage8h_mode3 count=6
+CASE_START 2026-06-13T20:45:29+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode0
+CASE_END 2026-06-13T20:45:57+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode4 rc=0
+CASE_END 2026-06-13T20:45:59+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode0 rc=0
+RAW_DELETE 2026-06-13T20:49:26+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall011_stage8h_mode4 count=6
+CASE_START 2026-06-13T20:49:26+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall015_stage8h_mode1
+RAW_DELETE 2026-06-13T20:49:29+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode0 count=6
+CASE_START 2026-06-13T20:49:29+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode2
+CASE_END 2026-06-13T20:49:56+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall015_stage8h_mode1 rc=0
+CASE_END 2026-06-13T20:49:59+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode2 rc=0
+RAW_DELETE 2026-06-13T20:53:26+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall015_stage8h_mode1 count=6
+CASE_START 2026-06-13T20:53:26+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall015_stage8h_mode3
+RAW_DELETE 2026-06-13T20:53:27+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode2 count=6
+CASE_START 2026-06-13T20:53:27+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode4
+CASE_END 2026-06-13T20:53:55+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall015_stage8h_mode3 rc=0
+CASE_END 2026-06-13T20:53:57+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode4 rc=0
+RAW_DELETE 2026-06-13T20:57:24+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall015_stage8h_mode3 count=6
+CASE_START 2026-06-13T20:57:24+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall020_stage8h_mode0
+RAW_DELETE 2026-06-13T20:57:25+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall015_stage8h_mode4 count=6
+CASE_START 2026-06-13T20:57:25+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall020_stage8h_mode1
+CASE_END 2026-06-13T20:57:54+08:00 queue=flat_a gpu=GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2 case=cap_theta030_wall020_stage8h_mode0 rc=0
+CASE_END 2026-06-13T20:57:56+08:00 queue=flat_b gpu=GPU-2abee638-4460-b364-cd98-08cb6eaf11f7 case=cap_theta030_wall020_stage8h_mode1 rc=0

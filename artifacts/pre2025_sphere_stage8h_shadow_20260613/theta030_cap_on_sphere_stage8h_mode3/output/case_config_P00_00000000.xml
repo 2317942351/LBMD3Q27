@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<CLBConfig version="2.0" output="/media/yuan/新加卷1/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/sphere/theta030_cap_on_sphere_stage8h_mode3/output/" permissive="true">
+	<Geometry nx="80" ny="80" nz="180">
+		<MRT>
+			<Box />
+		</MRT>
+		<Wall mask="ALL" name="OuterDomain">
+			<Box nx="1" />
+			<Box dx="-1" />
+			<Box ny="1" />
+			<Box dy="-1" />
+			<Box nz="1" />
+			<Box dz="-1" />
+		</Wall>
+		<Wall mask="ALL" name="SolidSphere">
+			<Sphere dx="16" nx="48" dy="16" ny="48" dz="24" nz="48" />
+		</Wall>
+	</Geometry>
+	<Model>
+		<Param name="Density_h" value="1" />
+		<Param name="Density_l" value="0.001" />
+		<Param name="Viscosity_h" value="0.09" />
+		<Param name="Viscosity_l" value="0.1" />
+		<Param name="tauUpdate" value="3" />
+		<Param name="sigma" value="5e-05" />
+		<Param name="M" value="0.1" />
+		<Param name="IntWidth" value="6" />
+		<Param name="Radius" value="0" />
+		<Param name="CenterX" value="40" />
+		<Param name="CenterY" value="40" />
+		<Param name="CenterZ" value="96" />
+		<Param name="BubbleType" value="1" />
+		<Param name="SphereCapInit" value="1" />
+		<Param name="SphereCapInitParentRadius" value="29.04530453814458" />
+		<Param name="SphereCapInitCenterX" value="40" />
+		<Param name="SphereCapInitCenterY" value="40" />
+		<Param name="SphereCapInitCenterZ" value="62.56842748413523" />
+		<Param name="SphereCapInitSolidCenterX" value="40" />
+		<Param name="SphereCapInitSolidCenterY" value="40" />
+		<Param name="SphereCapInitSolidCenterZ" value="48" />
+		<Param name="SphereCapInitSolidRadius" value="24" />
+		<Param name="VelocityX" value="0.0" />
+		<Param name="VelocityY" value="0.0" />
+		<Param name="VelocityZ" value="0.0" />
+		<Param name="GravitationX" value="0.0" />
+		<Param name="GravitationY" value="0.0" />
+		<Param name="GravitationZ" value="0.0" />
+		<Param name="BuoyancyX" value="0.0" />
+		<Param name="BuoyancyY" value="0.0" />
+		<Param name="BuoyancyZ" value="0.0" />
+		<Param name="radAngle" value="90d" />
+		<Param name="radAngle" value="90d" zone="OuterDomain" />
+		<Param name="radAngle" value="11d" zone="SolidSphere" />
+		<Param name="minGradient" value="1e-08" />
+		<Param name="Stage8GradientWettingMode" value="0" />
+		<Param name="Stage8OperatorMode" value="1" />
+		<Param name="Stage8CandidateVersion" value="8.5" />
+		<Param name="Stage8UseLocalWallAngle" value="1" />
+		<Param name="Stage8UseWallGeomNormal" value="1" />
+		<Param name="Stage8NormalDotMin" value="0.25" />
+		<Param name="Stage8MaxGradDelta" value="0.25" />
+		<Param name="Stage8MaxNormalDelta" value="0.05" />
+		<Param name="Stage8MaxNormalDeltaRatio" value="0.5" />
+		<Param name="Stage8UseSmoothActiveWeight" value="1" />
+		<Param name="Stage8ActiveCMin" value="0.02" />
+		<Param name="Stage8ActiveCSoftWidth" value="0.05" />
+		<Param name="Stage8ActiveGradMin" value="1e-06" />
+		<Param name="Stage8ActiveTangentMin" value="1e-08" />
+		<Param name="Stage8TangentSoftMin" value="0.01" />
+		<Param name="Stage8RelaxationTau" value="1" />
+		<Param name="Stage8CurvatureRelaxation" value="1" />
+		<Param name="Stage8DiagSphereCenterX" value="40" />
+		<Param name="Stage8DiagSphereCenterY" value="40" />
+		<Param name="Stage8DiagSphereCenterZ" value="48" />
+		<Param name="Stage8DiagSphereRadius" value="24" />
+		<Param name="Stage8gMode" value="3" />
+		<Param name="Stage8gNormalFloor" value="0.02" />
+		<Param name="Stage8gKTarget" value="0.5" />
+		<Param name="Stage8gKTangent" value="0.5" />
+		<Param name="Stage8gTanCap" value="4" />
+		<Param name="Stage8gProfileConflictDiag" value="1" />
+		<Param name="Stage8hMode" value="3" />
+		<Param name="Stage8hBetaMax" value="0.25" />
+		<Param name="Stage8hKGrad" value="1" />
+		<Param name="Stage8hKCurvature" value="1" />
+		<Param name="Stage8hProfileMismatchScale" value="0.05" />
+		<Param name="Stage8hCosUpdateScale" value="1" />
+	</Model>
+	<VTK what="PhaseField,U,P,Rho,BOUNDARY,WallBCPath,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag,WallStage8eDnRaw,WallStage8eDnTry,WallStage8eDnLimited,WallStage8eAbsCap,WallStage8eRatioCap,WallStage8eEffectiveCap,WallStage8eCapSource,WallStage8eCapDemandRatio,WallStage8eNormalRawAbs,WallStage8eTargetNormalAbs,WallStage8eTargetMinusRawAbs,WallStage8eSmoothWeightC,WallStage8eSmoothWeightG,WallStage8eSmoothWeightT,WallStage8eSmoothWeightTotal,WallStage8eTanCoeffTimesTangent,WallStage8eLimiterClass,WallStage8eWallProfileConflict,WallStage8gMode,WallStage8gScaleRawNormal,WallStage8gScaleTarget,WallStage8gScaleTangent,WallStage8gScaleFloor,WallStage8gEffectiveScale,WallStage8gTanRaw,WallStage8gTanEff,WallStage8gRegularizationRatio,WallStage8gCapSource,WallStage8gCapDemandRatio,WallStage8gProfileTargetMismatch,WallStage8gProfileConflictSign,WallStage8gWriteAllowedFlag,WallStage8hMode,WallStage8hActualCos,WallStage8hTargetCos,WallStage8hResidualCos,WallStage8hDnTanRaw,WallStage8hDnCosRaw,WallStage8hDnRelaxed,WallStage8hBetaRelaxation,WallStage8hBetaSource,WallStage8hProfileNormal,WallStage8hProfileTargetMismatch,WallStage8hProfileConsistencyWeight,WallStage8hCandidateDemandRatio,WallStage8hCandidateNormalDelta,WallStage8hLimiterEquivalent,WallStage8hCosToTanRatio,WallStage8hEffectiveCap,WallStage8hWriteAllowedFlag" />
+	<Log Iterations="100" />
+	<Failcheck Iterations="100" />
+	<Solve Iterations="100">
+		<VTK Iterations="100" what="PhaseField,U,P,Rho,BOUNDARY,WallBCPath,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag,WallStage8eDnRaw,WallStage8eDnTry,WallStage8eDnLimited,WallStage8eAbsCap,WallStage8eRatioCap,WallStage8eEffectiveCap,WallStage8eCapSource,WallStage8eCapDemandRatio,WallStage8eNormalRawAbs,WallStage8eTargetNormalAbs,WallStage8eTargetMinusRawAbs,WallStage8eSmoothWeightC,WallStage8eSmoothWeightG,WallStage8eSmoothWeightT,WallStage8eSmoothWeightTotal,WallStage8eTanCoeffTimesTangent,WallStage8eLimiterClass,WallStage8eWallProfileConflict,WallStage8gMode,WallStage8gScaleRawNormal,WallStage8gScaleTarget,WallStage8gScaleTangent,WallStage8gScaleFloor,WallStage8gEffectiveScale,WallStage8gTanRaw,WallStage8gTanEff,WallStage8gRegularizationRatio,WallStage8gCapSource,WallStage8gCapDemandRatio,WallStage8gProfileTargetMismatch,WallStage8gProfileConflictSign,WallStage8gWriteAllowedFlag,WallStage8hMode,WallStage8hActualCos,WallStage8hTargetCos,WallStage8hResidualCos,WallStage8hDnTanRaw,WallStage8hDnCosRaw,WallStage8hDnRelaxed,WallStage8hBetaRelaxation,WallStage8hBetaSource,WallStage8hProfileNormal,WallStage8hProfileTargetMismatch,WallStage8hProfileConsistencyWeight,WallStage8hCandidateDemandRatio,WallStage8hCandidateNormalDelta,WallStage8hLimiterEquivalent,WallStage8hCosToTanRatio,WallStage8hEffectiveCap,WallStage8hWriteAllowedFlag" />
+		<Log Iterations="100" />
+		<Failcheck Iterations="100" />
+	</Solve>
+	<Solve Iterations="900">
+		<VTK Iterations="900" what="PhaseField,U,P,Rho,BOUNDARY,WallBCPath,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag,WallStage8eDnRaw,WallStage8eDnTry,WallStage8eDnLimited,WallStage8eAbsCap,WallStage8eRatioCap,WallStage8eEffectiveCap,WallStage8eCapSource,WallStage8eCapDemandRatio,WallStage8eNormalRawAbs,WallStage8eTargetNormalAbs,WallStage8eTargetMinusRawAbs,WallStage8eSmoothWeightC,WallStage8eSmoothWeightG,WallStage8eSmoothWeightT,WallStage8eSmoothWeightTotal,WallStage8eTanCoeffTimesTangent,WallStage8eLimiterClass,WallStage8eWallProfileConflict,WallStage8gMode,WallStage8gScaleRawNormal,WallStage8gScaleTarget,WallStage8gScaleTangent,WallStage8gScaleFloor,WallStage8gEffectiveScale,WallStage8gTanRaw,WallStage8gTanEff,WallStage8gRegularizationRatio,WallStage8gCapSource,WallStage8gCapDemandRatio,WallStage8gProfileTargetMismatch,WallStage8gProfileConflictSign,WallStage8gWriteAllowedFlag,WallStage8hMode,WallStage8hActualCos,WallStage8hTargetCos,WallStage8hResidualCos,WallStage8hDnTanRaw,WallStage8hDnCosRaw,WallStage8hDnRelaxed,WallStage8hBetaRelaxation,WallStage8hBetaSource,WallStage8hProfileNormal,WallStage8hProfileTargetMismatch,WallStage8hProfileConsistencyWeight,WallStage8hCandidateDemandRatio,WallStage8hCandidateNormalDelta,WallStage8hLimiterEquivalent,WallStage8hCosToTanRatio,WallStage8hEffectiveCap,WallStage8hWriteAllowedFlag" />
+		<Log Iterations="900" />
+		<Failcheck Iterations="900" />
+	</Solve>
+	<Run model="d3q27_pf_velocity_q27_geometric">
+		<Code version="ded67cd" precision="double" cross="GPU" />
+	</Run>
+</CLBConfig>

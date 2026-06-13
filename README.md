@@ -35,7 +35,8 @@ Read in this order:
 17. `docs/stage8e_normal_residual_only_wetting_candidate_20260613.md`
 18. `docs/stage8f_normal_limiter_root_cause_diag_20260613.md`
 19. `docs/stage8g_cap_contract_revision_diag_20260613.md`
-20. `docs/index_current_stage.md`
+20. `docs/stage8h_contact_relation_and_profile_path_audit_20260613.md`
+21. `docs/index_current_stage.md`
 
 ## Source Layout
 
@@ -55,6 +56,7 @@ Read in this order:
 - `third_party/tclb_snapshots/stage8e_normal_residual_only_wetting_candidate/`: Stage8e normal-residual-only candidate lane.
 - `third_party/tclb_snapshots/stage8f_normal_limiter_root_cause_diag/`: Stage8f normal-limiter root-cause diagnostic lane.
 - `third_party/tclb_snapshots/stage8g_cap_contract_revision_diag/`: Stage8g cap-contract and low-angle regularization shadow diagnostic lane.
+- `third_party/tclb_snapshots/stage8h_contact_relation_and_profile_path_audit/`: Stage8h contact-relation and wall-profile-path shadow diagnostic lane.
 - `third_party/tclb_snapshots/patches/`: diffs against the upstream snapshot.
 - `scripts/`: local generators, postprocessors, audits, and HM570 runners.
 - `cases/`: XML case definitions and manifests.

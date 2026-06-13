@@ -1,0 +1,40 @@
+{
+  "status": "runtime_sanity",
+  "claim_limit": "runtime_sanity / exploratory_not_validation only",
+  "case_id": "theta030_cap_on_sphere_stage8h_mode4",
+  "remote_case": "/media/yuan/\u65b0\u52a0\u53771/RUNS/runs/stage8/stage8h_contact_relation_and_profile_path_audit_20260613/sphere/theta030_cap_on_sphere_stage8h_mode4",
+  "init_kind": "cap_on_sphere_approx",
+  "stage8g_mode": 3,
+  "stage8h_mode": 4,
+  "operator_mode": 1.0,
+  "candidate_version": 8.5,
+  "domain": [
+    80,
+    80,
+    180
+  ],
+  "solid_center": [
+    40.0,
+    40.0,
+    48.0
+  ],
+  "solid_radius": 24.0,
+  "bottom_gap_lu": 24.0,
+  "outer_rad_angle_deg": 90.0,
+  "sphere_rad_angle_deg": 11.0,
+  "mobility": 0.1,
+  "int_width": 6.0,
+  "steps": 1000,
+  "vtk_expected_steps": [
+    0,
+    100,
+    1000
+  ],
+  "vtk_what": "PhaseField,U,P,Rho,BOUNDARY,WallBCPath,WallStage8GradMode,WallStage8ActiveWeight,WallStage8NormalGradRaw,WallStage8NormalGradTarget,WallStage8ContactResidual,WallStage8TangentGradMag,WallStage8TargetCos,WallStage8GradWriteDeltaMag,WallStage8LimiterReason,WallStage8LocalWallAngle,WallStage8LocalWallNormal,WallStage8FluidWallAngle,WallStage8FluidWallNormal,WallStage8FluidWallDataCount,WallStage8GradCandidate,WallStage8GradCandidateUse,WallStage8NormalAgreement,WallStage8UsedGeomNormal,WallStage8TanCoeffLocal,WallStage8ThetaLocal,WallStage8PhaseC,WallStage8GradMagRaw,WallStage8TangentGradRaw,WallStage8TargetNormalGrad,WallStage8NormalDeltaRaw,WallStage8NormalDeltaLimited,WallStage8VectorDeltaRawMag,WallStage8VectorDeltaLimitedMag,WallStage8NormalLimiterHit,WallStage8VectorLimiterHit,WallStage8LimiterRatio,WallStage8RegionTag,WallStage8SphereRadialDot,WallStage8ContactBandTag,WallStage8eDnRaw,WallStage8eDnTry,WallStage8eDnLimited,WallStage8eAbsCap,WallStage8eRatioCap,WallStage8eEffectiveCap,WallStage8eCapSource,WallStage8eCapDemandRatio,WallStage8eNormalRawAbs,WallStage8eTargetNormalAbs,WallStage8eTargetMinusRawAbs,WallStage8eSmoothWeightC,WallStage8eSmoothWeightG,WallStage8eSmoothWeightT,WallStage8eSmoothWeightTotal,WallStage8eTanCoeffTimesTangent,WallStage8eLimiterClass,WallStage8eWallProfileConflict,WallStage8gMode,WallStage8gScaleRawNormal,WallStage8gScaleTarget,WallStage8gScaleTangent,WallStage8gScaleFloor,WallStage8gEffectiveScale,WallStage8gTanRaw,WallStage8gTanEff,WallStage8gRegularizationRatio,WallStage8gCapSource,WallStage8gCapDemandRatio,WallStage8gProfileTargetMismatch,WallStage8gProfileConflictSign,WallStage8gWriteAllowedFlag,WallStage8hMode,WallStage8hActualCos,WallStage8hTargetCos,WallStage8hResidualCos,WallStage8hDnTanRaw,WallStage8hDnCosRaw,WallStage8hDnRelaxed,WallStage8hBetaRelaxation,WallStage8hBetaSource,WallStage8hProfileNormal,WallStage8hProfileTargetMismatch,WallStage8hProfileConsistencyWeight,WallStage8hCandidateDemandRatio,WallStage8hCandidateNormalDelta,WallStage8hLimiterEquivalent,WallStage8hCosToTanRatio,WallStage8hEffectiveCap,WallStage8hWriteAllowedFlag",
+  "diagnostic_note": "approximate parent-sphere cap initializer, not a theoretical equilibrium solution",
+  "volume_equivalent_drop_radius": 24.0,
+  "target_theta_deg": 30.0,
+  "parent_radius": 29.045304538144578,
+  "parent_center_distance": 14.568427484135233,
+  "parent_center_z": 62.568427484135235
+}

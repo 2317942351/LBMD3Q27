@@ -1,0 +1,80 @@
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:228:Stage8hWriteAllowedFlag [ -1|1  , -1|1  , -1|1  ] |   | Stage8hWriteAllowedFlag 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:281:Stage8hMode                                   |   | Stage8h shadow mode: 0 Stage8g baseline, 1 residual relaxation, 2 cosine residual, 3 profile conflict shadow, 4 combined 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:521:WallStage8hMode                     [      1] |   | WallStage8hMode 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:522:WallStage8hActualCos                [      1] |   | WallStage8hActualCos 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:523:WallStage8hTargetCos                [      1] |   | WallStage8hTargetCos 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:524:WallStage8hResidualCos              [      1] |   | WallStage8hResidualCos 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:525:WallStage8hDnTanRaw                 [      1] |   | WallStage8hDnTanRaw 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:526:WallStage8hDnCosRaw                 [      1] |   | WallStage8hDnCosRaw 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:527:WallStage8hDnRelaxed                [      1] |   | WallStage8hDnRelaxed 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:528:WallStage8hBetaRelaxation           [      1] |   | WallStage8hBetaRelaxation 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:529:WallStage8hBetaSource               [      1] |   | WallStage8hBetaSource 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:530:WallStage8hProfileNormal            [      1] |   | WallStage8hProfileNormal 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:531:WallStage8hProfileTargetMismatch    [      1] |   | WallStage8hProfileTargetMismatch 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:532:WallStage8hProfileConsistencyWeight [      1] |   | WallStage8hProfileConsistencyWeight 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:533:WallStage8hCandidateDemandRatio     [      1] |   | WallStage8hCandidateDemandRatio 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:534:WallStage8hCandidateNormalDelta     [      1] |   | WallStage8hCandidateNormalDelta 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:535:WallStage8hLimiterEquivalent        [      1] |   | WallStage8hLimiterEquivalent 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:536:WallStage8hCosToTanRatio            [      1] |   | WallStage8hCosToTanRatio 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:537:WallStage8hEffectiveCap             [      1] |   | WallStage8hEffectiveCap 
+CLB/d3q27_pf_velocity_q27_geometric/SUMMARY:538:WallStage8hWriteAllowedFlag         [      1] |   | WallStage8hWriteAllowedFlag 
+CLB/d3q27_pf_velocity_q27_geometric/Global.cpp:97:			CudaCopyToConstant("Stage8hMode", Stage8hMode, &val, sizeof(real_t)); 
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2100:        debug1("Creating Catalyst VTK object for WallStage8hMode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2103:        myArray->SetName("WallStage8hMode");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2116:        debug1("Creating Catalyst VTK object for WallStage8hActualCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2119:        myArray->SetName("WallStage8hActualCos");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2132:        debug1("Creating Catalyst VTK object for WallStage8hTargetCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2135:        myArray->SetName("WallStage8hTargetCos");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2148:        debug1("Creating Catalyst VTK object for WallStage8hResidualCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2151:        myArray->SetName("WallStage8hResidualCos");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2164:        debug1("Creating Catalyst VTK object for WallStage8hDnTanRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2167:        myArray->SetName("WallStage8hDnTanRaw");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2180:        debug1("Creating Catalyst VTK object for WallStage8hDnCosRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2183:        myArray->SetName("WallStage8hDnCosRaw");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2196:        debug1("Creating Catalyst VTK object for WallStage8hDnRelaxed\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2199:        myArray->SetName("WallStage8hDnRelaxed");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2212:        debug1("Creating Catalyst VTK object for WallStage8hBetaRelaxation\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2215:        myArray->SetName("WallStage8hBetaRelaxation");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2228:        debug1("Creating Catalyst VTK object for WallStage8hBetaSource\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2231:        myArray->SetName("WallStage8hBetaSource");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2244:        debug1("Creating Catalyst VTK object for WallStage8hProfileNormal\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2247:        myArray->SetName("WallStage8hProfileNormal");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2260:        debug1("Creating Catalyst VTK object for WallStage8hProfileTargetMismatch\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2263:        myArray->SetName("WallStage8hProfileTargetMismatch");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2276:        debug1("Creating Catalyst VTK object for WallStage8hProfileConsistencyWeight\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2279:        myArray->SetName("WallStage8hProfileConsistencyWeight");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2292:        debug1("Creating Catalyst VTK object for WallStage8hCandidateDemandRatio\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2295:        myArray->SetName("WallStage8hCandidateDemandRatio");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2308:        debug1("Creating Catalyst VTK object for WallStage8hCandidateNormalDelta\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2311:        myArray->SetName("WallStage8hCandidateNormalDelta");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2324:        debug1("Creating Catalyst VTK object for WallStage8hLimiterEquivalent\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2327:        myArray->SetName("WallStage8hLimiterEquivalent");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2340:        debug1("Creating Catalyst VTK object for WallStage8hCosToTanRatio\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2343:        myArray->SetName("WallStage8hCosToTanRatio");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2356:        debug1("Creating Catalyst VTK object for WallStage8hEffectiveCap\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2359:        myArray->SetName("WallStage8hEffectiveCap");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2372:        debug1("Creating Catalyst VTK object for WallStage8hWriteAllowedFlag\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:2375:        myArray->SetName("WallStage8hWriteAllowedFlag");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4989:      debug2("Filling Catalyst VTK object for WallStage8hMode\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4993:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8hMode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:4995:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8hMode"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5001:      solver.lattice->GetWallStage8hMode(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5006://      solver.lattice->GetWallStage8hMode(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5010:      debug2("Filling Catalyst VTK object for WallStage8hActualCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5014:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8hActualCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5016:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8hActualCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5022:      solver.lattice->GetWallStage8hActualCos(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5027://      solver.lattice->GetWallStage8hActualCos(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5031:      debug2("Filling Catalyst VTK object for WallStage8hTargetCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5035:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8hTargetCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5037:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8hTargetCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5043:      solver.lattice->GetWallStage8hTargetCos(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5048://      solver.lattice->GetWallStage8hTargetCos(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5052:      debug2("Filling Catalyst VTK object for WallStage8hResidualCos\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5056:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8hResidualCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5058:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8hResidualCos"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5064:      solver.lattice->GetWallStage8hResidualCos(old, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5069://      solver.lattice->GetWallStage8hResidualCos(reg, (real_t*)(myArrayData), 1/myUnit);
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5073:      debug2("Filling Catalyst VTK object for WallStage8hDnTanRaw\n");
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5077:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetCellData()->GetArray("WallStage8hDnTanRaw"));
+CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp:5079:        myArray = vtkRealTArray::SafeDownCast(VTKGrid->GetPointData()->GetArray("WallStage8hDnTanRaw"));
