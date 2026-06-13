@@ -1,0 +1,50 @@
+{
+  "status": "runtime_sanity",
+  "claim_limit": "runtime_sanity / exploratory_not_validation only",
+  "track": "Track A usable-angle validation ladder",
+  "date": "20260613",
+  "stage8_operator_mode": 1,
+  "steps": [0, 100, 1000],
+  "solver_physics_modified": false,
+  "stage8g_modified": false,
+  "automatic_gpu_runs_allowed": false,
+  "case_groups": {
+    "plane": {
+      "angles_deg": [20, 25, 30, 60, 90, 120, 150],
+      "template": "plane_shadow_template.xml"
+    },
+    "cylinder": {
+      "angles_deg": [30, 45, 60, 90, 120],
+      "template": "cylinder_shadow_template.xml"
+    },
+    "sphere": {
+      "angles_deg": [30, 45, 60, 90, 120],
+      "template": "sphere_shadow_template.xml"
+    }
+  },
+  "excluded": [
+    "sphere11 write",
+    "Stage8OperatorMode=2 sphere11",
+    "liquid impact",
+    "high-Weber dynamic spreading",
+    "automatic 50k",
+    "Track B"
+  ],
+  "required_metrics": [
+    "nonfinite_total",
+    "max_mach",
+    "phase_mass_relative_change",
+    "rho_relative_change",
+    "normal_limiter_fraction",
+    "vector_limiter_fraction",
+    "outer90_limiter_count",
+    "fallback_angle_limiter_count",
+    "Stage8FluidWallAngle statistics",
+    "Stage8NormalAgreement statistics",
+    "profile_target_mismatch p50/p95/p99",
+    "active_count",
+    "limiter_count",
+    "candidate_demand p50/p95/p99",
+    "geometry metrics by case group"
+  ]
+}
