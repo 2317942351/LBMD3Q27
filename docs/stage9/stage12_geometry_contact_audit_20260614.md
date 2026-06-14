@@ -2,7 +2,11 @@
 
 Date: 2026-06-14
 
-Status: geometry-domain fix confirmed; cap-initialized static contact is a validation candidate for flat wall and sphere, and a runtime-sanity candidate for cylinder. These are 200-step smoke calculations, not long-time equilibrium validation.
+Status: geometry-domain fix confirmed; cap-initialized static contact is `runtime_sanity` only for wall, sphere, and cylinder. These are 200-step smoke calculations that verify finite execution, the solid/fluid-domain gate, real contact-line initialization, and post-processing continuity; they are not `validation_candidate` evidence for equilibrium contact angle.
+
+Server state note: as of 2026-06-15 00:51-00:59 CST, the historical remote
+run roots are not currently reachable because the data disks are unmounted.
+See `docs/stage9/server_operational_state_20260615.md`.
 
 ## Root Cause Path
 
@@ -73,14 +77,14 @@ The cap initializer creates a real contact line. The contact angle reported belo
 
 | case | class | target | measured | error | nonfinite phase | solid/domain gate |
 | --- | --- | ---: | ---: | ---: | ---: | --- |
-| cap_wall_theta030 | validation_candidate | 30 | 29.641 | -0.359 | 0 | outside fluid 1.000 |
-| cap_wall_theta090 | validation_candidate | 90 | 89.996 | -0.004 | 0 | outside fluid 1.000 |
-| cap_sphere_theta030 | validation_candidate | 30 | 29.814 | -0.186 | 0 | inside/outside 1.000/1.000 |
-| cap_sphere_theta090 | validation_candidate | 90 | 89.998 | -0.002 | 0 | inside/outside 1.000/1.000 |
+| cap_wall_theta030 | runtime_sanity | 30 | 29.641 | -0.359 | 0 | outside fluid 1.000 |
+| cap_wall_theta090 | runtime_sanity | 90 | 89.996 | -0.004 | 0 | outside fluid 1.000 |
+| cap_sphere_theta030 | runtime_sanity | 30 | 29.814 | -0.186 | 0 | inside/outside 1.000/1.000 |
+| cap_sphere_theta090 | runtime_sanity | 90 | 89.998 | -0.002 | 0 | inside/outside 1.000/1.000 |
 | cap_cylinder_theta030 | runtime_sanity | 30 | 29.640 | -0.360 | 0 | inside/outside 1.000/1.000 |
 | cap_cylinder_theta090 | runtime_sanity | 90 | 89.985 | -0.015 | 0 | inside/outside 1.000/1.000 |
 
-Cylinder is intentionally classified as `runtime_sanity`, because the current cap initializer uses a local convex-sphere construction on the cylinder cross-section. It proves the corrected cylinder domain and post-processor can support contact-line calculations; it should not yet be presented as a final cylinder equilibrium validation.
+All cap-initialized smoke cases are intentionally classified as `runtime_sanity`. The close `theta_circle_intersection_abs_deg` values prove the initialization and post-processing geometry chain, not the equilibrium response of the wetting boundary condition. Cylinder has the additional limitation that the current cap initializer uses a local convex-sphere construction on the cylinder cross-section; it proves the corrected cylinder domain and post-processor can support contact-line calculations, but it should not be presented as a final cylinder equilibrium validation.
 
 ## Figure Artifacts
 
@@ -97,7 +101,7 @@ No raw `.vti`, `.pvti`, `.pri`, binary, or SSH key files were archived locally.
 
 The cylinder solid/fluid-domain confusion is fixed at the geometry/runtime level. The earlier claim that the old native cylinder was a valid benchmark is superseded by this axis-aware audit.
 
-Flat wall and sphere now have a real-contact-line static smoke path with angles near 30 and 90 degrees, so they are suitable for longer equilibrium validation. Cylinder is ready for the next gate, but its cap initializer should be upgraded from local cross-section approximation to a documented cylinder-cap construction before claiming full static cylinder validation.
+Flat wall and sphere now have a real-contact-line static smoke path with angles near 30 and 90 degrees, so the workflow is suitable for longer equilibrium validation. The present 200-step outputs themselves remain `runtime_sanity / exploratory_not_validation` for physical contact-angle claims because they do not demonstrate mass convergence, low-velocity equilibrium, or contact-angle drift convergence. Cylinder is ready for the next gate, but its cap initializer should be upgraded from local cross-section approximation to a documented cylinder-cap construction before claiming full static cylinder validation.
 
 ## Next Gate Before Dynamic Impact
 

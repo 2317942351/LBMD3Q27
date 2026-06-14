@@ -80,7 +80,7 @@ def summarize(root: Path) -> list[dict]:
         audit_status = data.get("audit", {}).get("status")
         contact_status = data.get("contact_info", {}).get("status")
         if audit_status and audit_status.startswith("PASS") and contact_status == "contacted":
-            classification = "validation_candidate" if data.get("geometry") in {"wall", "sphere"} else "runtime_sanity"
+            classification = "runtime_sanity"
         else:
             classification = "exploratory_not_validation"
         row = {

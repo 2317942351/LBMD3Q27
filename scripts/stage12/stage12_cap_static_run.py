@@ -141,7 +141,7 @@ def case_spec(geom: str, theta_deg: float, volume_radius: float, int_width: floa
             liquid_probe=(48.0, 2.0, 48.0),
             cap_parent_radius=parent_radius,
             cap_center=cap_center,
-            claim_limit="validation_candidate_only_after_contact_audit_and_equilibrium_run",
+            claim_limit="runtime_sanity_geometry_postprocess_smoke_only_not_equilibrium_validation",
             plane_axis=1,
             plane_offset=0.0,
         )
@@ -194,7 +194,7 @@ def case_spec(geom: str, theta_deg: float, volume_radius: float, int_width: floa
             liquid_probe=liquid_probe,
             cap_parent_radius=parent_radius,
             cap_center=cap_center,
-            claim_limit="validation_candidate_only_after_contact_audit_and_equilibrium_run",
+            claim_limit="runtime_sanity_geometry_postprocess_smoke_only_not_equilibrium_validation",
         )
 
     if geom == "cylinder":
