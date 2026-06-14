@@ -135,33 +135,65 @@ it explicit.
 
 ### 1.4 Why this is the right physical content
 
-- It is a discretisation of the **exact** Cahn-Hilliard natural BC, not a fit.
+**CORRECTED 2026-06-14 (see audit_findings_20260614.md).** The original
+section claimed the BC is "the exact Cahn-Hilliard natural BC" with "no
+clipping". Both claims are overstated. The corrected version:
+
+- The Briant formula is the closed-form wall value for an equilibrium tanh
+  interface of width `IntWidth`. It is derived from the surface-energy balance
+  under the assumption that the near-wall interface has reached its
+  equilibrium shape. This is a stronger assumption than the continuous
+  Cahn-Hilliard natural BC.
 - All wall geometry enters through the analytic `n_w` and signed distance `h`.
-- The only physical approximation is the diffuse-interface discretisation
-  error `O(W/R_drop)`, which is the model's inherent approximation and is the
-  same on plane and curved walls.
-- No clipping, no limiter, no relaxation parameter, no zonal override: the BC
-  is local, deterministic, and physically determined.
+- The wall ghost value IS clipped to `[PhaseField_l, PhaseField_h]`. This is a
+  physical bound on the order parameter (the mirror of a bounded phase), but
+  it means a "stable" result could be clip-dominated. Diagnostics
+  (`WallGhostRaw`, `WallGhostClampHit`) are required to distinguish and are
+  NOT yet implemented (reviewer concern 7.2).
+- The contact-angle error is **model-intrinsic** (present in upstream), scales
+  with cot(theta), and is NOT removed by this BC. See audit point B.
 
-## 2. What was wrong before (root causes this stage fixes)
+## 2. What was wrong before (root causes this stage addresses)
 
-1. **`PhaseF` field overload.** Fluid phase, wall ghost value, and the `-999`
-   solid sentinel shared one storage field. Gradient stencils could read ghost
-   values or sentinels as if they were physical phase. Fix: a separate
-   `WallGhost` field; `PhaseF` is physical-phase-only on fluid nodes and unused
-   on wall/solid nodes; solid detection uses `IsBoundary`/`IamSolid`, not `-999`.
-2. **Lattice-recovered wall normal on curved walls.** `Init_wallNorm` quantised
-   the wall normal to one of 27 lattice directions and stored it in `nw_*`.
-   On a sphere this normal can point into the solid (392 special points in the
-   theta030 case) and is off by up to ~25 deg from the true radial normal.
+**CORRECTED 2026-06-14 (see audit_findings_20260614.md).** The original
+section overstated what stage9 fixes. The corrected version:
+
+1. **`PhaseF` field overload (PARTIALLY addressed).** Fluid phase, wall ghost
+   value, and the `-999` solid sentinel shared one storage field. Stage9 adds
+   a separate `WallGhost` field, but the `-999` sentinel is **still used** on
+   the legacy lattice path (it is how `Init_wallNorm` detects solid). The
+   analytic path mirrors the fluid value into `PhaseF` instead of `-999`, but
+   only on analytic-flagged nodes. The field overload is reduced, not removed.
+2. **Lattice-recovered wall normal on curved walls (ADDRESSED).** `Init_wallNorm`
+   quantised the wall normal to one of 27 lattice directions. On a sphere this
+   normal can point into the solid (392 special points in the theta030 case).
    Fix: inject the analytic normal and signed distance when an analytic
-   geometry is declared; fall back to the lattice normal only when no analytic
-   geometry is declared.
-3. **`tan(pi/2 - theta)` sharp-interface formula with quantised normal.**
-   Combined error produced sign flips and the `~107 deg` response for a `30 deg`
-   target. Fix: the diffuse BC above plus the curvature correction.
-4. **`permissive.access=TRUE` in Dynamics.R.** Masked read-before-write field
-   errors. Fix: remove and rely on the clean field layout.
+   geometry is declared AND the fluid-side probe is a real fluid node. Corner/
+   edge nodes still fall back to the lattice normal.
+3. **`tan(pi/2 - theta)` sharp-interface formula (FORMULA CHANGED, ERROR
+   UNCHANGED).** The analytic branch now uses the Briant surface-energy
+   formula instead of the tan formula. **But measurement shows both formulas
+   give identical contact angles** (77.60 deg at theta=75 for both, matching
+   the unmodified upstream binary). The cot(theta)-scaled contact-angle error
+   is model-intrinsic, not a wall-BC formula artifact. The stage5-8 sign-flip
+   on the sphere is fixed by the analytic normal, NOT by the formula change.
+4. **`permissive.access=TRUE` in Dynamics.R (RETAINED, NOT REMOVED).** The
+   original design doc said this would be removed. It cannot be: TCLB's strict
+   checker rejects the intentional multi-stage PhaseF write (calcPhase writes
+   fluid PhaseF, then calcWall_CA overrides wall-node PhaseF). The flag is
+   retained. The Dynamics.R comment documents this accurately; this design
+   doc previously did not.
+
+## What stage9 does NOT fix (honest)
+
+- The cot(theta)-scaled contact-angle error (model-intrinsic; present in
+  upstream). theta=30 measures 35.65 deg; theta=11 would be worse.
+- The `-999` sentinel on the legacy lattice path.
+- Corner/edge nodes still using the lattice normal.
+
+To reduce the contact-angle error, the levers are: reduce IntWidth (O(W/R)
+scaling), increase droplet radius, or a fundamentally different wall BC that
+does not assume an equilibrium tanh interface. None of these are implemented.
 
 ## 3. Implementation plan (source files in stage9 snapshot)
 

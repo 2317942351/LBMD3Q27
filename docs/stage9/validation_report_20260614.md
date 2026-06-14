@@ -12,78 +12,102 @@ physically reasonable contact angles; not yet audit-promoted.
 
 ## Summary
 
-The analytic-geometry diffuse-interface wetting BC runs stably and produces
-contact-angle responses consistent with the prescribed `radAngle`, on both
-plane and curved (sphere) walls. This is the first stage to produce a clean
-θ=30 wetting response; stages 5-8 produced a sign-reversed ~107° response for
-the same target.
+**CORRECTED 2026-06-14 after self-audit (see audit_findings_20260614.md).**
+The original version of this report wrote "pass" for results that fail their
+own gates. That was wrong. The corrected summary:
 
-## Results
+The analytic-geometry wetting BC **builds and runs without NaN** on plane
+(any theta) and sphere (with STL) walls, and **eliminates the stage5-8 sphere
+special-points and sign-flip** at the smoke level. It does **NOT** achieve the
+target contact-angle accuracy. The measured error scales with cot(theta) and
+is **model-intrinsic** (the unmodified upstream binary shows the same error),
+not a wall-BC defect. No gate has been honestly passed. Stage9 is
+"finite smoke + promising architecture", not "wet BC fixed".
 
-### Gate A: Plane theta=30, 200000 steps (P100 #1, 28.2 min)
+## Results (corrected)
+
+### Gate A: Plane theta=30, 200000 steps (P100 #1, 28.2 min) — **FAIL**
 
 ```text
 rc = 0
 NaN count = 0
 VTK frames = 11 (steps 0, 20k, ..., 200k)
 two-row near-wall contact angle: 35.65 deg (target 30 deg)
-  left and right sides agree to 0.01 deg
+manifest gate: [28, 32] deg
+VERDICT: FAIL (35.65 is outside the gate by 0.65 deg on the high side)
 ```
 
-The measured 35.65° is within ~5.6° of the 30° target. The residual is
-consistent with the sharp-interface approximation error O(W/R_drop):
-for R_drop=24 lu, W=IntWidth=6 lu, the expected offset is ~10-25%, and
-35.65/30 = 1.19 (19%), inside the predicted band.
-
-This is a **pass** for gate A: the analytic path does not break the flat-wall
-result, and the wetting response is physically correct (acute angle, droplet
-spreads, mass conserved).
-
-### Gate A smokes: Plane theta=30/90/150, 1000 steps each (P100 #1)
+### Gate A: Plane theta=75, 100000 steps (P100 #1) — **FAIL-ish**
 
 ```text
-plane theta030: rc=0, NaN=0, 2 VTK frames, phase finite throughout
-plane theta090: rc=0, NaN=0, 2 VTK frames, phase finite throughout
-plane theta150: rc=0, NaN=0, 2 VTK frames, phase finite throughout
+rc = 0, NaN = 0
+contact angle: 77.60 deg (target 75 deg)
+would-be gate [73, 77]: FAIL by 0.60 deg
 ```
 
-All three plane smokes pass with no NaN. The analytic path correctly handles
-wetting (30°), neutral (90°), and non-wetting (150°) on a flat wall.
+### Model-intrinsic error confirmation (the key finding)
 
-### Sphere theta=30, 1000-step smoke with STL (P100 #2)
+The **unmodified upstream TCLB binary** at theta=75 also measures 77.60 deg.
+The Briant diffuse-interface formula and the tan sharp-interface formula both
+measure 77.60 deg. The error is therefore NOT a wall-BC formula artifact; it
+is the Fakhari-Mitchell model's interface-discretization error, scaling as
+O(W/R_drop) and amplified by cot(theta). This is the floor that any wall-BC
+change cannot by itself get under. See audit_findings_20260614.md point B.
+
+### Gate A smokes: Plane theta=30/90/150, 1000 steps each (P100 #1) — **smoke-only**
 
 ```text
-rc = 0
-NaN count = 0
-AnalyticFlag count at step 1000 = 75264 nodes (sphere surface correctly tagged)
-WallGhost range = [0, 1.732]  (1.732 ≈ √3, consistent with geometric tangent gradient)
-PhaseField range = [5.996e-09, 1.044], all finite
+plane theta030: rc=0, NaN=0, 2 VTK frames, finite. Angle NOT measured (smoke).
+plane theta090: rc=0, NaN=0. Trivial pass (90 deg special-case branch).
+plane theta150: rc=0, NaN=0, finite. Angle NOT measured (smoke).
 ```
 
-The analytic wetting BC correctly tags the sphere surface and writes finite
-ghost values. This is the configuration that produced 392 special points and
-a 107° sign-flipped response in stages 5-8; stage9 produces 0 special points
-and a finite, well-bounded ghost field.
+These are smoke tests (finite, no NaN), not angle validations. theta=90 is a
+hand-written special case and is not load-bearing evidence.
 
-### Sphere theta=30, 50000-step run (P100 #2, 3.2 min)
+### Sphere theta=30, 1000-step smoke with STL (P100 #2) — **smoke-only**
 
 ```text
-rc = 0
-NaN count = 0
-VTK frames = 11 (steps 0, 5k, ..., 50k)
+rc = 0, NaN = 0
+AnalyticFlag count at step 1000 = 75264 nodes
+WallGhost range = [0, 1.732]
 ```
 
-Runs clean. The droplet (R=12) overspreads because R=12 is too small relative
-to IntWidth=6 (only ~4 interface widths across the droplet diameter). A larger
-droplet (R=20+) is needed for a clean sessile-drop contact-angle measurement
-on the sphere. This is a case-setup issue, not a BC issue — the BC runs stable.
+Smoke only. No contact angle measured. The stage5-8 sign-flip / 392 special
+points are gone at the smoke level, which is real progress, but this is not
+a validated wetting result.
 
-### Sphere theta=30, R=20 droplet — pending
+### Sphere theta=30, 50000-step run (P100 #2, 3.2 min) — **no angle (case setup)**
 
-The R=20 run hit a case-setup issue with the STL `side` attribute convention
-(`side="in"` produces NaN at init because the droplet overlaps the solid;
-`side="out"` inverts the solid/fluid assignment). This is a geometry-setup
-debug item, documented here, not a stage9 BC defect.
+```text
+rc = 0, NaN = 0, 11 VTK frames
+```
+
+The R=12 droplet overspreads (pf_max drops below 0.5). This is a case-setup
+issue (droplet too small for IntWidth=6), not a BC issue. No clean angle.
+
+### Sphere theta=30, R=20 droplet — **BLOCKED on STL side convention**
+
+`side="in"` NaNs at init; `side="out"` inverts the solid/fluid assignment.
+Unresolved geometry-setup issue. Not a BC defect, but blocks sphere angle
+measurement.
+
+## Corrected gate status
+
+```text
+gate A plane theta030 200k : FAIL (35.65, gate [28,32])
+gate A plane theta075 100k : FAIL (77.60, would-be gate [73,77])
+gate A plane theta090      : trivial (special-case branch, not evidence)
+gate A plane theta150      : smoke-only, angle not measured
+gate B sphere theta030 1k  : smoke-only, finite, no angle
+gate B sphere theta030 50k : droplet overspread, no angle (case setup)
+gate C sphere theta030 long: NOT DONE
+gate D cylinder            : NOT DONE
+```
+
+**No gate has been honestly passed.**
+
+
 
 ## Comparison to stages 5-8
 

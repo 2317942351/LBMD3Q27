@@ -877,54 +877,81 @@ CudaDeviceFunction void calcWallPhase(){
 	PhaseF = PhaseF(0,0,0); //For fluid nodes.
 	if ( IamWall || IamSolid ) {
 		// ----------------------------------------------------------
-		// Stage9 analytic-geometry diffuse-interface wetting BC.
-		// If this wall node was flagged analytic during Init_wallNorm,
-		// compute the wall ghost from the analytic normal (already stored
-		// in nw_*) and the fluid-side phase/gradient read along nw.
-		// Result goes into the dedicated WallGhost field, and PhaseF on
-		// this wall node is set to the mirrored fluid value (NOT -999)
-		// so that downstream gradient stencils never see a sentinel.
+		// Stage9 analytic-geometry wetting BC.
 		//
-		// GUARDS: only take this branch when the fluid-side probe along nw
-		// is a real fluid node (not another wall/solid). Otherwise fall
-		// through to the legacy lattice path, which has its own special-
-		// point handling for corner/edge nodes.
+		// If this wall node was flagged analytic during Init_wallNorm, the
+		// wall ghost is computed with the ANALYTIC wall normal (stored in
+		// nw_*) and ANALYTIC distance (stored in WallH), using the Briant
+		// surface-energy formula (the closed-form wall value for an
+		// equilibrium tanh interface of width IntWidth). See the block
+		// below for the exact expression.
+		//
+		// IMPORTANT (audit 2026-06-14): this Briant formula and the
+		// tan(pi/2-theta) sharp-interface formula give IDENTICAL measured
+		// contact angles (verified: 77.60 deg at theta=75 for both, and
+		// the unmodified upstream binary also gives 77.60 deg). The
+		// cot(theta)-scaled contact-angle error is therefore MODEL-
+		// INTRINSIC (Fakhari-Mitchell interface discretization), NOT a
+		// wall-BC formula artifact. This BC fixes the stage5-8 sign-flip
+		// and special-points on curved walls, but does NOT by itself
+		// reduce the contact-angle error below the model's O(W/R) floor.
+		//
+		// The result goes into WallGhost; PhaseF on this wall node is set
+		// to the mirrored fluid value so gradient stencils never see -999.
+		//
+		// GUARDS: take this branch only when both fluid-side probes along nw
+		// are real fluid nodes (not sentinels). Corner/edge nodes where one
+		// probe hits another wall fall through to the legacy lattice path.
 		// ----------------------------------------------------------
 		if (AnalyticFlag(0,0,0) > 0.5) {
-			real_t h = WallH(0,0,0);
-			// fluid-side probe along the analytic normal nw
+			real_t h_a = WallH(0,0,0);
+			// fluid-side probes along the analytic normal nw at h and 2h
 			real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
-			bool probe_is_fluid = (pf_f > -100.0);
-			if (h > 0.001 && probe_is_fluid) {
+			real_t pf_ff = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+			bool probe1_fluid = (pf_f  > -100.0);
+			bool probe2_fluid = (pf_ff > -100.0);
+			bool both_probes_fluid = probe1_fluid && probe2_fluid;
+			if (h_a > 0.001 && both_probes_fluid) {
 				if (fabs(radAngle - PI/2.0) < 1e-4) {
-					// 90 deg: neutral wetting, ghost = mirror fluid value.
+					// 90 deg: neutral wetting. The Briant formula is singular
+					// at cos(theta)=0 (a=0 -> division by eps), so we use the
+					// mirror value directly. NOTE: this means theta=90 is a
+					// trivial special case and is NOT load-bearing evidence
+					// that the BC is correct. theta=30 and theta=150 are the
+					// load-bearing cases.
 					WallGhost = pf_f;
 					PhaseF = pf_f;
 					return;
 				}
-#ifdef OPTIONS_geometric
-				vector_t grad = {
-					gradPhiVal_x_dyn(nw_x, nw_y, nw_z),
-					gradPhiVal_y_dyn(nw_x, nw_y, nw_z),
-					gradPhiVal_z_dyn(nw_x, nw_y, nw_z)
-				};
-#else
-				vector_t grad = {0.0, 0.0, 0.0};
-				real_t phi_nn = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z);
-				real_t inv2h = 1.0/(2.0*h + 1e-30);
-				grad.x = (pf_f - phi_nn) * (nw_x) * inv2h;
-				grad.y = (pf_f - phi_nn) * (nw_y) * inv2h;
-				grad.z = (pf_f - phi_nn) * (nw_z) * inv2h;
-#endif
-				vector_t n_w = {nw_x, nw_y, nw_z};
-				real_t ghost = stage9_calc_wall_ghost(n_w, h, pf_f, grad);
+				// ----------------------------------------------------------
+				// Briant/Jacqmin surface-energy wall BC. This is the closed-
+				// form wall value for an equilibrium tanh interface:
+				//   a = -h_a * (4/IntWidth) * cos(theta)
+				//   phi_g = (1+a - sqrt((1+a)^2 - 4*a*pf_f)) / (a+eps)
+				// It assumes the near-wall interface is at its equilibrium
+				// tanh shape. See audit_findings_20260614.md point B for why
+				// this does NOT reduce the model-intrinsic cot(theta) error.
+				// ----------------------------------------------------------
+				real_t a = -h_a * (4.0/IntWidth) * cos(radAngle);
+				real_t discrim = (1.0+a)*(1.0+a) - 4.0*a*pf_f;
+				real_t ghost;
+				if (discrim < 0.0) {
+					// Degenerate (numerical); fall back to mirror value.
+					ghost = pf_f;
+				} else {
+					ghost = (1.0 + a - sqrt(discrim))/(a + 1e-12) - pf_f;
+				}
+				// physical bound on the order parameter
+				if (ghost < PhaseField_l) ghost = PhaseField_l;
+				if (ghost > PhaseField_h) ghost = PhaseField_h;
 				WallGhost = ghost;
 				PhaseF = pf_f;
 				return;
 			}
-			// else: probe hit a non-fluid node (corner/edge) or degenerate
-			// h. Fall through to the legacy lattice path below.
+			// else: a probe hit a non-fluid node (corner/edge) or degenerate h.
+			// Fall through to the legacy lattice path below.
 		}
+
 
 		real_t a, h, pf_f;
 
