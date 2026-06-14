@@ -146,15 +146,15 @@ if (Options$thermo){
 	# STAGES FOR VARIOUS OPTIONS
 	if (Options$geometric){
 		AddStage("WallInit_CA"  , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWall_CA"  , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "gradPhi", "PF", "solid_boundary", extra_fields_to_load_for_bc))
+		AddStage("calcWall_CA"  , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost", "WallH", "AnalyticFlag"), load=DensityAll$group %in% c("nw", "gradPhi", "PF", "solid_boundary", extra_fields_to_load_for_bc))
 
 		AddStage('calcPhaseGrad', "calcPhaseGrad", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
 		AddStage('calcPhaseGrad_init', "calcPhaseGrad_init", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary"))
+		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
 	} else {
 		AddStage("WallInit" , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
 		AddStage("calcWall" , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary"))
+		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
 	}
 	if (Options$thermo){
 		AddStage("CopyDistributions", "TempCopy",  save=Fields$group %in% c("g","h","Vel","nw", "PF","Thermal"))

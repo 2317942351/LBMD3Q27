@@ -5,7 +5,10 @@ from vtk.util.numpy_support import vtk_to_numpy
 r=vtk.vtkXMLImageDataReader(); r.SetFileName(sys.argv[1]); r.Update()
 out=r.GetOutput()
 pf=vtk_to_numpy(out.GetCellData().GetArray("PhaseField")).copy()
-bd=vtk_to_numpy(out.GetCellData().GetArray("BOUNDARY")).copy()
+bd_arr = out.GetCellData().GetArray("IsItBoundary")
+if bd_arr is None:
+    bd_arr = out.GetCellData().GetArray("BOUNDARY")
+bd=vtk_to_numpy(bd_arr).copy()
 af=vtk_to_numpy(out.GetCellData().GetArray("AnalyticFlag")).copy()
 dims=out.GetDimensions()
 nx,ny,nz=dims[0]-1,dims[1]-1,dims[2]-1

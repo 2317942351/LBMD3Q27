@@ -367,6 +367,12 @@ CudaDeviceFunction vector_t stage9_analytic_wall_normal_and_distance(real_t* out
 	return n;
 }
 
+CudaDeviceFunction int stage9_probe_component(real_t n) {
+	if (n >  0.5) return  1;
+	if (n < -0.5) return -1;
+	return 0;
+}
+
 // Curvature (1/R) used for the leading-order centered-difference correction.
 // Plane = 0, cylinder = 1/R, sphere = 1/R.
 CudaDeviceFunction real_t stage9_analytic_curvature() {
@@ -433,13 +439,15 @@ CudaDeviceFunction real_t stage9_calc_wall_ghost(
 
 // Public accessor: the analytic wall normal at this node (zero if not analytic).
 CudaDeviceFunction vector_t getAnalyticWallNormal() {
+	if (AnalyticFlag(0,0,0) < 0.5) {
+		vector_t zero = {0.0, 0.0, 0.0};
+		return zero;
+	}
 	real_t h;
 	return stage9_analytic_wall_normal_and_distance(&h);
 }
 CudaDeviceFunction real_t getWallH() {
-	real_t h;
-	stage9_analytic_wall_normal_and_distance(&h);
-	return h;
+	return WallH(0,0,0);
 }
 CudaDeviceFunction real_t getWallGhost() {
 	return WallGhost(0,0,0);
@@ -853,6 +861,7 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
  */
 CudaDeviceFunction void calcWallPhase_correction() {
 	PhaseF = PhaseF(0,0,0);
+	WallGhost = WallGhost(0,0,0);
 
 	// Stage9 analytic path: the ghost was already written in calcWallPhase and
 	// stored in WallGhost. Nothing to correct; analytic normals never point
@@ -875,13 +884,18 @@ CudaDeviceFunction void calcWallPhase_correction() {
  */
 CudaDeviceFunction void calcWallPhase(){
 	PhaseF = PhaseF(0,0,0); //For fluid nodes.
+	WallGhost = 0.0;
+	WallH = 0.0;
+	AnalyticFlag = 0.0;
 	if ( IamWall || IamSolid ) {
 		// ----------------------------------------------------------
 		// Stage9 analytic-geometry wetting BC.
 		//
-		// If this wall node was flagged analytic during Init_wallNorm, the
-		// wall ghost is computed with the ANALYTIC wall normal (stored in
-		// nw_*) and ANALYTIC distance (stored in WallH), using the Briant
+		// The wall ghost is computed with the analytic geometry distance.
+		// We reconstruct the analytic tag here instead of relying on
+		// AnalyticFlag persistence across unrelated stages. The nw_* fields
+		// intentionally remain integer lattice offsets for TCLB dynamic field
+		// reads; exact analytic normals are recomputed for diagnostics.
 		// surface-energy formula (the closed-form wall value for an
 		// equilibrium tanh interface of width IntWidth). See the block
 		// below for the exact expression.
@@ -899,57 +913,66 @@ CudaDeviceFunction void calcWallPhase(){
 		// The result goes into WallGhost; PhaseF on this wall node is set
 		// to the mirrored fluid value so gradient stencils never see -999.
 		//
-		// GUARDS: take this branch only when both fluid-side probes along nw
-		// are real fluid nodes (not sentinels). Corner/edge nodes where one
-		// probe hits another wall fall through to the legacy lattice path.
+		// GUARD: take this branch only when the first and second fluid-side
+		// probes along the analytic normal are real fluid nodes, not solid
+		// sentinels.
 		// ----------------------------------------------------------
-		if (AnalyticFlag(0,0,0) > 0.5) {
-			real_t h_a = WallH(0,0,0);
-			// fluid-side probes along the analytic normal nw at h and 2h
-			real_t pf_f = PhaseF_dyn(nw_x, nw_y, nw_z);
-			real_t pf_ff = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z);
-			bool probe1_fluid = (pf_f  > -100.0);
-			bool probe2_fluid = (pf_ff > -100.0);
-			bool both_probes_fluid = probe1_fluid && probe2_fluid;
-			if (h_a > 0.001 && both_probes_fluid) {
-				if (fabs(radAngle - PI/2.0) < 1e-4) {
-					// 90 deg: neutral wetting. The Briant formula is singular
-					// at cos(theta)=0 (a=0 -> division by eps), so we use the
-					// mirror value directly. NOTE: this means theta=90 is a
-					// trivial special case and is NOT load-bearing evidence
-					// that the BC is correct. theta=30 and theta=150 are the
-					// load-bearing cases.
-					WallGhost = pf_f;
+		if (AnalyticWetting > 0.5) {
+			real_t sd_a = 0.0;
+			vector_t n_w_a = stage9_analytic_wall_normal_and_distance(&sd_a);
+			real_t nmag_a = sqrt(n_w_a.x*n_w_a.x + n_w_a.y*n_w_a.y + n_w_a.z*n_w_a.z);
+			real_t d_to_surface_a = (sd_a < 0.0) ? -sd_a : sd_a;
+			if (nmag_a > 0.5 && d_to_surface_a < 1.5) {
+				int probe_dx = stage9_probe_component(n_w_a.x);
+				int probe_dy = stage9_probe_component(n_w_a.y);
+				int probe_dz = stage9_probe_component(n_w_a.z);
+				real_t h_a = d_to_surface_a + 0.5;
+				real_t pf_f = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
+				real_t pf_ff = PhaseF_dyn(2*probe_dx, 2*probe_dy, 2*probe_dz);
+				bool both_probes_fluid = (pf_f > -100.0) && (pf_ff > -100.0);
+				if (h_a > 0.001 && both_probes_fluid) {
+					AnalyticFlag = 1.0;
+					nw_x = probe_dx;
+					nw_y = probe_dy;
+					nw_z = probe_dz;
+					WallH = h_a;
+					if (fabs(radAngle - PI/2.0) < 1e-4) {
+						// 90 deg: neutral wetting. The Briant formula is singular
+						// at cos(theta)=0 (a=0 -> division by eps), so we use the
+						// mirror value directly. NOTE: this means theta=90 is a
+						// trivial special case and is NOT load-bearing evidence
+						// that the BC is correct. theta=30 and theta=150 are the
+						// load-bearing cases.
+						WallGhost = pf_f;
+						PhaseF = pf_f;
+						return;
+					}
+					// ----------------------------------------------------------
+					// Briant/Jacqmin surface-energy wall BC. This is the closed-
+					// form wall value for an equilibrium tanh interface:
+					//   a = -h_a * (4/IntWidth) * cos(theta)
+					//   phi_g = (1+a - sqrt((1+a)^2 - 4*a*pf_f)) / (a+eps)
+					// It assumes the near-wall interface is at its equilibrium
+					// tanh shape. See audit_findings_20260614.md point B for why
+					// this does NOT reduce the model-intrinsic cot(theta) error.
+					// ----------------------------------------------------------
+					real_t a = -h_a * (4.0/IntWidth) * cos(radAngle);
+					real_t discrim = (1.0+a)*(1.0+a) - 4.0*a*pf_f;
+					real_t ghost;
+					if (discrim < 0.0) {
+						// Degenerate (numerical); fall back to mirror value.
+						ghost = pf_f;
+					} else {
+						ghost = (1.0 + a - sqrt(discrim))/(a + 1e-12) - pf_f;
+					}
+					// physical bound on the order parameter
+					if (ghost < PhaseField_l) ghost = PhaseField_l;
+					if (ghost > PhaseField_h) ghost = PhaseField_h;
+					WallGhost = ghost;
 					PhaseF = pf_f;
 					return;
 				}
-				// ----------------------------------------------------------
-				// Briant/Jacqmin surface-energy wall BC. This is the closed-
-				// form wall value for an equilibrium tanh interface:
-				//   a = -h_a * (4/IntWidth) * cos(theta)
-				//   phi_g = (1+a - sqrt((1+a)^2 - 4*a*pf_f)) / (a+eps)
-				// It assumes the near-wall interface is at its equilibrium
-				// tanh shape. See audit_findings_20260614.md point B for why
-				// this does NOT reduce the model-intrinsic cot(theta) error.
-				// ----------------------------------------------------------
-				real_t a = -h_a * (4.0/IntWidth) * cos(radAngle);
-				real_t discrim = (1.0+a)*(1.0+a) - 4.0*a*pf_f;
-				real_t ghost;
-				if (discrim < 0.0) {
-					// Degenerate (numerical); fall back to mirror value.
-					ghost = pf_f;
-				} else {
-					ghost = (1.0 + a - sqrt(discrim))/(a + 1e-12) - pf_f;
-				}
-				// physical bound on the order parameter
-				if (ghost < PhaseField_l) ghost = PhaseField_l;
-				if (ghost > PhaseField_h) ghost = PhaseField_h;
-				WallGhost = ghost;
-				PhaseF = pf_f;
-				return;
 			}
-			// else: a probe hit a non-fluid node (corner/edge) or degenerate h.
-			// Fall through to the legacy lattice path below.
 		}
 
 
@@ -1354,22 +1377,19 @@ CudaDeviceFunction void Init_wallNorm(){
 				// values. We gate on PhaseF_dyn instead: solid nodes carry
 				// the -999 sentinel (set by PhaseInit), fluid nodes carry a
 				// finite phase value. This is reliable during Init.
-				real_t ix = (real_t)(n_w.x > 0.5) - (real_t)(n_w.x < -0.5);
-				real_t iy = (real_t)(n_w.y > 0.5) - (real_t)(n_w.y < -0.5);
-				real_t iz = (real_t)(n_w.z > 0.5) - (real_t)(n_w.z < -0.5);
-				int probe_dx = (int)(ix);
-				int probe_dy = (int)(iy);
-				int probe_dz = (int)(iz);
+				int probe_dx = stage9_probe_component(n_w.x);
+				int probe_dy = stage9_probe_component(n_w.y);
+				int probe_dz = stage9_probe_component(n_w.z);
 				real_t probe_pf = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
 				bool probe_is_fluid_node = (probe_pf > -100.0);
 				if (probe_is_fluid_node) {
 					// This wall node is genuinely on the analytic surface and
-					// the fluid-side probe is a real fluid node. Safe to use
-					// the analytic normal.
+					// the fluid-side probe is a real fluid node. Keep nw_* as
+					// integer offsets; dynamic field access is not continuous.
 					AnalyticFlag = 1.0;
-					nw_x = n_w.x;
-					nw_y = n_w.y;
-					nw_z = n_w.z;
+					nw_x = probe_dx;
+					nw_y = probe_dy;
+					nw_z = probe_dz;
 					WallH = d_to_surface + 0.5;
 				}
 			}

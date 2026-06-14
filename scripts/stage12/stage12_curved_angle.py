@@ -27,16 +27,19 @@ from vtk.util.numpy_support import vtk_to_numpy
 
 vti = sys.argv[1]
 geom = sys.argv[2]
-cy_c = float(sys.argv[3]); cz_c = float(sys.argv[4])  # center in (y,z) for cyl
-# for sphere, argv[3..5] = (cx,cy,cz) center; R = argv[6]
-cx_c = float(sys.argv[3]); cy_c = float(sys.argv[4]); cz_c = float(sys.argv[5])
+cx_c = float(sys.argv[3])
+cy_c = float(sys.argv[4])
+cz_c = float(sys.argv[5])
 R_solid = float(sys.argv[6])
 dx_drop = float(sys.argv[7]); dy_drop = float(sys.argv[8]); dz_drop = float(sys.argv[9])
 
 r = vtk.vtkXMLImageDataReader(); r.SetFileName(vti); r.Update()
 out = r.GetOutput()
 pf = vtk_to_numpy(out.GetCellData().GetArray("PhaseField")).copy()
-bd = vtk_to_numpy(out.GetCellData().GetArray("BOUNDARY")).copy()
+bd_arr = out.GetCellData().GetArray("IsItBoundary")
+if bd_arr is None:
+    bd_arr = out.GetCellData().GetArray("BOUNDARY")
+bd = vtk_to_numpy(bd_arr).copy()
 dims = out.GetDimensions()
 nx, ny, nz = dims[0]-1, dims[1]-1, dims[2]-1
 pf3 = pf.reshape((nz, ny, nx))
@@ -86,7 +89,8 @@ pts = np.array(contour_pts)  # (N, 2): columns (y, z)
 print(f"contour points: {len(pts)}")
 
 # find the contact line: contour points closest to the solid surface
-# solid surface in the (y,z) slice: circle centered at (cy_c, cz_c), radius R_solid
+# For the cylinder, the slice is normal to the y-z cross-section. For the
+# sphere, this is the central x-slice, so the surface is also a circle in y-z.
 dist_to_surf = np.sqrt((pts[:,0]-cy_c)**2 + (pts[:,1]-cz_c)**2) - R_solid
 # contact line points: those with |dist_to_surf| minimal
 # take the lowest-z contour points (the droplet sits above; contact at bottom)
