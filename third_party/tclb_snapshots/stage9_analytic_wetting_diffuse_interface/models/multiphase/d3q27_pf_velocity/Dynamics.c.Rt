@@ -479,6 +479,50 @@ CudaDeviceFunction void specialCases_Init()
                 PhaseF = 0.5*(PhaseField_h + PhaseField_l)
                        - 0.5*(PhaseField_h - PhaseField_l) * BubbleType * tanh(2 * (Ri - Radius)/IntWidth);
         }	
+
+	// Stage12 static-contact initializers. These are deliberately default-off
+	// and only set the initial diffuse phase field. They do not change the
+	// wall wetting law, and solid/wall nodes are still reset to -999 by Init().
+	if (CapInit > 0.5 && CapInitRadius > 0.0) {
+		real_t Ri = sqrt((X - CapInitCenterX)*(X - CapInitCenterX) +
+		                 (Y - CapInitCenterY)*(Y - CapInitCenterY) +
+		                 (Z - CapInitCenterZ)*(Z - CapInitCenterZ));
+		PhaseF = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+		         (1.0 - tanh(2.0*(Ri - CapInitRadius)/IntWidth));
+	}
+
+	if (SphereCapInit > 0.5 && SphereCapInitParentRadius > 0.0 && SphereCapInitSolidRadius > 0.0) {
+		real_t Ri = sqrt((X - SphereCapInitCenterX)*(X - SphereCapInitCenterX) +
+		                 (Y - SphereCapInitCenterY)*(Y - SphereCapInitCenterY) +
+		                 (Z - SphereCapInitCenterZ)*(Z - SphereCapInitCenterZ));
+		real_t Rs = sqrt((X - SphereCapInitSolidCenterX)*(X - SphereCapInitSolidCenterX) +
+		                 (Y - SphereCapInitSolidCenterY)*(Y - SphereCapInitSolidCenterY) +
+		                 (Z - SphereCapInitSolidCenterZ)*(Z - SphereCapInitSolidCenterZ));
+		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+		                (1.0 - tanh(2.0*(Ri - SphereCapInitParentRadius)/IntWidth));
+		PhaseF = (Rs < SphereCapInitSolidRadius) ? PhaseField_l : cap_pf;
+	}
+
+	if (CylinderCapInit > 0.5 && CylinderCapInitParentRadius > 0.0 && CylinderCapInitSolidRadius > 0.0) {
+		real_t Ri = sqrt((X - CylinderCapInitCenterX)*(X - CylinderCapInitCenterX) +
+		                 (Y - CylinderCapInitCenterY)*(Y - CylinderCapInitCenterY) +
+		                 (Z - CylinderCapInitCenterZ)*(Z - CylinderCapInitCenterZ));
+		real_t dxs = X - CylinderCapInitSolidCenterX;
+		real_t dys = Y - CylinderCapInitSolidCenterY;
+		real_t dzs = Z - CylinderCapInitSolidCenterZ;
+		real_t radial;
+		if (CylinderCapInitSolidAxis < 0.5) {
+			radial = sqrt(dys*dys + dzs*dzs);
+		} else if (CylinderCapInitSolidAxis < 1.5) {
+			radial = sqrt(dxs*dxs + dzs*dzs);
+		} else {
+			radial = sqrt(dxs*dxs + dys*dys);
+		}
+		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+		                (1.0 - tanh(2.0*(Ri - CylinderCapInitParentRadius)/IntWidth));
+		PhaseF = (radial < CylinderCapInitSolidRadius) ? PhaseField_l : cap_pf;
+	}
+
  	// Rayleigh-Taylor Instability
 	    // Initialises with a sharp interface
 	if (RTI_Characteristic_Length > 0){

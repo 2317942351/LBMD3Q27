@@ -1,37 +1,15 @@
 #!/usr/bin/env python3
 """gen_cylinder_stl.py - generate a binary STL of a finite cylinder.
-Axis along x (AnalyticSolidAxis=0), centered at (cx, cy) in the y-z plane,
+Axis along x (AnalyticSolidAxis=0), centered at (cy, cz) in the y-z plane,
 radius R, spanning x in [x_min, x_max]. Normals point OUTWARD (away from axis)
 on the lateral surface; the end caps are open (the cylinder is a tube whose
 ends coincide with the domain wall, so TCLB's outer-domain wall closes them).
 
-Usage: python3 gen_cylinder_stl.py <cx> <cy> <radius> <x_min> <x_max> <out.stl>
+Usage: python3 gen_cylinder_stl.py <cy_center> <cz_center> <radius> <x_min> <x_max> <out.stl>
 """
 import sys, math, struct
 
-cx, cy = float(sys.argv[1]), float(sys.argv[2])
-R = float(sys.argv[3])
-x_min, x_max = float(sys.argv[4]), float(sys.argv[5])
-outfile = sys.argv[6]
-
 n_theta = 48   # circumferential segments
-# lateral surface quads -> 2 triangles each
-faces = []
-for i in range(n_theta):
-    a0 = 2.0*math.pi*i/n_theta
-    a1 = 2.0*math.pi*(i+1)/n_theta
-    # 4 corners of the quad strip
-    y0a = cy + R*math.sin(a0); z0a = cx*0 + (0)  # placeholder
-    # actually: y = cy + R sin(theta), z = cz + R cos(theta); but cz is the
-    # cylinder axis z-coordinate. For axis along x centered at (cx_axis, cy_axis)
-    # the perpendicular plane is (y,z); center in that plane is (cy, cz_axis).
-    pass
-
-# Redo cleanly: axis = x. Perpendicular plane is (y,z). Center in (y,z) = (cy_center, cz_center).
-# But the user passed (cx, cy) = center in (y,z)? Re-read: cx is the x-axis location (irrelevant
-# for an x-axis cylinder), cy is the y-center. We also need cz_center. For simplicity assume
-# the cylinder is centered at (y=cy, z=cz_default) where cz_default is read from the domain.
-# To keep the interface simple, treat argv[1]=cy_center, argv[2]=cz_center.
 cy_center = float(sys.argv[1])
 cz_center = float(sys.argv[2])
 R = float(sys.argv[3])

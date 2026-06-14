@@ -1,0 +1,124 @@
+{
+  "analytic_flag_cells": 19928,
+  "analytic_near_surface_cells": 18400,
+  "audit": {
+    "angle_validation": "diagnostic_only_not_a_contact_angle_validation",
+    "failures": [],
+    "status": "PASS_RUNTIME_GEOMETRY_CONTACT_DIAGNOSTIC",
+    "warnings": []
+  },
+  "contact_angles": [
+    {
+      "contact_point": [
+        28.5,
+        52.54409612727466
+      ],
+      "continuous_contact_point": [
+        28.216676162979635,
+        50.93600033371621
+      ],
+      "local_points": 6,
+      "points": 4,
+      "side": "left",
+      "signed_distance": 0.022457631717255566,
+      "status": "ok",
+      "theta_circle_fit_abs_deg": 30.394347318240055,
+      "theta_circle_intersection_abs_deg": 29.640407002224823,
+      "theta_grad_deg": 129.71422248661133,
+      "theta_tangent_abs_deg": 35.943202299945334
+    },
+    {
+      "contact_point": [
+        67.5,
+        52.54409612727466
+      ],
+      "continuous_contact_point": [
+        67.78332383702038,
+        50.93600033371615
+      ],
+      "local_points": 6,
+      "points": 4,
+      "side": "right",
+      "signed_distance": 0.022457631717255566,
+      "status": "ok",
+      "theta_circle_fit_abs_deg": 30.394347318240065,
+      "theta_circle_intersection_abs_deg": 29.640407002224823,
+      "theta_grad_deg": 129.71422248661133,
+      "theta_tangent_abs_deg": 35.94320229994542
+    }
+  ],
+  "contact_info": {
+    "contact_tolerance": 2.5,
+    "continuous_angle_note": "theta_circle_intersection_abs_deg uses the fitted phi=0.5 circle and analytic solid intersection.",
+    "continuous_intersections": [
+      [
+        67.78332383702038,
+        50.93600033371615
+      ],
+      [
+        28.216676162979635,
+        50.93600033371621
+      ]
+    ],
+    "interface_circle_fit": {
+      "center": [
+        48.000000000000014,
+        58.60900061195376
+      ],
+      "points": 100,
+      "radius": 21.2192091113277,
+      "rms_residual": 0.1515458962044259
+    },
+    "min_abs_surface_distance": 0.022457631717255566,
+    "note": "Angle is diagnostic only unless the initial condition is a validated cap/contact-line setup.",
+    "status": "contacted"
+  },
+  "contour_point_count": 100,
+  "cylinder_axis": 2,
+  "drop_center": [
+    48.0,
+    72.0,
+    48.0
+  ],
+  "drop_center_boundary": 0.0,
+  "drop_center_in_bounds": true,
+  "drop_center_index": [
+    48,
+    72,
+    48
+  ],
+  "drop_center_is_fluid": true,
+  "drop_center_phase": 0.9999830328382007,
+  "drop_radius": 16.0,
+  "figure": "/home/yuan/data_sda/RUNS/runs/stage12_cap_static_smoke_20260614/cap_cylinder_theta030/cap_cylinder_theta030_audit.png",
+  "fluid_cells": 711768,
+  "fluid_phase_max": 0.9999981641012476,
+  "fluid_phase_min": -9.026729439337107e-07,
+  "fluid_phase_out_of_range_count": 0,
+  "geometry": "cylinder",
+  "grid": [
+    96,
+    96,
+    96
+  ],
+  "inside_core_cells": 92460,
+  "inside_core_solid_fraction": 1.0,
+  "outside_far_cells": 639124,
+  "outside_far_fluid_fraction": 1.0,
+  "phase": {
+    "count": 884736,
+    "finite": 884736,
+    "max": 1.0,
+    "min": -9.026729439337107e-07,
+    "nonfinite": 0
+  },
+  "solid_cells": 172968,
+  "solid_center": [
+    48.0,
+    48.0,
+    48.0
+  ],
+  "solid_radius": 20.0,
+  "speed_max": 9.569036102138313e-05,
+  "vti": "/home/yuan/data_sda/RUNS/runs/stage12_cap_static_smoke_20260614/cap_cylinder_theta030/output/case_VTK_P00_00000200.vti"
+}

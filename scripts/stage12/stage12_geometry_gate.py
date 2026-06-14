@@ -10,7 +10,7 @@ fallback because in this TCLB model it is a node-type bit field, not a clean
 
 Usage:
   python3 stage12_geometry_gate.py <vti> <cylinder|sphere> \
-      <cx> <cy> <cz> <R_solid> <drop_x> <drop_y> <drop_z>
+      <cx> <cy> <cz> <R_solid> <drop_x> <drop_y> <drop_z> [cylinder_axis]
 """
 import json
 import math
@@ -67,13 +67,14 @@ def outlier_samples(phase, signed_distance, boundary, mask, max_samples=8):
 
 
 def main():
-    if len(sys.argv) != 10:
+    if len(sys.argv) not in (10, 11):
         raise SystemExit(__doc__)
 
     vti, geom = sys.argv[1], sys.argv[2]
     cx, cy, cz = (float(x) for x in sys.argv[3:6])
     radius = float(sys.argv[6])
     drop_x, drop_y, drop_z = (float(x) for x in sys.argv[7:10])
+    cylinder_axis = int(sys.argv[10]) if len(sys.argv) == 11 else 0
 
     reader = vtk.vtkXMLImageDataReader()
     reader.SetFileName(vti)
@@ -101,7 +102,14 @@ def main():
 
     iz, iy, ix = np.indices((nz, ny, nx), dtype=float)
     if geom == "cylinder":
-        signed_distance = np.sqrt((iy - cy) ** 2 + (iz - cz) ** 2) - radius
+        if cylinder_axis == 0:
+            signed_distance = np.sqrt((iy - cy) ** 2 + (iz - cz) ** 2) - radius
+        elif cylinder_axis == 1:
+            signed_distance = np.sqrt((ix - cx) ** 2 + (iz - cz) ** 2) - radius
+        elif cylinder_axis == 2:
+            signed_distance = np.sqrt((ix - cx) ** 2 + (iy - cy) ** 2) - radius
+        else:
+            raise SystemExit(f"bad cylinder_axis: {cylinder_axis}")
     elif geom == "sphere":
         signed_distance = np.sqrt((ix - cx) ** 2 + (iy - cy) ** 2 + (iz - cz) ** 2) - radius
     else:
@@ -171,6 +179,7 @@ def main():
         "grid": [int(nx), int(ny), int(nz)],
         "center": [cx, cy, cz],
         "radius": radius,
+        "cylinder_axis": cylinder_axis if geom == "cylinder" else None,
         "boundary_source": boundary_source,
         "inside_core_cells": int(inside_core.sum()),
         "outside_far_cells": int(outside_far.sum()),

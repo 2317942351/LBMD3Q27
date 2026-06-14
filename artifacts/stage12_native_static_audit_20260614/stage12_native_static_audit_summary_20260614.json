@@ -1,0 +1,141 @@
+[
+  {
+    "audit_failures": [
+      "PhaseField contains non-finite values",
+      "analytic solid interior is not cleanly solid"
+    ],
+    "audit_status": "FAIL",
+    "audit_warnings": [
+      "interface is no_interface_contour (min_abs_surface_distance=None)"
+    ],
+    "case": "native_cylinder_theta030",
+    "contact_angle_mean_grad_deg": null,
+    "contact_angle_values_grad_deg": [],
+    "contact_status": "no_interface_contour",
+    "drop_center_is_fluid": true,
+    "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static/native_cylinder_theta030/native_cylinder_theta030_audit.png",
+    "fluid_phase_max": null,
+    "fluid_phase_min": null,
+    "fluid_phase_out_of_range_count": 0,
+    "geometry": "cylinder",
+    "inside_core_solid_fraction": 0.908825438027255,
+    "min_abs_surface_distance": null,
+    "outside_far_fluid_fraction": 0.9821912492724416,
+    "phase_nonfinite": 774176,
+    "speed_max": 0.0
+  },
+  {
+    "audit_failures": [
+      "analytic solid interior is not cleanly solid"
+    ],
+    "audit_status": "FAIL",
+    "audit_warnings": [
+      "interface is not_contacted (min_abs_surface_distance=6.816284496218465)"
+    ],
+    "case": "native_cylinder_theta090",
+    "contact_angle_mean_grad_deg": null,
+    "contact_angle_values_grad_deg": [],
+    "contact_status": "not_contacted",
+    "drop_center_is_fluid": true,
+    "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static/native_cylinder_theta090/native_cylinder_theta090_audit.png",
+    "fluid_phase_max": 1.0000059617198334,
+    "fluid_phase_min": -9.061747552259318e-07,
+    "fluid_phase_out_of_range_count": 0,
+    "geometry": "cylinder",
+    "inside_core_solid_fraction": 0.908825438027255,
+    "min_abs_surface_distance": 6.816284496218465,
+    "outside_far_fluid_fraction": 0.9821912492724416,
+    "phase_nonfinite": 0,
+    "speed_max": 5.287925549797743e-06
+  },
+  {
+    "audit_failures": [],
+    "audit_status": "PASS_RUNTIME_GEOMETRY_NO_CONTACT",
+    "audit_warnings": [
+      "interface is not_contacted (min_abs_surface_distance=6.0212528110435635)"
+    ],
+    "case": "native_sphere_theta030",
+    "contact_angle_mean_grad_deg": null,
+    "contact_angle_values_grad_deg": [],
+    "contact_status": "not_contacted",
+    "drop_center_is_fluid": true,
+    "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static/native_sphere_theta030/native_sphere_theta030_audit.png",
+    "fluid_phase_max": 1.0000005967327894,
+    "fluid_phase_min": -9.060288101991681e-07,
+    "fluid_phase_out_of_range_count": 0,
+    "geometry": "sphere",
+    "inside_core_solid_fraction": 1.0,
+    "min_abs_surface_distance": 6.0212528110435635,
+    "outside_far_fluid_fraction": 1.0,
+    "phase_nonfinite": 0,
+    "speed_max": 3.846483319867405e-06
+  },
+  {
+    "audit_failures": [],
+    "audit_status": "PASS_RUNTIME_GEOMETRY_NO_CONTACT",
+    "audit_warnings": [
+      "interface is not_contacted (min_abs_surface_distance=6.0212520333037105)"
+    ],
+    "case": "native_sphere_theta090",
+    "contact_angle_mean_grad_deg": null,
+    "contact_angle_values_grad_deg": [],
+    "contact_status": "not_contacted",
+    "drop_center_is_fluid": true,
+    "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static/native_sphere_theta090/native_sphere_theta090_audit.png",
+    "fluid_phase_max": 1.0000005967332082,
+    "fluid_phase_min": -9.060288101861005e-07,
+    "fluid_phase_out_of_range_count": 0,
+    "geometry": "sphere",
+    "inside_core_solid_fraction": 1.0,
+    "min_abs_surface_distance": 6.0212520333037105,
+    "outside_far_fluid_fraction": 1.0,
+    "phase_nonfinite": 0,
+    "speed_max": 3.846482801838335e-06
+  },
+  {
+    "audit_failures": [],
+    "audit_status": "PASS_RUNTIME_GEOMETRY_CONTACT_DIAGNOSTIC",
+    "audit_warnings": [],
+    "case": "native_wall_theta030",
+    "contact_angle_mean_grad_deg": 143.8854244615511,
+    "contact_angle_values_grad_deg": [
+      143.8854244615511,
+      143.88542446155114
+    ],
+    "contact_status": "contacted",
+    "drop_center_is_fluid": true,
+    "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static/native_wall_theta030/native_wall_theta030_audit.png",
+    "fluid_phase_max": 1.0000038431478018,
+    "fluid_phase_min": -9.060015057911997e-07,
+    "fluid_phase_out_of_range_count": 0,
+    "geometry": "wall",
+    "inside_core_solid_fraction": null,
+    "min_abs_surface_distance": 1.5,
+    "outside_far_fluid_fraction": 1.0,
+    "phase_nonfinite": 0,
+    "speed_max": 0.00010295209752972114
+  },
+  {
+    "audit_failures": [],
+    "audit_status": "PASS_RUNTIME_GEOMETRY_CONTACT_DIAGNOSTIC",
+    "audit_warnings": [],
+    "case": "native_wall_theta090",
+    "contact_angle_mean_grad_deg": 143.8854244615511,
+    "contact_angle_values_grad_deg": [
+      143.8854244615511,
+      143.88542446155114
+    ],
+    "contact_status": "contacted",
+    "drop_center_is_fluid": true,
+    "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static/native_wall_theta090/native_wall_theta090_audit.png",
+    "fluid_phase_max": 1.0000038431478018,
+    "fluid_phase_min": -9.06001505791234e-07,
+    "fluid_phase_out_of_range_count": 0,
+    "geometry": "wall",
+    "inside_core_solid_fraction": null,
+    "min_abs_surface_distance": 1.5,
+    "outside_far_fluid_fraction": 1.0,
+    "phase_nonfinite": 0,
+    "speed_max": 0.00010295209752972112
+  }
+]
