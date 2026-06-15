@@ -129,7 +129,44 @@ global shape metric, slow cap-volume relaxation, or an implementation issue in
 the imposed wetting response. It cannot be described as proof that the BC drives
 the contact angle.
 
-## 6. Current Verdict
+## 6. Wall Morphology Check
+
+The wall cases were additionally plotted as direct phase-field morphology
+sections from the center x-slice of the VTI output. These figures show the
+actual droplet shape, not just the scalar contact-angle time series.
+
+Curated figures:
+
+```text
+artifacts/stage12_validation_20260615/wall_morphology_figures/wall_morphology_final_panels.png
+artifacts/stage12_validation_20260615/wall_morphology_figures/wall_morphology_initial_final_panels.png
+```
+
+The final equilibrium wall cases are qualitatively correct:
+
+| case | BC | theta at step 30000 | footprint | height | width/height | visual interpretation |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| equil_wall_t30 | 30 | 44.7 | 50 | 10 | 5.00 | spreading, acute morphology |
+| equil_wall_t150 | 150 | 130.8 | 32 | 28 | 1.14 | tall, obtuse morphology |
+
+The decoupled wall cases show the current failure mode clearly:
+
+| case | init | BC | theta step 0 | theta step 30000 | visual issue |
+| --- | ---: | ---: | ---: | ---: | --- |
+| decouple_wall_60to30 | 60 | 30 | 60.0 | 70.4 | does not spread toward the 30 degree target |
+| decouple_wall_120to150 | 120 | 150 | 120.0 | 111.0 | does not become taller/narrower toward 150 degrees |
+
+This visual evidence supports the same conclusion as the shape-angle table:
+the current implementation can produce distinct acute and obtuse equilibrium
+wall morphologies, but the non-circular decoupled response gate still fails.
+
+Reproduction script:
+
+```text
+scripts/stage12/stage12_wall_morphology_panels.py
+```
+
+## 7. Current Verdict
 
 The project should treat this batch as:
 
@@ -160,7 +197,7 @@ BC-response evidence: the decoupled cases need to move toward the prescribed BC
 target under a defensible metric, and the equilibrium cases need stricter mass,
 kinetic-energy, and angle-drift convergence.
 
-## 7. Required Next Gate
+## 8. Required Next Gate
 
 1. Re-audit `stage12_shape_angle_analysis.py` on decoupled cases: confirm the
    circle-arc branch, angle convention, and whether the reported global angle is
@@ -173,7 +210,7 @@ kinetic-energy, and angle-drift convergence.
 4. Only after the decoupled response and equilibrium gates pass should dynamic
    wall, cylinder, and sphere impact cases be launched.
 
-## 8. Reproducibility
+## 9. Reproducibility
 
 Repository scripts:
 
@@ -184,6 +221,7 @@ scripts/stage12/postprocess_stage12_validation_20260615.sh
 scripts/stage12/stage12_shape_angle_analysis.py
 scripts/stage12/stage12_convergence_plot.py
 scripts/stage12/stage12_angle_timeseries.py
+scripts/stage12/stage12_wall_morphology_panels.py
 ```
 
 Curated local artifacts:
