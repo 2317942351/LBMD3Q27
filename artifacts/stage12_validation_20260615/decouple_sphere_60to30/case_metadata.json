@@ -1,0 +1,35 @@
+{
+  "bc_theta_deg": 30.0,
+  "binary": "/mnt/win_sda2/RUNS/runs/stage9/src/TCLB_stage9_analytic_wetting_20260614/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "binary_sha256": "c046eb99e33192b379aad855fb2ab0222b72a9c7a1e63cc7d69389246e7eecd8",
+  "case": "decouple_sphere_60to30",
+  "claim_limit": "validation_decouple_or_equilibrium",
+  "classification_before_audit": "validation_candidate",
+  "cylinder_axis": null,
+  "decoupled": true,
+  "geometry": "sphere",
+  "grid": [
+    80,
+    80,
+    120
+  ],
+  "init_theta_deg": 60.0,
+  "interface_width": 3.0,
+  "iterations": 30000,
+  "liquid_probe": [
+    40.0,
+    40.0,
+    72.0
+  ],
+  "log_period": 500,
+  "mobility": 0.1,
+  "note": "init_theta drives cap shape (CapInitRadius/ParentRadius/Center); bc_theta drives radAngle (wetting law). When decoupled==true, a correct BC must relax the interface from init_theta toward bc_theta.",
+  "solid_center": [
+    40.0,
+    40.0,
+    48.0
+  ],
+  "solid_radius": 20.0,
+  "volume_equivalent_radius": 16.0,
+  "vtk_period": 2000
+}
