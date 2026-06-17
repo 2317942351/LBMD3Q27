@@ -43,7 +43,52 @@ DEFAULT_BIN = (
     "CLB/d3q27_pf_velocity_q27_geometric/main"
 )
 DEFAULT_ROOT = "/mnt/usb1t/RUNS/runs/stage12_validation_20260615"
-VTK_FIELDS = "PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallH,AnalyticWallNormal,AnalyticFlag"
+VTK_FIELDS = ",".join([
+    "PhaseField",
+    "Rho",
+    "U",
+    "P",
+    "BOUNDARY",
+    "IsItBoundary",
+    "WallGhost",
+    "WallH",
+    "AnalyticWallNormal",
+    "AnalyticFlag",
+    "WallCSQMode",
+    "WallCSQValid",
+    "WallCSQThetaDeg",
+    "WallCSQNormalX",
+    "WallCSQNormalY",
+    "WallCSQNormalZ",
+    "WallCSQDs",
+    "WallCSQDf",
+    "WallCSQQf",
+    "WallCSQQsRaw",
+    "WallCSQQsBounded",
+    "WallCSQQw",
+    "WallCSQResidual",
+    "WallCSQDiscriminant",
+    "WallCSQRootChoice",
+    "WallCSQStencilCase",
+    "WallCSQStencilL",
+    "WallCSQFallbackReason",
+    "WallCSQBoundedDelta",
+    "WallCSQAppliedWeight",
+    "WallCSQWriteAllowedFlag",
+    "WallCSQCandidateCount",
+    "WallCSQFluidVertexCount",
+    "WallCSQTriangleInside",
+    "WallCSQPlaneId",
+    "WallCSQBaryMin",
+    "WallCSQBaryMax",
+    "WallCSQMethodComplete",
+    "WallCSQVertexMaskBits",
+    "WallCSQVertexPhaseCleanBits",
+    "WallCSQVertexQMin",
+    "WallCSQVertexQMax",
+    "WallCSQRejectedSolidVertexCount",
+    "WallCSQRejectedSentinelCount",
+])
 
 
 @dataclass(frozen=True)
@@ -298,6 +343,10 @@ def render_xml(
     <Param name="radAngle" value="90d" zone="OuterDomain"/>
 {spec.solid_params}
     <Param name="AnalyticWetting" value="1"/>
+    <Param name="WallCompactStencilMode" value="1"/>
+    <Param name="WallCompactStencilNormalMode" value="1"/>
+    <Param name="WallCompactStencilMaxL" value="3"/>
+    <Param name="WallCompactStencilWriteAllowedFlag" value="0"/>
     <Param name="radAngle" value="{bc_theta_deg:.16g}d" zone="{target_zone}"/>
     <Param name="minGradient" value="1e-08"/>
   </Model>
