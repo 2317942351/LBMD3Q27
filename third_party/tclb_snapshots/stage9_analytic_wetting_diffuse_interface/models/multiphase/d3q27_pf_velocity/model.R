@@ -68,15 +68,23 @@ if (Options$OutFlow) {
 ##################################################
 # Functions to print c-code for grad and laplace #
 ##################################################
+ScalarStencilExpr <- function(myStringSca, x, y, z) {
+  if (is.function(myStringSca)) {
+    return(myStringSca(x, y, z))
+  }
+  paste0(myStringSca, "(", x, ",", y, ",", z, ")")
+}
 IsotropicGrad <- function(myStringVec, myStringSca){
-  cat(paste0(myStringVec,".y = 16.00 * (",myStringSca, "(0,1,0) - ", myStringSca, "(0,-1,0)) + ", myStringSca, "(1,1,1) + ", myStringSca, "(-1,1,1) - ", myStringSca, "(1,-1,1) - ", myStringSca, "(-1,-1,1) + ", myStringSca, "(1,1,-1)+ ", myStringSca, "(-1,1,-1)- ", myStringSca,  "(1,-1,-1)- ", myStringSca, "(-1,-1,-1) +  4.00 * (", myStringSca, "(1,1,0) + ", myStringSca, "(-1,1,0) - ", myStringSca, "(1,-1,0) - ", myStringSca, "(-1,-1,0) +  ", myStringSca, "(0,1,1) - ", myStringSca, "(0,-1,1) + ", myStringSca, "(0,1,-1) - ", myStringSca, "(0,-1,-1));\n"))
-  cat(paste0(myStringVec,".x = 16.00 * (",myStringSca, "(1,0,0) - ", myStringSca, "(-1,0,0)) + ", myStringSca, "(1,1,1) - ", myStringSca, "(-1,1,1) + ", myStringSca, "(1,-1,1) - ", myStringSca, "(-1,-1,1) + ", myStringSca, "(1,1,-1)- ", myStringSca, "(-1,1,-1) + ", myStringSca, "(1,-1,-1) - ", myStringSca, "(-1,-1,-1) +  4.00 * (", myStringSca, "(1,1,0) - ", myStringSca, "(-1,1,0) + ", myStringSca, "(1,-1,0) - ", myStringSca, "(-1,-1,0) + ", myStringSca, "(1,0,1) - ", myStringSca, "(-1,0,1) + ", myStringSca, "(1,0,-1) - ", myStringSca, "(-1,0,-1));\n"))
-  cat(paste0(myStringVec,".z = 16.00 * (",myStringSca, "(0,0,1) - ", myStringSca, "(0,0,-1)) + ", myStringSca, "(1,1,1) + ", myStringSca, "(-1,1,1) + ", myStringSca, "(1,-1,1) + ", myStringSca, "(-1,-1,1) - ", myStringSca, "(1,1,-1)- ", myStringSca, "(-1,1,-1)- ", myStringSca,  "(1,-1,-1)- ", myStringSca, "(-1,-1,-1) +  4.00 * (", myStringSca, "(1,0,1) + ", myStringSca, "(-1,0,1) - ", myStringSca, "(1,0,-1) - ", myStringSca, "(-1,0,-1) +  ", myStringSca, "(0,1,1) + ", myStringSca, "(0,-1,1) - ", myStringSca, "(0,1,-1) - ", myStringSca, "(0,-1,-1));\n"))
+  S <- function(x, y, z) ScalarStencilExpr(myStringSca, x, y, z)
+  cat(paste0(myStringVec,".y = 16.00 * (",S(0,1,0), " - ", S(0,-1,0), ") + ", S(1,1,1), " + ", S(-1,1,1), " - ", S(1,-1,1), " - ", S(-1,-1,1), " + ", S(1,1,-1), "+ ", S(-1,1,-1), "- ", S(1,-1,-1), "- ", S(-1,-1,-1), " +  4.00 * (", S(1,1,0), " + ", S(-1,1,0), " - ", S(1,-1,0), " - ", S(-1,-1,0), " +  ", S(0,1,1), " - ", S(0,-1,1), " + ", S(0,1,-1), " - ", S(0,-1,-1), ");\n"))
+  cat(paste0(myStringVec,".x = 16.00 * (",S(1,0,0), " - ", S(-1,0,0), ") + ", S(1,1,1), " - ", S(-1,1,1), " + ", S(1,-1,1), " - ", S(-1,-1,1), " + ", S(1,1,-1), "- ", S(-1,1,-1), " + ", S(1,-1,-1), " - ", S(-1,-1,-1), " +  4.00 * (", S(1,1,0), " - ", S(-1,1,0), " + ", S(1,-1,0), " - ", S(-1,-1,0), " + ", S(1,0,1), " - ", S(-1,0,1), " + ", S(1,0,-1), " - ", S(-1,0,-1), ");\n"))
+  cat(paste0(myStringVec,".z = 16.00 * (",S(0,0,1), " - ", S(0,0,-1), ") + ", S(1,1,1), " + ", S(-1,1,1), " + ", S(1,-1,1), " + ", S(-1,-1,1), " - ", S(1,1,-1), "- ", S(-1,1,-1), "- ", S(1,-1,-1), "- ", S(-1,-1,-1), " +  4.00 * (", S(1,0,1), " + ", S(-1,0,1), " - ", S(1,0,-1), " - ", S(-1,0,-1), " +  ", S(0,1,1), " + ", S(0,-1,1), " - ", S(0,1,-1), " - ", S(0,-1,-1), ");\n"))
   cat(paste0(myStringVec,".x /= 72.0;\n"))
   cat(paste0(myStringVec,".y /= 72.0;\n"))
   cat(paste0(myStringVec,".z /= 72.0;\n"))
 }
 myLaplace <- function(myStringVec, myStringSca){
-  cat(paste0(myStringVec, " = 16.0 *((", myStringSca, "(1,0,0)) + (", myStringSca, "(-1,0,0)) + (", myStringSca, "(0,1,0)) + (", myStringSca, "(0,-1,0))+ (", myStringSca, "(0,0,1)) + (", myStringSca, "(0,0,-1)))	+ 1.0 *((", myStringSca, "(1,1,1)) + (", myStringSca, "(-1,1,1)) + (", myStringSca, "(1,-1,1))+ (", myStringSca, "(-1,-1,1)) + (", myStringSca, "(1,1,-1))+ (", myStringSca, "(-1,1,-1)) + (", myStringSca, "(1,-1,-1))+(", myStringSca, "(-1,-1,-1))) + 4.0 *((", myStringSca, "(1,1,0)) + (", myStringSca, "(-1,1,0))+ (", myStringSca, "(1,-1,0))+ (", myStringSca, "(-1,-1,0))+ (", myStringSca, "(1,0,1)) + (", myStringSca, "(-1,0,1))+ (", myStringSca, "(1,0,-1))+ (", myStringSca, "(-1,0,-1))+ (", myStringSca, "(0,1,1)) + (", myStringSca, "(0,-1,1))+ (", myStringSca, "(0,1,-1))+ (", myStringSca, "(0,-1,-1))) - 152.0 * ", myStringSca, "(0,0,0);\n"))
+  S <- function(x, y, z) ScalarStencilExpr(myStringSca, x, y, z)
+  cat(paste0(myStringVec, " = 16.0 *((", S(1,0,0), ") + (", S(-1,0,0), ") + (", S(0,1,0), ") + (", S(0,-1,0), ")+ (", S(0,0,1), ") + (", S(0,0,-1), "))	+ 1.0 *((", S(1,1,1), ") + (", S(-1,1,1), ") + (", S(1,-1,1), ")+ (", S(-1,-1,1), ") + (", S(1,1,-1), ")+ (", S(-1,1,-1), ") + (", S(1,-1,-1), ")+(", S(-1,-1,-1), ")) + 4.0 *((", S(1,1,0), ") + (", S(-1,1,0), ")+ (", S(1,-1,0), ")+ (", S(-1,-1,0), ")+ (", S(1,0,1), ") + (", S(-1,0,1), ")+ (", S(1,0,-1), ")+ (", S(-1,0,-1), ")+ (", S(0,1,1), ") + (", S(0,-1,1), ")+ (", S(0,1,-1), ")+ (", S(0,-1,-1), ")) - 152.0 * ", S(0,0,0), ";\n"))
   cat(paste0(myStringVec, "/= 36.0;\n"))
 }

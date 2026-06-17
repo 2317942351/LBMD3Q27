@@ -86,11 +86,89 @@ if (Options$geometric){
 AddField("WallGhost", stencil3d=2, group="solid_boundary")
 AddField("WallH",     stencil3d=1, group="solid_boundary")
 AddField("AnalyticFlag", stencil3d=1, group="solid_boundary")
+AddField("WallGhostRaw", stencil3d=1, group="solid_boundary")
+AddField("WallGhostClamped", stencil3d=1, group="solid_boundary")
+AddField("WallGhostClampHit", stencil3d=1, group="solid_boundary")
+AddField("WettingPathId", stencil3d=1, group="solid_boundary")
+AddField("LocalRadAngle", stencil3d=1, group="solid_boundary")
+AddField("WallCSQMode", stencil3d=1, group="solid_boundary")
+AddField("WallCSQNormalMode", stencil3d=1, group="solid_boundary")
+AddField("WallCSQValid", stencil3d=1, group="solid_boundary")
+AddField("WallCSQThetaDeg", stencil3d=1, group="solid_boundary")
+AddField("WallCSQNormalX", stencil3d=1, group="solid_boundary")
+AddField("WallCSQNormalY", stencil3d=1, group="solid_boundary")
+AddField("WallCSQNormalZ", stencil3d=1, group="solid_boundary")
+AddField("WallCSQDs", stencil3d=1, group="solid_boundary")
+AddField("WallCSQDf", stencil3d=1, group="solid_boundary")
+AddField("WallCSQQf", stencil3d=1, group="solid_boundary")
+AddField("WallCSQQsRaw", stencil3d=1, group="solid_boundary")
+AddField("WallCSQQsBounded", stencil3d=1, group="solid_boundary")
+AddField("WallCSQQw", stencil3d=1, group="solid_boundary")
+AddField("WallCSQResidual", stencil3d=1, group="solid_boundary")
+AddField("WallCSQAppliedResidual", stencil3d=1, group="solid_boundary")
+AddField("WallCSQDiscriminant", stencil3d=1, group="solid_boundary")
+AddField("WallCSQRootChoice", stencil3d=1, group="solid_boundary")
+AddField("WallCSQStencilCase", stencil3d=1, group="solid_boundary")
+AddField("WallCSQStencilL", stencil3d=1, group="solid_boundary")
+AddField("WallCSQFallbackReason", stencil3d=1, group="solid_boundary")
+AddField("WallCSQBoundedDelta", stencil3d=1, group="solid_boundary")
+AddField("WallCSQAppliedWeight", stencil3d=1, group="solid_boundary")
+AddField("WallCSQWriteAllowedFlag", stencil3d=1, group="solid_boundary")
+AddField("WallCSQCandidateCount", stencil3d=1, group="solid_boundary")
+AddField("WallCSQFluidVertexCount", stencil3d=1, group="solid_boundary")
+AddField("WallCSQTriangleInside", stencil3d=1, group="solid_boundary")
+AddField("WallCSQPlaneId", stencil3d=1, group="solid_boundary")
+AddField("WallCSQBaryMin", stencil3d=1, group="solid_boundary")
+AddField("WallCSQBaryMax", stencil3d=1, group="solid_boundary")
+AddField("WallCSQMethodComplete", stencil3d=1, group="solid_boundary")
+AddField("WallCSQVertexMaskBits", stencil3d=1, group="solid_boundary")
+AddField("WallCSQVertexRealFluidBits", stencil3d=1, group="solid_boundary")
+AddField("WallCSQVertexPhaseCleanBits", stencil3d=1, group="solid_boundary")
+AddField("WallCSQVertexQMin", stencil3d=1, group="solid_boundary")
+AddField("WallCSQVertexQMax", stencil3d=1, group="solid_boundary")
+AddField("WallCSQRejectedSolidVertexCount", stencil3d=1, group="solid_boundary")
+AddField("WallCSQRejectedSentinelCount", stencil3d=1, group="solid_boundary")
+AddField("WallCSQStrictWriteReady", stencil3d=1, group="solid_boundary")
+AddField("WallGradDeltaMag", stencil3d=1, group="wall_grad_diag")
+AddField("WallGradThetaApp", stencil3d=1, group="wall_grad_diag")
+AddField("WallMuCandidate", stencil3d=1, group="wall_grad_diag")
+
+stage13_wall_diag_fields = c(
+    "WallGhost", "WallH", "AnalyticFlag", "WallGhostRaw",
+    "WallGhostClamped", "WallGhostClampHit", "WettingPathId",
+    "LocalRadAngle",
+    "WallCSQMode", "WallCSQNormalMode", "WallCSQValid", "WallCSQThetaDeg",
+    "WallCSQNormalX", "WallCSQNormalY", "WallCSQNormalZ",
+    "WallCSQDs", "WallCSQDf", "WallCSQQf", "WallCSQQsRaw",
+    "WallCSQQsBounded", "WallCSQQw", "WallCSQResidual",
+    "WallCSQAppliedResidual",
+    "WallCSQDiscriminant", "WallCSQRootChoice", "WallCSQStencilCase",
+    "WallCSQStencilL", "WallCSQFallbackReason", "WallCSQBoundedDelta",
+    "WallCSQAppliedWeight", "WallCSQWriteAllowedFlag",
+    "WallCSQCandidateCount", "WallCSQFluidVertexCount",
+    "WallCSQTriangleInside", "WallCSQPlaneId", "WallCSQBaryMin",
+    "WallCSQBaryMax", "WallCSQMethodComplete",
+    "WallCSQVertexMaskBits", "WallCSQVertexRealFluidBits",
+    "WallCSQVertexPhaseCleanBits",
+    "WallCSQVertexQMin", "WallCSQVertexQMax",
+    "WallCSQRejectedSolidVertexCount", "WallCSQRejectedSentinelCount",
+    "WallCSQStrictWriteReady"
+)
+stage13_wall_phase_save_fields = c("PhaseF", stage13_wall_diag_fields)
+
+# Stage13 diagnostics: output-only in this pass. These fields are written by
+# collision/update code but do not feed back into the solver.
+AddField("ForceIterResidual", stencil3d=1, group="runtime_diagnostics")
+AddField("ForceIterCount", stencil3d=1, group="runtime_diagnostics")
+AddField("MassCorrectionApplied", stencil3d=1, group="runtime_diagnostics")
+AddField("PhaseStencilGhostUseCount", stencil3d=1, group="runtime_diagnostics")
+AddField("PhaseStencilFallbackCount", stencil3d=1, group="runtime_diagnostics")
+AddField("PhaseStencilMidpointFallbackCount", stencil3d=1, group="runtime_diagnostics")
 
 save_initial_PF = c("PF","Vel")
 save_initial    = c("g","h","PF")
-save_iteration  = c("g","h","Vel","nw", "solid_boundary", extra_save_iteration)
-load_iteration  = c("g","h","Vel","nw", "solid_boundary", extra_load_iteration)
+save_iteration  = c("g","h","Vel","nw", "solid_boundary", "runtime_diagnostics", "wall_grad_diag", extra_save_iteration)
+load_iteration  = c("g","h","Vel","nw", "solid_boundary", "runtime_diagnostics", "wall_grad_diag", extra_load_iteration)
 load_phase      = c("g","h","Vel","nw", "solid_boundary", extra_load_phase)
 
 if (Options$OutFlow){
@@ -146,15 +224,15 @@ if (Options$thermo){
 	# STAGES FOR VARIOUS OPTIONS
 	if (Options$geometric){
 		AddStage("WallInit_CA"  , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWall_CA"  , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost", "WallH", "AnalyticFlag"), load=DensityAll$group %in% c("nw", "gradPhi", "PF", "solid_boundary", extra_fields_to_load_for_bc))
+		AddStage("calcWall_CA"  , "calcWallPhase", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c("nw", "gradPhi", "PF", "solid_boundary", extra_fields_to_load_for_bc))
 
 		AddStage('calcPhaseGrad', "calcPhaseGrad", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
 		AddStage('calcPhaseGrad_init', "calcPhaseGrad_init", load=DensityAll$group %in% c("nw", "PF", "solid_boundary"), save=Fields$group=="gradPhi")
-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
+		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
 	} else {
 		AddStage("WallInit" , "Init_wallNorm", save=Fields$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWall" , "calcWallPhase", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
-		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% c("PhaseF", "WallGhost"), load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
+		AddStage("calcWall" , "calcWallPhase", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c("nw", "solid_boundary", extra_fields_to_load_for_bc))
+		AddStage("calcWallPhase_correction", "calcWallPhase_correction", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c("nw", "PF", "solid_boundary"))
 	}
 	if (Options$thermo){
 		AddStage("CopyDistributions", "TempCopy",  save=Fields$group %in% c("g","h","Vel","nw", "PF","Thermal"))
@@ -203,9 +281,61 @@ if (Options$thermo){
 	}
 	# Stage9 analytic-geometry wetting BC diagnostics
 	AddQuantity(name="WallGhost", unit=1)
+	AddQuantity(name="WallGhostRaw", unit=1)
+	AddQuantity(name="WallGhostClamped", unit=1)
+	AddQuantity(name="WallGhostClampHit", unit=1)
+	AddQuantity(name="WettingPathId", unit=1)
+	AddQuantity(name="LocalRadAngle", unit=1)
 	AddQuantity(name="WallH", unit=1)
 	AddQuantity(name="AnalyticWallNormal", unit=1, vector=T)
 	AddQuantity(name="AnalyticFlag", unit=1)
+	AddQuantity(name="WallCSQMode", unit=1)
+	AddQuantity(name="WallCSQNormalMode", unit=1)
+	AddQuantity(name="WallCSQValid", unit=1)
+	AddQuantity(name="WallCSQThetaDeg", unit=1)
+	AddQuantity(name="WallCSQNormalX", unit=1)
+	AddQuantity(name="WallCSQNormalY", unit=1)
+	AddQuantity(name="WallCSQNormalZ", unit=1)
+	AddQuantity(name="WallCSQDs", unit=1)
+	AddQuantity(name="WallCSQDf", unit=1)
+	AddQuantity(name="WallCSQQf", unit=1)
+	AddQuantity(name="WallCSQQsRaw", unit=1)
+	AddQuantity(name="WallCSQQsBounded", unit=1)
+	AddQuantity(name="WallCSQQw", unit=1)
+	AddQuantity(name="WallCSQResidual", unit=1)
+	AddQuantity(name="WallCSQAppliedResidual", unit=1)
+	AddQuantity(name="WallCSQDiscriminant", unit=1)
+	AddQuantity(name="WallCSQRootChoice", unit=1)
+	AddQuantity(name="WallCSQStencilCase", unit=1)
+	AddQuantity(name="WallCSQStencilL", unit=1)
+	AddQuantity(name="WallCSQFallbackReason", unit=1)
+	AddQuantity(name="WallCSQBoundedDelta", unit=1)
+	AddQuantity(name="WallCSQAppliedWeight", unit=1)
+	AddQuantity(name="WallCSQWriteAllowedFlag", unit=1)
+	AddQuantity(name="WallCSQCandidateCount", unit=1)
+	AddQuantity(name="WallCSQFluidVertexCount", unit=1)
+	AddQuantity(name="WallCSQTriangleInside", unit=1)
+	AddQuantity(name="WallCSQPlaneId", unit=1)
+	AddQuantity(name="WallCSQBaryMin", unit=1)
+	AddQuantity(name="WallCSQBaryMax", unit=1)
+	AddQuantity(name="WallCSQMethodComplete", unit=1)
+	AddQuantity(name="WallCSQVertexMaskBits", unit=1)
+	AddQuantity(name="WallCSQVertexRealFluidBits", unit=1)
+	AddQuantity(name="WallCSQVertexPhaseCleanBits", unit=1)
+	AddQuantity(name="WallCSQVertexQMin", unit=1)
+	AddQuantity(name="WallCSQVertexQMax", unit=1)
+	AddQuantity(name="WallCSQRejectedSolidVertexCount", unit=1)
+	AddQuantity(name="WallCSQRejectedSentinelCount", unit=1)
+	AddQuantity(name="WallCSQStrictWriteReady", unit=1)
+	AddQuantity(name="ForceIterResidual", unit=1)
+	AddQuantity(name="ForceIterCount", unit=1)
+	AddQuantity(name="MassCorrectionApplied", unit=1)
+	AddQuantity(name="PhaseStencilGhostUseCount", unit=1)
+	AddQuantity(name="PhaseStencilFallbackCount", unit=1)
+	AddQuantity(name="PhaseStencilMidpointFallbackCount", unit=1)
+	AddQuantity(name="WallGradDeltaMag", unit=1)
+	AddQuantity(name="WallGradThetaApp", unit=1)
+	AddQuantity(name="WallMuCandidate", unit=1)
 ###################################
 ########INPUTS - PHASEFIELD########
 ###################################
@@ -219,6 +349,8 @@ if (Options$thermo){
 	AddSetting(name="M", omega_phi='1.0/(3*M+0.5)', default=0.02, comment='Mobility')
 	AddSetting(name="sigma", comment='surface tension')
 	AddSetting(name="force_fixed_iterator", default=2, comment='to resolve implicit relation of viscous force')
+	AddSetting(name="ForceFixedTol", default=0.0, comment='Stage13 force fixed-point residual tolerance; <=0 preserves fixed-count iteration')
+	AddSetting(name="ForceFixedMaxIter", default=2, comment='Stage13 force fixed-point maximum iterations used when ForceFixedTol>0')
   	AddSetting(name="Washburn_start", default="0", comment='Start of washburn gas phase')
   	AddSetting(name="Washburn_end", default="0", comment='End of washburn gas phase')
 	AddSetting(name="radAngle", default='1.570796', comment='Contact angle in radians, can use units -> 90d where d=2pi/360', zonal=T)
@@ -237,6 +369,24 @@ if (Options$thermo){
 	AddSetting(name="AnalyticSolidRadius", default=0.0, comment='Stage9: solid radius (cylinder/sphere)')
 	AddSetting(name="AnalyticSolidAxis", default=2, comment='Stage9: plane normal / cylinder axis: 0=x, 1=y, 2=z')
 	AddSetting(name="AnalyticSolidPlaneOffset", default=0.0, comment='Stage9: plane offset along axis (plane only)')
+	AddSetting(name="WettingBCMode", default=0, comment='Stage13 analytic wetting BC mode: 0 legacy Briant/Jacqmin, 1 geometric tangent/curvature diagnostic')
+	AddSetting(name="WallCompactStencilMode", default=0, comment='Stage13 compact-stencil wetting mode: 0 off, 1 shadow only, 2 write after gate')
+	AddSetting(name="WallCompactStencilNormalMode", default=1, comment='Stage13 compact-stencil normal mode: only 1 analytic signed-distance normal is implemented; other modes reject compact writes')
+	AddSetting(name="WallCompactStencilMaxL", default=3, comment='Stage13 compact-stencil seven-plane local search radius for shadow diagnostics')
+	AddSetting(name="WallCompactStencilThetaEps", default=1e-6, comment='Stage13 compact-stencil neutral-angle epsilon in radians')
+	AddSetting(name="WallCompactStencilBoundEps", default=0.0, comment='Stage13 compact-stencil q bound tolerance; strict write keeps q_s inside physical [0,1]')
+	AddSetting(name="WallCompactStencilMaxBoundedDelta", default=1e-8, comment='Stage13 compact-stencil write gate: max allowed |q_s_bounded-q_s_raw|')
+	AddSetting(name="WallCompactStencilAppliedResidualTol", default=1e-8, comment='Stage13 compact-stencil write gate: max residual after applying bounded q_s')
+	AddSetting(name="WallCompactStencilWriteAllowedFlag", default=0, comment='Stage13 hard gate: compact-stencil writes are blocked unless explicitly enabled')
+	AddSetting(name="PhaseEquationMode", default=0, comment='Stage13 reserved: 0 legacy phase equation; mass correction inactive until Stage E')
+	##LAYER 1-2 CONTACT LINE DRIVE (Wang 2025 / Ju 2024)
+	AddSetting(name="WallGradMode", default=0, comment='Layer1 Wang corrected gradient: 0 off, 1 shadow, 2 write')
+	AddSetting(name="WallGradContactSign", default=1.0, comment='Layer1: contact angle sign +1 or -1')
+	AddSetting(name="WallGradCapFactor", default=2.0, comment='Layer1: corrected gradient magnitude cap factor')
+	AddSetting(name="WallGradContactLineEps", default=0.02, comment='Layer1: skip nodes where q<eps or q>1-eps')
+	AddSetting(name="WallMuMode", default=0, comment='Layer2 Ju wall-mu source: 0 off, 1 shadow, 2 write')
+	AddSetting(name="WallMuScale", default=1.0, comment='Layer2: mu_wall scaling factor')
+	AddSetting(name="WallMuContactLineEps", default=0.02, comment='Layer2: skip nodes where q<eps or q>1-eps')
 	##SPECIAL INITIALISATIONS
 	# RTI
 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')

@@ -265,7 +265,7 @@ NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE = 2
 NEXT_NEXT_INTERPOLATING_POINTS_ARE_SOLID = 3
 NEXT_INTERPOLATING_POINTS_ARE_SOLID = 4
 BOTH_NEXT_AND_NNEXT_INTERPOLATING_POINTS_ARE_SOLID = 5
-SPECIAL_POINT_HUGE_MAGIC_NUMBER = 2342e10
+SPECIAL_POINT_HUGE_MAGIC_NUMBER = -999.0
 ?>
 
 //##################################################################//
@@ -351,6 +351,41 @@ CudaDeviceFunction real_t stage9_sphere_signed_distance() {
 	return sqrt(dx*dx + dy*dy + dz*dz) - AnalyticSolidRadius;
 }
 
+CudaDeviceFunction real_t stage13_analytic_signed_distance_at_offset(real_t ox, real_t oy, real_t oz)
+{
+	real_t px = X + ox;
+	real_t py = Y + oy;
+	real_t pz = Z + oz;
+	real_t t = AnalyticSolidType;
+	if (AnalyticWetting < 0.5 || t < 0.5) return 1.0;
+	if (t < 1.5) {
+		real_t coord = (AnalyticSolidAxis < 0.5) ? px
+		             : (AnalyticSolidAxis < 1.5) ? py : pz;
+		return coord - AnalyticSolidPlaneOffset;
+	}
+	if (t < 2.5) {
+		real_t dx = px - AnalyticSolidCenterX;
+		real_t dy = py - AnalyticSolidCenterY;
+		real_t dz = pz - AnalyticSolidCenterZ;
+		real_t a = 0.0;
+		real_t b = 0.0;
+		if (AnalyticSolidAxis < 0.5)        { a = dy; b = dz; }
+		else if (AnalyticSolidAxis < 1.5)   { a = dx; b = dz; }
+		else                                { a = dx; b = dy; }
+		return sqrt(a*a + b*b) - AnalyticSolidRadius;
+	}
+	real_t dx = px - AnalyticSolidCenterX;
+	real_t dy = py - AnalyticSolidCenterY;
+	real_t dz = pz - AnalyticSolidCenterZ;
+	return sqrt(dx*dx + dy*dy + dz*dz) - AnalyticSolidRadius;
+}
+
+CudaDeviceFunction int stage13_compact_vertex_is_geometric_fluid(int ox, int oy, int oz)
+{
+	real_t sd = stage13_analytic_signed_distance_at_offset((real_t)ox, (real_t)oy, (real_t)oz);
+	return (sd > 1.0e-9);
+}
+
 // Dispatch: fill out_n and out_h for the declared analytic geometry.
 // Returns the analytic wall normal (unit, pointing into fluid). out_h receives
 // the signed distance (>0 in fluid). If AnalyticWetting is off or the geometry
@@ -406,8 +441,23 @@ CudaDeviceFunction real_t stage9_analytic_curvature() {
 //             + (h0^2/R) * tan(pi/2 - theta) * |grad_t phi|     [curvature corr]
 //
 // grad_t: gradient projected onto the analytic tangent plane (perp to n_w).
-CudaDeviceFunction real_t stage9_calc_wall_ghost(
-	vector_t n_w, real_t h0, real_t phi_0, vector_t grad)
+CudaDeviceFunction real_t stage13_clamp_phase_value(real_t raw, real_t *clamp_hit)
+{
+	real_t out = raw;
+	*clamp_hit = 0.0;
+	if (out < PhaseField_l) {
+		out = PhaseField_l;
+		*clamp_hit = 1.0;
+	}
+	if (out > PhaseField_h) {
+		out = PhaseField_h;
+		*clamp_hit = 1.0;
+	}
+	return out;
+}
+
+CudaDeviceFunction real_t stage13_compute_geometric_tangent_raw(
+	vector_t n_w, real_t h0, real_t phi_0, vector_t grad, real_t theta)
 {
 	real_t phase_range = PhaseField_h - PhaseField_l;
 	if (fabs(phase_range) < 1e-12) phase_range = 1.0;
@@ -420,21 +470,653 @@ CudaDeviceFunction real_t stage9_calc_wall_ghost(
 	grad_t.z = grad.z - gdotn * n_w.z;
 	real_t gt_mag = sqrt(grad_t.x*grad_t.x + grad_t.y*grad_t.y + grad_t.z*grad_t.z);
 
-	real_t tan_coeff = tan(PI/2.0 - radAngle);
+	real_t tan_coeff = tan(PI/2.0 - theta);
 	real_t kappa_corr = stage9_analytic_curvature() * h0 * h0;
 
-	real_t ghost = phi_0 + 2.0 * h0 * tan_coeff * gt_mag
-	                      + kappa_corr * tan_coeff * gt_mag;
+	return phi_0 + 2.0 * h0 * tan_coeff * gt_mag
+	             + kappa_corr * tan_coeff * gt_mag;
+}
 
-	// Physical phase range clamp. This is not a numerical stabiliser: the
-	// ghost value is the wall-side mirror of a bounded phase variable, so it
-	// must remain inside [PhaseField_l, PhaseField_h]. Clipping here enforces
-	// the physical bounds of the order parameter; it does not hide a wrong
-	// angle because the angle enters through the un-clipped slope, not the
-	// value. This is the same convention used by Briant's surface-energy BC.
-	if (ghost < PhaseField_l) ghost = PhaseField_l;
-	if (ghost > PhaseField_h) ghost = PhaseField_h;
-	return ghost;
+CudaDeviceFunction real_t stage9_calc_wall_ghost(
+	vector_t n_w, real_t h0, real_t phi_0, vector_t grad)
+{
+	real_t clamp_hit = 0.0;
+	real_t raw = stage13_compute_geometric_tangent_raw(n_w, h0, phi_0, grad, radAngle);
+	return stage13_clamp_phase_value(raw, &clamp_hit);
+}
+
+CudaDeviceFunction real_t stage13_compute_briant_wall_ghost_raw(
+	real_t phi_f, real_t h0, real_t theta, real_t *path_id)
+{
+	real_t a = -h0 * (4.0/IntWidth) * cos(theta);
+	real_t discrim = (1.0+a)*(1.0+a) - 4.0*a*phi_f;
+	*path_id = 2.0;
+	if (discrim < 0.0) {
+		*path_id = -2.0;
+		return phi_f;
+	}
+	return (1.0 + a - sqrt(discrim))/(a + 1e-12) - phi_f;
+}
+
+CudaDeviceFunction real_t stage13_compute_analytic_wall_ghost(
+	vector_t n_w, real_t h0, real_t phi_f, vector_t grad, real_t theta,
+	real_t *raw_out, real_t *clamped_out, real_t *clamp_hit, real_t *path_id)
+{
+	if (fabs(theta - PI/2.0) < 1e-4) {
+		*path_id = 1.0;
+		*raw_out = phi_f;
+		*clamped_out = phi_f;
+		*clamp_hit = 0.0;
+		return phi_f;
+	}
+
+	real_t raw;
+	if (WettingBCMode > 0.5 && WettingBCMode < 1.5) {
+		raw = stage13_compute_geometric_tangent_raw(n_w, h0, phi_f, grad, theta);
+		*path_id = 20.0;
+	} else {
+		raw = stage13_compute_briant_wall_ghost_raw(phi_f, h0, theta, path_id);
+	}
+
+	*raw_out = raw;
+	*clamped_out = stage13_clamp_phase_value(raw, clamp_hit);
+	return *clamped_out;
+}
+
+CudaDeviceFunction real_t stage13_phase_to_q(real_t phi)
+{
+	real_t range = PhaseField_h - PhaseField_l;
+	if (fabs(range) < 1.0e-30) return 0.5;
+	return (phi - PhaseField_l) / range;
+}
+
+CudaDeviceFunction real_t stage13_q_to_phase(real_t q)
+{
+	return PhaseField_l + q * (PhaseField_h - PhaseField_l);
+}
+
+CudaDeviceFunction int stage13_compact_write_requested()
+{
+	return (WallCompactStencilMode > 1.5 && WallCompactStencilWriteAllowedFlag > 0.5);
+}
+
+CudaDeviceFunction int stage13_compact_normal_mode_allows_write()
+{
+	// Only analytic signed-distance normals are implemented for the compact
+	// stencil. Other advertised modes must not silently write.
+	return (WallCompactStencilNormalMode > 0.5 && WallCompactStencilNormalMode < 1.5);
+}
+
+CudaDeviceFunction int stage13_csq_fallback_allows_write()
+{
+	return (fabs(WallCSQFallbackReason) < 0.5 ||
+	        fabs(WallCSQFallbackReason - 4.0) < 0.5);
+}
+
+CudaDeviceFunction int stage13_compact_solution_can_write()
+{
+	real_t max_bounded_delta = WallCompactStencilMaxBoundedDelta;
+	real_t max_applied_residual = WallCompactStencilAppliedResidualTol;
+	if (max_bounded_delta < 0.0) max_bounded_delta = 0.0;
+	if (max_applied_residual < 0.0) max_applied_residual = 0.0;
+	int ready = (stage13_compact_write_requested()
+	     && stage13_compact_normal_mode_allows_write()
+	     && WallCSQValid > 0.5
+	     && WallCSQMethodComplete > 0.5
+	     && stage13_csq_fallback_allows_write()
+	     && WallCSQBoundedDelta <= max_bounded_delta
+	     && fabs(WallCSQAppliedResidual) <= max_applied_residual);
+	WallCSQStrictWriteReady = ready ? 1.0 : 0.0;
+	return ready;
+}
+
+CudaDeviceFunction real_t stage13_compact_solution_wall_ghost(
+	real_t *raw_out, real_t *clamped_out, real_t *clamp_hit)
+{
+	real_t raw = stage13_q_to_phase(WallCSQQsRaw);
+	real_t bounded = stage13_q_to_phase(WallCSQQsBounded);
+	real_t phase_clamp_hit = 0.0;
+	real_t out = stage13_clamp_phase_value(bounded, &phase_clamp_hit);
+	*raw_out = raw;
+	*clamped_out = out;
+	*clamp_hit = phase_clamp_hit;
+	if (WallCSQBoundedDelta > 1.0e-14) {
+		*clamp_hit = 1.0;
+	}
+	return out;
+}
+
+CudaDeviceFunction int stage13_boundary_phase_is_valid(real_t pf) {
+	return (pf > -100.0 && pf < 100.0);
+}
+
+CudaDeviceFunction int stage13_compact_vertex_is_real_fluid(int ox, int oy, int oz, real_t pf)
+{
+	// This helper is used from calcWallPhase after Init_wallNorm has saved the
+	// IsBoundary field. Do not move it into Init_wallNorm: neighbour
+	// IsBoundary_dyn reads are stale while that field is being populated there.
+	if (!stage13_boundary_phase_is_valid(pf)) return 0;
+	if (IsBoundary_dyn(ox, oy, oz) > 0.5) return 0;
+	return 1;
+}
+
+CudaDeviceFunction real_t stage13_bit3_value(int a, int b, int c)
+{
+	return (real_t)(a + 2*b + 4*c);
+}
+
+CudaDeviceFunction real_t stage13_bound_q(real_t q)
+{
+	real_t eps = WallCompactStencilBoundEps;
+	if (eps < 0.0) eps = 0.0;
+	if (q < -eps) return -eps;
+	if (q > 1.0 + eps) return 1.0 + eps;
+	return q;
+}
+
+CudaDeviceFunction real_t stage13_wall_csq_residual(
+	real_t q_s, real_t q_f, real_t d_s, real_t d_f, real_t theta)
+{
+	real_t D = d_s + d_f;
+	if (D <= 1.0e-30 || IntWidth <= 1.0e-30) return 1.0e30;
+	real_t q_w = (d_s*q_f + d_f*q_s) / D;
+	real_t lhs = (q_f - q_s) / D;
+	real_t rhs = -(4.0/IntWidth) * q_w * (1.0 - q_w) * cos(theta);
+	return lhs - rhs;
+}
+
+CudaDeviceFunction int stage13_floor_int(real_t x)
+{
+	int out = (int)floor(x);
+	return out;
+}
+
+CudaDeviceFunction int stage13_ceil_int(real_t x)
+{
+	int out = (int)ceil(x);
+	return out;
+}
+
+CudaDeviceFunction int stage13_max_int(int a, int b)
+{
+	return (a > b) ? a : b;
+}
+
+CudaDeviceFunction int stage13_min_int(int a, int b)
+{
+	return (a < b) ? a : b;
+}
+
+CudaDeviceFunction real_t stage13_min_real(real_t a, real_t b)
+{
+	return (a < b) ? a : b;
+}
+
+CudaDeviceFunction real_t stage13_max_real(real_t a, real_t b)
+{
+	return (a > b) ? a : b;
+}
+
+CudaDeviceFunction int stage13_coord_span_ok(
+	int ax, int ay, int az,
+	int bx, int by, int bz,
+	int cx, int cy, int cz)
+{
+	int minx = stage13_min_int(ax, stage13_min_int(bx, cx));
+	int maxx = stage13_max_int(ax, stage13_max_int(bx, cx));
+	int miny = stage13_min_int(ay, stage13_min_int(by, cy));
+	int maxy = stage13_max_int(ay, stage13_max_int(by, cy));
+	int minz = stage13_min_int(az, stage13_min_int(bz, cz));
+	int maxz = stage13_max_int(az, stage13_max_int(bz, cz));
+	return ((maxx - minx) <= 1 && (maxy - miny) <= 1 && (maxz - minz) <= 1);
+}
+
+CudaDeviceFunction int stage13_barycentric_3d(
+	real_t px, real_t py, real_t pz,
+	real_t ax, real_t ay, real_t az,
+	real_t bx, real_t by, real_t bz,
+	real_t cx, real_t cy, real_t cz,
+	real_t *w0, real_t *w1, real_t *w2)
+{
+	real_t v0x = bx - ax;
+	real_t v0y = by - ay;
+	real_t v0z = bz - az;
+	real_t v1x = cx - ax;
+	real_t v1y = cy - ay;
+	real_t v1z = cz - az;
+	real_t v2x = px - ax;
+	real_t v2y = py - ay;
+	real_t v2z = pz - az;
+	real_t d00 = v0x*v0x + v0y*v0y + v0z*v0z;
+	real_t d01 = v0x*v1x + v0y*v1y + v0z*v1z;
+	real_t d11 = v1x*v1x + v1y*v1y + v1z*v1z;
+	real_t d20 = v2x*v0x + v2y*v0y + v2z*v0z;
+	real_t d21 = v2x*v1x + v2y*v1y + v2z*v1z;
+	real_t denom = d00*d11 - d01*d01;
+	if (fabs(denom) < 1.0e-30) return 0;
+	real_t v = (d11*d20 - d01*d21) / denom;
+	real_t w = (d00*d21 - d01*d20) / denom;
+	real_t u = 1.0 - v - w;
+	*w0 = u;
+	*w1 = v;
+	*w2 = w;
+	return 1;
+}
+
+CudaDeviceFunction int stage13_barycentric_inside(real_t w0, real_t w1, real_t w2)
+{
+	real_t tol = 1.0e-10;
+	return (w0 >= -tol && w1 >= -tol && w2 >= -tol &&
+	        w0 <= 1.0 + tol && w1 <= 1.0 + tol && w2 <= 1.0 + tol);
+}
+
+CudaDeviceFunction int stage13_try_compact_triangle(
+	int ax, int ay, int az,
+	int bx, int by, int bz,
+	int cx, int cy, int cz,
+	int sx, int sy, int sz,
+	real_t fx, real_t fy, real_t fz,
+	real_t *q_f, real_t *bary_min, real_t *bary_max)
+{
+	if (!stage13_coord_span_ok(ax, ay, az, bx, by, bz, cx, cy, cz)) return 0;
+	WallCSQCandidateCount = WallCSQCandidateCount + 1.0;
+
+	real_t pf_a = PhaseF_dyn(sx*ax, sy*ay, sz*az);
+	real_t pf_b = PhaseF_dyn(sx*bx, sy*by, sz*bz);
+	real_t pf_c = PhaseF_dyn(sx*cx, sy*cy, sz*cz);
+	int a_geom_fluid = stage13_compact_vertex_is_geometric_fluid(sx*ax, sy*ay, sz*az);
+	int b_geom_fluid = stage13_compact_vertex_is_geometric_fluid(sx*bx, sy*by, sz*bz);
+	int c_geom_fluid = stage13_compact_vertex_is_geometric_fluid(sx*cx, sy*cy, sz*cz);
+	int a_real_fluid = stage13_compact_vertex_is_real_fluid(sx*ax, sy*ay, sz*az, pf_a);
+	int b_real_fluid = stage13_compact_vertex_is_real_fluid(sx*bx, sy*by, sz*bz, pf_b);
+	int c_real_fluid = stage13_compact_vertex_is_real_fluid(sx*cx, sy*cy, sz*cz, pf_c);
+	int a_fluid = a_geom_fluid && a_real_fluid;
+	int b_fluid = b_geom_fluid && b_real_fluid;
+	int c_fluid = c_geom_fluid && c_real_fluid;
+	int a_clean = stage13_boundary_phase_is_valid(pf_a);
+	int b_clean = stage13_boundary_phase_is_valid(pf_b);
+	int c_clean = stage13_boundary_phase_is_valid(pf_c);
+	WallCSQVertexMaskBits = stage13_bit3_value(a_fluid, b_fluid, c_fluid);
+	WallCSQVertexRealFluidBits = stage13_bit3_value(a_real_fluid, b_real_fluid, c_real_fluid);
+	WallCSQVertexPhaseCleanBits = stage13_bit3_value(a_clean, b_clean, c_clean);
+	if (!a_fluid || !b_fluid || !c_fluid) {
+		WallCSQRejectedSolidVertexCount = WallCSQRejectedSolidVertexCount + 1.0;
+		return 0;
+	}
+	if (!a_clean || !b_clean || !c_clean) {
+		WallCSQRejectedSentinelCount = WallCSQRejectedSentinelCount + 1.0;
+		return 0;
+	}
+	real_t q_a = stage13_phase_to_q(pf_a);
+	real_t q_b = stage13_phase_to_q(pf_b);
+	real_t q_c = stage13_phase_to_q(pf_c);
+	WallCSQVertexQMin = stage13_min_real(q_a, stage13_min_real(q_b, q_c));
+	WallCSQVertexQMax = stage13_max_real(q_a, stage13_max_real(q_b, q_c));
+
+	real_t w0 = 0.0;
+	real_t w1 = 0.0;
+	real_t w2 = 0.0;
+	if (!stage13_barycentric_3d(
+			fx, fy, fz,
+			(real_t)ax, (real_t)ay, (real_t)az,
+			(real_t)bx, (real_t)by, (real_t)bz,
+			(real_t)cx, (real_t)cy, (real_t)cz,
+			&w0, &w1, &w2)) {
+		return 0;
+	}
+	if (!stage13_barycentric_inside(w0, w1, w2)) return 0;
+
+	*bary_min = stage13_min_real(w0, stage13_min_real(w1, w2));
+	*bary_max = stage13_max_real(w0, stage13_max_real(w1, w2));
+	*q_f = w0*q_a + w1*q_b + w2*q_c;
+	return 1;
+}
+
+CudaDeviceFunction void stage13_fill_compact_stencil_solution(
+	real_t q_f, real_t d_s, real_t d_f, real_t theta, real_t method_complete)
+{
+	WallCSQDs = d_s;
+	WallCSQDf = d_f;
+	WallCSQQf = q_f;
+	if (fabs(cos(theta)) < WallCompactStencilThetaEps) {
+		WallCSQValid = 1.0;
+		WallCSQQsRaw = q_f;
+		WallCSQQsBounded = stage13_bound_q(q_f);
+		WallCSQQw = q_f;
+		WallCSQResidual = 0.0;
+		WallCSQAppliedResidual = stage13_wall_csq_residual(WallCSQQsBounded, q_f, d_s, d_f, theta);
+		WallCSQDiscriminant = 0.0;
+		WallCSQRootChoice = 90.0;
+		WallCSQBoundedDelta = fabs(WallCSQQsBounded - WallCSQQsRaw);
+		WallCSQFallbackReason = 4.0;  // neutral branch
+		WallCSQMethodComplete = method_complete;
+		return;
+	}
+	real_t D = d_s + d_f;
+	real_t K = -(4.0/IntWidth) * cos(theta);
+	real_t C = d_s * q_f;
+	real_t E = D - C;
+	real_t a = K * d_f * d_f;
+	real_t b = -D - K * d_f * (E - C);
+	real_t c = D * q_f - K * C * E;
+	real_t disc = b*b - 4.0*a*c;
+	WallCSQDiscriminant = disc;
+	real_t q_s = q_f;
+	real_t root_choice = 0.0;
+	if (disc < 0.0) {
+		WallCSQFallbackReason = 5.0;  // no real root
+		q_s = q_f;
+		root_choice = -2.0;
+	} else if (fabs(a) < 1.0e-30) {
+		if (fabs(b) < 1.0e-30) {
+			WallCSQFallbackReason = 6.0;  // degenerate equation
+			q_s = q_f;
+			root_choice = -3.0;
+		} else {
+			q_s = -c / b;
+			root_choice = -1.0;
+			WallCSQValid = 1.0;
+		}
+	} else {
+		real_t sqrt_disc = sqrt(disc);
+		real_t r1 = (-b - sqrt_disc) / (2.0*a);
+		real_t r2 = (-b + sqrt_disc) / (2.0*a);
+		real_t eps = WallCompactStencilBoundEps;
+		if (eps < 0.0) eps = 0.0;
+		bool r1_ok = (r1 >= -eps && r1 <= 1.0 + eps);
+		bool r2_ok = (r2 >= -eps && r2 <= 1.0 + eps);
+		if (r1_ok && r2_ok) {
+			if (fabs(r1 - q_f) <= fabs(r2 - q_f)) {
+				q_s = r1;
+				root_choice = 1.0;
+			} else {
+				q_s = r2;
+				root_choice = 2.0;
+			}
+			WallCSQValid = 1.0;
+		} else if (r1_ok) {
+			q_s = r1;
+			root_choice = 1.0;
+			WallCSQValid = 1.0;
+		} else if (r2_ok) {
+			q_s = r2;
+			root_choice = 2.0;
+			WallCSQValid = 1.0;
+		} else {
+			q_s = (fabs(r1 - q_f) <= fabs(r2 - q_f)) ? r1 : r2;
+			root_choice = -4.0;
+			WallCSQFallbackReason = 7.0;  // roots out of bounded range
+		}
+	}
+	real_t q_s_bounded = stage13_bound_q(q_s);
+	real_t q_w = (d_s*q_f + d_f*q_s) / D;
+	WallCSQQsRaw = q_s;
+	WallCSQQsBounded = q_s_bounded;
+	WallCSQQw = q_w;
+	WallCSQResidual = stage13_wall_csq_residual(q_s, q_f, d_s, d_f, theta);
+	WallCSQAppliedResidual = stage13_wall_csq_residual(q_s_bounded, q_f, d_s, d_f, theta);
+	WallCSQRootChoice = root_choice;
+	WallCSQBoundedDelta = fabs(q_s_bounded - q_s);
+	if (WallCSQValid > 0.5 && WallCSQFallbackReason == 0.0) {
+		WallCSQFallbackReason = 0.0;
+	}
+	WallCSQMethodComplete = method_complete;
+}
+
+CudaDeviceFunction int stage13_find_compact_qf(
+	vector_t n_w, real_t d_s, real_t *out_q_f, real_t *out_d_f)
+{
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-30) {
+		WallCSQFallbackReason = 8.0;  // invalid normal
+		return 0;
+	}
+	real_t nx = fabs(n_w.x) / nmag;
+	real_t ny = fabs(n_w.y) / nmag;
+	real_t nz = fabs(n_w.z) / nmag;
+	int sx = (n_w.x < 0.0) ? -1 : 1;
+	int sy = (n_w.y < 0.0) ? -1 : 1;
+	int sz = (n_w.z < 0.0) ? -1 : 1;
+	int max_l = (int)(WallCompactStencilMaxL + 0.5);
+	if (max_l < 1) max_l = 1;
+	if (max_l > 4) max_l = 4;
+
+	real_t best_df = 1.0e30;
+	real_t best_qf = 0.5;
+	real_t best_bary_min = 0.0;
+	real_t best_bary_max = 0.0;
+	real_t best_plane = 0.0;
+	real_t best_l = 0.0;
+	real_t found = 0.0;
+	real_t clean_seen = 0.0;
+
+	for (int plane = 1; plane <= 7; ++plane) {
+		int cx = (plane == 1 || plane == 4 || plane == 6 || plane == 7) ? 1 : 0;
+		int cy = (plane == 2 || plane == 4 || plane == 5 || plane == 7) ? 1 : 0;
+		int cz = (plane == 3 || plane == 5 || plane == 6 || plane == 7) ? 1 : 0;
+		real_t denom = cx*nx + cy*ny + cz*nz;
+		if (denom < 1.0e-14) continue;
+		for (int L = 1; L <= max_l; ++L) {
+			real_t t = ((real_t)L) / denom;
+			if (t <= d_s + 1.0e-9) continue;
+			real_t fx = nx*t;
+			real_t fy = ny*t;
+			real_t fz = nz*t;
+			int x0 = stage13_max_int(0, stage13_floor_int(fx) - 1);
+			int y0 = stage13_max_int(0, stage13_floor_int(fy) - 1);
+			int z0 = stage13_max_int(0, stage13_floor_int(fz) - 1);
+			int x1 = stage13_max_int(x0, stage13_ceil_int(fx) + 1);
+			int y1 = stage13_max_int(y0, stage13_ceil_int(fy) + 1);
+			int z1 = stage13_max_int(z0, stage13_ceil_int(fz) + 1);
+			int nodes[64][3];
+			int node_count = 0;
+			for (int ix = x0; ix <= x1; ++ix) {
+				for (int iy = y0; iy <= y1; ++iy) {
+					for (int iz = z0; iz <= z1; ++iz) {
+						if (cx*ix + cy*iy + cz*iz != L) continue;
+						if (node_count < 64) {
+							nodes[node_count][0] = ix;
+							nodes[node_count][1] = iy;
+							nodes[node_count][2] = iz;
+							node_count++;
+						}
+					}
+				}
+			}
+			for (int ia = 0; ia < node_count; ++ia) {
+				for (int ib = ia + 1; ib < node_count; ++ib) {
+					for (int ic = ib + 1; ic < node_count; ++ic) {
+						real_t q_f = 0.5;
+						real_t bary_min = 0.0;
+						real_t bary_max = 0.0;
+						int tri_ok = stage13_try_compact_triangle(
+							nodes[ia][0], nodes[ia][1], nodes[ia][2],
+							nodes[ib][0], nodes[ib][1], nodes[ib][2],
+							nodes[ic][0], nodes[ic][1], nodes[ic][2],
+							sx, sy, sz, fx, fy, fz,
+							&q_f, &bary_min, &bary_max);
+						if (!tri_ok) continue;
+						clean_seen = 1.0;
+						WallCSQTriangleInside = 1.0;
+						real_t d_f = t - d_s;
+						if (d_f <= 1.0e-9) continue;
+						if (d_f < best_df) {
+							best_df = d_f;
+							best_qf = q_f;
+							best_bary_min = bary_min;
+							best_bary_max = bary_max;
+							best_plane = (real_t)plane;
+							best_l = (real_t)L;
+							found = 1.0;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if (found > 0.5) {
+		*out_q_f = best_qf;
+		*out_d_f = best_df;
+		WallCSQFluidVertexCount = 3.0;
+		WallCSQPlaneId = best_plane;
+		WallCSQStencilCase = 100.0 + best_plane;
+		WallCSQStencilL = best_l;
+		WallCSQBaryMin = best_bary_min;
+		WallCSQBaryMax = best_bary_max;
+		WallCSQAppliedWeight = 1.0;
+		return 1;
+	}
+	if (WallCSQCandidateCount < 0.5) {
+		WallCSQFallbackReason = 8.0;  // no candidate triangle generated
+	} else if (clean_seen < 0.5) {
+		WallCSQFallbackReason = 9.0;  // no clean all-fluid triangle
+	} else {
+		WallCSQFallbackReason = 10.0; // no accepted positive-distance triangle
+	}
+	return 0;
+}
+
+CudaDeviceFunction void stage13_reset_wall_csq()
+{
+	WallCSQMode = 0.0;
+	WallCSQNormalMode = 0.0;
+	WallCSQValid = 0.0;
+	WallCSQThetaDeg = 0.0;
+	WallCSQNormalX = 0.0;
+	WallCSQNormalY = 0.0;
+	WallCSQNormalZ = 0.0;
+	WallCSQDs = 0.0;
+	WallCSQDf = 0.0;
+	WallCSQQf = 0.0;
+	WallCSQQsRaw = 0.0;
+	WallCSQQsBounded = 0.0;
+	WallCSQQw = 0.0;
+	WallCSQResidual = 0.0;
+	WallCSQAppliedResidual = 0.0;
+	WallCSQDiscriminant = 0.0;
+	WallCSQRootChoice = 0.0;
+	WallCSQStencilCase = 0.0;
+	WallCSQStencilL = 0.0;
+	WallCSQFallbackReason = 0.0;
+	WallCSQBoundedDelta = 0.0;
+	WallCSQAppliedWeight = 0.0;
+	WallCSQWriteAllowedFlag = WallCompactStencilWriteAllowedFlag;
+	WallCSQCandidateCount = 0.0;
+	WallCSQFluidVertexCount = 0.0;
+	WallCSQTriangleInside = 0.0;
+	WallCSQPlaneId = 0.0;
+	WallCSQBaryMin = 0.0;
+	WallCSQBaryMax = 0.0;
+	WallCSQMethodComplete = 0.0;
+	WallCSQVertexMaskBits = 0.0;
+	WallCSQVertexRealFluidBits = 0.0;
+	WallCSQVertexPhaseCleanBits = 0.0;
+	WallCSQVertexQMin = 0.0;
+	WallCSQVertexQMax = 0.0;
+	WallCSQRejectedSolidVertexCount = 0.0;
+	WallCSQRejectedSentinelCount = 0.0;
+	WallCSQStrictWriteReady = 0.0;
+}
+
+CudaDeviceFunction void stage13_keep_wall_csq()
+{
+	WallCSQMode = WallCSQMode(0,0,0);
+	WallCSQNormalMode = WallCSQNormalMode(0,0,0);
+	WallCSQValid = WallCSQValid(0,0,0);
+	WallCSQThetaDeg = WallCSQThetaDeg(0,0,0);
+	WallCSQNormalX = WallCSQNormalX(0,0,0);
+	WallCSQNormalY = WallCSQNormalY(0,0,0);
+	WallCSQNormalZ = WallCSQNormalZ(0,0,0);
+	WallCSQDs = WallCSQDs(0,0,0);
+	WallCSQDf = WallCSQDf(0,0,0);
+	WallCSQQf = WallCSQQf(0,0,0);
+	WallCSQQsRaw = WallCSQQsRaw(0,0,0);
+	WallCSQQsBounded = WallCSQQsBounded(0,0,0);
+	WallCSQQw = WallCSQQw(0,0,0);
+	WallCSQResidual = WallCSQResidual(0,0,0);
+	WallCSQAppliedResidual = WallCSQAppliedResidual(0,0,0);
+	WallCSQDiscriminant = WallCSQDiscriminant(0,0,0);
+	WallCSQRootChoice = WallCSQRootChoice(0,0,0);
+	WallCSQStencilCase = WallCSQStencilCase(0,0,0);
+	WallCSQStencilL = WallCSQStencilL(0,0,0);
+	WallCSQFallbackReason = WallCSQFallbackReason(0,0,0);
+	WallCSQBoundedDelta = WallCSQBoundedDelta(0,0,0);
+	WallCSQAppliedWeight = WallCSQAppliedWeight(0,0,0);
+	WallCSQWriteAllowedFlag = WallCSQWriteAllowedFlag(0,0,0);
+	WallCSQCandidateCount = WallCSQCandidateCount(0,0,0);
+	WallCSQFluidVertexCount = WallCSQFluidVertexCount(0,0,0);
+	WallCSQTriangleInside = WallCSQTriangleInside(0,0,0);
+	WallCSQPlaneId = WallCSQPlaneId(0,0,0);
+	WallCSQBaryMin = WallCSQBaryMin(0,0,0);
+	WallCSQBaryMax = WallCSQBaryMax(0,0,0);
+	WallCSQMethodComplete = WallCSQMethodComplete(0,0,0);
+	WallCSQVertexMaskBits = WallCSQVertexMaskBits(0,0,0);
+	WallCSQVertexRealFluidBits = WallCSQVertexRealFluidBits(0,0,0);
+	WallCSQVertexPhaseCleanBits = WallCSQVertexPhaseCleanBits(0,0,0);
+	WallCSQVertexQMin = WallCSQVertexQMin(0,0,0);
+	WallCSQVertexQMax = WallCSQVertexQMax(0,0,0);
+	WallCSQRejectedSolidVertexCount = WallCSQRejectedSolidVertexCount(0,0,0);
+	WallCSQRejectedSentinelCount = WallCSQRejectedSentinelCount(0,0,0);
+	WallCSQStrictWriteReady = WallCSQStrictWriteReady(0,0,0);
+}
+
+CudaDeviceFunction void stage13_compute_compact_stencil_solution(
+	vector_t n_w, real_t d_to_surface, real_t phi_f, real_t theta)
+{
+	stage13_reset_wall_csq();
+	WallCSQMode = WallCompactStencilMode;
+	WallCSQNormalMode = WallCompactStencilNormalMode;
+	WallCSQThetaDeg = theta * 180.0 / PI;
+	WallCSQNormalX = n_w.x;
+	WallCSQNormalY = n_w.y;
+	WallCSQNormalZ = n_w.z;
+	WallCSQWriteAllowedFlag = WallCompactStencilWriteAllowedFlag;
+	if (WallCompactStencilMode < 0.5) {
+		WallCSQFallbackReason = 1.0;  // mode off
+		return;
+	}
+	if (!stage13_compact_normal_mode_allows_write()) {
+		WallCSQFallbackReason = 11.0;  // unsupported normal mode
+		return;
+	}
+	real_t range = PhaseField_h - PhaseField_l;
+	if (fabs(range) < 1.0e-30 || IntWidth <= 1.0e-30) {
+		WallCSQFallbackReason = 2.0;  // invalid normalization or interface width
+		return;
+	}
+	int first_probe_valid = stage13_boundary_phase_is_valid(phi_f);
+	if (!first_probe_valid) {
+		WallCSQFallbackReason = 3.0;  // no valid first fluid probe
+	}
+	real_t d_s = d_to_surface;
+	if (d_s < 0.0) d_s = -d_s;
+	if (d_s < 0.0) d_s = 0.0;
+
+	real_t q_f = 0.5;
+	real_t d_f = 0.0;
+	if (stage13_find_compact_qf(n_w, d_s, &q_f, &d_f)) {
+		WallCSQFallbackReason = 0.0;
+		stage13_fill_compact_stencil_solution(q_f, d_s, d_f, theta, 1.0);
+	} else {
+		real_t fallback_reason = WallCSQFallbackReason;
+		if (!first_probe_valid) {
+			WallCSQFallbackReason = fallback_reason;
+			return;
+		}
+		real_t q_probe = stage13_phase_to_q(phi_f);
+		real_t d_probe = 1.0 - d_s;
+		if (d_probe <= 1.0e-6) d_probe = 1.0;
+		WallCSQStencilCase = 1.0;  // incomplete first-ring normal probe fallback
+		WallCSQStencilL = 1.0;
+		WallCSQFluidVertexCount = 1.0;
+		WallCSQTriangleInside = 0.0;
+		WallCSQPlaneId = 0.0;
+		WallCSQBaryMin = 1.0;
+		WallCSQBaryMax = 1.0;
+		stage13_fill_compact_stencil_solution(q_probe, d_s, d_probe, theta, 0.0);
+		WallCSQFallbackReason = fallback_reason;
+	}
 }
 
 // Public accessor: the analytic wall normal at this node (zero if not analytic).
@@ -452,9 +1134,62 @@ CudaDeviceFunction real_t getWallH() {
 CudaDeviceFunction real_t getWallGhost() {
 	return WallGhost(0,0,0);
 }
+CudaDeviceFunction real_t getWallGhostRaw() {
+	return WallGhostRaw(0,0,0);
+}
+CudaDeviceFunction real_t getWallGhostClamped() {
+	return WallGhostClamped(0,0,0);
+}
+CudaDeviceFunction real_t getWallGhostClampHit() {
+	return WallGhostClampHit(0,0,0);
+}
+CudaDeviceFunction real_t getWettingPathId() {
+	return WettingPathId(0,0,0);
+}
+CudaDeviceFunction real_t getLocalRadAngle() {
+	return LocalRadAngle(0,0,0);
+}
 CudaDeviceFunction real_t getAnalyticFlag() {
 	return AnalyticFlag(0,0,0);
 }
+CudaDeviceFunction real_t getWallCSQMode() { return WallCSQMode(0,0,0); }
+CudaDeviceFunction real_t getWallCSQNormalMode() { return WallCSQNormalMode(0,0,0); }
+CudaDeviceFunction real_t getWallCSQValid() { return WallCSQValid(0,0,0); }
+CudaDeviceFunction real_t getWallCSQThetaDeg() { return WallCSQThetaDeg(0,0,0); }
+CudaDeviceFunction real_t getWallCSQNormalX() { return WallCSQNormalX(0,0,0); }
+CudaDeviceFunction real_t getWallCSQNormalY() { return WallCSQNormalY(0,0,0); }
+CudaDeviceFunction real_t getWallCSQNormalZ() { return WallCSQNormalZ(0,0,0); }
+CudaDeviceFunction real_t getWallCSQDs() { return WallCSQDs(0,0,0); }
+CudaDeviceFunction real_t getWallCSQDf() { return WallCSQDf(0,0,0); }
+CudaDeviceFunction real_t getWallCSQQf() { return WallCSQQf(0,0,0); }
+CudaDeviceFunction real_t getWallCSQQsRaw() { return WallCSQQsRaw(0,0,0); }
+CudaDeviceFunction real_t getWallCSQQsBounded() { return WallCSQQsBounded(0,0,0); }
+CudaDeviceFunction real_t getWallCSQQw() { return WallCSQQw(0,0,0); }
+CudaDeviceFunction real_t getWallCSQResidual() { return WallCSQResidual(0,0,0); }
+CudaDeviceFunction real_t getWallCSQAppliedResidual() { return WallCSQAppliedResidual(0,0,0); }
+CudaDeviceFunction real_t getWallCSQDiscriminant() { return WallCSQDiscriminant(0,0,0); }
+CudaDeviceFunction real_t getWallCSQRootChoice() { return WallCSQRootChoice(0,0,0); }
+CudaDeviceFunction real_t getWallCSQStencilCase() { return WallCSQStencilCase(0,0,0); }
+CudaDeviceFunction real_t getWallCSQStencilL() { return WallCSQStencilL(0,0,0); }
+CudaDeviceFunction real_t getWallCSQFallbackReason() { return WallCSQFallbackReason(0,0,0); }
+CudaDeviceFunction real_t getWallCSQBoundedDelta() { return WallCSQBoundedDelta(0,0,0); }
+CudaDeviceFunction real_t getWallCSQAppliedWeight() { return WallCSQAppliedWeight(0,0,0); }
+CudaDeviceFunction real_t getWallCSQWriteAllowedFlag() { return WallCSQWriteAllowedFlag(0,0,0); }
+CudaDeviceFunction real_t getWallCSQCandidateCount() { return WallCSQCandidateCount(0,0,0); }
+CudaDeviceFunction real_t getWallCSQFluidVertexCount() { return WallCSQFluidVertexCount(0,0,0); }
+CudaDeviceFunction real_t getWallCSQTriangleInside() { return WallCSQTriangleInside(0,0,0); }
+CudaDeviceFunction real_t getWallCSQPlaneId() { return WallCSQPlaneId(0,0,0); }
+CudaDeviceFunction real_t getWallCSQBaryMin() { return WallCSQBaryMin(0,0,0); }
+CudaDeviceFunction real_t getWallCSQBaryMax() { return WallCSQBaryMax(0,0,0); }
+CudaDeviceFunction real_t getWallCSQMethodComplete() { return WallCSQMethodComplete(0,0,0); }
+CudaDeviceFunction real_t getWallCSQVertexMaskBits() { return WallCSQVertexMaskBits(0,0,0); }
+CudaDeviceFunction real_t getWallCSQVertexRealFluidBits() { return WallCSQVertexRealFluidBits(0,0,0); }
+CudaDeviceFunction real_t getWallCSQVertexPhaseCleanBits() { return WallCSQVertexPhaseCleanBits(0,0,0); }
+CudaDeviceFunction real_t getWallCSQVertexQMin() { return WallCSQVertexQMin(0,0,0); }
+CudaDeviceFunction real_t getWallCSQVertexQMax() { return WallCSQVertexQMax(0,0,0); }
+CudaDeviceFunction real_t getWallCSQRejectedSolidVertexCount() { return WallCSQRejectedSolidVertexCount(0,0,0); }
+CudaDeviceFunction real_t getWallCSQRejectedSentinelCount() { return WallCSQRejectedSentinelCount(0,0,0); }
+CudaDeviceFunction real_t getWallCSQStrictWriteReady() { return WallCSQStrictWriteReady(0,0,0); }
 
 #ifdef OPTIONS_staircaseimp
 
@@ -708,6 +1443,17 @@ CudaDeviceFunction real_t getIsItBoundary() {
 	return IsBoundary(0, 0, 0);
 }
 
+CudaDeviceFunction real_t stage13_select_boundary_phase(real_t pf, real_t is_boundary, real_t ghost, real_t center) {
+	if (is_boundary > 0.5 && stage13_boundary_phase_is_valid(ghost)) return ghost;
+	if (stage13_boundary_phase_is_valid(pf)) return pf;
+	if (stage13_boundary_phase_is_valid(ghost)) return ghost;
+	if (stage13_boundary_phase_is_valid(center)) return center;
+	return 0.5*(PhaseField_l + PhaseField_h);
+}
+
+#define STAGE13_BOUNDARY_PHASE(dx,dy,dz) \
+	stage13_select_boundary_phase(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), WallGhost(dx,dy,dz), PhaseF(0,0,0))
+
 
 #ifdef OPTIONS_geometric
 CudaDeviceFunction vector_t getGradPhi() {
@@ -721,7 +1467,7 @@ CudaDeviceFunction vector_t getGradPhi() {
 CudaDeviceFunction void calcPhaseGrad(){
     vector_t gradPhi;
     <?R
-        IsotropicGrad('gradPhi', 'PhaseF')
+        IsotropicGrad('gradPhi', 'STAGE13_BOUNDARY_PHASE')
     ?>
     gradPhiVal_x = gradPhi.x;
     gradPhiVal_y = gradPhi.y;
@@ -743,9 +1489,9 @@ CudaDeviceFunction void calcPhaseGrad_init(){
 	gradPhiVal_y = gradPhiVal_y(0, 0, 0);
 	gradPhiVal_z = gradPhiVal_z(0, 0, 0);
 
-	gradPhiVal_x = (PhaseF(1, 0, 0) - PhaseF(-1, 0, 0) )/ (2.0*h);
-	gradPhiVal_y = (PhaseF(0, 1, 0) - PhaseF(0, -1, 0) )/ (2.0*h);
-	gradPhiVal_z = (PhaseF(0, 0, 1) - PhaseF(0, 0, -1) )/ (2.0*h);
+	gradPhiVal_x = (STAGE13_BOUNDARY_PHASE(1, 0, 0) - STAGE13_BOUNDARY_PHASE(-1, 0, 0) )/ (2.0*h);
+	gradPhiVal_y = (STAGE13_BOUNDARY_PHASE(0, 1, 0) - STAGE13_BOUNDARY_PHASE(0, -1, 0) )/ (2.0*h);
+	gradPhiVal_z = (STAGE13_BOUNDARY_PHASE(0, 0, 1) - STAGE13_BOUNDARY_PHASE(0, 0, -1) )/ (2.0*h);
 
 	calcPhaseGradCloseToBoundary();
 
@@ -781,9 +1527,9 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
     <?R
 		tmpVec = "forcedFiniteDifference"
 		myStringSca = "IsBoundary"
-		cat(paste0(tmpVec,".y = ", myStringSca, "(1,1,1) || ", myStringSca, "(-1,1,1) || ", myStringSca, "(1,-1,1) || ", myStringSca, "(-1,-1,1) || ", myStringSca, "(1,1,-1)|| ", myStringSca, "(-1,1,-1)- ", myStringSca,  "(1,-1,-1)- ", myStringSca, "(-1,-1,-1) ||    ", myStringSca, "(1,1,0) || ", myStringSca, "(-1,1,0) || ", myStringSca, "(1,-1,0) || ", myStringSca, "(-1,-1,0) ||  ", myStringSca, "(0,1,1) || ", myStringSca, "(0,-1,1) || ", myStringSca, "(0,1,-1) || ", myStringSca, "(0,-1,-1);\n"))
-		cat(paste0(tmpVec,".x = ", myStringSca, "(1,1,1) || ", myStringSca, "(-1,1,1) || ", myStringSca, "(1,-1,1) || ", myStringSca, "(-1,-1,1) || ", myStringSca, "(1,1,-1)- ", myStringSca, "(-1,1,-1) || ", myStringSca, "(1,-1,-1) || ", myStringSca, "(-1,-1,-1) ||  ", myStringSca, "(1,1,0) || ", myStringSca, "(-1,1,0) || ", myStringSca, "(1,-1,0) || ", myStringSca, "(-1,-1,0) || ", myStringSca, "(1,0,1) || ", myStringSca, "(-1,0,1) || ", myStringSca, "(1,0,-1) || ", myStringSca, "(-1,0,-1);\n"))
-		cat(paste0(tmpVec,".z = ", myStringSca, "(1,1,1) || ", myStringSca, "(-1,1,1) || ", myStringSca, "(1,-1,1) || ", myStringSca, "(-1,-1,1) || ", myStringSca, "(1,1,-1)- ", myStringSca, "(-1,1,-1)- ", myStringSca,  "(1,-1,-1)- ", myStringSca, "(-1,-1,-1) ||     ", myStringSca, "(1,0,1) || ", myStringSca, "(-1,0,1) || ", myStringSca, "(1,0,-1) || ", myStringSca, "(-1,0,-1) ||  ", myStringSca, "(0,1,1) || ", myStringSca, "(0,-1,1) || ", myStringSca, "(0,1,-1) || ", myStringSca, "(0,-1,-1);\n"))
+		cat(paste0(tmpVec,".y = ", myStringSca, "(1,1,1) || ", myStringSca, "(-1,1,1) || ", myStringSca, "(1,-1,1) || ", myStringSca, "(-1,-1,1) || ", myStringSca, "(1,1,-1)|| ", myStringSca, "(-1,1,-1)|| ", myStringSca,  "(1,-1,-1)|| ", myStringSca, "(-1,-1,-1) ||    ", myStringSca, "(1,1,0) || ", myStringSca, "(-1,1,0) || ", myStringSca, "(1,-1,0) || ", myStringSca, "(-1,-1,0) ||  ", myStringSca, "(0,1,1) || ", myStringSca, "(0,-1,1) || ", myStringSca, "(0,1,-1) || ", myStringSca, "(0,-1,-1);\n"))
+		cat(paste0(tmpVec,".x = ", myStringSca, "(1,1,1) || ", myStringSca, "(-1,1,1) || ", myStringSca, "(1,-1,1) || ", myStringSca, "(-1,-1,1) || ", myStringSca, "(1,1,-1)|| ", myStringSca, "(-1,1,-1) || ", myStringSca, "(1,-1,-1) || ", myStringSca, "(-1,-1,-1) ||  ", myStringSca, "(1,1,0) || ", myStringSca, "(-1,1,0) || ", myStringSca, "(1,-1,0) || ", myStringSca, "(-1,-1,0) || ", myStringSca, "(1,0,1) || ", myStringSca, "(-1,0,1) || ", myStringSca, "(1,0,-1) || ", myStringSca, "(-1,0,-1);\n"))
+		cat(paste0(tmpVec,".z = ", myStringSca, "(1,1,1) || ", myStringSca, "(-1,1,1) || ", myStringSca, "(1,-1,1) || ", myStringSca, "(-1,-1,1) || ", myStringSca, "(1,1,-1)|| ", myStringSca, "(-1,1,-1)|| ", myStringSca,  "(1,-1,-1)|| ", myStringSca, "(-1,-1,-1) ||     ", myStringSca, "(1,0,1) || ", myStringSca, "(-1,0,1) || ", myStringSca, "(1,0,-1) || ", myStringSca, "(-1,0,-1) ||  ", myStringSca, "(0,1,1) || ", myStringSca, "(0,-1,1) || ", myStringSca, "(0,1,-1) || ", myStringSca, "(0,-1,-1);\n"))
     ?>
 
 
@@ -810,8 +1556,8 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
 		(!IsBoundary(<?%s str_coord(-1, 0, 0, axis) ?>)) && (!IsBoundary(<?%s str_coord(1, 0, 0, axis) ?>));
 
 	if (canForceCentralDifference) {
-		gradPhiVal_<?%s directions[axis+1] ?> = (PhaseF(<?%s str_coord(1, 0, 0, axis) ?>) - \
-							PhaseF(<?%s str_coord(-1, 0, 0, axis) ?>))/(2.0*h);
+		gradPhiVal_<?%s directions[axis+1] ?> = (STAGE13_BOUNDARY_PHASE(<?%s str_coord(1, 0, 0, axis) ?>) - \
+							STAGE13_BOUNDARY_PHASE(<?%s str_coord(-1, 0, 0, axis) ?>))/(2.0*h);
 		set_gradPhi = true;
 	}
 
@@ -822,8 +1568,8 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
 			// keep it as it is, calculated using the previously set gradient and the boundary
 			// value
 		} else {
-			gradPhiVal_<?%s directions[axis+1] ?> = -(4*PhaseF(<?%s str_coord(-1, 0, 0, axis) ?>) - \
-							 PhaseF(<?%s str_coord(-2, 0, 0, axis) ?>) - 3*PhaseF(0, 0, 0))/(2.0*h);
+			gradPhiVal_<?%s directions[axis+1] ?> = -(4*STAGE13_BOUNDARY_PHASE(<?%s str_coord(-1, 0, 0, axis) ?>) - \
+							 STAGE13_BOUNDARY_PHASE(<?%s str_coord(-2, 0, 0, axis) ?>) - 3*STAGE13_BOUNDARY_PHASE(0, 0, 0))/(2.0*h);
 			set_gradPhi = true;
 		}
 	}
@@ -836,8 +1582,8 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
 			// keep it as it is, calculated using the previously set gradient and the boundary
 			// value
 		} else {
-		gradPhiVal_<?%s directions[axis+1] ?> = (4*PhaseF(<?%s str_coord(1, 0, 0, axis)  ?>) -
-						PhaseF(<?%s str_coord(2, 0, 0, axis) ?>) - 3*PhaseF(0, 0, 0))/(2.0*h);
+		gradPhiVal_<?%s directions[axis+1] ?> = (4*STAGE13_BOUNDARY_PHASE(<?%s str_coord(1, 0, 0, axis)  ?>) -
+						STAGE13_BOUNDARY_PHASE(<?%s str_coord(2, 0, 0, axis) ?>) - 3*STAGE13_BOUNDARY_PHASE(0, 0, 0))/(2.0*h);
 		}
 	}
 
@@ -862,6 +1608,12 @@ CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
 CudaDeviceFunction void calcWallPhase_correction() {
 	PhaseF = PhaseF(0,0,0);
 	WallGhost = WallGhost(0,0,0);
+	WallGhostRaw = WallGhostRaw(0,0,0);
+	WallGhostClamped = WallGhostClamped(0,0,0);
+	WallGhostClampHit = WallGhostClampHit(0,0,0);
+	WettingPathId = WettingPathId(0,0,0);
+	LocalRadAngle = LocalRadAngle(0,0,0);
+	stage13_keep_wall_csq();
 
 	// Stage9 analytic path: the ghost was already written in calcWallPhase and
 	// stored in WallGhost. Nothing to correct; analytic normals never point
@@ -874,7 +1626,18 @@ CudaDeviceFunction void calcWallPhase_correction() {
 	if (IsSpecialBoundaryPoint == <?%s NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?> ) {
 		// take the phase field calculated already from the node in front.
 		// Might as well calculate using the neighbors, e.g. averaging
-		PhaseF = PhaseF_dyn(nw_x, nw_y, nw_z);
+		real_t corrected = PhaseF_dyn(nw_x, nw_y, nw_z);
+		if (stage13_boundary_phase_is_valid(corrected)) {
+			PhaseF = corrected;
+		} else {
+			PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+		}
+		WallGhost = PhaseF;
+		WallGhostRaw = PhaseF;
+		WallGhostClamped = PhaseF;
+		WallGhostClampHit = 0.0;
+		WettingPathId = -12.0;
+		LocalRadAngle = radAngle;
 	}
 }
 
@@ -887,6 +1650,12 @@ CudaDeviceFunction void calcWallPhase(){
 	WallGhost = 0.0;
 	WallH = 0.0;
 	AnalyticFlag = 0.0;
+	WallGhostRaw = 0.0;
+	WallGhostClamped = 0.0;
+	WallGhostClampHit = 0.0;
+	WettingPathId = 0.0;
+	LocalRadAngle = 0.0;
+	stage13_reset_wall_csq();
 	if ( IamWall || IamSolid ) {
 		// ----------------------------------------------------------
 		// Stage9 analytic-geometry wetting BC.
@@ -930,79 +1699,127 @@ CudaDeviceFunction void calcWallPhase(){
 				real_t pf_f = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
 				real_t pf_ff = PhaseF_dyn(2*probe_dx, 2*probe_dy, 2*probe_dz);
 				bool both_probes_fluid = (pf_f > -100.0) && (pf_ff > -100.0);
-				if (h_a > 0.001 && both_probes_fluid) {
+				bool compact_write = stage13_compact_write_requested();
+				if (h_a > 0.001 && (compact_write || both_probes_fluid)) {
 					AnalyticFlag = 1.0;
 					nw_x = probe_dx;
 					nw_y = probe_dy;
 					nw_z = probe_dz;
 					WallH = h_a;
-					if (fabs(radAngle - PI/2.0) < 1e-4) {
-						// 90 deg: neutral wetting. The Briant formula is singular
-						// at cos(theta)=0 (a=0 -> division by eps), so we use the
-						// mirror value directly. NOTE: this means theta=90 is a
-						// trivial special case and is NOT load-bearing evidence
-						// that the BC is correct. theta=30 and theta=150 are the
-						// load-bearing cases.
-						WallGhost = pf_f;
-						PhaseF = pf_f;
+					LocalRadAngle = radAngle;
+					if (compact_write) {
+						stage13_compute_compact_stencil_solution(n_w_a, d_to_surface_a, pf_f, radAngle);
+						if (stage13_compact_solution_can_write()) {
+							WallGhost = stage13_compact_solution_wall_ghost(
+								&WallGhostRaw, &WallGhostClamped, &WallGhostClampHit);
+							WettingPathId = 30.0;
+						} else {
+							if (stage13_boundary_phase_is_valid(pf_f)) {
+								WallGhost = pf_f;
+							} else if (stage13_boundary_phase_is_valid(pf_ff)) {
+								WallGhost = pf_ff;
+							} else {
+								WallGhost = 0.5*(PhaseField_l + PhaseField_h);
+							}
+							WallGhostRaw = WallGhost;
+							WallGhostClamped = WallGhost;
+							WallGhostClampHit = 0.0;
+							WettingPathId = -30.0;
+						}
+						if (stage13_boundary_phase_is_valid(pf_f)) {
+							PhaseF = pf_f;
+						} else if (stage13_boundary_phase_is_valid(pf_ff)) {
+							PhaseF = pf_ff;
+						} else {
+							PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+						}
 						return;
 					}
-					// ----------------------------------------------------------
-					// Briant/Jacqmin surface-energy wall BC. This is the closed-
-					// form wall value for an equilibrium tanh interface:
-					//   a = -h_a * (4/IntWidth) * cos(theta)
-					//   phi_g = (1+a - sqrt((1+a)^2 - 4*a*pf_f)) / (a+eps)
-					// It assumes the near-wall interface is at its equilibrium
-					// tanh shape. See audit_findings_20260614.md point B for why
-					// this does NOT reduce the model-intrinsic cot(theta) error.
-					// ----------------------------------------------------------
-					real_t a = -h_a * (4.0/IntWidth) * cos(radAngle);
-					real_t discrim = (1.0+a)*(1.0+a) - 4.0*a*pf_f;
-					real_t ghost;
-					if (discrim < 0.0) {
-						// Degenerate (numerical); fall back to mirror value.
-						ghost = pf_f;
-					} else {
-						ghost = (1.0 + a - sqrt(discrim))/(a + 1e-12) - pf_f;
-					}
-					// physical bound on the order parameter
-					if (ghost < PhaseField_l) ghost = PhaseField_l;
-					if (ghost > PhaseField_h) ghost = PhaseField_h;
-					WallGhost = ghost;
+					vector_t grad_f = {0.0, 0.0, 0.0};
+#ifdef OPTIONS_geometric
+					grad_f.x = gradPhiVal_x_dyn(probe_dx, probe_dy, probe_dz);
+					grad_f.y = gradPhiVal_y_dyn(probe_dx, probe_dy, probe_dz);
+					grad_f.z = gradPhiVal_z_dyn(probe_dx, probe_dy, probe_dz);
+#endif
+					WallGhost = stage13_compute_analytic_wall_ghost(
+						n_w_a, h_a, pf_f, grad_f, radAngle,
+						&WallGhostRaw, &WallGhostClamped, &WallGhostClampHit, &WettingPathId);
+					stage13_compute_compact_stencil_solution(n_w_a, d_to_surface_a, pf_f, radAngle);
 					PhaseF = pf_f;
 					return;
 				}
+				// Stage13D: this node lies on the declared analytic surface,
+				// but the fluid-side probe is blocked by another wall/solid
+				// node. That happens at flat-wall edge/corner overlaps with
+				// the outer domain. Do not fall through to the legacy geometric
+				// wetting path: it uses a lattice normal, may apply the target
+				// angle to an edge node, and can write an unbounded wall phase
+				// for acute angles. Keep the node finite and neutral for the
+				// stencil while tagging the non-load-bearing overlap explicitly.
+				AnalyticFlag = 0.5;
+				nw_x = probe_dx;
+				nw_y = probe_dy;
+				nw_z = probe_dz;
+				WallH = h_a;
+				LocalRadAngle = radAngle;
+				if (stage13_boundary_phase_is_valid(pf_f)) {
+					PhaseF = pf_f;
+				} else if (stage13_boundary_phase_is_valid(pf_ff)) {
+					PhaseF = pf_ff;
+				} else {
+					PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+				}
+				WallGhost = PhaseF;
+				WallGhostRaw = PhaseF;
+				WallGhostClamped = PhaseF;
+				WallGhostClampHit = 0.0;
+				WettingPathId = -20.0;
+				stage13_compute_compact_stencil_solution(n_w_a, d_to_surface_a, PhaseF, radAngle);
+				return;
 			}
 		}
 
 
-		real_t a, h, pf_f;
+		real_t h, pf_f;
+		LocalRadAngle = radAngle;
 
 		// This is needed, because otherwise geometric_staircaseimp performance will drop
 		// (presumably because of the dynamic access that it has)
         <?R phase_field_field_name <- if (Options$geometric) 'gradPhi_PhaseF' else 'PhaseF' ?>
 
         pf_f = <?%s phase_field_field_name ?>_dyn(nw_x, nw_y, nw_z);
+		if (!stage13_boundary_phase_is_valid(pf_f)) {
+			pf_f = 0.5*(PhaseField_l + PhaseField_h);
+		}
 
 		h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
 
         // handling special cases
 		if (h < 0.001) {
 			// If I am a wall/solid node and I am surrounded by solid nodes
+			WettingPathId = -10.0;
 			PhaseF = 1;
 		} else if (fabs(radAngle - PI/2.0) < 1e-4) {
 			// If I am not surrounded, but contact angle is pi/2 (90d)
+			WettingPathId = 11.0;
 			PhaseF = pf_f;
 		} else if (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_NEXT_NODE ?>) {
-			// Pass for now. Dont calculate anything, just set it to some huge number, purely to make sure
-			// that the value is corrected in calcWall_correction, and otherwise the error would be visible
-			// and hopefulyl break the simulation
-			PhaseF = <?%f SPECIAL_POINT_HUGE_MAGIC_NUMBER ?>;
+			// Stage13 P0: never write the old huge sentinel here. It can pass
+			// fluid-probe guards and poison near-wall finite-difference
+			// stencils. Use the available fluid-side value when valid; otherwise
+			// fall back to the phase midpoint until the correction stage.
+			WettingPathId = -11.0;
+			if (stage13_boundary_phase_is_valid(pf_f)) {
+				PhaseF = pf_f;
+			} else {
+				PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+			}
 		} else if  (IsSpecialBoundaryPoint == <?%d NORMAL_POINTING_INTO_SOLID_ON_FURTHER_NEXT_NODE ?>) {
 			// Eventhough I am geometric boundary condition, still apply surface energy
 			// here because otherwise we cant really apply anything else
-			a = -h * (4.0/IntWidth) * cos( radAngle );
-			PhaseF = (1 + a - sqrt( (1+a)*(1+a) - 4*a*pf_f))/(a+1e-12) - pf_f;
+			real_t path_id = 12.0;
+			PhaseF = stage13_compute_briant_wall_ghost_raw(pf_f, h, radAngle, &path_id);
+			WettingPathId = (path_id < 0.0) ? -12.0 : 12.0;
 		} else {
 			// normal calculation with picking correct form depending on the boundary condition
 
@@ -1035,8 +1852,9 @@ CudaDeviceFunction void calcWallPhase(){
 			
 #ifndef OPTIONS_geometric
 			// Case 1: Apply surface energy BC (with calculated pf_f with standard or staircase improvement)
-			a = -h * (4.0/IntWidth) * cos( radAngle );
-			PhaseF = (1 + a - sqrt( (1+a)*(1+a) - 4*a*pf_f))/(a+1e-12) - pf_f;
+			real_t path_id = 13.0;
+			PhaseF = stage13_compute_briant_wall_ghost_raw(pf_f, h, radAngle, &path_id);
+			WettingPathId = (path_id < 0.0) ? -13.0 : 13.0;
 #else
 	#ifdef OPTIONS_staircaseimp
 		// Case 2: Apply geometric BC
@@ -1129,9 +1947,14 @@ CudaDeviceFunction void calcWallPhase(){
 									 grad_tangent_v.z * grad_tangent_v.z);
 
 			// apply geometric boundary condition
+			WettingPathId = 14.0;
 			PhaseF =  tan(PI/2.0 - radAngle) * grad_tangent * 2.0*h + pf_f;
 #endif // end boundary condition pick
 		}
+		WallGhostRaw = PhaseF;
+		WallGhost = stage13_clamp_phase_value(WallGhostRaw, &WallGhostClampHit);
+		WallGhostClamped = WallGhost;
+		PhaseF = WallGhost;
 	}
 }
 
@@ -1352,6 +2175,11 @@ CudaDeviceFunction void Init_wallNorm(){
 	AnalyticFlag = 0.0;
 	WallH = 0.0;
 	WallGhost = 0.0;
+	WallGhostRaw = 0.0;
+	WallGhostClamped = 0.0;
+	WallGhostClampHit = 0.0;
+	WettingPathId = 0.0;
+	LocalRadAngle = 0.0;
 	if (AnalyticWetting > 0.5 && (IamWall || IamSolid)) {
 		real_t sd = 0.0;
 		vector_t n_w = stage9_analytic_wall_normal_and_distance(&sd);
@@ -1391,6 +2219,7 @@ CudaDeviceFunction void Init_wallNorm(){
 					nw_y = probe_dy;
 					nw_z = probe_dz;
 					WallH = d_to_surface + 0.5;
+					LocalRadAngle = radAngle;
 				}
 			}
 		}

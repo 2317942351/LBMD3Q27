@@ -95,6 +95,210 @@ CudaDeviceFunction vector_t getNormal(){
 	return n;
 }
 
+CudaDeviceFunction int stage13_phase_is_valid(real_t pf) {
+	return (pf > -100.0 && pf < 100.0);
+}
+
+CudaDeviceFunction real_t stage13_select_phase_for_stencil(real_t pf, real_t is_boundary, real_t ghost, real_t center) {
+	// When Layer 1 (WallGradMode >= 2) is active, the corrected gradient
+	// handles the contact-angle drive. Ghost substitution is skipped for
+	// boundary neighbours to avoid double-applying the contact angle.
+	if (WallGradMode < 1.5) {
+		if (is_boundary > 0.5 && stage13_phase_is_valid(ghost)) {
+			PhaseStencilGhostUseCount = PhaseStencilGhostUseCount + 1.0;
+			return ghost;
+		}
+	}
+	if (stage13_phase_is_valid(pf)) return pf;
+	if (stage13_phase_is_valid(ghost)) {
+		PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		return ghost;
+	}
+	if (stage13_phase_is_valid(center)) {
+		PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		return center;
+	}
+	PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+	PhaseStencilMidpointFallbackCount = PhaseStencilMidpointFallbackCount + 1.0;
+	return 0.5*(PhaseField_l + PhaseField_h);
+}
+
+#define STAGE13_PHASE_FOR_STENCIL(dx,dy,dz) \
+	stage13_select_phase_for_stencil(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), WallGhost(dx,dy,dz), PhaseF(0,0,0))
+
+CudaDeviceFunction real_t getForceIterResidual(){
+	return ForceIterResidual(0,0,0);
+}
+
+CudaDeviceFunction real_t getForceIterCount(){
+	return ForceIterCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getMassCorrectionApplied(){
+	return MassCorrectionApplied(0,0,0);
+}
+
+CudaDeviceFunction real_t getPhaseStencilGhostUseCount(){
+	return PhaseStencilGhostUseCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getPhaseStencilFallbackCount(){
+	return PhaseStencilFallbackCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getPhaseStencilMidpointFallbackCount(){
+	return PhaseStencilMidpointFallbackCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getWallGradDeltaMag(){
+	return WallGradDeltaMag(0,0,0);
+}
+CudaDeviceFunction real_t getWallGradThetaApp(){
+	return WallGradThetaApp(0,0,0);
+}
+CudaDeviceFunction real_t getWallMuCandidate(){
+	return WallMuCandidate(0,0,0);
+}
+
+// ================================================================
+// Layer 1 (Wang 2025): boundary-fluid corrected gradient
+// ================================================================
+
+// Check if this node is a fluid node adjacent to a boundary/wall node.
+CudaDeviceFunction int stage13_is_fluid_boundary_node()
+{
+	if (IamWall || IamSolid) return 0;
+	// Check 6 face neighbours for IsBoundary
+	if (IsBoundary(1,0,0) > 0.5) return 1;
+	if (IsBoundary(-1,0,0) > 0.5) return 1;
+	if (IsBoundary(0,1,0) > 0.5) return 1;
+	if (IsBoundary(0,-1,0) > 0.5) return 1;
+	if (IsBoundary(0,0,1) > 0.5) return 1;
+	if (IsBoundary(0,0,-1) > 0.5) return 1;
+	return 0;
+}
+
+// Wang 2025 corrected gradient: replace the normal component of gradPhi
+// on boundary fluid nodes with the value required by the equilibrium
+// contact-angle relation, while preserving the tangential component.
+CudaDeviceFunction vector_t calcGradPhiBoundaryCorrected(vector_t g_bulk)
+{
+	vector_t g = g_bulk;
+	WallGradDeltaMag = 0.0;
+	WallGradThetaApp = 0.0;
+
+	if (WallGradMode < 0.5) return g;
+	if (!stage13_is_fluid_boundary_node()) return g;
+
+	// Obtain analytic wall normal and distance at this fluid node.
+	real_t h_dist;
+	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-12) return g;
+	// Only correct nodes close to the wall.
+	real_t d_abs = fabs(h_dist);
+	if (d_abs > 2.0) return g;
+
+	// Normalise wall normal.
+	n_w.x /= nmag; n_w.y /= nmag; n_w.z /= nmag;
+
+	// Normalised phase q in [0,1].
+	real_t pf = PhaseF(0,0,0);
+	real_t pf_scale = PhaseField_h - PhaseField_l;
+	if (fabs(pf_scale) < 1.0e-30) return g;
+	real_t q = (pf - PhaseField_l) / pf_scale;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+
+	// Skip pure-phase regions.
+	if (q < WallGradContactLineEps || q > 1.0 - WallGradContactLineEps) return g;
+
+	// Decompose bulk gradient into tangential and normal.
+	real_t dotgn = g.x*n_w.x + g.y*n_w.y + g.z*n_w.z;
+	vector_t g_t;
+	g_t.x = g.x - dotgn*n_w.x;
+	g_t.y = g.y - dotgn*n_w.y;
+	g_t.z = g.z - dotgn*n_w.z;
+
+	// Target normal gradient from equilibrium contact-angle relation.
+	// n_w . grad(q) = -(4/W) cos(theta) q(1-q)
+	real_t A_wet = 4.0 / IntWidth;
+	real_t gn_target_q = -WallGradContactSign * A_wet * cos(radAngle) * q * (1.0 - q);
+	real_t gn_target_pf = gn_target_q * pf_scale;
+
+	// Apparent contact angle for diagnostics.
+	real_t gmag = sqrt(g.x*g.x + g.y*g.y + g.z*g.z);
+	if (gmag > 1.0e-14) {
+		real_t cos_app = -(g.x*n_w.x + g.y*n_w.y + g.z*n_w.z) / gmag;
+		if (cos_app < -1.0) cos_app = -1.0;
+		if (cos_app > 1.0) cos_app = 1.0;
+		WallGradThetaApp = acos(cos_app) * 180.0 / 3.14159265358979323846;
+	}
+
+	// Assemble corrected gradient.
+	vector_t gc;
+	gc.x = g_t.x + gn_target_pf * n_w.x;
+	gc.y = g_t.y + gn_target_pf * n_w.y;
+	gc.z = g_t.z + gn_target_pf * n_w.z;
+
+	// Magnitude cap to prevent over-driving at low angles.
+	real_t magc = sqrt(gc.x*gc.x + gc.y*gc.y + gc.z*gc.z);
+	real_t ref_mag = gmag;
+	if (fabs(pf_scale/IntWidth) > ref_mag) ref_mag = fabs(pf_scale/IntWidth);
+	real_t cap = WallGradCapFactor * ref_mag;
+	if (magc > cap && magc > 1.0e-14) {
+		gc.x *= cap/magc; gc.y *= cap/magc; gc.z *= cap/magc;
+	}
+
+	// Record delta for diagnostics.
+	real_t dx = gc.x - g.x, dy = gc.y - g.y, dz = gc.z - g.z;
+	WallGradDeltaMag = sqrt(dx*dx + dy*dy + dz*dz);
+
+	return gc;
+}
+
+// ================================================================
+// Layer 2 (Ju 2024): wall free-energy chemical potential source
+// ================================================================
+
+// Compute mu_wall = -a_v * sqrt(2*kappa*beta) * cos(theta) * q*(1-q)
+// where sqrt(2*kappa*beta) = 6*sigma in the current TCLB convention.
+CudaDeviceFunction real_t calcWallMuSource(real_t C)
+{
+	if (WallMuMode < 0.5) return 0.0;
+	if (IamWall || IamSolid) return 0.0;
+	if (!stage13_is_fluid_boundary_node()) return 0.0;
+
+	real_t h_dist;
+	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-12) return 0.0;
+	if (fabs(h_dist) > 2.0) return 0.0;
+
+	real_t pf_scale = PhaseField_h - PhaseField_l;
+	if (fabs(pf_scale) < 1.0e-30) return 0.0;
+	real_t q = (C - PhaseField_l) / pf_scale;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+	if (q < WallMuContactLineEps || q > 1.0 - WallMuContactLineEps) return 0.0;
+
+	// Effective surface area a_v: approximate with IsBoundary gradient magnitude.
+	real_t av = 0.0;
+	av += fabs(IsBoundary(1,0,0) - IsBoundary(-1,0,0));
+	av += fabs(IsBoundary(0,1,0) - IsBoundary(0,-1,0));
+	av += fabs(IsBoundary(0,0,1) - IsBoundary(0,0,-1));
+	av *= 0.5;  // first-order difference
+	real_t av_cap = 2.0 / IntWidth;
+	if (av > av_cap) av = av_cap;
+	if (av < 1.0e-14) return 0.0;
+
+	// mu_wall = -a_v * 6*sigma * cos(theta) * q*(1-q) / pf_scale
+	real_t mu_wall = -WallMuScale * av * 6.0 * sigma * cos(radAngle) * q * (1.0 - q);
+	mu_wall /= pf_scale;
+
+	return mu_wall;
+}
+
 <?R
 ###################################################
 # Miscellaneous helper functions used in the code #
@@ -104,47 +308,58 @@ CudaDeviceFunction vector_t getNormal(){
 	This function uses isotropic gradient stencils to return
 	the gradient of the phase field variable \phi.
 */
-CudaDeviceFunction vector_t calcGradPhi()
+CudaDeviceFunction vector_t calcGradPhiRaw()
 {
 	vector_t gradPhi = {0.0,0.0,0.0};
 	#ifdef OPTIONS_OutFlow
 		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
 			gradPhi.x = 0.0;
-			gradPhi.y = 16.00 * (PhaseF(0,1,0) - PhaseF(0,-1,0))
-						+ 2.0*(PhaseF(-1,1,1) - PhaseF(-1,-1,1)
-						+ PhaseF(-1,1,-1)- PhaseF(-1,-1,-1))
-						+  4.00 * (2.0*( PhaseF(-1,1,0) - PhaseF(-1,-1,0))
-							+  PhaseF(0,1,1) - PhaseF(0,-1,1) + PhaseF(0,1,-1) - PhaseF(0,-1,-1));
-			gradPhi.z = 16.00 * (PhaseF(0,0,1) - PhaseF(0,0,-1))
-						+ 2.0*( PhaseF(-1,1,1) + PhaseF(-1,-1,1)
-						-  PhaseF(-1,1,-1)- PhaseF(-1,-1,-1))
-						+  4.00 * (2.0*( PhaseF(-1,0,1) - PhaseF(-1,0,-1))
-							+  PhaseF(0,1,1) + PhaseF(0,-1,1) - PhaseF(0,1,-1) - PhaseF(0,-1,-1));
+			gradPhi.y = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,1,0) - STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ 2.0*(STAGE13_PHASE_FOR_STENCIL(-1,1,1) - STAGE13_PHASE_FOR_STENCIL(-1,-1,1)
+						+ STAGE13_PHASE_FOR_STENCIL(-1,1,-1)- STAGE13_PHASE_FOR_STENCIL(-1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(-1,1,0) - STAGE13_PHASE_FOR_STENCIL(-1,-1,0))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) - STAGE13_PHASE_FOR_STENCIL(0,-1,1) + STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
+			gradPhi.z = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,0,1) - STAGE13_PHASE_FOR_STENCIL(0,0,-1))
+						+ 2.0*( STAGE13_PHASE_FOR_STENCIL(-1,1,1) + STAGE13_PHASE_FOR_STENCIL(-1,-1,1)
+						-  STAGE13_PHASE_FOR_STENCIL(-1,1,-1)- STAGE13_PHASE_FOR_STENCIL(-1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(-1,0,1) - STAGE13_PHASE_FOR_STENCIL(-1,0,-1))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) + STAGE13_PHASE_FOR_STENCIL(0,-1,1) - STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
 		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
 			gradPhi.x = 0.0;
-			gradPhi.y = 16.00 * (PhaseF(0,1,0) - PhaseF(0,-1,0))
-						+ 2.0*(PhaseF(1,1,1) - PhaseF(1,-1,1)
-						+ PhaseF(1,1,-1)- PhaseF(1,-1,-1))
-						+  4.00 * (2.0*( PhaseF(1,1,0) - PhaseF(1,-1,0))
-							+  PhaseF(0,1,1) - PhaseF(0,-1,1) + PhaseF(0,1,-1) - PhaseF(0,-1,-1));
-			gradPhi.z = 16.00 * (PhaseF(0,0,1) - PhaseF(0,0,-1))
-						+ 2.0*( PhaseF(1,1,1) + PhaseF(1,-1,1)
-						-  PhaseF(1,1,-1)- PhaseF(1,-1,-1))
-						+  4.00 * (2.0*( PhaseF(1,0,1) - PhaseF(1,0,-1))
-							+  PhaseF(0,1,1) + PhaseF(0,-1,1) - PhaseF(0,1,-1) - PhaseF(0,-1,-1));
+			gradPhi.y = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,1,0) - STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ 2.0*(STAGE13_PHASE_FOR_STENCIL(1,1,1) - STAGE13_PHASE_FOR_STENCIL(1,-1,1)
+						+ STAGE13_PHASE_FOR_STENCIL(1,1,-1)- STAGE13_PHASE_FOR_STENCIL(1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(1,1,0) - STAGE13_PHASE_FOR_STENCIL(1,-1,0))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) - STAGE13_PHASE_FOR_STENCIL(0,-1,1) + STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
+			gradPhi.z = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,0,1) - STAGE13_PHASE_FOR_STENCIL(0,0,-1))
+						+ 2.0*( STAGE13_PHASE_FOR_STENCIL(1,1,1) + STAGE13_PHASE_FOR_STENCIL(1,-1,1)
+						-  STAGE13_PHASE_FOR_STENCIL(1,1,-1)- STAGE13_PHASE_FOR_STENCIL(1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(1,0,1) - STAGE13_PHASE_FOR_STENCIL(1,0,-1))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) + STAGE13_PHASE_FOR_STENCIL(0,-1,1) - STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
 		} else if ((NodeType & NODE_BOUNDARY)) {
 			gradPhi.x = 0.0;gradPhi.y = 0.0;gradPhi.z = 0.0;
 		} else {	
 			<?R
-				IsotropicGrad('gradPhi', 'PhaseF')
+				IsotropicGrad('gradPhi', 'STAGE13_PHASE_FOR_STENCIL')
 			?>
 		}
 	#else
 		    <?R
-			IsotropicGrad('gradPhi', 'PhaseF')
+			IsotropicGrad('gradPhi', 'STAGE13_PHASE_FOR_STENCIL')
 		    ?>
 	#endif	
 	return gradPhi;
+}
+
+// Layer 1 wrapper: apply Wang 2025 boundary-fluid corrected gradient.
+CudaDeviceFunction vector_t calcGradPhi()
+{
+	vector_t g = calcGradPhiRaw();
+	if (WallGradMode > 0.5) {
+		vector_t gc = calcGradPhiBoundaryCorrected(g);
+		if (WallGradMode > 1.5) return gc;
+	}
+	return g;
 }
 
 /*
@@ -174,47 +389,47 @@ CudaDeviceFunction real_t calcMu(real_t C)
 	pfavg = 0.5*(PhaseField_l+PhaseField_h);
 	#ifdef OPTIONS_OutFlow
 		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) { 
-			lpPhi = 16.0 *( 2.0* PhaseF(-1,0,0)
-						+ (PhaseF(0,1,0)) + (PhaseF(0,-1,0))
-						+ (PhaseF(0,0,1)) + (PhaseF(0,0,-1)))
-					+ 1.0 *(  2.0*(PhaseF(-1,1,1)
-						+ (PhaseF(-1,-1,1))
-							+ (PhaseF(-1,1,-1))
-							+ (PhaseF(-1,-1,-1))))
-					+ 4.0 *(2.0*( (PhaseF(-1,1,0))
-						+ (PhaseF(-1,-1,0))
-						+ (PhaseF(-1,0,1))
-						+ (PhaseF(-1,0,-1)))
-						+ (PhaseF(0,1,1)) + (PhaseF(0,-1,1))
-						+ (PhaseF(0,1,-1))+ (PhaseF(0,-1,-1)))
-				- 152.0 * PhaseF(0,0,0);
+			lpPhi = 16.0 *( 2.0* STAGE13_PHASE_FOR_STENCIL(-1,0,0)
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,0)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,0,1)) + (STAGE13_PHASE_FOR_STENCIL(0,0,-1)))
+					+ 1.0 *(  2.0*(STAGE13_PHASE_FOR_STENCIL(-1,1,1)
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,-1,1))
+							+ (STAGE13_PHASE_FOR_STENCIL(-1,1,-1))
+							+ (STAGE13_PHASE_FOR_STENCIL(-1,-1,-1))))
+					+ 4.0 *(2.0*( (STAGE13_PHASE_FOR_STENCIL(-1,1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,0,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,0,-1)))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,1)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,-1))+ (STAGE13_PHASE_FOR_STENCIL(0,-1,-1)))
+				- 152.0 * STAGE13_PHASE_FOR_STENCIL(0,0,0);
 		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) { 
-			lpPhi = 16.0 *( 2.0* PhaseF(1,0,0)
-						+ (PhaseF(0,1,0)) + (PhaseF(0,-1,0))
-						+ (PhaseF(0,0,1)) + (PhaseF(0,0,-1)))
-					+ 1.0 *(  2.0*(PhaseF(1,1,1)
-						+ (PhaseF(1,-1,1))
-							+ (PhaseF(1,1,-1))
-							+ (PhaseF(1,-1,-1))))
-					+ 4.0 *(2.0*( (PhaseF(1,1,0))
-						+ (PhaseF(1,-1,0))
-						+ (PhaseF(1,0,1))
-						+ (PhaseF(1,0,-1)))
-						+ (PhaseF(0,1,1)) + (PhaseF(0,-1,1))
-						+ (PhaseF(0,1,-1))+ (PhaseF(0,-1,-1)))
-				- 152.0 * PhaseF(0,0,0);
+			lpPhi = 16.0 *( 2.0* STAGE13_PHASE_FOR_STENCIL(1,0,0)
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,0)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,0,1)) + (STAGE13_PHASE_FOR_STENCIL(0,0,-1)))
+					+ 1.0 *(  2.0*(STAGE13_PHASE_FOR_STENCIL(1,1,1)
+						+ (STAGE13_PHASE_FOR_STENCIL(1,-1,1))
+							+ (STAGE13_PHASE_FOR_STENCIL(1,1,-1))
+							+ (STAGE13_PHASE_FOR_STENCIL(1,-1,-1))))
+					+ 4.0 *(2.0*( (STAGE13_PHASE_FOR_STENCIL(1,1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(1,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(1,0,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(1,0,-1)))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,1)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,-1))+ (STAGE13_PHASE_FOR_STENCIL(0,-1,-1)))
+				- 152.0 * STAGE13_PHASE_FOR_STENCIL(0,0,0);
 		} else if ((NodeType & NODE_BOUNDARY)) {
 			// If single phase inlet/outlet, dont want periodic bounds
 			// to interfere - can cause waves/instabilities
 			lpPhi = 0.0;
 		} else {
 			<?R
-				myLaplace('lpPhi', 'PhaseF')
+				myLaplace('lpPhi', 'STAGE13_PHASE_FOR_STENCIL')
 			?>
 		}
 	#else
 			<?R
-				myLaplace('lpPhi', 'PhaseF')
+				myLaplace('lpPhi', 'STAGE13_PHASE_FOR_STENCIL')
 			?>
 	#endif
 	#ifdef OPTIONS_thermo
@@ -224,6 +439,14 @@ CudaDeviceFunction real_t calcMu(real_t C)
 		mu = 4.0*(12.0*sigma/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
 			- (1.5 *sigma*IntWidth) * lpPhi;
 	#endif
+	// Layer 2 (Ju 2024): wall free-energy chemical potential source.
+	if (WallMuMode > 0.5) {
+		real_t mu_wall = calcWallMuSource(C);
+		WallMuCandidate = mu_wall;
+		if (WallMuMode > 1.5) mu += mu_wall;
+	} else {
+		WallMuCandidate = 0.0;
+	}
 	return mu;
 }
 
@@ -763,6 +986,12 @@ CudaDeviceFunction void CollisionMRT()
 	PhaseF = PhaseF(0,0,0);
 	int i, j;
 	real_t C  = PhaseF;
+	ForceIterResidual = 0.0;
+	ForceIterCount = 0.0;
+	MassCorrectionApplied = 0.0;
+	PhaseStencilGhostUseCount = 0.0;
+	PhaseStencilFallbackCount = 0.0;
+	PhaseStencilMidpointFallbackCount = 0.0;
     real_t mu = calcMu( C );
 	real_t tau, DynVisc, rho, p;			// Macroscopic Properties
 	vector_t n, gradPhi;					// Phase field gradients
@@ -772,6 +1001,7 @@ CudaDeviceFunction void CollisionMRT()
 	real_t F_phi[hPops], heq[hPops];				// Phase field collision terms
 	real_t F_i[27];							// Momentum distribution forcing term
 	real_t m[27]; 							//MRT Details
+	real_t F_prev[3] = {0.0, 0.0, 0.0};
 
 	// Find Macroscopic Details
 	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
@@ -817,8 +1047,17 @@ CudaDeviceFunction void CollisionMRT()
     calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
 	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
     calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
-	//  Viscous Force:
+	// Viscous force fixed-point iteration. ForceFixedTol<=0 preserves the
+	// legacy fixed-count loop controlled by force_fixed_iterator.
+	int force_iter_limit = force_fixed_iterator;
+	if (ForceFixedTol > 0.0) {
+		force_iter_limit = ForceFixedMaxIter;
+	}
+	if (force_iter_limit < 1) {
+		force_iter_limit = 1;
+	}
 	j = 0;
+	bool force_iter_converged = false;
 	do {	// do while loop is guaranteeing the loop will execute at least once
 		j++;
 	<?R
@@ -839,9 +1078,24 @@ CudaDeviceFunction void CollisionMRT()
 		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
 		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
 		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+		if (j > 1) {
+			real_t dFx = F_total[0] - F_prev[0];
+			real_t dFy = F_total[1] - F_prev[1];
+			real_t dFz = F_total[2] - F_prev[2];
+			real_t delta_norm = sqrt(dFx*dFx + dFy*dFy + dFz*dFz);
+			real_t prev_norm = sqrt(F_prev[0]*F_prev[0] + F_prev[1]*F_prev[1] + F_prev[2]*F_prev[2]);
+			ForceIterResidual = delta_norm / (prev_norm + 1.0e-30);
+		}
+		F_prev[0] = F_total[0];
+		F_prev[1] = F_total[1];
+		F_prev[2] = F_total[2];
+		ForceIterCount = j;
 
 	<?R 	C( u, m0[2:4] + 0.5 * F_total * rho.inv) ?>
-	} while (j<force_fixed_iterator);
+		if (ForceFixedTol > 0.0 && j > 1 && ForceIterResidual < ForceFixedTol) {
+			force_iter_converged = true;
+		}
+	} while (j < force_iter_limit && !force_iter_converged);
 	// PHASE FIELD POPULATION UPDATE:
 	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
 	<?R
@@ -1047,6 +1301,12 @@ CudaDeviceFunction void CollisionBGK()
     PhaseF = PhaseF(0,0,0);
 	int i, j;
 	real_t C  = PhaseF; 
+	ForceIterResidual = 0.0;
+	ForceIterCount = 0.0;
+	MassCorrectionApplied = 0.0;
+	PhaseStencilGhostUseCount = 0.0;
+	PhaseStencilFallbackCount = 0.0;
+	PhaseStencilMidpointFallbackCount = 0.0;
     real_t mu = calcMu( C );
 	real_t tau, DynVisc, rho, p;			// Macroscopic Properties
 	vector_t gradPhi;				// Phase field gradients
@@ -1077,6 +1337,7 @@ CudaDeviceFunction void CollisionBGK()
     calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
     // VISCOUS FORCE:
     for (j=0;j<2;j++) {
+		ForceIterCount = j + 1;
     // GAMMA AND EQUILIBRIUM
         mag = U*U + V*V + W*W;
         for (i=0; i< 27; i++){
