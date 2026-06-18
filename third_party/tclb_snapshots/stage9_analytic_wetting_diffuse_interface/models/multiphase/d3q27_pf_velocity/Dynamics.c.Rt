@@ -165,6 +165,148 @@ CudaDeviceFunction real_t getWallMuCandidate(){
 }
 
 // ================================================================
+// Layer 3 (DynamicCL, Stage 15B): residual contact-line shadow diagnostics
+// ================================================================
+// Getters for the DynamicCL diagnostic fields. Each AddQuantity above needs a
+// get<Name>() device function returning the cell-field value.
+CudaDeviceFunction real_t getDynamicCLActive(){ return DynamicCLActive(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLIndicator(){ return DynamicCLIndicator(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLCosApp(){ return DynamicCLCosApp(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLThetaApp(){ return DynamicCLThetaApp(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLCosEq(){ return DynamicCLCosEq(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLCosResidual(){ return DynamicCLCosResidual(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateX(){ return DynamicCLForceCandidateX(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateY(){ return DynamicCLForceCandidateY(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateZ(){ return DynamicCLForceCandidateZ(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateMag(){ return DynamicCLForceCandidateMag(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLTangentialX(){ return DynamicCLTangentialX(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLTangentialY(){ return DynamicCLTangentialY(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLTangentialZ(){ return DynamicCLTangentialZ(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallNormalX(){ return DynamicCLWallNormalX(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallNormalY(){ return DynamicCLWallNormalY(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallNormalZ(){ return DynamicCLWallNormalZ(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLRejectedReason(){ return DynamicCLRejectedReason(0,0,0); }
+
+// ----------------------------------------------------------------
+// Stage 15B: compute the contact-line residual R_theta and a candidate
+// force F_CL = DynamicCLForceSign * DynamicCLCoeff * sigma/IntWidth * R_theta
+//            * I_CL * t_CL.
+// This is SHADOW ONLY in 15B: it writes the DynamicCL* diagnostic fields and
+// returns the candidate force vector, but the caller must NOT add it to
+// F_total unless DynamicCLMode >= 2 (reserved for 15C).
+//
+// R_theta = cos(theta_eq) - cos(theta_app) vanishes at equilibrium by
+// construction. theta_app is read from the interface normal n_i = gradPhi/|g|
+// vs the analytic wall normal n_w. The sign convention DynamicCLCosSign is
+// calibrated by the equilibrium 30/90/150 cases (the value that makes
+// cos_app -> cos(radAngle) there).
+//
+// Rejected-reason codes (DynamicCLRejectedReason):
+//   0 accepted, 1 wall/solid node, 2 not fluid-boundary, 3 invalid/too-far
+//   wall normal, 4 q out of contact-line band, 5 |gradPhi| too small,
+//   6 |R_theta| below DynamicCLCosTol.
+// ----------------------------------------------------------------
+CudaDeviceFunction void calcDynamicCLShadow(vector_t gradPhi, real_t C,
+	real_t *fx, real_t *fy, real_t *fz)
+{
+	// Defaults: zero candidate + zero diagnostics.
+	*fx = 0.0; *fy = 0.0; *fz = 0.0;
+	DynamicCLActive = 0.0;
+	DynamicCLIndicator = 0.0;
+	DynamicCLCosApp = 0.0;
+	DynamicCLThetaApp = 0.0;
+	DynamicCLCosEq = 0.0;
+	DynamicCLCosResidual = 0.0;
+	DynamicCLForceCandidateX = 0.0;
+	DynamicCLForceCandidateY = 0.0;
+	DynamicCLForceCandidateZ = 0.0;
+	DynamicCLForceCandidateMag = 0.0;
+	DynamicCLTangentialX = 0.0;
+	DynamicCLTangentialY = 0.0;
+	DynamicCLTangentialZ = 0.0;
+	DynamicCLWallNormalX = 0.0;
+	DynamicCLWallNormalY = 0.0;
+	DynamicCLWallNormalZ = 0.0;
+	DynamicCLRejectedReason = 0.0;
+
+	if (DynamicCLMode < 0.5) return;
+
+	if (IamWall || IamSolid) { DynamicCLRejectedReason = 1.0; return; }
+	if (!stage13_is_fluid_boundary_node()) { DynamicCLRejectedReason = 2.0; return; }
+
+	real_t h_dist;
+	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-12) { DynamicCLRejectedReason = 3.0; return; }
+	if (fabs(h_dist) > 2.0) { DynamicCLRejectedReason = 3.0; return; }
+	n_w.x /= nmag; n_w.y /= nmag; n_w.z /= nmag;
+	DynamicCLWallNormalX = n_w.x;
+	DynamicCLWallNormalY = n_w.y;
+	DynamicCLWallNormalZ = n_w.z;
+
+	real_t pf_scale = PhaseField_h - PhaseField_l;
+	if (fabs(pf_scale) < 1.0e-30) { DynamicCLRejectedReason = 4.0; return; }
+	real_t q = (C - PhaseField_l) / pf_scale;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+	if (q < DynamicCLEpsQ || q > 1.0 - DynamicCLEpsQ) { DynamicCLRejectedReason = 4.0; return; }
+
+	real_t gmag = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+	if (gmag < DynamicCLGradMin) { DynamicCLRejectedReason = 5.0; return; }
+
+	vector_t n_i;
+	n_i.x = gradPhi.x / gmag;
+	n_i.y = gradPhi.y / gmag;
+	n_i.z = gradPhi.z / gmag;
+
+	real_t dot_nw = n_i.x*n_w.x + n_i.y*n_w.y + n_i.z*n_w.z;
+	real_t cos_app = DynamicCLCosSign * dot_nw;
+	if (cos_app > 1.0) cos_app = 1.0;
+	if (cos_app < -1.0) cos_app = -1.0;
+	real_t cos_eq = cos(radAngle);
+	real_t R_theta = cos_eq - cos_app;
+	DynamicCLCosApp = cos_app;
+	DynamicCLCosEq = cos_eq;
+	DynamicCLCosResidual = R_theta;
+	// theta_app in degrees for diagnostics
+	DynamicCLThetaApp = acos(cos_app) * 180.0 / 3.14159265358979323846;
+
+	if (fabs(R_theta) < DynamicCLCosTol) { DynamicCLRejectedReason = 6.0; return; }
+
+	// Wall-tangential direction of the interface normal projection:
+	// t_CL = n_i - (n_i . n_w) n_w, normalized.
+	vector_t t;
+	t.x = n_i.x - dot_nw*n_w.x;
+	t.y = n_i.y - dot_nw*n_w.y;
+	t.z = n_i.z - dot_nw*n_w.z;
+	real_t tmag = sqrt(t.x*t.x + t.y*t.y + t.z*t.z);
+	if (tmag < 1.0e-14) { DynamicCLRejectedReason = 5.0; return; }
+	t.x /= tmag; t.y /= tmag; t.z /= tmag;
+	DynamicCLTangentialX = t.x;
+	DynamicCLTangentialY = t.y;
+	DynamicCLTangentialZ = t.z;
+
+	real_t I_cl = 4.0 * q * (1.0 - q);
+	DynamicCLIndicator = I_cl;
+
+	// Candidate force magnitude (capped). NOT added to F_total in 15B.
+	real_t scale = sigma / IntWidth;
+	real_t mag = DynamicCLForceSign * DynamicCLCoeff * scale * R_theta * I_cl;
+	real_t cap = DynamicCLForceCap * scale;
+	if (mag >  cap) mag =  cap;
+	if (mag < -cap) mag = -cap;
+
+	*fx = mag * t.x;
+	*fy = mag * t.y;
+	*fz = mag * t.z;
+	DynamicCLForceCandidateX = *fx;
+	DynamicCLForceCandidateY = *fy;
+	DynamicCLForceCandidateZ = *fz;
+	DynamicCLForceCandidateMag = fabs(mag);
+	DynamicCLActive = 1.0;  // accepted: node is in contact-line band with usable R_theta
+}
+
+// ================================================================
 // Layer 1 (Wang 2025): boundary-fluid corrected gradient
 // ================================================================
 
@@ -1043,6 +1185,17 @@ CudaDeviceFunction void CollisionMRT()
 	gradPhi = calcGradPhi();
 	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
 
+	// Stage 15B: DynamicCL shadow. Compute the candidate residual contact-line
+	// force and write diagnostics. In 15B the candidate is NEVER added to
+	// F_total (DynamicCLMode<=1). The F_total += F_CL line is reserved for 15C
+	// and guarded by DynamicCLMode>=2 below, inside the force-iteration block.
+	{
+		real_t fcl_x, fcl_y, fcl_z;
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+		// 15C write hook (disabled in 15B; runner refuses DynamicCLMode>=2):
+		// if (DynamicCLMode > 1.5) { F_cl[0]=fcl_x; F_cl[1]=fcl_y; F_cl[2]=fcl_z; }
+	}
+
 	if (magnPhi < minGradient){
 		n.x=0.0; n.y=0.0; n.z=0.0;
 	} else {
@@ -1342,6 +1495,13 @@ CudaDeviceFunction void CollisionBGK()
 	nx = gradPhi.x/magnPhi;
 	ny = gradPhi.y/magnPhi;
 	nz = gradPhi.z/magnPhi;
+	// Stage 15B: DynamicCL shadow (BGK path). Diagnostics only; never added to
+	// F_total in 15B. See the MRT path above and calcDynamicCLShadow for the
+	// 15C write hook (reserved; runner refuses DynamicCLMode>=2).
+	{
+		real_t fcl_x, fcl_y, fcl_z;
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+	}
 
 	// CALCULATE FORCES:
     calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);

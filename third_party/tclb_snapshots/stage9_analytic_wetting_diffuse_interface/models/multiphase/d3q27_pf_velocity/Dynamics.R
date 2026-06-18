@@ -132,6 +132,25 @@ AddField("WallCSQStrictWriteReady", stencil3d=1, group="solid_boundary")
 AddField("WallGradDeltaMag", stencil3d=1, group="wall_grad_diag")
 AddField("WallGradThetaApp", stencil3d=1, group="wall_grad_diag")
 AddField("WallMuCandidate", stencil3d=1, group="wall_grad_diag")
+# Layer3 DynamicCL shadow diagnostics (Stage 15B). Candidate residual
+# contact-line force computed but NOT added to F_total (DynamicCLMode<=1).
+AddField("DynamicCLActive", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLIndicator", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLCosApp", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLThetaApp", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLCosEq", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLCosResidual", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLForceCandidateX", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLForceCandidateY", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLForceCandidateZ", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLForceCandidateMag", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLTangentialX", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLTangentialY", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLTangentialZ", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallNormalX", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallNormalY", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallNormalZ", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLRejectedReason", stencil3d=1, group="wall_grad_diag")
 
 stage13_wall_diag_fields = c(
     "WallGhost", "WallH", "AnalyticFlag", "WallGhostRaw",
@@ -336,6 +355,24 @@ if (Options$thermo){
 	AddQuantity(name="WallGradDeltaMag", unit=1)
 	AddQuantity(name="WallGradThetaApp", unit=1)
 	AddQuantity(name="WallMuCandidate", unit=1)
+	# Layer3 DynamicCL shadow diagnostics (Stage 15B)
+	AddQuantity(name="DynamicCLActive", unit=1)
+	AddQuantity(name="DynamicCLIndicator", unit=1)
+	AddQuantity(name="DynamicCLCosApp", unit=1)
+	AddQuantity(name="DynamicCLThetaApp", unit=1)
+	AddQuantity(name="DynamicCLCosEq", unit=1)
+	AddQuantity(name="DynamicCLCosResidual", unit=1)
+	AddQuantity(name="DynamicCLForceCandidateX", unit=1)
+	AddQuantity(name="DynamicCLForceCandidateY", unit=1)
+	AddQuantity(name="DynamicCLForceCandidateZ", unit=1)
+	AddQuantity(name="DynamicCLForceCandidateMag", unit=1)
+	AddQuantity(name="DynamicCLTangentialX", unit=1)
+	AddQuantity(name="DynamicCLTangentialY", unit=1)
+	AddQuantity(name="DynamicCLTangentialZ", unit=1)
+	AddQuantity(name="DynamicCLWallNormalX", unit=1)
+	AddQuantity(name="DynamicCLWallNormalY", unit=1)
+	AddQuantity(name="DynamicCLWallNormalZ", unit=1)
+	AddQuantity(name="DynamicCLRejectedReason", unit=1)
 ###################################
 ########INPUTS - PHASEFIELD########
 ###################################
@@ -387,6 +424,19 @@ if (Options$thermo){
 	AddSetting(name="WallMuMode", default=0, comment='Layer2 Ju wall-mu source: 0 off, 1 shadow, 2 write')
 	AddSetting(name="WallMuScale", default=1.0, comment='Layer2: mu_wall scaling factor')
 	AddSetting(name="WallMuContactLineEps", default=0.02, comment='Layer2: skip nodes where q<eps or q>1-eps')
+	# Layer3 DynamicCL residual contact-line force (Stage 15B shadow / 15C write)
+	# Residual R_theta = cos(theta_eq) - cos(theta_app), added to F_total.
+	# Vanishes at equilibrium by construction (theta_app -> theta_eq).
+	# 15B: DynamicCLMode<=1 shadow only (diagnostics, never adds to F_total).
+	# 15C: DynamicCLMode>=2 write (reserved; runner refuses until 15C).
+	AddSetting(name="DynamicCLMode", default=0, comment='Layer3 DynamicCL: 0 off, 1 shadow diagnostics, 2 add residual CL force (reserved 15C)')
+	AddSetting(name="DynamicCLCoeff", default=0.0, comment='Layer3: residual contact-line force coefficient')
+	AddSetting(name="DynamicCLForceCap", default=0.02, comment='Layer3: force cap in units of sigma/IntWidth')
+	AddSetting(name="DynamicCLEpsQ", default=0.05, comment='Layer3: contact-line band cutoff eps<q<1-eps')
+	AddSetting(name="DynamicCLGradMin", default=1e-10, comment='Layer3: minimum |gradPhi| for theta_app')
+	AddSetting(name="DynamicCLCosTol", default=1e-3, comment='Layer3: no candidate force below this |cos_eq-cos_app|')
+	AddSetting(name="DynamicCLCosSign", default=1.0, comment='Layer3: sign convention for cos_app, calibrated by equilibrium 30/90/150')
+	AddSetting(name="DynamicCLForceSign", default=1.0, comment='Layer3: global force direction sign, calibrated by decoupled footprint')
 	##SPECIAL INITIALISATIONS
 	# RTI
 		AddSetting(name="RTI_Characteristic_Length", default=-999, comment='Use for RTI instability')

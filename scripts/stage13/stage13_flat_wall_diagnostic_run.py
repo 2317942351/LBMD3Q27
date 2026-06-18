@@ -89,6 +89,23 @@ VTK_FIELDS = ",".join(
         "WallGradDeltaMag",
         "WallGradThetaApp",
         "WallMuCandidate",
+        "DynamicCLActive",
+        "DynamicCLIndicator",
+        "DynamicCLCosApp",
+        "DynamicCLThetaApp",
+        "DynamicCLCosEq",
+        "DynamicCLCosResidual",
+        "DynamicCLForceCandidateX",
+        "DynamicCLForceCandidateY",
+        "DynamicCLForceCandidateZ",
+        "DynamicCLForceCandidateMag",
+        "DynamicCLTangentialX",
+        "DynamicCLTangentialY",
+        "DynamicCLTangentialZ",
+        "DynamicCLWallNormalX",
+        "DynamicCLWallNormalY",
+        "DynamicCLWallNormalZ",
+        "DynamicCLRejectedReason",
     ]
 )
 
@@ -178,6 +195,7 @@ def render_xml(
     wall_grad_mode: int,
     wall_grad_contact_sign: float,
     wall_mu_mode: int,
+    dynamic_cl_mode: int,
 ) -> str:
     parent_radius = cap_sphere_radius(volume_radius, case.init_theta)
     theta = math.radians(case.init_theta)
@@ -244,6 +262,7 @@ def render_xml(
     <Param name="WallGradMode" value="{wall_grad_mode}"/>
     <Param name="WallGradContactSign" value="{wall_grad_contact_sign:.16g}"/>
     <Param name="WallMuMode" value="{wall_mu_mode}"/>
+    <Param name="DynamicCLMode" value="{dynamic_cl_mode}"/>
     <Param name="radAngle" value="{case.bc_theta:.16g}d" zone="FlatLowerY"/>
     <Param name="minGradient" value="1e-08"/>
   </Model>
@@ -281,6 +300,7 @@ def write_case(case: CaseDef, args: argparse.Namespace) -> Path:
         wall_grad_mode=args.wall_grad_mode,
         wall_grad_contact_sign=args.wall_grad_contact_sign,
         wall_mu_mode=args.wall_mu_mode,
+        dynamic_cl_mode=args.dynamic_cl_mode,
     )
     (case_dir / "case.xml").write_text(xml, encoding="utf-8")
     metadata: dict[str, Any] = {
@@ -323,6 +343,7 @@ def write_case(case: CaseDef, args: argparse.Namespace) -> Path:
         "wall_grad_mode": args.wall_grad_mode,
         "wall_grad_contact_sign": args.wall_grad_contact_sign,
         "wall_mu_mode": args.wall_mu_mode,
+        "dynamic_cl_mode": args.dynamic_cl_mode,
         "binary": args.binary,
         "binary_sha256": binary_hash(args.binary),
         "classification_before_audit": "exploratory_not_validation",
@@ -420,6 +441,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wall-grad-mode", type=int, default=0, help="Layer1 Wang corrected gradient: 0 off, 1 shadow (diagnostic only). NOTE: mode=2 (write) is DISABLED since Stage 15B-pre; the corrected gradient is diagnostic-only and never enters the dynamics.")
     parser.add_argument("--wall-grad-contact-sign", type=float, default=1.0)
     parser.add_argument("--wall-mu-mode", type=int, default=0, help="Layer2 Ju wall-mu: 0 off, 1 shadow, 2 write")
+    parser.add_argument("--dynamic-cl-mode", type=int, default=0, help="Layer3 DynamicCL: 0 off, 1 shadow (diagnostics only). NOTE: mode=2 (write to F_total) is reserved for Stage 15C and refused by this runner until 15C.")
     parser.add_argument("--force-fixed-tol", type=float, default=0.0)
     parser.add_argument("--force-fixed-max-iter", type=int, default=2)
     parser.add_argument(
@@ -465,6 +487,14 @@ def main() -> int:
             "Stage 15B-pre. The corrected gradient is diagnostic-only "
             "(use --wall-grad-mode 0 or 1). The compact ghost remains the "
             "sole wall-phase physics channel."
+        )
+    # Stage 15B: DynamicCL write (mode>=2, adding F_CL to F_total) is reserved
+    # for Stage 15C. 15B only allows shadow (mode<=1, diagnostics, no force).
+    if args.dynamic_cl_mode >= 2:
+        raise ValueError(
+            "DynamicCLMode=2 (add residual contact-line force to F_total) is "
+            "reserved for Stage 15C. Current stage (15B) is shadow-only: use "
+            "--dynamic-cl-mode 0 or 1."
         )
     if args.wall_compact_stencil_mode is None:
         args.wall_compact_stencil_mode = 2 if args.compact_mode == "write" else 1
