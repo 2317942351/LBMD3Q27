@@ -1,0 +1,160 @@
+{
+  "case": "diag_wall_t90",
+  "case_dir": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90",
+  "claim_limit": "shape-angle diagnostic only; not validation_passed",
+  "figures": {
+    "pdf": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/diag_wall_t90_stage13_shape_angle.pdf",
+    "png": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/diag_wall_t90_stage13_shape_angle.png"
+  },
+  "metadata": {
+    "bc_theta_deg": 90.0,
+    "binary": "/home/yuan/src/TCLB_stage13d_flat_wall_edge_fallback_20260615/CLB/d3q27_pf_velocity_q27_geometric/main",
+    "binary_sha256": "d28eff55bb47132dd9c2f11476b86dbec21a22eebac045beca1aeee7a15a3ec8",
+    "case": "diag_wall_t90",
+    "claim_limit": "flat-wall diagnostic gate only; not validation_passed",
+    "classification_before_audit": "exploratory_not_validation",
+    "decoupled": false,
+    "force_fixed_max_iter": 2,
+    "force_fixed_tol": 0.0,
+    "geometry": "wall",
+    "init_theta_deg": 90.0,
+    "interface_width": 3.0,
+    "iterations": 6000,
+    "log_period": 500,
+    "mobility": 0.1,
+    "pass_intent": "equilibrium cases check path fields and acute/neutral/obtuse response; decoupled cases must move from init_theta toward bc_theta before sphere/cylinder gates are allowed",
+    "purpose": "neutral path sanity",
+    "required_diagnostics": [
+      "WallGhostRaw",
+      "WallGhostClamped",
+      "WallGhostClampHit",
+      "WettingPathId",
+      "LocalRadAngle",
+      "ForceIterResidual",
+      "ForceIterCount",
+      "MassCorrectionApplied"
+    ],
+    "stage": "stage13_flat_wall_diagnostic",
+    "target_wall_patch": {
+      "reason": "exclude outer-domain edge/corner overlaps from the flat-wall contact-angle gate",
+      "x_count": 94,
+      "x_start": 1,
+      "y_count": 1,
+      "y_start": 0,
+      "z_count": 94,
+      "z_start": 1
+    },
+    "target_wall_zone": "FlatLowerY",
+    "volume_equivalent_radius": 16.0,
+    "vtk_fields": [
+      "PhaseField",
+      "Rho",
+      "U",
+      "P",
+      "BOUNDARY",
+      "IsItBoundary",
+      "WallGhost",
+      "WallGhostRaw",
+      "WallGhostClamped",
+      "WallGhostClampHit",
+      "WettingPathId",
+      "LocalRadAngle",
+      "WallH",
+      "AnalyticWallNormal",
+      "AnalyticFlag",
+      "ForceIterResidual",
+      "ForceIterCount",
+      "MassCorrectionApplied"
+    ],
+    "vtk_period": 1000,
+    "wetting_bc_mode": 0
+  },
+  "theta_shape_end_deg": 90.12849602101203,
+  "theta_shape_series": [
+    {
+      "circle": {
+        "cx": 47.99999999999987,
+        "cy": -0.0011230123345313814,
+        "n_points": 78,
+        "r": 20.152213737848072,
+        "rms": 0.006758460089290405
+      },
+      "step": 0,
+      "theta_shape_deg": 89.99680710675364,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00000000.vti"
+    },
+    {
+      "circle": {
+        "cx": 48.00000007506499,
+        "cy": 0.002702298052284391,
+        "n_points": 78,
+        "r": 20.14975621732381,
+        "rms": 0.013791448617376878
+      },
+      "step": 1000,
+      "theta_shape_deg": 90.00768397752192,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00001000.vti"
+    },
+    {
+      "circle": {
+        "cx": 48.00000006002784,
+        "cy": 0.01095419992003599,
+        "n_points": 78,
+        "r": 20.146983136365765,
+        "rms": 0.017038987369512332
+      },
+      "step": 2000,
+      "theta_shape_deg": 90.0311525279014,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00002000.vti"
+    },
+    {
+      "circle": {
+        "cx": 48.000000158621425,
+        "cy": 0.020375536612959877,
+        "n_points": 78,
+        "r": 20.143417158611392,
+        "rms": 0.019185627257879544
+      },
+      "step": 3000,
+      "theta_shape_deg": 90.05795602817172,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00003000.vti"
+    },
+    {
+      "circle": {
+        "cx": 48.00000042530754,
+        "cy": 0.030197142215342865,
+        "n_points": 78,
+        "r": 20.139503383962857,
+        "rms": 0.0206847541901116
+      },
+      "step": 4000,
+      "theta_shape_deg": 90.08590924103754,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00004000.vti"
+    },
+    {
+      "circle": {
+        "cx": 48.000000669017844,
+        "cy": 0.0401425311430188,
+        "n_points": 78,
+        "r": 20.135405955137855,
+        "rms": 0.02173425105110788
+      },
+      "step": 5000,
+      "theta_shape_deg": 90.11422660869978,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00005000.vti"
+    },
+    {
+      "circle": {
+        "cx": 48.00000067066343,
+        "cy": 0.05016131294060244,
+        "n_points": 78,
+        "r": 20.131165040536928,
+        "rms": 0.022457987533378937
+      },
+      "step": 6000,
+      "theta_shape_deg": 90.14276543332427,
+      "vti": "/mnt/usb1t/RUNS/runs/stage13_flat_wall_diag_20260615/diag_wall_t90/output/case_VTK_P00_00006000.vti"
+    }
+  ],
+  "theta_shape_tail_std_deg": 0.014269412312245322
+}
