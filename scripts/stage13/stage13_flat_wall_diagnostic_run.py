@@ -417,7 +417,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--int-width", type=float, default=3.0)
     parser.add_argument("--mobility", type=float, default=0.3)
     parser.add_argument("--wetting-bc-mode", type=int, default=0)
-    parser.add_argument("--wall-grad-mode", type=int, default=2, help="Layer1 Wang corrected gradient: 0 off, 1 shadow, 2 write")
+    parser.add_argument("--wall-grad-mode", type=int, default=0, help="Layer1 Wang corrected gradient: 0 off, 1 shadow (diagnostic only). NOTE: mode=2 (write) is DISABLED since Stage 15B-pre; the corrected gradient is diagnostic-only and never enters the dynamics.")
     parser.add_argument("--wall-grad-contact-sign", type=float, default=1.0)
     parser.add_argument("--wall-mu-mode", type=int, default=0, help="Layer2 Ju wall-mu: 0 off, 1 shadow, 2 write")
     parser.add_argument("--force-fixed-tol", type=float, default=0.0)
@@ -452,6 +452,20 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> int:
     args = parse_args()
+    # Stage 15B-pre safety guard: WallGradMode=2 (corrected-gradient write) is
+    # disabled. It replaces gradPhi with the static equilibrium contact-angle
+    # gradient and erases the non-equilibrium residual that drives contact-line
+    # motion; this was disproven by the decoupled direction tests (docs 24/27).
+    # The corrected gradient is now diagnostic-only (mode<=1); the compact ghost
+    # is the sole wall-phase source. Refuse rather than silently clamp so no run
+    # can silently use the wrong physics.
+    if args.wall_grad_mode >= 2:
+        raise ValueError(
+            "WallGradMode=2 (corrected-gradient write) is disabled since "
+            "Stage 15B-pre. The corrected gradient is diagnostic-only "
+            "(use --wall-grad-mode 0 or 1). The compact ghost remains the "
+            "sole wall-phase physics channel."
+        )
     if args.wall_compact_stencil_mode is None:
         args.wall_compact_stencil_mode = 2 if args.compact_mode == "write" else 1
     if args.wall_compact_stencil_write_allowed_flag is None:

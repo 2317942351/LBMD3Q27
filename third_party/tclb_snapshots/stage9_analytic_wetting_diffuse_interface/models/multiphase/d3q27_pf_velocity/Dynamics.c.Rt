@@ -100,14 +100,18 @@ CudaDeviceFunction int stage13_phase_is_valid(real_t pf) {
 }
 
 CudaDeviceFunction real_t stage13_select_phase_for_stencil(real_t pf, real_t is_boundary, real_t ghost, real_t center) {
-	// When Layer 1 (WallGradMode >= 2) is active, the corrected gradient
-	// handles the contact-angle drive. Ghost substitution is skipped for
-	// boundary neighbours to avoid double-applying the contact angle.
-	if (WallGradMode < 1.5) {
-		if (is_boundary > 0.5 && stage13_phase_is_valid(ghost)) {
-			PhaseStencilGhostUseCount = PhaseStencilGhostUseCount + 1.0;
-			return ghost;
-		}
+	// Stage 15B-pre safety cleanup: the compact-stencil WallGhost is the single
+	// main physics channel for the geometric contact-angle boundary (14A/14C-prime
+	// proved it healthy on the contact-line band). It must ALWAYS be consumed by
+	// the stencil when valid, independent of WallGradMode. The prior WallGradMode
+	// guard skipped ghost substitution when Layer1 (>=2) was active, which would
+	// let the already-disproven corrected-gradient write path bypass the compact
+	// ghost and silently change both gradPhi and lapPhi/mu. That path is now
+	// disabled in calcGradPhi(); the guard here is removed so the compact ghost
+	// is the sole source of the wall phase seen by the stencil.
+	if (is_boundary > 0.5 && stage13_phase_is_valid(ghost)) {
+		PhaseStencilGhostUseCount = PhaseStencilGhostUseCount + 1.0;
+		return ghost;
 	}
 	if (stage13_phase_is_valid(pf)) return pf;
 	if (stage13_phase_is_valid(ghost)) {
@@ -357,7 +361,15 @@ CudaDeviceFunction vector_t calcGradPhi()
 	vector_t g = calcGradPhiRaw();
 	if (WallGradMode > 0.5) {
 		vector_t gc = calcGradPhiBoundaryCorrected(g);
-		if (WallGradMode > 1.5) return gc;
+		// Stage 15B-pre safety cleanup: WallGradMode is now DIAGNOSTIC ONLY.
+		// calcGradPhiBoundaryCorrected still updates its diagnostic fields
+		// (WallGradDeltaMag, WallGradThetaApp) inside the helper, but the
+		// corrected gradient gc is NEVER returned to the dynamics. Returning gc
+		// (the old WallGradMode>=2 write path) replaces gradPhi with the static
+		// equilibrium contact-angle gradient and erases the non-equilibrium
+		// residual that drives contact-line motion; this was disproven by the
+		// decoupled direction tests. The compact ghost (consumed in
+		// stage13_select_phase_for_stencil) remains the sole wall-phase source.
 	}
 	return g;
 }
