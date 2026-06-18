@@ -186,6 +186,12 @@ CudaDeviceFunction real_t getDynamicCLWallNormalX(){ return DynamicCLWallNormalX
 CudaDeviceFunction real_t getDynamicCLWallNormalY(){ return DynamicCLWallNormalY(0,0,0); }
 CudaDeviceFunction real_t getDynamicCLWallNormalZ(){ return DynamicCLWallNormalZ(0,0,0); }
 CudaDeviceFunction real_t getDynamicCLRejectedReason(){ return DynamicCLRejectedReason(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLThetaEq(){ return DynamicCLThetaEq(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallContextFound(){ return DynamicCLWallContextFound(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLBlockedReason(){ return DynamicCLBlockedReason(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallDx(){ return DynamicCLWallDx(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallDy(){ return DynamicCLWallDy(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallDz(){ return DynamicCLWallDz(0,0,0); }
 
 // ----------------------------------------------------------------
 // Stage 15B: compute the contact-line residual R_theta and a candidate
@@ -197,14 +203,21 @@ CudaDeviceFunction real_t getDynamicCLRejectedReason(){ return DynamicCLRejected
 //
 // R_theta = cos(theta_eq) - cos(theta_app) vanishes at equilibrium by
 // construction. theta_app is read from the interface normal n_i = gradPhi/|g|
-// vs the analytic wall normal n_w. The sign convention DynamicCLCosSign is
-// calibrated by the equilibrium 30/90/150 cases (the value that makes
-// cos_app -> cos(radAngle) there).
+// vs the analytic wall normal n_w. theta_eq is the zone-resolved contact
+// angle taken from the adjacent WETTING wall node's LocalRadAngle (NOT this
+// fluid node's own zonal radAngle, which reads the global 90 deg default off
+// the wetting-wall zone — that produced the cos_eq=0 artifact). The sign
+// convention DynamicCLCosSign is calibrated by the equilibrium 30/90/150
+// cases (the value that makes cos_app -> cos(theta_eq) there).
 //
-// Rejected-reason codes (DynamicCLRejectedReason):
-//   0 accepted, 1 wall/solid node, 2 not fluid-boundary, 3 invalid/too-far
+// Rejected-reason codes (DynamicCLRejectedReason / legacy):
+//   0 accepted, 1 wall/solid node, 2 no adjacent wetting wall, 3 invalid/too-far
 //   wall normal, 4 q out of contact-line band, 5 |gradPhi| too small,
 //   6 |R_theta| below DynamicCLCosTol.
+// Blocked-reason codes (DynamicCLBlockedReason / 15B, more granular):
+//   0 accepted or DynamicCLMode off, 1 wall/solid, 2 no adjacent wetting wall,
+//   3 invalid/too-far wall normal, 5 q out of band, 6 |gradPhi| too small,
+//   7 |R_theta| below DynamicCLCosTol.
 // ----------------------------------------------------------------
 CudaDeviceFunction void calcDynamicCLShadow(vector_t gradPhi, real_t C,
 	real_t *fx, real_t *fy, real_t *fz)
@@ -228,31 +241,56 @@ CudaDeviceFunction void calcDynamicCLShadow(vector_t gradPhi, real_t C,
 	DynamicCLWallNormalY = 0.0;
 	DynamicCLWallNormalZ = 0.0;
 	DynamicCLRejectedReason = 0.0;
+	DynamicCLThetaEq = 0.0;
+	DynamicCLWallContextFound = 0.0;
+	DynamicCLBlockedReason = 0.0;
+	DynamicCLWallDx = 0.0;
+	DynamicCLWallDy = 0.0;
+	DynamicCLWallDz = 0.0;
 
 	if (DynamicCLMode < 0.5) return;
 
-	if (IamWall || IamSolid) { DynamicCLRejectedReason = 1.0; return; }
-	if (!stage13_is_fluid_boundary_node()) { DynamicCLRejectedReason = 2.0; return; }
+	if (IamWall || IamSolid) { DynamicCLRejectedReason = 1.0; DynamicCLBlockedReason = 1.0; return; }
+
+	// Stage 15B fix: require an adjacent WETTING wall (AnalyticFlag>0 with a
+	// populated LocalRadAngle), not merely "any boundary neighbour". This
+	// rejects OuterDomain walls (AnalyticFlag=0) which otherwise leak the
+	// contact-line force band onto the outer-domain skin. The coarse
+	// stage13_is_fluid_boundary_node() gate is intentionally NOT used here.
+	real_t theta_eq;
+	int wdx = 0, wdy = 0, wdz = 0;
+	if (!stage15_find_wetting_wall_context(&theta_eq, &wdx, &wdy, &wdz)) {
+		DynamicCLRejectedReason = 2.0;          // legacy code: not a contact-line node
+		DynamicCLBlockedReason = 2.0;           // 15B: no adjacent wetting wall
+		return;
+	}
+	DynamicCLWallContextFound = 1.0;
+	DynamicCLWallDx = (real_t) wdx;
+	DynamicCLWallDy = (real_t) wdy;
+	DynamicCLWallDz = (real_t) wdz;
 
 	real_t h_dist;
 	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
 	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
-	if (nmag < 1.0e-12) { DynamicCLRejectedReason = 3.0; return; }
-	if (fabs(h_dist) > 2.0) { DynamicCLRejectedReason = 3.0; return; }
+	if (nmag < 1.0e-12) { DynamicCLRejectedReason = 3.0; DynamicCLBlockedReason = 3.0; return; }
+	if (fabs(h_dist) > 2.0) { DynamicCLRejectedReason = 3.0; DynamicCLBlockedReason = 3.0; return; }
 	n_w.x /= nmag; n_w.y /= nmag; n_w.z /= nmag;
 	DynamicCLWallNormalX = n_w.x;
 	DynamicCLWallNormalY = n_w.y;
 	DynamicCLWallNormalZ = n_w.z;
 
 	real_t pf_scale = PhaseField_h - PhaseField_l;
-	if (fabs(pf_scale) < 1.0e-30) { DynamicCLRejectedReason = 4.0; return; }
+	if (fabs(pf_scale) < 1.0e-30) { DynamicCLRejectedReason = 4.0; DynamicCLBlockedReason = 4.0; return; }
 	real_t q = (C - PhaseField_l) / pf_scale;
 	if (q < 0.0) q = 0.0;
 	if (q > 1.0) q = 1.0;
-	if (q < DynamicCLEpsQ || q > 1.0 - DynamicCLEpsQ) { DynamicCLRejectedReason = 4.0; return; }
+	// Contact-line band gate (Step D): exclude pure liquid / pure gas. This
+	// alone removes a large class of spurious activations on near-wall bulk
+	// nodes that happened to pass the old boundary-proximity gate.
+	if (q < DynamicCLEpsQ || q > 1.0 - DynamicCLEpsQ) { DynamicCLRejectedReason = 4.0; DynamicCLBlockedReason = 5.0; return; }
 
 	real_t gmag = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
-	if (gmag < DynamicCLGradMin) { DynamicCLRejectedReason = 5.0; return; }
+	if (gmag < DynamicCLGradMin) { DynamicCLRejectedReason = 5.0; DynamicCLBlockedReason = 6.0; return; }
 
 	vector_t n_i;
 	n_i.x = gradPhi.x / gmag;
@@ -263,7 +301,12 @@ CudaDeviceFunction void calcDynamicCLShadow(vector_t gradPhi, real_t C,
 	real_t cos_app = DynamicCLCosSign * dot_nw;
 	if (cos_app > 1.0) cos_app = 1.0;
 	if (cos_app < -1.0) cos_app = -1.0;
-	real_t cos_eq = cos(radAngle);
+	// Stage 15B fix: theta_eq comes from the adjacent wetting wall's zone-
+	// resolved LocalRadAngle (captured above), NOT from this fluid node's
+	// own zonal radAngle (which reads the global 90 deg default off the
+	// wetting-wall zone and produced the cos_eq=0 artifact).
+	real_t cos_eq = cos(theta_eq);
+	DynamicCLThetaEq = theta_eq;
 	real_t R_theta = cos_eq - cos_app;
 	DynamicCLCosApp = cos_app;
 	DynamicCLCosEq = cos_eq;
@@ -271,7 +314,7 @@ CudaDeviceFunction void calcDynamicCLShadow(vector_t gradPhi, real_t C,
 	// theta_app in degrees for diagnostics
 	DynamicCLThetaApp = acos(cos_app) * 180.0 / 3.14159265358979323846;
 
-	if (fabs(R_theta) < DynamicCLCosTol) { DynamicCLRejectedReason = 6.0; return; }
+	if (fabs(R_theta) < DynamicCLCosTol) { DynamicCLRejectedReason = 6.0; DynamicCLBlockedReason = 7.0; return; }
 
 	// Wall-tangential direction of the interface normal projection:
 	// t_CL = n_i - (n_i . n_w) n_w, normalized.
@@ -323,6 +366,60 @@ CudaDeviceFunction int stage13_is_fluid_boundary_node()
 	if (IsBoundary(0,0,-1) > 0.5) return 1;
 	return 0;
 }
+
+// ================================================================
+// Stage 15B fix: wetting-wall context lookup.
+//
+// Problem being fixed: calcDynamicCLShadow runs on FLUID nodes, but
+// `radAngle` is a zonal setting. The flat-wall case only sets the target
+// angle in the FlatLowerY wall zone (y=0); fluid nodes (y>=1) read the
+// global default (90 deg), so cos_eq = cos(radAngle) came out as 0 for the
+// t30 case. The compact-ghost path is correct because it runs on the wall
+// node itself and stores the zone-resolved angle into LocalRadAngle.
+//
+// This helper recovers the correct theta_eq for a fluid node by reading the
+// LocalRadAngle stored on an adjacent WETTING wall node (one that has
+// AnalyticFlag>0, i.e. close to the analytic solid surface). OuterDomain
+// walls have AnalyticFlag=0 (they are far from the analytic y=0 plane), so
+// they are correctly rejected here even though they are also boundary nodes.
+//
+// IMPLEMENTATION NOTE: TCLB's IsBoundary/AnalyticFlag/LocalRadAngle field
+// accesses expand to LatticeAccess<range_int<...>> template parameters and
+// therefore require COMPILE-TIME CONSTANT offsets. A runtime loop or a
+// helper function taking int (dx,dy,dz) parameters CANNOT be instantiated
+// (nvcc: "no instance of overloaded load_* matches the argument list /
+// expression must have a constant value"). So the 6 face offsets are written
+// out as literals here, and the three tests are inlined per offset rather
+// than factored into a variable-argument helper. This is sufficient for the
+// flat-wall contact line (reached through a face neighbour). Curved-surface
+// compact-stencil support, if ever needed, must enumerate any extra offsets
+// as literals too, not via a loop.
+//
+// Returns 1 if a usable wetting-wall neighbour was found, in which case
+// *out_theta receives its LocalRadAngle; *out_dx/dy/dz receive its offset.
+// Returns 0 otherwise (caller must block the node, NOT fall back to the
+// local zonal radAngle, which would silently reintroduce the 90 deg bug).
+// ================================================================
+#define STAGE15_CHECK_FACE(OX,OY,OZ) \
+	if (IsBoundary(OX,OY,OZ) > 0.5 && AnalyticFlag(OX,OY,OZ) > 0.5) { \
+		real_t theta_ = LocalRadAngle(OX,OY,OZ); \
+		if (theta_ > 1.0e-6 && theta_ < 3.14159265358979 - 1.0e-6) { \
+			*out_theta = theta_; *out_dx = OX; *out_dy = OY; *out_dz = OZ; return 1; \
+		} \
+	}
+
+CudaDeviceFunction int stage15_find_wetting_wall_context(
+	real_t *out_theta, int *out_dx, int *out_dy, int *out_dz)
+{
+	STAGE15_CHECK_FACE( 1, 0, 0)
+	STAGE15_CHECK_FACE(-1, 0, 0)
+	STAGE15_CHECK_FACE( 0, 1, 0)
+	STAGE15_CHECK_FACE( 0,-1, 0)
+	STAGE15_CHECK_FACE( 0, 0, 1)
+	STAGE15_CHECK_FACE( 0, 0,-1)
+	return 0;
+}
+#undef STAGE15_CHECK_FACE
 
 // Wang 2025 corrected gradient: replace the normal component of gradPhi
 // on boundary fluid nodes with the value required by the equilibrium

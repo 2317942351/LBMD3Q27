@@ -106,6 +106,15 @@ VTK_FIELDS = ",".join(
         "DynamicCLWallNormalY",
         "DynamicCLWallNormalZ",
         "DynamicCLRejectedReason",
+        # Stage 15B fix fields: record how theta_eq was sourced (from the
+        # adjacent wetting wall's LocalRadAngle, not this node's zonal
+        # radAngle) and why a node is blocked. Needed to verify the fix.
+        "DynamicCLThetaEq",
+        "DynamicCLWallContextFound",
+        "DynamicCLBlockedReason",
+        "DynamicCLWallDx",
+        "DynamicCLWallDy",
+        "DynamicCLWallDz",
     ]
 )
 

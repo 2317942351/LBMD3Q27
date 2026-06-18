@@ -151,6 +151,17 @@ AddField("DynamicCLWallNormalX", stencil3d=1, group="wall_grad_diag")
 AddField("DynamicCLWallNormalY", stencil3d=1, group="wall_grad_diag")
 AddField("DynamicCLWallNormalZ", stencil3d=1, group="wall_grad_diag")
 AddField("DynamicCLRejectedReason", stencil3d=1, group="wall_grad_diag")
+# Stage 15B fix: theta_eq must come from the adjacent WETTING wall (zone-
+# resolved LocalRadAngle), NOT from this fluid node's own zonal radAngle
+# (which reads the global default 90 deg on non-wetting-wall zones).
+# These fields record how theta_eq / n_w were obtained and why a node may
+# be blocked even if it sits near *some* boundary (rejects OuterDomain).
+AddField("DynamicCLThetaEq", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallContextFound", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLBlockedReason", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallDx", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallDy", stencil3d=1, group="wall_grad_diag")
+AddField("DynamicCLWallDz", stencil3d=1, group="wall_grad_diag")
 
 stage13_wall_diag_fields = c(
     "WallGhost", "WallH", "AnalyticFlag", "WallGhostRaw",
@@ -373,6 +384,12 @@ if (Options$thermo){
 	AddQuantity(name="DynamicCLWallNormalY", unit=1)
 	AddQuantity(name="DynamicCLWallNormalZ", unit=1)
 	AddQuantity(name="DynamicCLRejectedReason", unit=1)
+	AddQuantity(name="DynamicCLThetaEq", unit=1)
+	AddQuantity(name="DynamicCLWallContextFound", unit=1)
+	AddQuantity(name="DynamicCLBlockedReason", unit=1)
+	AddQuantity(name="DynamicCLWallDx", unit=1)
+	AddQuantity(name="DynamicCLWallDy", unit=1)
+	AddQuantity(name="DynamicCLWallDz", unit=1)
 ###################################
 ########INPUTS - PHASEFIELD########
 ###################################
