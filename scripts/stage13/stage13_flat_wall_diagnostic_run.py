@@ -512,14 +512,13 @@ def main() -> int:
             "(use --wall-grad-mode 0 or 1). The compact ghost remains the "
             "sole wall-phase physics channel."
         )
-    # Stage 15B: DynamicCL write (mode>=2, adding F_CL to F_total) is reserved
-    # for Stage 15C. 15B only allows shadow (mode<=1, diagnostics, no force).
-    if args.dynamic_cl_mode >= 2:
-        raise ValueError(
-            "DynamicCLMode=2 (add residual contact-line force to F_total) is "
-            "reserved for Stage 15C. Current stage (15B) is shadow-only: use "
-            "--dynamic-cl-mode 0 or 1."
-        )
+    # Stage 15C (2026-06-19): DynamicCLMode>=2 (write F_CL to F_total) is now
+    # AUTHORISED for C2a (t90 coeff=0 zero-force regression) onward. The 15B
+    # shadow-only guard is lifted. ForceSign=+1 / CosSign=-1 are calibrated
+    # (doc 35). The C2-pre hook in Dynamics.c.Rt guards the F_CL add with
+    # DynamicCLMode>1.5, so Mode=1 stays shadow-only regardless of this gate.
+    # NOTE: this does NOT touch WallGradMode (still diagnostic-only) or any
+    # PhaseF/gradPhi/mu/WallGhost path.
     if args.wall_compact_stencil_mode is None:
         args.wall_compact_stencil_mode = 2 if args.compact_mode == "write" else 1
     if args.wall_compact_stencil_write_allowed_flag is None:

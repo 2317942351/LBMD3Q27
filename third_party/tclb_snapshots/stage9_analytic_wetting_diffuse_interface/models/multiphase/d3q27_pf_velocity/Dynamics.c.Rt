@@ -1286,11 +1286,12 @@ CudaDeviceFunction void CollisionMRT()
 	// force and write diagnostics. In 15B the candidate is NEVER added to
 	// F_total (DynamicCLMode<=1). The F_total += F_CL line is reserved for 15C
 	// and guarded by DynamicCLMode>=2 below, inside the force-iteration block.
+	real_t fcl_x = 0.0, fcl_y = 0.0, fcl_z = 0.0;
 	{
-		real_t fcl_x, fcl_y, fcl_z;
+		// Stage 15B/15C: compute the candidate residual contact-line force and
+		// write diagnostics on every call (Mode>=1). fcl_* is hoisted to
+		// function scope so the 15C write hook below can add it to F_total.
 		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
-		// 15C write hook (disabled in 15B; runner refuses DynamicCLMode>=2):
-		// if (DynamicCLMode > 1.5) { F_cl[0]=fcl_x; F_cl[1]=fcl_y; F_cl[2]=fcl_z; }
 	}
 
 	if (magnPhi < minGradient){
@@ -1340,6 +1341,15 @@ CudaDeviceFunction void CollisionMRT()
 		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
 		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
 		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+		// Stage 15C write hook: add the residual contact-line force to F_total.
+		// Shadow-only at Mode<=1 (no-op). calcDynamicCLShadow already applied
+		// ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl and the ForceCap; do NOT
+		// rescale here. Mode>1.5 is refused by the runner until 15C is cleared.
+		if (DynamicCLMode > 1.5) {
+			F_total[0] += fcl_x;
+			F_total[1] += fcl_y;
+			F_total[2] += fcl_z;
+		}
 		if (j > 1) {
 			real_t dFx = F_total[0] - F_prev[0];
 			real_t dFy = F_total[1] - F_prev[1];
@@ -1595,8 +1605,10 @@ CudaDeviceFunction void CollisionBGK()
 	// Stage 15B: DynamicCL shadow (BGK path). Diagnostics only; never added to
 	// F_total in 15B. See the MRT path above and calcDynamicCLShadow for the
 	// 15C write hook (reserved; runner refuses DynamicCLMode>=2).
+	real_t fcl_x = 0.0, fcl_y = 0.0, fcl_z = 0.0;
 	{
-		real_t fcl_x, fcl_y, fcl_z;
+		// Stage 15B/15C: diagnostics on every call; fcl_* hoisted for the 15C
+		// write hook below (BGK path, symmetric with MRT).
 		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
 	}
 
@@ -1638,6 +1650,14 @@ CudaDeviceFunction void CollisionBGK()
         F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
         F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
         F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+        // Stage 15C write hook: add residual contact-line force to F_total.
+        // Shadow-only at Mode<=1 (no-op). calcDynamicCLShadow already applied
+        // ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl and the ForceCap.
+        if (DynamicCLMode > 1.5) {
+            F_total[0] += fcl_x;
+            F_total[1] += fcl_y;
+            F_total[2] += fcl_z;
+        }
 
     <?R C( u, g %*% U) ?>
         U = U + (0.5*F_total[0])/rho;
