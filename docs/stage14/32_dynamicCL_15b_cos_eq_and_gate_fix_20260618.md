@@ -1,8 +1,14 @@
 # DynamicCL Stage 15B — cos_eq source fix + activation gate tightening
 
-Date: 2026-06-18
+Date: 2026-06-18 (verified 2026-06-19)
 Branch: `stage15-dynamicCL-residual`
-Status: `exploratory_not_validation` (code change; compile + re-run pending)
+Status: `Stage15B: PASS for theta_eq sourcing and wetting-wall locality.
+        NOT a physical-validation pass — the residual gate (gate 4) is blocked
+        by the uncalibrated cos_app sign convention (DynamicCLCosSign).
+        Stage15B code fix is verified; DynamicCL residual model has not yet
+        passed equilibrium-residual=0. Next stage: Stage15C-pre sign
+        calibration (shadow-only, DynamicCLMode=1 preserved, DynamicCLForceSign
+        untouched).`
 
 This records the fix to the two substantive bugs found in the Stage 15B
 shadow diagnostic (commit `60a345d`). Both were diagnosed from the
