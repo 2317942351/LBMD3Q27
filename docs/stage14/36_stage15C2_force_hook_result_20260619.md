@@ -157,6 +157,57 @@ The changed-angle question (60->30 / 120->150) is therefore better posed as:
 to drive the contact line?" If yes, tune Coeff/Cap; if no, raise ForceCap (then
 re-do a t90 equilibrium safety smoke before any changed-angle run).
 
+## 5c. C2e — changed-angle under current cap (RESULT: force too weak)
+
+Ran the decoupled changed-angle cases at the capped maximum force, with an
+early-time trajectory (vtk-period=500, frames at step 0/500/.../4000) and a
+matching Coeff=0 baseline on the same binary (so F_cl=0, isolating the force).
+
+  test : 60->30, 120->150  Mode=2 Coeff=2 ForceCap=0.02  (F_cl saturated at 3.333e-7)
+  base : same cases        Mode=2 Coeff=0                (F_cl=0)
+
+60->30 (target 30 deg), theta_app / |R_theta| / footprint, test vs base:
+```
+ step | theta_app T/B  | |R| T / B   | footprint T / B | Fcl_max  cap%  spur
+  500 | 33.52 / 33.52  | 0.0323/0.0323| 30.41 / 30.41  | 3.33e-7  56%   0
+ 1500 | 30.13 / 30.13  | 0.0011/0.0011| 31.40 / 31.40  | 3.33e-7  80%   0
+ 3000 | 28.62 / 28.62  | 0.0118/0.0118| 32.02 / 32.02  | 3.33e-7  83%   0
+ 4000 | 28.01 / 28.01  | 0.0169/0.0168| 32.31 / 32.31  | 3.33e-7  74%   0
+```
+
+120->150 (target 150 deg), test vs base:
+```
+ step | theta_app T/B  | |R| T / B   | footprint T / B | Fcl_max  cap%  spur
+  500 | 139.97/139.97 | 0.1003/0.1003| 20.00 / 20.00  | 3.33e-7  80%   0
+ 2000 | 142.99/142.98 | 0.0675/0.0676| 20.12 / 20.12  | 3.33e-7  70%   0
+ 4000 | 144.49/144.48 | 0.0520/0.0521| 20.12 / 20.12  | 3.33e-7  76%   0
+```
+
+```text
+C2e RESULT:
+  run_rc=0, no NaN, 0 spurious fluid force nodes at every frame.
+  F_cl reaches the cap (3.333e-7); capped_frac 56-84% (force is clamped, as in C2d).
+  test trajectory is INDISTINGUISHABLE from the Coeff=0 baseline at every step:
+    theta_app   differs < 0.02 deg
+    |R_theta|   differs < 0.002
+    footprint   bit-identical
+    mass        differs < 1e-5
+  => Under ForceCap=0.02 the DynamicCL force is stable and localized, but TOO WEAK
+     to produce any measurable contact-line response.
+```
+
+This is NOT a direction error and NOT a hook error. The mechanism is healthy
+(F_cl on active CL nodes, capped, no bulk leak, no NaN). The cap value is the
+bottleneck: 3.333e-7 in sigma/IntWidth units is below the threshold needed to
+move the contact line against the compact-ghost relaxation. Note the cap-fraction
+is high (56-84%), meaning the *intended* (uncapped) force at Coeff=2 already
+exceeds the cap on most CL nodes — so raising Coeff further is pointless; the
+next lever is `DynamicCLForceCap`.
+
+Decoupled baseline dynamics (independent of DynamicCL): 60->30 over-relaxes to
+~28 deg by step 4000 (theta_app < target 30); 120->150 reaches ~144.5 deg (short
+of 150). Both are compact-ghost behaviour, unchanged by the current DynamicCL force.
+
 ## 6. Runtime settings carried forward (must be explicit)
 
 ```text
@@ -178,18 +229,20 @@ binary: /home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geome
         sha256 f00f8ff7da214f0ecfae215e7ce73c0f08d8c058cbda37fc198dbba228674c69
 patch:  scripts/stage13/stage15C2_pre_hook.patch + stage15C2_pre_apply.py
 analysis: scripts/stage13/stage15C2{a,b,c,d}_regression.py + stage15C2b_locality_probe.py
-roots:  /mnt/usb1t/RUNS/runs/stage15C2{a,b,c,d}_t90_*
+          + stage15C2e_trajectory.py
+roots:  /mnt/usb1t/RUNS/runs/stage15C2{a,b,c,d}_t90_*  (t90 smokes)
+        /mnt/usb1t/RUNS/runs/stage15C2e_changed_angle_{test,base}  (60->30,120->150)
 ```
 
 ## 8. Next (NOT done — pending separate authorisation)
 
 ```text
-Under ForceCap=0.02 the maximum force is 3.333e-7 (capped). The changed-angle
-question is whether that is enough to drive 60->30 / 120->150.
-  Option A: raise DynamicCLForceCap, re-do t90 equilibrium safety smoke, then
-            changed-angle.
-  Option B: run changed-angle (60->30, 120->150) at Coeff=2 (saturated) under
-            the current cap, with an early-time trajectory (step 0/500/1000/
-            2000/4000) since the decoupled droplet over-relaxes by step 4000.
-Coeff=20/200 is NOT useful under ForceCap=0.02 (force already saturated).
+C2e showed ForceCap=0.02 (max F_cl=3.333e-7) is too weak to move the contact
+line. The next lever is DynamicCLForceCap, not Coeff (Coeff is already saturated
+at 2). Planned:
+  C2f-0: t90 equilibrium safety smoke at ForceCap=0.2 (max F_cl=3.333e-6, 10x),
+         Coeff=2, to confirm the larger force does NOT perturb equilibrium.
+  C2f:   if C2f-0 passes, 60->30 + 120->150 at ForceCap=0.2, Coeff=2,
+         vtk-period=500, vs the existing Coeff=0 baseline (test vs base).
+Coeff=20/200 is NOT useful (force already saturated at Coeff~0.3 regardless of cap).
 ```
