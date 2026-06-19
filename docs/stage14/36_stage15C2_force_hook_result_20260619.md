@@ -97,18 +97,65 @@ Wall-node F_cl>0 is a VTI/diagnostic caveat (same as in C1), NOT a dynamics
 contamination. A separate cosmetic cleanup (zero wall-cell force diagnostics)
 is deferred to its own commit; it is not mixed into this verified hook.
 
-## 5. C2 verdict
+## 5. C2d — t90 Coeff=2 enters the cap-limited regime (PASS, critical finding)
+
+C2b → C2c scaled F_cl exactly 10x (0.02 → 0.2). C2c → C2d did NOT:
+
+| metric | C2c (Coeff=0.2) | C2d (Coeff=2) | ratio | expected |
+|---|---|---|---|---|
+| F_cl_max | 9.73e-08 | **3.333e-07** | **3.43x** | 10x (linear) |
+| active force nodes | 540 | 540 | 1.0x | 1.0x |
+| spurious FLUID force nodes | 0 | 0 | — | 0 |
+| \|R_theta\| mean (active) | 0.0286 | 0.0287 | 1.0x | 1.0x |
+| d_mass vs C2a | +8.3e-08 | -1.8e-08 | — | small |
+| d_footprint vs C2a | 0.0 | 0.0 | — | 0 |
+| \|U\|max | 5.11e-06 | 4.55e-06 | — | ~unchanged |
+
+The measured C2d F_cl_max = **3.333e-07** is *exactly* the force cap:
+
+```text
+scale = sigma/IntWidth          = 5e-5 / 3      = 1.6667e-5
+cap   = DynamicCLForceCap*scale = 0.02 * 1.6667e-5 = 3.3333e-7
+```
+
+Per-coeff uncapped vs capped (R_theta~0.0286, I_cl~0.6):
+```
+Coeff=0.02 : uncapped 5.72e-9   < cap  -> LINEAR  (measured 9.73e-9 ✓)
+Coeff=0.2  : uncapped 5.72e-8   < cap  -> LINEAR  (measured 9.73e-8 ✓)
+Coeff=2    : uncapped 5.72e-7   > cap  -> CAPPED to 3.333e-7 (measured 3.33e-7 ✓)
+```
+
+**This is the cap working as designed, NOT a bug.** `calcDynamicCLShadow` applies
+`if(|mag|>cap) mag=+/-cap` before returning the force; once Coeff is large enough
+that `Coeff*scale*R_theta*I_cl > ForceCap*scale`, the magnitude is clamped and
+raising Coeff further has no effect on F_cl.
+
+## 5b. C2 verdict (updated with C2d)
 
 ```text
 C2a PASS: Mode=2 + Coeff=0 reproduces Mode=1 (hook inert).
 C2b PASS: Coeff=0.02 nonzero force is tiny, localized to active CL, non-perturbing.
 C2c PASS: Coeff=0.2 scales F_cl exactly 10x; 0 fluid pollution; solution stable.
-=> the guarded F_CL hook is verified in the safe regime (t90, Coeff up to 0.2).
+C2d PASS: Coeff=2 enters the CAP-LIMITED regime. F_cl_max = cap = 3.333e-7.
+          run_rc=0, no NaN, 0 spurious fluid force nodes, footprint bit-identical,
+          mass/PhaseF/velocity stable. The cap engages as designed.
+
+Effective Coeff dynamic range under ForceCap=0.02:
+  LINEAR for Coeff <= ~0.3 (where Coeff*scale*R*I_cl <= ForceCap*scale)
+  CAPPED for Coeff >  ~0.3 -> F_cl saturates at 3.333e-7 regardless of Coeff.
 ```
 
-Not yet done: Coeff 2/20/200, and the changed-angle response (60->30 / 120->150)
-which is the actual physics target. Those proceed under separate authorisation,
-each as a small step, on top of this committed hook.
+**Consequence for further scans:** under the default `DynamicCLForceCap=0.02`,
+running Coeff=20 or 200 adds NO new information — the force is already saturated
+at Coeff~0.3 and stays at 3.333e-7. A higher Coeff only matters if
+`DynamicCLForceCap` is raised first. This is why the planned Coeff=20/200 sweep
+is NOT run: it would be misleading (look like "no response to larger force"
+when in fact the force is unchanged).
+
+The changed-angle question (60->30 / 120->150) is therefore better posed as:
+"Is the *current cap's* maximum force (3.333e-7 in sigma/IntWidth units) enough
+to drive the contact line?" If yes, tune Coeff/Cap; if no, raise ForceCap (then
+re-do a t90 equilibrium safety smoke before any changed-angle run).
 
 ## 6. Runtime settings carried forward (must be explicit)
 
@@ -116,8 +163,12 @@ each as a small step, on top of this committed hook.
 DynamicCLCosSign   = -1   (NOT the +1 code default; calibrated by C1 gate-4)
 DynamicCLForceSign = +1   (calibrated by C1, sign-robust)
 DynamicCLMode      = 2    (to activate the hook; 1 = shadow, 0 = off)
-DynamicCLCoeff     = scan (verified 0, 0.02, 0.2; 2/20/200 pending)
-DynamicCLForceCap  = 0.02 (in sigma/IntWidth units; applied inside calcDynamicCLShadow)
+DynamicCLCoeff     = effective LINEAR range is Coeff <= ~0.3 under ForceCap=0.02;
+                     above that F_cl is capped. Verified: 0 (inert), 0.02, 0.2
+                     (linear), 2 (capped). Coeff=20/200 NOT run (no new info).
+DynamicCLForceCap  = 0.02 (in sigma/IntWidth units; gives max F_cl = 3.333e-7).
+                     Applied inside calcDynamicCLShadow. Raise this (not Coeff)
+                     to increase the maximum allowable force.
 ```
 
 ## 7. Reproducibility
@@ -126,6 +177,19 @@ DynamicCLForceCap  = 0.02 (in sigma/IntWidth units; applied inside calcDynamicCL
 binary: /home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
         sha256 f00f8ff7da214f0ecfae215e7ce73c0f08d8c058cbda37fc198dbba228674c69
 patch:  scripts/stage13/stage15C2_pre_hook.patch + stage15C2_pre_apply.py
-analysis: scripts/stage13/stage15C2{a,b,c}_regression.py + stage15C2b_locality_probe.py
-roots:  /mnt/usb1t/RUNS/runs/stage15C2{a,b,c}_t90_*
+analysis: scripts/stage13/stage15C2{a,b,c,d}_regression.py + stage15C2b_locality_probe.py
+roots:  /mnt/usb1t/RUNS/runs/stage15C2{a,b,c,d}_t90_*
+```
+
+## 8. Next (NOT done — pending separate authorisation)
+
+```text
+Under ForceCap=0.02 the maximum force is 3.333e-7 (capped). The changed-angle
+question is whether that is enough to drive 60->30 / 120->150.
+  Option A: raise DynamicCLForceCap, re-do t90 equilibrium safety smoke, then
+            changed-angle.
+  Option B: run changed-angle (60->30, 120->150) at Coeff=2 (saturated) under
+            the current cap, with an early-time trajectory (step 0/500/1000/
+            2000/4000) since the decoupled droplet over-relaxes by step 4000.
+Coeff=20/200 is NOT useful under ForceCap=0.02 (force already saturated).
 ```
