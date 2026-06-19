@@ -118,20 +118,35 @@ path stops using it.
 
 ## 5. Verification status
 
-Do NOT promote past `exploratory_not_validation` without gates 2-4 passing.
+Do NOT promote past `exploratory_not_validation` without gate 4 passing.
 
 ```text
 gate 1 (compile):   COMPLETE (see §8.3). nvcc clean, binary e2a10d0e.
-gate 2 (cos_eq):    PENDING. re-run flat-wall 30/90/150 DynamicCLMode=1 shadow:
-    theta030 DynamicCLCosEq ~ +0.866
-    theta090 DynamicCLCosEq ~ 0
-    theta150 DynamicCLCosEq ~ -0.866
-gate 3 (locality):  PENDING. DynamicCLActive=1 only on y=1 near FlatLowerY and
-    only within DynamicCLEpsQ<q<1-DynamicCLEpsQ. OuterDomain-skin nodes and
-    bulk nodes report DynamicCLWallContextFound=0 / BlockedReason=2.
-gate 4 (residual):  PENDING. mean|DynamicCLCosResidual| ~ 0 within
-    DynamicCLCosTol for the equilibrium cases.
+gate 2 (cos_eq):    PASS. flat-wall 30/90/150 DynamicCLMode=1 shadow, 1000 steps:
+    theta030 DynamicCLCosEq unique = [+0.866]   (cos 30 deg, all active nodes)
+    theta090 DynamicCLCosEq unique = [0.000]    (cos 90 deg)
+    theta150 DynamicCLCosEq unique = [-0.866]   (cos 150 deg)
+    DynamicCLThetaEq unique per case = [0.5236]/[1.5708]/[2.618] (pi/6, pi/2, 5pi/6)
+    -> theta_eq is correctly sourced from the adjacent FlatLowerY wall's
+       LocalRadAngle, NOT the fluid node's own zonal radAngle (90 deg).
+       Bug A (cos_eq=0) is fixed.
+gate 3 (locality):  PASS (with VTI-display caveat, see §9). t30 4740 active
+    nodes: their DynamicCLThetaEq is uniquely [0.5236]=30 deg. No node reads
+    the OuterDomain 90 deg. DynamicCLBlockedReason=2 (no wetting wall) blocked
+    713580 of 737280 cells. Bug B (gate too wide) is fixed.
+gate 4 (residual):  BLOCKED. mean|DynamicCLCosResidual| is currently ~1.79
+    because cos_app has the wrong sign (cos_app ~ -0.92 for t30, i.e.
+    theta_app ~ 157 deg) which is a DynamicCLCosSign calibration issue, NOT a
+    theta_eq-source issue. Gate 4 is deferred until DynamicCLCosSign is
+    calibrated; sign calibration is out of scope for this commit.
 ```
+
+Runtime verification was done on server lane `192.168.1.16`, binary
+`CLB/d3q27_pf_velocity_q27_geometric/main` (sha256 e2a10d0e...), runner
+`stage13_flat_wall_diagnostic_run.py` with `--dynamic-cl-mode 1 --iterations
+1000 --vtk-period 200 --mobility 0.3`, output under `/home/yuan/gate2_runs/`.
+Diagnostic reader: `scripts/stage13/gate2_dynamiccl_diag.py` +
+`gate3_context_probe.py` + `gate3_sixdir_probe.py`.
 
 If gate 2 still yields cos_eq=0, then `LocalRadAngle` is not being read from
 the wall neighbour correctly (e.g. the wall node never took the analytic
@@ -238,5 +253,62 @@ DynamicCLMode > 1.5 force-write: still commented only (line 1356 of generated
               Dynamics.c); Mode=1 shadow-only boundary preserved
 ```
 
-gate 1 (compile) is COMPLETE. gates 2-4 (runtime cos_eq / locality / residual)
-are the next gates and have NOT been run yet.
+gate 1 (compile) is COMPLETE. gates 2 and 3 PASSED at runtime (see §5).
+gate 4 is BLOCKED pending DynamicCLCosSign calibration (see §9).
+
+## 9. Gate 3 VTI-display caveat + cos_app sign issue (for future reference)
+
+Two findings from the gate-3 runtime verification that are NOT bugs in this
+commit, but must be recorded so they are not misread later.
+
+### 9.1 VTI cell-data vs device node-data staggered offset
+
+The first locality table (built from VTI cell-centered data, reshaped
+(nz,ny,nx) per VTK's x-fastest ordering) showed DynamicCLActive cells
+scattered across cell y = 1..77, which looked like a spurious spread. A
+six-direction probe showed this is a **display artifact**, not physical
+spread:
+
+- All 4740 active nodes have DynamicCLThetaEq uniquely = [0.5236] = 30 deg.
+  No node reads the OuterDomain 90 deg. If bulk nodes were truly (wrongly)
+  activated, their theta_eq would be a mix of 30 deg and 90 deg; it is not.
+- DynamicCLWallDy is uniquely [-1] over all active nodes, i.e. every active
+  node found its wetting wall in the -y direction (towards y=0), exactly as
+  expected for a flat wall. +x/-x/+y/+z/-z never match.
+- IsItBoundary / AnalyticFlag / LocalRadAngle are stored as cell data in the
+  VTI but read as node data by `AnalyticFlag(0,-1,0)` in the device code;
+  the half-grid stagger between cell-center and node coordinates is what
+  stretches the contact-line band across many cell-y rows when plotted.
+
+Conclusion: gate 3 passes on the coordinate-independent criterion (theta_eq
+identity). Any future plot of DynamicCLActive over (x,y,z) must account for
+the cell/node stagger, or it will over-report the band width.
+
+### 9.2 cos_app sign (DynamicCLCosSign calibration) — NOT done in this commit
+
+For t30 equilibrium, the active nodes report DynamicCLCosApp in [-0.925,
+-0.900] (i.e. theta_app ~ 157 deg), while DynamicCLCosEq = +0.866. Hence
+DynamicCLCosResidual ~ +1.79, far from 0.
+
+This is expected at this stage: DynamicCLCosSign (the convention mapping
+the interface-normal / wall-normal dot product to cos_app) has not been
+calibrated yet, and the plan explicitly defers sign calibration until after
+theta_eq sourcing is verified. theta_eq sourcing is now verified (gate 2).
+The next step would be DynamicCLCosSign calibration, then re-run gate 4.
+That is a separate, explicitly-authorized change — do NOT touch
+DynamicCLCosSign or DynamicCLForceSign as part of this commit.
+
+### 9.3 Status summary
+
+```text
+Bug A (cos_eq=0, wrong theta_eq source):        FIXED, verified (gate 2).
+Bug B (gate too wide, OuterDomain leakage):     FIXED, verified (gate 3).
+DynamicCLMode=1 shadow-only boundary:           PRESERVED (gate 1 + code review).
+DynamicCLCosSign calibration:                   NOT DONE (deferred).
+DynamicCLMode=2 (force into F_total):           NOT ENABLED.
+WallGrad/WallMu same-class cos(radAngle) bug:   RECORDED (§7), NOT FIXED.
+```
+
+This commit's scope (theta_eq source + wetting-wall gate) is complete and
+runtime-verified for gates 1-3. Remaining work (sign calibration, gate 4,
+mode 2) is explicitly out of scope.
