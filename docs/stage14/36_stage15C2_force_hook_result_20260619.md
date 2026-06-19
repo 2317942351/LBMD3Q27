@@ -208,7 +208,90 @@ Decoupled baseline dynamics (independent of DynamicCL): 60->30 over-relaxes to
 ~28 deg by step 4000 (theta_app < target 30); 120->150 reaches ~144.5 deg (short
 of 150). Both are compact-ghost behaviour, unchanged by the current DynamicCL force.
 
+## 5d. C2f-0 + C2f — raise ForceCap to 0.2 (RESULT: mixed / obtuse reverse)
+
+ForceCap raised 0.02 -> 0.2 (max F_cl 3.333e-7 -> 3.333e-6, 10x). Coeff stays 2.
+
+### C2f-0: t90 equilibrium safety smoke at ForceCap=0.2 (PASS)
+
+| metric | C2f-0 (cap=0.2, Co=2) | C2a (cap=0.02, Co=0) |
+|---|---|---|
+| NaN/Inf | 0 | 0 |
+| F_cl_max | 9.76e-07 | 0 |
+| capped_frac | 0% (uncapped; R_theta~0.029 small) | 0% |
+| spurious fluid nodes | 0 | 0 |
+| theta_app | 88.354 deg | 88.361 deg (diff -0.007 deg) |
+| footprint | 22.825 (bit-identical to base) | 22.825 |
+| mass diff vs base | +8.4e-07 | - |
+
+The 10x larger cap does NOT perturb t90 equilibrium. F_cl_max=9.76e-7 is below
+the new cap 3.33e-6 (t90 residual is small). Clean.
+
+### C2f: changed-angle at ForceCap=0.2 (MIXED / REVERSE — open issue)
+
+60->30 (target 30 deg), test ForceCap=0.2 Coeff=2 vs base Coeff=0:
+```
+ step | th_app T/B  | |R| T/B    | foot T/B        | Fcl_max  cap% spur | |U|maxT
+  500 | 33.56/33.52 | .0327/.0323| 30.41/30.41     | 1.84e-6   0%   0   | 2.6e-5
+ 1500 | 30.16/30.13 | .0014/.0011| 31.40/31.40     | 9.2e-7    0%   0   | 2.9e-5
+ 4000 | 28.00/28.01 | .0169/.0168| 32.31/32.31     | 8.2e-7    0%   0   | 3.0e-5
+ max|d_theta_app(test-base)| = 0.041 deg  -> STILL_WEAK (indistinguishable from base)
+```
+
+120->150 (target 150 deg), test vs base:
+```
+ step | th_app T/B     | |R| T/B    | foot T/B     | Fcl_max  cap% spur | |U|maxT
+  500 | 139.98/139.97  | .1002/.1003| 20.00/20.00  | 3.33e-6  26%   0   | 4.3e-5
+ 1500 | 142.68/142.65  | .0708/.0711| 20.00/20.00  | 3.03e-6   0%   0   | 6.3e-5
+ 4000 | 144.23/144.48  | .0546/.0521| 20.12/20.12  | 2.42e-6   0%   0   | 7.2e-5
+ max|d_theta_app(test-base)| = 0.244 deg  -> SEPARATES, but WRONG DIRECTION
+```
+
+### Interpretation (recorded as an OPEN ISSUE, not a verdict)
+
+```text
+C2f is NOT a clean EFFECTIVE result. Two cases behave differently:
+  60->30 : STILL_WEAK. test ~ base (max d_theta 0.04 deg). Force too small to matter.
+  120->150: separates by 0.24 deg, but ANTI-productive:
+             test theta_app ends FURTHER from target (144.23 vs base 144.48);
+             |R_theta| reduces LESS in test (0.0456 vs base 0.0482);
+             |U|max is PUMPED UP (base ~5e-5 -> test ~7e-5), i.e. the force does
+             work but in the wrong direction on the obtuse case.
+
+=> This is a SIGN / DIRECTION problem in the obtuse regime, NOT a magnitude problem.
+   Raising ForceCap further would amplify the wrong-direction effect, not fix it.
+```
+
+Possible causes (NOT yet diagnosed — left for the next investigator):
+1. C1 sign calibration was done at step-4000 over-relaxed state with |R_theta|~0.05
+   (narrow margin); the sign vote may not hold once the force is strong.
+2. The C1 assumption "t_CL points radially outward on the contact-line ring" was
+   only verified on the flat-wall ring; the obtuse (150 deg) contact-line geometry
+   may orient t_CL differently, flipping the effective force direction.
+3. The over-relax caveat (base itself only reaches 144.5 by step 4000) means the
+   early-time force (step 500, cap 26%) may push the trajectory off before the
+   residual has a clean sign.
+
+### Recommended next steps (for the next investigator)
+
+```text
+Do NOT raise ForceCap further (would amplify the reverse trend).
+Recommended: go back to DIAGNOSTICS, not more coefficient scans.
+  1. Read the actual force direction in the 120->150 test VTI: compute the radial
+     projection of (ForceCandidateX, ForceCandidateZ) on the active CL nodes and
+     check its sign vs the desired (inward, since retract needed). This directly
+     tests whether the force points the right way in the obtuse regime.
+  2. Re-derive the C1 sign from EARLY-TIME (step 500-1000) R_theta where the
+     residual is large, instead of the step-4000 over-relaxed value.
+  3. Verify the t_CL orientation assumption on the 150 deg contact line (it may
+     not be purely radial-outward there).
+If the force direction is confirmed wrong in the obtuse regime, the fix is a
+sign convention correction (DynamicCLForceSign or a geometry-dependent term),
+NOT a larger coefficient.
+```
+
 ## 6. Runtime settings carried forward (must be explicit)
+
 
 ```text
 DynamicCLCosSign   = -1   (NOT the +1 code default; calibrated by C1 gate-4)
@@ -217,9 +300,10 @@ DynamicCLMode      = 2    (to activate the hook; 1 = shadow, 0 = off)
 DynamicCLCoeff     = effective LINEAR range is Coeff <= ~0.3 under ForceCap=0.02;
                      above that F_cl is capped. Verified: 0 (inert), 0.02, 0.2
                      (linear), 2 (capped). Coeff=20/200 NOT run (no new info).
-DynamicCLForceCap  = 0.02 (in sigma/IntWidth units; gives max F_cl = 3.333e-7).
-                     Applied inside calcDynamicCLShadow. Raise this (not Coeff)
-                     to increase the maximum allowable force.
+DynamicCLForceCap  = 0.02 default; raised to 0.2 in C2f-0/C2f (max F_cl=3.333e-6).
+                     At ForceCap=0.2: t90 stable, 60->30 still weak, 120->150
+                     separates but in the WRONG direction (sign issue, see §5d).
+                     Do NOT raise further until the obtuse sign is diagnosed.
 ```
 
 ## 7. Reproducibility
@@ -229,20 +313,27 @@ binary: /home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geome
         sha256 f00f8ff7da214f0ecfae215e7ce73c0f08d8c058cbda37fc198dbba228674c69
 patch:  scripts/stage13/stage15C2_pre_hook.patch + stage15C2_pre_apply.py
 analysis: scripts/stage13/stage15C2{a,b,c,d}_regression.py + stage15C2b_locality_probe.py
-          + stage15C2e_trajectory.py
+          + stage15C2e_trajectory.py + stage15C2f0_regression.py + stage15C2f_trajectory.py
 roots:  /mnt/usb1t/RUNS/runs/stage15C2{a,b,c,d}_t90_*  (t90 smokes)
-        /mnt/usb1t/RUNS/runs/stage15C2e_changed_angle_{test,base}  (60->30,120->150)
+        /mnt/usb1t/RUNS/runs/stage15C2e_changed_angle_{test,base}  (cap=0.02)
+        /mnt/usb1t/RUNS/runs/stage15C2f0_t90_cap0p2              (t90 cap=0.2)
+        /mnt/usb1t/RUNS/runs/stage15C2f_changed_angle_test        (cap=0.2)
+note:   DynamicCLForceCap is NOT a runner flag; it is injected into case.xml by
+        scripts/stage13/inject_forcecap.py (server copy /home/yuan/inject_forcecap.py)
+        because the runner's XML template hardcodes the code default 0.02.
 ```
 
-## 8. Next (NOT done — pending separate authorisation)
+## 8. Next (NOT done — the open issue from C2f)
 
 ```text
-C2e showed ForceCap=0.02 (max F_cl=3.333e-7) is too weak to move the contact
-line. The next lever is DynamicCLForceCap, not Coeff (Coeff is already saturated
-at 2). Planned:
-  C2f-0: t90 equilibrium safety smoke at ForceCap=0.2 (max F_cl=3.333e-6, 10x),
-         Coeff=2, to confirm the larger force does NOT perturb equilibrium.
-  C2f:   if C2f-0 passes, 60->30 + 120->150 at ForceCap=0.2, Coeff=2,
-         vtk-period=500, vs the existing Coeff=0 baseline (test vs base).
-Coeff=20/200 is NOT useful (force already saturated at Coeff~0.3 regardless of cap).
+C2f exposed a SIGN / DIRECTION problem in the obtuse regime (120->150 force pushes
+theta_app AWAY from target). This is NOT fixable by raising ForceCap (would amplify
+the reverse trend). Go back to diagnostics:
+  1. Read the actual force direction in the 120->150 test VTI: radial projection
+     of (ForceCandidateX, ForceCandidateZ) on active CL nodes vs desired (inward).
+  2. Re-derive C1 sign from EARLY-TIME (step 500-1000) R_theta (large residual),
+     not the step-4000 over-relaxed value.
+  3. Verify t_CL orientation on the 150 deg contact line (may not be radial-outward).
+If the direction is confirmed wrong in obtuse, the fix is a sign-convention
+correction, not a coefficient change.
 ```
