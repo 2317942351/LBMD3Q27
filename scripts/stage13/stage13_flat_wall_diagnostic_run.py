@@ -206,6 +206,8 @@ def render_xml(
     wall_mu_mode: int,
     dynamic_cl_mode: int,
     cos_sign: float,
+    force_sign: float,
+    dynamic_cl_coeff: float,
 ) -> str:
     parent_radius = cap_sphere_radius(volume_radius, case.init_theta)
     theta = math.radians(case.init_theta)
@@ -274,6 +276,8 @@ def render_xml(
     <Param name="WallMuMode" value="{wall_mu_mode}"/>
     <Param name="DynamicCLMode" value="{dynamic_cl_mode}"/>
     <Param name="DynamicCLCosSign" value="{cos_sign:.16g}"/>
+    <Param name="DynamicCLForceSign" value="{force_sign:.16g}"/>
+    <Param name="DynamicCLCoeff" value="{dynamic_cl_coeff:.16g}"/>
     <Param name="radAngle" value="{case.bc_theta:.16g}d" zone="FlatLowerY"/>
     <Param name="minGradient" value="1e-08"/>
   </Model>
@@ -313,6 +317,8 @@ def write_case(case: CaseDef, args: argparse.Namespace) -> Path:
         wall_mu_mode=args.wall_mu_mode,
         dynamic_cl_mode=args.dynamic_cl_mode,
         cos_sign=args.cos_sign,
+        force_sign=args.force_sign,
+        dynamic_cl_coeff=args.dynamic_cl_coeff,
     )
     (case_dir / "case.xml").write_text(xml, encoding="utf-8")
     metadata: dict[str, Any] = {
@@ -357,6 +363,8 @@ def write_case(case: CaseDef, args: argparse.Namespace) -> Path:
         "wall_mu_mode": args.wall_mu_mode,
         "dynamic_cl_mode": args.dynamic_cl_mode,
         "cos_sign": args.cos_sign,
+        "force_sign": args.force_sign,
+        "dynamic_cl_coeff": args.dynamic_cl_coeff,
         "binary": args.binary,
         "binary_sha256": binary_hash(args.binary),
         "classification_before_audit": "exploratory_not_validation",
@@ -456,6 +464,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wall-mu-mode", type=int, default=0, help="Layer2 Ju wall-mu: 0 off, 1 shadow, 2 write")
     parser.add_argument("--dynamic-cl-mode", type=int, default=0, help="Layer3 DynamicCL: 0 off, 1 shadow (diagnostics only). NOTE: mode=2 (write to F_total) is reserved for Stage 15C and refused by this runner until 15C.")
     parser.add_argument("--cos-sign", type=float, default=1.0, help="DynamicCLCosSign: sign convention mapping (n_i . n_w) to cos_app. Default 1.0 matches Dynamics.R. Stage15C-pre scans +1/-1 to calibrate so cos_app -> cos_eq at equilibrium (gate 4).")
+    parser.add_argument("--force-sign", type=float, default=1.0, help="DynamicCLForceSign: global sign of the residual contact-line force F_CL. Default 1.0 matches Dynamics.R. Stage15C gate C1 scans +1/-1 on decoupled 60->30 / 120->150 to pick the sign that drives the contact line in the correct direction.")
+    parser.add_argument("--dynamic-cl-coeff", type=float, default=0.0, help="DynamicCLCoeff: residual CL force coefficient. Default 0.0 matches Dynamics.R (shadow: candidate magnitude is zero, so ForceCandidateMag is the diagnostic). Stage15C C1 sets a nonzero value (e.g. 0.02) so the candidate force direction is non-zero and scannable even in Mode=1 shadow; the force is still NOT added to F_total while DynamicCLMode=1.")
     parser.add_argument("--force-fixed-tol", type=float, default=0.0)
     parser.add_argument("--force-fixed-max-iter", type=int, default=2)
     parser.add_argument(
