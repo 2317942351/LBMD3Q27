@@ -290,19 +290,25 @@ Conclusion: gate 3 passes on the coordinate-independent criterion (theta_eq
 identity). Any future plot of DynamicCLActive over (x,y,z) must account for
 the cell/node stagger, or it will over-report the band width.
 
-### 9.2 cos_app sign (DynamicCLCosSign calibration) — NOT done in this commit
+### 9.2 cos_app sign (DynamicCLCosSign calibration) — RESOLVED in Stage15C-pre
 
-For t30 equilibrium, the active nodes report DynamicCLCosApp in [-0.925,
--0.900] (i.e. theta_app ~ 157 deg), while DynamicCLCosEq = +0.866. Hence
-DynamicCLCosResidual ~ +1.79, far from 0.
+For t30 equilibrium with the original DynamicCLCosSign=+1, the active nodes
+report DynamicCLCosApp in [-0.925, -0.900] (i.e. theta_app ~ 157 deg), while
+DynamicCLCosEq = +0.866. Hence DynamicCLCosResidual ~ +1.79, far from 0.
 
-This is expected at this stage: DynamicCLCosSign (the convention mapping
-the interface-normal / wall-normal dot product to cos_app) has not been
-calibrated yet, and the plan explicitly defers sign calibration until after
-theta_eq sourcing is verified. theta_eq sourcing is now verified (gate 2).
-The next step would be DynamicCLCosSign calibration, then re-run gate 4.
-That is a separate, explicitly-authorized change — do NOT touch
-DynamicCLCosSign or DynamicCLForceSign as part of this commit.
+This was the sign being inverted. Stage15C-pre (see §10) scanned
+DynamicCLCosSign = +1 / -1 on flat-wall 30/90/150 and found **DynamicCLCosSign
+= -1** is correct: it flips cos_app to the right sign and magnitude, bringing
+mean|residual| to ~0.04 across all three angles (gate 4 PASS). The Dynamics.R
+default for DynamicCLCosSign remains 1.0 (unchanged in this commit); the
+correct value -1 is applied by the runner `--cos-sign -1` and is the
+recommended value for any future DynamicCL shadow/force run.
+
+The reason the default was left at 1.0 rather than flipped: DynamicCL is
+still shadow-only (DynamicCLMode<=1) and the default-mode is 0 (off), so the
+sign default does not affect any active physics yet. The sign default should
+be fixed together with the decision to enable DynamicCLMode>=1 as a real
+boundary condition, not silently flipped while the feature is off.
 
 ### 9.3 Status summary
 
@@ -310,11 +316,67 @@ DynamicCLCosSign or DynamicCLForceSign as part of this commit.
 Bug A (cos_eq=0, wrong theta_eq source):        FIXED, verified (gate 2).
 Bug B (gate too wide, OuterDomain leakage):     FIXED, verified (gate 3).
 DynamicCLMode=1 shadow-only boundary:           PRESERVED (gate 1 + code review).
-DynamicCLCosSign calibration:                   NOT DONE (deferred).
+DynamicCLCosSign calibration:                   DONE in Stage15C-pre (=-1, §10).
+gate 4 (equilibrium residual ~ 0):             PASS (Stage15C-pre, §10).
 DynamicCLMode=2 (force into F_total):           NOT ENABLED.
+DynamicCLForceSign:                             UNCALIBRATED (needs decoupled 60->30 / 120->150 dynamics).
 WallGrad/WallMu same-class cos(radAngle) bug:   RECORDED (§7), NOT FIXED.
 ```
 
 This commit's scope (theta_eq source + wetting-wall gate) is complete and
-runtime-verified for gates 1-3. Remaining work (sign calibration, gate 4,
-mode 2) is explicitly out of scope.
+runtime-verified for gates 1-3. Stage15C-pre (§10) additionally resolves the
+cos_app sign and passes gate 4. Remaining work (DynamicCLForceSign,
+DynamicCLMode=2, mode 2 dynamics) is explicitly out of scope.
+
+## 10. Stage15C-pre: DynamicCLCosSign calibration (shadow-only)
+
+A small follow-up stage (its own commits) that resolves the gate-4 blocker
+recorded in §9.2. NOT a force-write stage: DynamicCLMode=1, no F_total edit,
+no DynamicCLForceSign touch, no PhaseF/gradPhi/mu/WallGhost change.
+
+### 10.1 Method
+
+Scanned DynamicCLCosSign = +1 / -1 on flat-wall 30/90/150 (DynamicCLMode=1,
+DynamicCLCoeff=0, 1000 steps, vtk-period 200, mobility 0.3, WallGradMode=0,
+WallMuMode=0). Reused binary e2a10d0e (DynamicCLCosSign is a runtime setting;
+no recompile). Runner gained `--cos-sign`; the diagnostic reader gained a
+SIGN-SCAN block (mean/median/|residual| over active nodes).
+
+### 10.2 Result: DynamicCLCosSign = -1 is correct
+
+t30 sign comparison (decisive):
+
+```text
+cos_sign=+1: cos_app mean=-0.910, |residual| mean=1.776   (wrong sign)
+cos_sign=-1: cos_app mean=+0.910, |residual| mean=0.044   (correct sign)
+```
+
+Full three-angle table with cos_sign=-1 (gate 4):
+
+```text
+case   cos_eq    cos_app mean   residual mean   |residual| mean   threshold   verdict
+t30    +0.866    +0.910         -0.044          0.044             <0.15       PASS
+t90     0.000    +0.030         -0.030          0.030             <0.15       PASS
+t150   -0.866    -0.845         -0.021          0.046             <0.20       PASS
+```
+
+cos_app sign matches cos_eq sign at all three angles. |residual| is ~0.03-0.05,
+well under threshold. t150 shows no obtuse-drift signature (|residual|=0.046,
+small). The residual is consistently a small negative value (cos_app slightly
+larger than cos_eq), i.e. the apparent angle is marginally more wetting than
+the target — expected from phase-field interface thickness and the short
+(1000-step, not fully relaxed) runs, not a bug.
+
+### 10.3 What changed in the repo
+
+- runner `--cos-sign` parameter added (writes `<Param name="DynamicCLCosSign">`).
+- diagnostic reader SIGN-SCAN block added.
+- this section §10 + §9.2/§9.3 updated.
+- Dynamics.R default for DynamicCLCosSign UNCHANGED (stays 1.0); the correct
+  value -1 is a runner/recommendation, not a source default flip.
+
+### 10.4 Next (NOT in this stage)
+
+Stage15C: small-coefficient force-write with DynamicCLMode=2, after
+DynamicCLForceSign calibration via decoupled 60->30 / 120->150 dynamics.
+Explicitly out of scope here.

@@ -82,6 +82,29 @@ def main():
         else:
             print("  WARNING: zero active nodes -- check BlockedReason distribution")
 
+    # --- Stage15C-pre sign-scan statistics over active nodes ---
+    cos_app = get("DynamicCLCosApp")
+    resid = get("DynamicCLCosResidual")
+    if cos_eq is not None and active is not None and cos_app is not None and resid is not None:
+        act = active > 0.5
+        if act.sum() > 0:
+            ce = cos_eq[act]; ca = cos_app[act]; rs = resid[act]
+            print("\n" + "=" * 60)
+            print("SIGN SCAN (Stage15C-pre, over DynamicCLActive>0.5)")
+            print("=" * 60)
+            print(f"  active_count: {act.sum()}")
+            print(f"  cos_eq : mean={ce.mean():+.4f} median={np.median(ce):+.4f} unique={np.unique(np.round(ce,3))}")
+            print(f"  cos_app: mean={ca.mean():+.4f} median={np.median(ca):+.4f} "
+                  f"min={ca.min():+.4f} max={ca.max():+.4f}")
+            print(f"  residual (cos_eq - cos_app): mean={rs.mean():+.4f} "
+                  f"median={np.median(rs):+.4f}")
+            ar = np.abs(rs)
+            print(f"  |residual|: mean={ar.mean():.4f} median={np.median(ar):.4f} "
+                  f"max={ar.max():.4f}")
+            print(f"  gate4 thresholds: t30/t90 mean|resid|<0.15, t150<0.20")
+            # sign verdict: does cos_app match cos_eq in sign and magnitude?
+            print(f"  cos_app sign matches cos_eq sign: {np.sign(ca.mean()) == np.sign(ce.mean())}")
+
     # --- gate 3: spatial locality table with CORRECT VTK cell ordering ---
     # VTK ImageData cell arrays are x-fastest, then y, then z (C order).
     # Reshape to (nz, ny, nx) so cell (ix,iy,iz) = arr3d[iz, iy, ix].
