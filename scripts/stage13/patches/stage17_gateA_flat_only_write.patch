@@ -1,0 +1,4 @@
+1702c1702
+< 				bool compact_write = stage13_compact_write_requested();
+---
+> 				bool compact_write = stage13_compact_write_requested() && (AnalyticSolidType < 1.5);

@@ -1699,7 +1699,7 @@ CudaDeviceFunction void calcWallPhase(){
 				real_t pf_f = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
 				real_t pf_ff = PhaseF_dyn(2*probe_dx, 2*probe_dy, 2*probe_dz);
 				bool both_probes_fluid = (pf_f > -100.0) && (pf_ff > -100.0);
-				bool compact_write = stage13_compact_write_requested();
+				bool compact_write = stage13_compact_write_requested() && (AnalyticSolidType < 1.5);
 				if (h_a > 0.001 && (compact_write || both_probes_fluid)) {
 					AnalyticFlag = 1.0;
 					nw_x = probe_dx;
