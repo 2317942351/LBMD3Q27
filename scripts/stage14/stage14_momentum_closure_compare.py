@@ -36,7 +36,22 @@ FIELDS = [
     "ReplayTauUsed",
     "ReplayRhoForForce",
     "ReplayForceInjectionMode",
+    "ReplayPressureClosureMode",
+    "ReplayForceDensityClosureMode",
+    "ReplayForceFixedPointMode",
+    "ReplayForceRhoRaw",
+    "ReplayForceRhoEffective",
+    "ForceIterCount",
+    "ForceIterResidual",
 ]
+
+
+def probe_name(path: Path) -> str:
+    for part in path.parts:
+        if part.startswith("probe_"):
+            return part
+    match = re.search(r"(probe_[^/\\]+)", str(path))
+    return match.group(1) if match else ""
 
 
 def probe_mode(path: Path) -> int:
@@ -72,10 +87,11 @@ def stat_nonfinite(frame: dict[str, Any], field: str) -> Any:
 
 def build_rows(root: Path, step: int) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for summary_path in sorted(root.glob("probe_A*/s2_replay_smoke_summary.json")):
+    for summary_path in sorted(root.glob("probe_*/s2_replay_smoke_summary.json")):
         summary = load_summary(summary_path)
         frame = frame_at(summary, step)
         row: dict[str, Any] = {
+            "probe": probe_name(summary_path),
             "probe_mode": probe_mode(summary_path),
             "summary_path": str(summary_path),
             "step": step,

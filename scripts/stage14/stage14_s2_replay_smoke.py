@@ -110,6 +110,11 @@ VTK_FIELDS = ",".join(
         "ReplayTauUsed",
         "ReplayRhoForForce",
         "ReplayForceInjectionMode",
+        "ReplayPressureClosureMode",
+        "ReplayForceDensityClosureMode",
+        "ReplayForceFixedPointMode",
+        "ReplayForceRhoRaw",
+        "ReplayForceRhoEffective",
     ]
 )
 
@@ -145,6 +150,11 @@ REQUIRED_REPLAY_FIELDS = [
     "ReplayFmuRaw",
     "ReplayFmuDelta",
     "ReplayForceInjectionMode",
+    "ReplayPressureClosureMode",
+    "ReplayForceDensityClosureMode",
+    "ReplayForceFixedPointMode",
+    "ReplayForceRhoRaw",
+    "ReplayForceRhoEffective",
 ]
 
 
@@ -199,9 +209,15 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("MomentumForceMode", args.momentum_force_mode),
             param("MomentumClosureDiagnosticsMode", args.momentum_closure_diagnostics_mode),
             param("MomentumClosureProbeMode", args.momentum_closure_probe_mode),
+            param("PressureClosureMode", args.pressure_closure_mode),
+            param("PressureClosureReference", args.pressure_closure_reference),
+            param("ForceDensityClosureMode", args.force_density_closure_mode),
+            param("ForceDensityRhoFloor", args.force_density_rho_floor),
+            param("ForceFixedPointMode", args.force_fixed_point_mode),
+            param("ForceFixedDivergenceGuardFactor", args.force_fixed_divergence_guard_factor),
             param("force_fixed_iterator", args.force_fixed_iterator),
-            param("ForceFixedTol", 0.0),
-            param("ForceFixedMaxIter", 2),
+            param("ForceFixedTol", args.force_fixed_tol),
+            param("ForceFixedMaxIter", args.force_fixed_max_iter),
             param("minGradient", "1e-08"),
             param("WettingBCMode", 0),
             param("WallGradMode", 0),
@@ -382,6 +398,14 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "momentum_force_mode": args.momentum_force_mode,
             "momentum_closure_diagnostics_mode": args.momentum_closure_diagnostics_mode,
             "momentum_closure_probe_mode": args.momentum_closure_probe_mode,
+            "pressure_closure_mode": args.pressure_closure_mode,
+            "pressure_closure_reference": args.pressure_closure_reference,
+            "force_density_closure_mode": args.force_density_closure_mode,
+            "force_density_rho_floor": args.force_density_rho_floor,
+            "force_fixed_point_mode": args.force_fixed_point_mode,
+            "force_fixed_tol": args.force_fixed_tol,
+            "force_fixed_max_iter": args.force_fixed_max_iter,
+            "force_fixed_divergence_guard_factor": args.force_fixed_divergence_guard_factor,
             "density_h": args.density_h,
             "density_l": args.density_l,
             "viscosity_h": args.viscosity_h,
@@ -611,6 +635,11 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
             "ReplayTauUsed",
             "ReplayRhoForForce",
             "ReplayForceInjectionMode",
+            "ReplayPressureClosureMode",
+            "ReplayForceDensityClosureMode",
+            "ReplayForceFixedPointMode",
+            "ReplayForceRhoRaw",
+            "ReplayForceRhoEffective",
             "PhaseStencilGhostUseCount",
             "PhaseStencilFallbackCount",
             "PhaseStencilMidpointFallbackCount",
@@ -663,6 +692,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--momentum-force-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-diagnostics-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-probe-mode", type=int, default=0)
+    parser.add_argument("--pressure-closure-mode", type=int, default=0)
+    parser.add_argument("--pressure-closure-reference", type=float, default=0.0)
+    parser.add_argument("--force-density-closure-mode", type=int, default=0)
+    parser.add_argument("--force-density-rho-floor", type=float, default=0.0)
+    parser.add_argument("--force-fixed-point-mode", type=int, default=0)
+    parser.add_argument("--force-fixed-tol", type=float, default=0.0)
+    parser.add_argument("--force-fixed-max-iter", type=int, default=2)
+    parser.add_argument("--force-fixed-divergence-guard-factor", type=float, default=100.0)
     parser.add_argument("--density-h", type=float, default=1.0)
     parser.add_argument("--density-l", type=float, default=0.001)
     parser.add_argument("--viscosity-h", type=float, default=0.1)
