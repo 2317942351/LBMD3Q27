@@ -13,12 +13,14 @@ docs/stage14/55_tclb_execution_semantics_constraints_20260623.md
 docs/stage14/58_phasefield_rebuild_execution_plan_20260623.md
 docs/stage14/59_current_progress_and_next_solver_targets_20260623.md
 docs/stage14/60_stage18_p100_semantics_smoke_20260623.md
+docs/stage14/61_c_reference_math_validation_20260623.md
+docs/stage14/62_s1_s2_timeline_replay_plan_20260623.md
 ```
 
 Branch:
 
 ```text
-stage15-dynamicCL-residual
+work/phasefield-c-reference-20260623
 ```
 
 Baseline tag:
@@ -42,11 +44,19 @@ Current extension on branch `work/phasefield-c-reference-20260623`:
 
 ```text
 reference_solvers/phasefield_d3q27_c now contains an executable C++ scaffold
-server g++ self-test passed with checks=96 failures=0
+server g++ self-test passed with checks=108 failures=0
 scripts/audit_tclb_execution_semantics.py extracts TCLB density/field/stage risks
 remote P100/storage audit summaries are under artifacts/remote_space_audit_20260623
 stage18 P100 smoke: flat and corrected z-axis cylinder runtime chains run; old axis=0 cylinder template fails with P NaN
 no solver physics has been changed yet on this branch
+```
+
+Current S1/S2 decision:
+
+```text
+first audit PhaseF / WallGhost / gradPhi / mu / force producer-consumer timeline
+then perform C-to-TCLB first-10-step replay
+only after S1/S2 pass may curved-wall wetting implementation be edited
 ```
 
 The rest of this file preserves earlier stage history and should not be read as
