@@ -1,0 +1,97 @@
+quantity,producer_stage,producer_order,consumer_stage,consumer_order,edge_type,time_level
+g*,BaseIter,1,,,write,produced during this stage for later saved state
+h*,BaseIter,1,,,write,produced during this stage for later saved state
+U,BaseIter,1,,,write,produced during this stage for later saved state
+V,BaseIter,1,,,write,produced during this stage for later saved state
+W,BaseIter,1,,,write,produced during this stage for later saved state
+pnorm,BaseIter,1,,,write,produced during this stage for later saved state
+ForceIterResidual,BaseIter,1,,,write,produced during this stage for later saved state
+ForceIterCount,BaseIter,1,,,write,produced during this stage for later saved state
+MassCorrectionApplied,BaseIter,1,,,write,produced during this stage for later saved state
+PhaseStencilGhostUseCount,BaseIter,1,,,write,produced during this stage for later saved state
+PhaseStencilFallbackCount,BaseIter,1,,,write,produced during this stage for later saved state
+PhaseStencilMidpointFallbackCount,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayPhaseConsumed,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayLapPhi,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayMu,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayGradPhi*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayFsurf*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayFpressure*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayFbody*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayFmu*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayFtotal*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayRho,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayTau,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayPressureMoment,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayUPreForce*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayUPostForce*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayPhaseAdvVelocity*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayForceOverRho*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayNormal*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayStress*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayFphi*,BaseIter,1,,,write,produced during this stage for later saved state
+ReplayTmp1,BaseIter,1,,,write,produced during this stage for later saved state
+WallMuCandidate,BaseIter,1,,,write,produced during this stage for later saved state
+DynamicCL*,BaseIter,1,,,write,produced during this stage for later saved state
+g*,BaseIter,1,BaseIter,1,read,same action prior stage
+h*,BaseIter,1,BaseIter,1,read,same action prior stage
+PhaseF,previous_action_or_initial_state,,BaseIter,1,read,loaded at action boundary / previous saved state
+WallGhost,previous_action_or_initial_state,,BaseIter,1,read,loaded at action boundary / previous saved state
+IsBoundary,previous_action_or_initial_state,,BaseIter,1,read,loaded at action boundary / previous saved state
+U,BaseIter,1,BaseIter,1,read,same action prior stage
+V,BaseIter,1,BaseIter,1,read,same action prior stage
+W,BaseIter,1,BaseIter,1,read,same action prior stage
+pnorm,BaseIter,1,BaseIter,1,read,same action prior stage
+PhaseF,calcPhase,2,,,write,produced during this stage for later saved state
+ReplayPhaseFromH,calcPhase,2,,,write,produced during this stage for later saved state
+h*,BaseIter,1,calcPhase,2,read,same action prior stage
+PhaseF,calcPhase,2,calcPhase,2,read,same action prior stage
+NodeType,previous_action_or_initial_state,,calcPhase,2,read,loaded at action boundary / previous saved state
+gradPhiVal_x,calcPhaseGrad,3,,,write,produced during this stage for later saved state
+gradPhiVal_y,calcPhaseGrad,3,,,write,produced during this stage for later saved state
+gradPhiVal_z,calcPhaseGrad,3,,,write,produced during this stage for later saved state
+gradPhi_PhaseF,calcPhaseGrad,3,,,write,produced during this stage for later saved state
+PhaseF,calcPhase,2,calcPhaseGrad,3,read,same action prior stage
+WallGhost,previous_action_or_initial_state,,calcPhaseGrad,3,read,loaded at action boundary / previous saved state
+IsBoundary,previous_action_or_initial_state,,calcPhaseGrad,3,read,loaded at action boundary / previous saved state
+gradPhiVal_x,calcPhaseGrad_init,3,,,write,produced during this stage for later saved state
+gradPhiVal_y,calcPhaseGrad_init,3,,,write,produced during this stage for later saved state
+gradPhiVal_z,calcPhaseGrad_init,3,,,write,produced during this stage for later saved state
+gradPhi_PhaseF,calcPhaseGrad_init,3,,,write,produced during this stage for later saved state
+PhaseF,calcPhase,2,calcPhaseGrad_init,3,read,same action prior stage
+WallGhost,previous_action_or_initial_state,,calcPhaseGrad_init,3,read,loaded at action boundary / previous saved state
+IsBoundary,previous_action_or_initial_state,,calcPhaseGrad_init,3,read,loaded at action boundary / previous saved state
+gradPhiVal_x,calcPhaseGrad_init,3,calcPhaseGrad_init,3,read,same action prior stage
+gradPhiVal_y,calcPhaseGrad_init,3,calcPhaseGrad_init,3,read,same action prior stage
+gradPhiVal_z,calcPhaseGrad_init,3,calcPhaseGrad_init,3,read,same action prior stage
+PhaseF,calcWall_CA,4,,,write,produced during this stage for later saved state
+WallGhost,calcWall_CA,4,,,write,produced during this stage for later saved state
+WallGhostRaw,calcWall_CA,4,,,write,produced during this stage for later saved state
+WallGhostClamped,calcWall_CA,4,,,write,produced during this stage for later saved state
+WallGhostClampHit,calcWall_CA,4,,,write,produced during this stage for later saved state
+WettingPathId,calcWall_CA,4,,,write,produced during this stage for later saved state
+LocalRadAngle,calcWall_CA,4,,,write,produced during this stage for later saved state
+WallH,calcWall_CA,4,,,write,produced during this stage for later saved state
+AnalyticFlag,calcWall_CA,4,,,write,produced during this stage for later saved state
+WallCSQ*,calcWall_CA,4,,,write,produced during this stage for later saved state
+PhaseF,calcWall_CA,4,calcWall_CA,4,read,same action prior stage
+WallGhost,calcWall_CA,4,calcWall_CA,4,read,same action prior stage
+gradPhiVal_x,calcPhaseGrad_init,3,calcWall_CA,4,read,same action prior stage
+gradPhiVal_y,calcPhaseGrad_init,3,calcWall_CA,4,read,same action prior stage
+gradPhiVal_z,calcPhaseGrad_init,3,calcWall_CA,4,read,same action prior stage
+nw_x,previous_action_or_initial_state,,calcWall_CA,4,read,loaded at action boundary / previous saved state
+nw_y,previous_action_or_initial_state,,calcWall_CA,4,read,loaded at action boundary / previous saved state
+nw_z,previous_action_or_initial_state,,calcWall_CA,4,read,loaded at action boundary / previous saved state
+PhaseF,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+WallGhost,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+WallGhostRaw,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+WallGhostClamped,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+WallGhostClampHit,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+WettingPathId,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+LocalRadAngle,calcWallPhase_correction,5,,,write,produced during this stage for later saved state
+PhaseF,calcWallPhase_correction,5,calcWallPhase_correction,5,read,same action prior stage
+WallGhost,calcWallPhase_correction,5,calcWallPhase_correction,5,read,same action prior stage
+nw_x,previous_action_or_initial_state,,calcWallPhase_correction,5,read,loaded at action boundary / previous saved state
+nw_y,previous_action_or_initial_state,,calcWallPhase_correction,5,read,loaded at action boundary / previous saved state
+nw_z,previous_action_or_initial_state,,calcWallPhase_correction,5,read,loaded at action boundary / previous saved state
+IsSpecialBoundaryPoint,previous_action_or_initial_state,,calcWallPhase_correction,5,read,loaded at action boundary / previous saved state

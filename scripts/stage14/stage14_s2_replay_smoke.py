@@ -1,0 +1,630 @@
+#!/usr/bin/env python3
+"""S2 replay smoke for TCLB phase-field time-level diagnostics.
+
+This is a small runtime gate, not a contact-angle validation. It checks that
+the S1 Replay* fields are produced by the compiled TCLB binary and can be read
+from VTI outputs for steps 0-10. Full C-to-TCLB numerical replay is a later
+step built on these artifacts.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+import os
+import re
+import shutil
+import subprocess
+import xml.etree.ElementTree as ET
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+
+
+DEFAULT_BIN = (
+    "/home/yuan/src/TCLB_lbm2026_compile_lane/"
+    "CLB/d3q27_pf_velocity_q27_geometric/main"
+)
+DEFAULT_ROOT = "/mnt/usb1t/RUNS/runs/stage14_s2_replay_smoke_20260623"
+
+VTK_FIELDS = ",".join(
+    [
+        "PhaseField",
+        "Rho",
+        "U",
+        "P",
+        "BOUNDARY",
+        "IsItBoundary",
+        "WallGhost",
+        "WallGhostRaw",
+        "WallGhostClamped",
+        "WallGhostClampHit",
+        "WettingPathId",
+        "LocalRadAngle",
+        "WallH",
+        "AnalyticWallNormal",
+        "AnalyticFlag",
+        "GradPhi",
+        "ForceIterResidual",
+        "ForceIterCount",
+        "MassCorrectionApplied",
+        "PhaseStencilGhostUseCount",
+        "PhaseStencilFallbackCount",
+        "PhaseStencilMidpointFallbackCount",
+        "ReplayPhaseConsumed",
+        "ReplayPhaseFromH",
+        "ReplayLapPhi",
+        "ReplayMu",
+        "ReplayGradPhi",
+        "ReplayFsurf",
+        "ReplayFpressure",
+        "ReplayFbody",
+        "ReplayFmu",
+        "ReplayFtotal",
+        "ReplayRho",
+        "ReplayTau",
+        "ReplayPressureMoment",
+        "ReplayUPreForce",
+        "ReplayUPostForce",
+        "ReplayPhaseAdvVelocity",
+        "ReplayForceOverRho",
+        "ReplayFmuIter1",
+        "ReplayFtotalIter1",
+        "ReplayUPostIter1",
+        "ReplayNormal",
+        "ReplayStressXX",
+        "ReplayStressXY",
+        "ReplayStressXZ",
+        "ReplayStressYY",
+        "ReplayStressYZ",
+        "ReplayStressZZ",
+        "ReplayFphiSum",
+        "ReplayFphiMaxAbs",
+        "ReplayTmp1",
+    ]
+)
+
+REQUIRED_REPLAY_FIELDS = [
+    "ReplayPhaseConsumed",
+    "ReplayPhaseFromH",
+    "ReplayLapPhi",
+    "ReplayMu",
+    "ReplayGradPhi",
+    "ReplayFsurf",
+    "ReplayFpressure",
+    "ReplayFbody",
+    "ReplayFmu",
+    "ReplayFtotal",
+    "ReplayRho",
+    "ReplayTau",
+    "ReplayUPostForce",
+    "ReplayPhaseAdvVelocity",
+    "ReplayForceOverRho",
+    "ReplayFmuIter1",
+    "ReplayFtotalIter1",
+    "ReplayUPostIter1",
+    "ReplayFphiMaxAbs",
+]
+
+
+@dataclass(frozen=True)
+class SmokeCase:
+    name: str
+    kind: str
+    init_theta: float | None = None
+    bc_theta: float | None = None
+
+
+CASES = [
+    SmokeCase("bulk_tanh_10", "bulk"),
+    SmokeCase("wall_t90_10", "wall", 90.0, 90.0),
+    SmokeCase("wall_60to30_10", "wall", 60.0, 30.0),
+    SmokeCase("wall_120to150_10", "wall", 120.0, 150.0),
+]
+
+
+def param(name: str, value: str | float | int) -> str:
+    return f'    <Param name="{name}" value="{value}"/>'
+
+
+def cap_sphere_radius(volume_radius: float, theta_deg: float) -> float:
+    theta = math.radians(theta_deg)
+    denom = (1.0 - math.cos(theta)) ** 2 * (2.0 + math.cos(theta))
+    if denom <= 0.0:
+        raise ValueError(f"invalid cap theta: {theta_deg}")
+    return volume_radius * (4.0 / denom) ** (1.0 / 3.0)
+
+
+def common_model_params(args: argparse.Namespace) -> str:
+    return "\n".join(
+        [
+            param("Density_h", args.density_h),
+            param("Density_l", args.density_l),
+            param("Viscosity_h", args.viscosity_h),
+            param("Viscosity_l", args.viscosity_l),
+            param("tauUpdate", 1),
+            param("sigma", args.sigma),
+            param("M", args.mobility),
+            param("IntWidth", args.int_width),
+            param("BubbleType", 1.0),
+            param("VelocityX", 0.0),
+            param("VelocityY", 0.0),
+            param("VelocityZ", 0.0),
+            param("GravitationX", 0.0),
+            param("GravitationY", 0.0),
+            param("GravitationZ", 0.0),
+            param("ReplayDiagnosticsMode", args.replay_mode),
+            param("PhaseAdvectionVelocityMode", args.phase_advection_velocity_mode),
+            param("MomentumForceMode", args.momentum_force_mode),
+            param("force_fixed_iterator", args.force_fixed_iterator),
+            param("ForceFixedTol", 0.0),
+            param("ForceFixedMaxIter", 2),
+            param("minGradient", "1e-08"),
+            param("WettingBCMode", 0),
+            param("WallGradMode", 0),
+            param("WallMuMode", 0),
+            param("DynamicCLMode", 0),
+            param("DynamicCLCoeff", 0.0),
+        ]
+    )
+
+
+def render_bulk_xml(
+    iterations: int,
+    vtk_period: int,
+    log_period: int,
+    args: argparse.Namespace,
+) -> str:
+    return f"""<?xml version="1.0"?>
+<CLBConfig version="2.0" output="output/" permissive="true">
+  <Geometry nx="32" ny="24" nz="24">
+    <MRT><Box/></MRT>
+  </Geometry>
+  <Model>
+{common_model_params(args)}
+    <Param name="Radius" value="0"/>
+    <Param name="CenterX" value="16"/>
+    <Param name="CenterY" value="12"/>
+    <Param name="CenterZ" value="12"/>
+    <Param name="Washburn_start" value="8"/>
+    <Param name="Washburn_end" value="24"/>
+    <Param name="AnalyticWetting" value="0"/>
+    <Param name="WallCompactStencilMode" value="0"/>
+    <Param name="radAngle" value="90d"/>
+  </Model>
+  <VTK what="{VTK_FIELDS}"/>
+  <Log Iterations="{log_period}"/>
+  <Failcheck Iterations="{log_period}"/>
+  <Solve Iterations="{iterations}">
+    <VTK Iterations="{vtk_period}" what="{VTK_FIELDS}"/>
+    <Log Iterations="{log_period}"/>
+    <Failcheck Iterations="{log_period}"/>
+  </Solve>
+</CLBConfig>
+"""
+
+
+def render_wall_xml(
+    init_theta: float,
+    bc_theta: float,
+    iterations: int,
+    vtk_period: int,
+    log_period: int,
+    args: argparse.Namespace,
+) -> str:
+    volume_radius = 16.0
+    parent_radius = cap_sphere_radius(volume_radius, init_theta)
+    theta = math.radians(init_theta)
+    cap_center_x = 48.0
+    cap_center_y = -parent_radius * math.cos(theta)
+    cap_center_z = 48.0
+    init_params = "\n".join(
+        [
+            param("Radius", 0),
+            param("CenterX", cap_center_x),
+            param("CenterY", max(2.0, parent_radius * (1.0 - math.cos(theta)) * 0.35)),
+            param("CenterZ", cap_center_z),
+            param("CapInit", 1),
+            param("CapInitRadius", f"{parent_radius:.16g}"),
+            param("CapInitTheta", f"{theta:.16g}"),
+            param("CapInitCenterX", f"{cap_center_x:.16g}"),
+            param("CapInitCenterY", f"{cap_center_y:.16g}"),
+            param("CapInitCenterZ", f"{cap_center_z:.16g}"),
+        ]
+    )
+    return f"""<?xml version="1.0"?>
+<CLBConfig version="2.0" output="output/" permissive="true">
+  <Geometry nx="96" ny="80" nz="96">
+    <MRT><Box/></MRT>
+    <Wall mask="ALL" name="OuterDomain">
+      <Box nx="1"/><Box dx="-1"/><Box dy="-1"/><Box nz="1"/><Box dz="-1"/>
+    </Wall>
+    <Wall mask="ALL" name="FlatLowerY"><Box dx="1" nx="94" ny="1" dz="1" nz="94"/></Wall>
+  </Geometry>
+  <Model>
+{common_model_params(args)}
+{init_params}
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <Param name="AnalyticSolidType" value="1"/>
+    <Param name="AnalyticSolidAxis" value="1"/>
+    <Param name="AnalyticSolidPlaneOffset" value="0.0"/>
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="WallCompactStencilMode" value="1"/>
+    <Param name="WallCompactStencilNormalMode" value="1"/>
+    <Param name="WallCompactStencilMaxL" value="3"/>
+    <Param name="WallCompactStencilWriteAllowedFlag" value="0"/>
+    <Param name="radAngle" value="{bc_theta:.16g}d" zone="FlatLowerY"/>
+  </Model>
+  <VTK what="{VTK_FIELDS}"/>
+  <Log Iterations="{log_period}"/>
+  <Failcheck Iterations="{log_period}"/>
+  <Solve Iterations="{iterations}">
+    <VTK Iterations="{vtk_period}" what="{VTK_FIELDS}"/>
+    <Log Iterations="{log_period}"/>
+    <Failcheck Iterations="{log_period}"/>
+  </Solve>
+</CLBConfig>
+"""
+
+
+def render_case_xml(
+    case: SmokeCase,
+    iterations: int,
+    vtk_period: int,
+    log_period: int,
+    args: argparse.Namespace,
+) -> str:
+    if case.kind == "bulk":
+        return render_bulk_xml(iterations, vtk_period, log_period, args)
+    if case.kind == "wall":
+        assert case.init_theta is not None and case.bc_theta is not None
+        return render_wall_xml(
+            case.init_theta,
+            case.bc_theta,
+            iterations,
+            vtk_period,
+            log_period,
+            args,
+        )
+    raise ValueError(case.kind)
+
+
+def binary_hash(binary: str) -> str | None:
+    try:
+        out = subprocess.check_output(["sha256sum", binary], text=True)
+    except Exception:
+        return None
+    parts = out.split()
+    return parts[0] if parts else None
+
+
+def write_cases(args: argparse.Namespace) -> list[Path]:
+    root = Path(args.root)
+    root.mkdir(parents=True, exist_ok=True)
+    case_dirs: list[Path] = []
+    selected = {name.strip() for name in args.cases.split(",") if name.strip()}
+    for case in CASES:
+        if selected and case.name not in selected and "all" not in selected:
+            continue
+        case_dir = root / case.name
+        if case_dir.exists() and args.force:
+            shutil.rmtree(case_dir)
+        case_dir.mkdir(parents=True, exist_ok=True)
+        (case_dir / "output").mkdir(exist_ok=True)
+        xml = render_case_xml(
+            case,
+            args.iterations,
+            args.vtk_period,
+            args.log_period,
+            args,
+        )
+        (case_dir / "case.xml").write_text(xml, encoding="utf-8")
+        metadata = {
+            "stage": "stage14_s2_replay_smoke",
+            "case": case.name,
+            "kind": case.kind,
+            "init_theta_deg": case.init_theta,
+            "bc_theta_deg": case.bc_theta,
+            "iterations": args.iterations,
+            "vtk_period": args.vtk_period,
+            "log_period": args.log_period,
+            "physical_grid": xml_grid(xml),
+            "vtk_fields": VTK_FIELDS.split(","),
+            "binary": args.binary,
+            "binary_sha256": binary_hash(args.binary),
+            "gpu": args.gpu,
+            "replay_mode": args.replay_mode,
+            "phase_advection_velocity_mode": args.phase_advection_velocity_mode,
+            "momentum_force_mode": args.momentum_force_mode,
+            "density_h": args.density_h,
+            "density_l": args.density_l,
+            "viscosity_h": args.viscosity_h,
+            "viscosity_l": args.viscosity_l,
+            "sigma": args.sigma,
+            "mobility": args.mobility,
+            "int_width": args.int_width,
+            "force_fixed_iterator": args.force_fixed_iterator,
+            "claim_limit": "S2 replay smoke only; not contact-angle validation",
+        }
+        (case_dir / "case_metadata.json").write_text(
+            json.dumps(metadata, indent=2, sort_keys=True), encoding="utf-8"
+        )
+        case_dirs.append(case_dir)
+    return case_dirs
+
+
+def run_cases(case_dirs: list[Path], args: argparse.Namespace) -> list[dict[str, Any]]:
+    env = os.environ.copy()
+    env["PATH"] = "/usr/local/cuda-12.6/bin:/usr/bin:/bin:/usr/local/bin"
+    env["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+    env["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
+    env["OMPI_MCA_plm_rsh_agent"] = "/usr/bin/ssh"
+    env["LD_LIBRARY_PATH"] = "/usr/local/cuda-12.6/lib64:" + env.get("LD_LIBRARY_PATH", "")
+    results = []
+    for case_dir in case_dirs:
+        with (case_dir / "run.log").open("w", encoding="utf-8", errors="replace") as log:
+            log.write(f"case={case_dir.name}\n")
+            log.write(f"gpu={args.gpu}\n")
+            log.write(f"binary={args.binary}\n")
+            log.write(f"binary_sha256={binary_hash(args.binary)}\n")
+            log.flush()
+            completed = subprocess.run(
+                ["timeout", str(args.timeout), args.binary, "case.xml"],
+                cwd=case_dir,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                env=env,
+            )
+            log.write(f"\nRUN_RC={completed.returncode}\n")
+        results.append({"case": case_dir.name, "run_rc": completed.returncode})
+    return results
+
+
+def xml_grid(xml: str) -> list[int] | None:
+    try:
+        root = ET.fromstring(xml)
+    except ET.ParseError:
+        return None
+    geom = root.find("Geometry")
+    if geom is None:
+        return None
+    try:
+        return [int(geom.attrib[name]) for name in ("nx", "ny", "nz")]
+    except (KeyError, ValueError):
+        return None
+
+
+def step_of(path: Path) -> int:
+    match = re.search(r"P00_(\d+)\.vti$", path.name)
+    return int(match.group(1)) if match else -1
+
+
+def load_vti(path: Path) -> tuple[tuple[int, int, int], dict[str, np.ndarray]]:
+    import vtk  # type: ignore
+    from vtk.util.numpy_support import vtk_to_numpy  # type: ignore
+
+    reader = vtk.vtkXMLImageDataReader()
+    reader.SetFileName(str(path))
+    reader.Update()
+    data = reader.GetOutput()
+    dims = tuple(int(v) - 1 for v in data.GetDimensions())
+    cell_data = data.GetCellData()
+    arrays: dict[str, np.ndarray] = {}
+    for idx in range(cell_data.GetNumberOfArrays()):
+        arr = cell_data.GetArray(idx)
+        if arr is None:
+            continue
+        arrays[arr.GetName()] = vtk_to_numpy(arr)
+    return dims, arrays
+
+
+def crop_to_physical(
+    arr: np.ndarray,
+    local_dims: tuple[int, int, int],
+    physical_grid: list[int] | None,
+) -> np.ndarray:
+    if not physical_grid:
+        return arr
+    px, py, pz = physical_grid
+    nx, ny, nz = local_dims
+    if px > nx or py > ny or pz > nz:
+        return arr
+    values = np.asarray(arr)
+    if values.shape[0] != nx * ny * nz:
+        return arr
+    if values.ndim == 1:
+        return values.reshape((nx, ny, nz))[:px, :py, :pz].reshape(-1)
+    return values.reshape((nx, ny, nz, values.shape[1]))[:px, :py, :pz, :].reshape(
+        -1, values.shape[1]
+    )
+
+
+def field_stats(arr: np.ndarray) -> dict[str, Any]:
+    values = np.asarray(arr, dtype=float)
+    finite = np.isfinite(values)
+    finite_values = values[finite]
+    if finite_values.size == 0:
+        return {
+            "present": True,
+            "size": int(values.size),
+            "finite_count": 0,
+            "nonfinite_count": int(values.size),
+            "min": None,
+            "max": None,
+            "mean": None,
+            "max_abs": None,
+            "nonzero_count": 0,
+        }
+    mag = np.linalg.norm(finite_values, axis=1) if finite_values.ndim == 2 else np.abs(finite_values)
+    return {
+        "present": True,
+        "size": int(values.size),
+        "finite_count": int(np.count_nonzero(finite)),
+        "nonfinite_count": int(values.size - np.count_nonzero(finite)),
+        "min": float(np.min(finite_values)),
+        "max": float(np.max(finite_values)),
+        "mean": float(np.mean(finite_values)),
+        "max_abs": float(np.max(np.abs(finite_values))),
+        "nonzero_count": int(np.count_nonzero(mag > 0.0)),
+    }
+
+
+def summarize_case(case_dir: Path) -> dict[str, Any]:
+    physical_grid = None
+    metadata_path = case_dir / "case_metadata.json"
+    if metadata_path.exists():
+        try:
+            physical_grid = json.loads(metadata_path.read_text(encoding="utf-8")).get(
+                "physical_grid"
+            )
+        except json.JSONDecodeError:
+            physical_grid = None
+    vtis = sorted((case_dir / "output").glob("case_VTK_P00_*.vti"), key=step_of)
+    summary: dict[str, Any] = {
+        "case": case_dir.name,
+        "case_dir": str(case_dir),
+        "n_vti": len(vtis),
+        "steps": [step_of(path) for path in vtis],
+        "physical_grid": physical_grid,
+        "required_replay_fields": REQUIRED_REPLAY_FIELDS,
+        "frames": [],
+        "failures": [],
+    }
+    if not vtis:
+        summary["failures"].append("no_vti_outputs")
+        return summary
+    for path in vtis:
+        dims, arrays = load_vti(path)
+        frame = {
+            "step": step_of(path),
+            "vti": str(path),
+            "dims": list(dims),
+            "array_count": len(arrays),
+            "missing_required_replay": [name for name in REQUIRED_REPLAY_FIELDS if name not in arrays],
+            "stats": {},
+        }
+        for name in [
+            "PhaseField",
+            "WallGhost",
+            "ReplayPhaseConsumed",
+            "ReplayPhaseFromH",
+            "ReplayLapPhi",
+            "ReplayMu",
+            "ReplayGradPhi",
+            "ReplayFsurf",
+            "ReplayFpressure",
+            "ReplayFbody",
+            "ReplayFmu",
+            "ReplayFtotal",
+            "ReplayRho",
+            "ReplayTau",
+            "ReplayPressureMoment",
+            "ReplayUPreForce",
+            "ReplayUPostForce",
+            "ReplayPhaseAdvVelocity",
+            "ReplayForceOverRho",
+            "ReplayFmuIter1",
+            "ReplayFtotalIter1",
+            "ReplayUPostIter1",
+            "ReplayNormal",
+            "ReplayStressXX",
+            "ReplayStressXY",
+            "ReplayStressXZ",
+            "ReplayStressYY",
+            "ReplayStressYZ",
+            "ReplayStressZZ",
+            "ReplayFphiSum",
+            "ReplayFphiMaxAbs",
+            "ReplayTmp1",
+            "PhaseStencilGhostUseCount",
+            "PhaseStencilFallbackCount",
+            "PhaseStencilMidpointFallbackCount",
+        ]:
+            if name in arrays:
+                frame["stats"][name] = field_stats(
+                    crop_to_physical(arrays[name], dims, physical_grid)
+                )
+            else:
+                frame["stats"][name] = {"present": False}
+        if frame["missing_required_replay"]:
+            summary["failures"].append(f"missing_replay_fields_step_{frame['step']}")
+        for name, stats in frame["stats"].items():
+            if stats.get("present") and stats.get("nonfinite_count", 0) > 0:
+                summary["failures"].append(f"nonfinite_{name}_step_{frame['step']}")
+        summary["frames"].append(frame)
+    summary["failures"] = sorted(set(summary["failures"]))
+    return summary
+
+
+def summarize_root(root: Path) -> dict[str, Any]:
+    cases = []
+    for case_dir in sorted(path for path in root.iterdir() if path.is_dir()):
+        if (case_dir / "output").is_dir():
+            cases.append(summarize_case(case_dir))
+    report = {
+        "root": str(root),
+        "case_count": len(cases),
+        "cases": cases,
+        "failures": sorted({failure for case in cases for failure in case.get("failures", [])}),
+    }
+    (root / "s2_replay_smoke_summary.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True), encoding="utf-8"
+    )
+    return report
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--root", default=DEFAULT_ROOT)
+    parser.add_argument("--binary", default=DEFAULT_BIN)
+    parser.add_argument("--gpu", type=int, default=1)
+    parser.add_argument("--iterations", type=int, default=10)
+    parser.add_argument("--vtk-period", type=int, default=1)
+    parser.add_argument("--log-period", type=int, default=1)
+    parser.add_argument("--timeout", type=int, default=600)
+    parser.add_argument("--cases", default="all")
+    parser.add_argument("--replay-mode", type=int, default=1)
+    parser.add_argument("--phase-advection-velocity-mode", type=int, default=0)
+    parser.add_argument("--momentum-force-mode", type=int, default=0)
+    parser.add_argument("--density-h", type=float, default=1.0)
+    parser.add_argument("--density-l", type=float, default=0.001)
+    parser.add_argument("--viscosity-h", type=float, default=0.1)
+    parser.add_argument("--viscosity-l", type=float, default=0.1)
+    parser.add_argument("--sigma", default="5e-05")
+    parser.add_argument("--mobility", type=float, default=0.3)
+    parser.add_argument("--int-width", type=float, default=3.0)
+    parser.add_argument("--force-fixed-iterator", type=int, default=2)
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--run", action="store_true")
+    parser.add_argument("--summarize", action="store_true")
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    case_dirs = write_cases(args)
+    run_results: list[dict[str, Any]] = []
+    if args.run:
+        run_results = run_cases(case_dirs, args)
+    report = None
+    if args.summarize:
+        report = summarize_root(Path(args.root))
+    result = {
+        "root": args.root,
+        "case_dirs": [str(path) for path in case_dirs],
+        "run_results": run_results,
+        "summary": report,
+    }
+    print(json.dumps(result, indent=2, sort_keys=True))
+    if run_results and any(row["run_rc"] != 0 for row in run_results):
+        return 2
+    if report and report["failures"]:
+        return 3
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -1,0 +1,14 @@
+severity,id,message,evidence,lines,stage_order,line
+INFO,STREAMING_DENSITY,g/h are TCLB AddDensity streaming groups; do not treat them as explicit current arrays.,"[{""name"": ""g0"", ""dx"": 0, ""dy"": 0, ""dz"": 0, ""group"": ""g"", ""streams"": false, ""line"": 1}, {""name"": ""g1"", ""dx"": 1, ""dy"": 0, ""dz"": 0, ""group"": ""g"", ""streams"": true, ""line"": 2}, {""name"": ""g2"", ""dx"": -1, ""dy"": 0, ""dz"": 0, ""group"": ""g"", ""streams"": true, ""line"": 3}, {""name"": ""g3"", ""dx"": 0, ""dy"": 1, ""dz"": 0, ""group"": ""g"", ""streams"": true, ""line"": 4}, {""name"": ""g4"", ""dx"": 0, ""dy"": -1, ""dz"": 0, ""group"": ""g"", ""streams"": true, ""line"": 5}, {""name"": ""g5"", ""dx"": 0, ""dy"": 0, ""dz"": 1, ""group"": ""g"", ""streams"": true, ""line"": 6}]",,,
+CHECK,OCCURS_STAGE13_PHASE_FOR_STENCIL,STAGE13_PHASE_FOR_STENCIL appears in source and must be traced through producer/consumer stages.,,"[142, 848, 849, 850, 851, 852, 853, 854, 855, 856, 857, 860, 861, 862, 863, 864, 865, 866, 867, 868]",,
+CHECK,OCCURS_WallGhost,WallGhost appears in source and must be traced through producer/consumer stages.,,"[113, 143, 3305, 3306, 3308, 3309, 3311, 3312, 3314, 3315, 3626, 3781, 3782, 3783, 3784, 3790, 3806, 3807, 3808, 3809]",,
+CHECK,OCCURS_PhaseF_=_-999,PhaseF = -999 appears in source and must be traced through producer/consumer stages.,,"[1136, 1200]",,
+CHECK,OCCURS_IsBoundary,IsBoundary appears in source and must be traced through producer/consumer stages.,,"[143, 648, 649, 650, 651, 652, 653, 654, 674, 692, 816, 818, 819, 820, 1428, 2767, 2768, 2770, 3614, 3626]",,
+CHECK,WALL_BEFORE_ITER,calcWall_CA/calcWall stage exists before BaseIter in Dynamics.R order; verify fields loaded by BaseIter consume the intended wall ghost time level.,,,"[""PhaseInit"", ""BaseInit"", ""calcPhase"", ""BaseIter"", ""InitFromFieldsStage"", ""WallInit_CA"", ""calcWall_CA"", ""calcPhaseGrad"", ""calcPhaseGrad_init"", ""calcWallPhase_correction"", ""WallInit"", ""calcWall"", ""calcWallPhase_correction"", ""CopyDistributions"", ""CopyThermal"", ""RK_1"", ""RK_2"", ""RK_3"", ""RK_4"", ""NonLocalTemp""]",
+CHECK,FUNCTION_calcGradPhi,calcGradPhi is present; inspect its field reads/writes when changing wetting semantics.,,,,886
+CHECK,FUNCTION_calcMu,calcMu is present; inspect its field reads/writes when changing wetting semantics.,,,,928
+CHECK,FUNCTION_calcPhaseF,calcPhaseF is present; inspect its field reads/writes when changing wetting semantics.,,,,908
+CHECK,FUNCTION_Run,Run is present; inspect its field reads/writes when changing wetting semantics.,,,,1426
+CHECK,FUNCTION_BounceBack,BounceBack is present; inspect its field reads/writes when changing wetting semantics.,,,,2386
+CHECK,FUNCTION_calcWallPhase,calcWallPhase is present; inspect its field reads/writes when changing wetting semantics.,,,,3819
+HIGH,SPECIAL_POINT_MAGIC,Special-point magic values are present; confirm they cannot enter grad/laplace/mu stencils.,,[2429],,

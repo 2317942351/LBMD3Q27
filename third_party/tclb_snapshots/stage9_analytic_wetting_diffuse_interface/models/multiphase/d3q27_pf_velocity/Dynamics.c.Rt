@@ -96,7 +96,17 @@ CudaDeviceFunction vector_t getNormal(){
 }
 
 CudaDeviceFunction int stage13_phase_is_valid(real_t pf) {
-	return (pf > -100.0 && pf < 100.0);
+	if (!(pf == pf)) return 0;
+	real_t lo = PhaseField_l;
+	real_t hi = PhaseField_h;
+	if (lo > hi) {
+		real_t tmp = lo;
+		lo = hi;
+		hi = tmp;
+	}
+	real_t eps = PhaseValidityEps;
+	if (eps < 0.0) eps = 0.0;
+	return (pf >= lo - eps && pf <= hi + eps);
 }
 
 CudaDeviceFunction real_t stage13_select_phase_for_stencil(real_t pf, real_t is_boundary, real_t ghost, real_t center) {
@@ -110,20 +120,22 @@ CudaDeviceFunction real_t stage13_select_phase_for_stencil(real_t pf, real_t is_
 	// disabled in calcGradPhi(); the guard here is removed so the compact ghost
 	// is the sole source of the wall phase seen by the stencil.
 	if (is_boundary > 0.5 && stage13_phase_is_valid(ghost)) {
-		PhaseStencilGhostUseCount = PhaseStencilGhostUseCount + 1.0;
+		if (ReplayDiagnosticsMode > 0.5) PhaseStencilGhostUseCount = PhaseStencilGhostUseCount + 1.0;
 		return ghost;
 	}
 	if (stage13_phase_is_valid(pf)) return pf;
 	if (stage13_phase_is_valid(ghost)) {
-		PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		if (ReplayDiagnosticsMode > 0.5) PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
 		return ghost;
 	}
 	if (stage13_phase_is_valid(center)) {
-		PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		if (ReplayDiagnosticsMode > 0.5) PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
 		return center;
 	}
-	PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
-	PhaseStencilMidpointFallbackCount = PhaseStencilMidpointFallbackCount + 1.0;
+	if (ReplayDiagnosticsMode > 0.5) {
+		PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		PhaseStencilMidpointFallbackCount = PhaseStencilMidpointFallbackCount + 1.0;
+	}
 	return 0.5*(PhaseField_l + PhaseField_h);
 }
 
@@ -152,6 +164,282 @@ CudaDeviceFunction real_t getPhaseStencilFallbackCount(){
 
 CudaDeviceFunction real_t getPhaseStencilMidpointFallbackCount(){
 	return PhaseStencilMidpointFallbackCount(0,0,0);
+}
+
+CudaDeviceFunction int stage16_replay_diagnostics_active(){
+	return (ReplayDiagnosticsMode > 0.5 && !(IamWall || IamSolid));
+}
+
+CudaDeviceFunction void stage16_zero_replay_diagnostics(){
+	ReplayPhaseConsumed = 0.0;
+	ReplayLapPhi = 0.0;
+	ReplayMu = 0.0;
+	ReplayGradPhiX = 0.0;
+	ReplayGradPhiY = 0.0;
+	ReplayGradPhiZ = 0.0;
+	ReplayFsurfX = 0.0;
+	ReplayFsurfY = 0.0;
+	ReplayFsurfZ = 0.0;
+	ReplayFpressureX = 0.0;
+	ReplayFpressureY = 0.0;
+	ReplayFpressureZ = 0.0;
+	ReplayFbodyX = 0.0;
+	ReplayFbodyY = 0.0;
+	ReplayFbodyZ = 0.0;
+	ReplayFmuX = 0.0;
+	ReplayFmuY = 0.0;
+	ReplayFmuZ = 0.0;
+	ReplayFtotalX = 0.0;
+	ReplayFtotalY = 0.0;
+	ReplayFtotalZ = 0.0;
+	ReplayRho = 0.0;
+	ReplayTau = 0.0;
+	ReplayPressureMoment = 0.0;
+	ReplayUPreForceX = 0.0;
+	ReplayUPreForceY = 0.0;
+	ReplayUPreForceZ = 0.0;
+	ReplayUPostForceX = 0.0;
+	ReplayUPostForceY = 0.0;
+	ReplayUPostForceZ = 0.0;
+	ReplayPhaseAdvVelocityX = 0.0;
+	ReplayPhaseAdvVelocityY = 0.0;
+	ReplayPhaseAdvVelocityZ = 0.0;
+	ReplayForceOverRhoX = 0.0;
+	ReplayForceOverRhoY = 0.0;
+	ReplayForceOverRhoZ = 0.0;
+	ReplayFmuIter1X = 0.0;
+	ReplayFmuIter1Y = 0.0;
+	ReplayFmuIter1Z = 0.0;
+	ReplayFtotalIter1X = 0.0;
+	ReplayFtotalIter1Y = 0.0;
+	ReplayFtotalIter1Z = 0.0;
+	ReplayUPostIter1X = 0.0;
+	ReplayUPostIter1Y = 0.0;
+	ReplayUPostIter1Z = 0.0;
+	ReplayNormalX = 0.0;
+	ReplayNormalY = 0.0;
+	ReplayNormalZ = 0.0;
+	ReplayStressXX = 0.0;
+	ReplayStressXY = 0.0;
+	ReplayStressXZ = 0.0;
+	ReplayStressYY = 0.0;
+	ReplayStressYZ = 0.0;
+	ReplayStressZZ = 0.0;
+	ReplayFphiSum = 0.0;
+	ReplayFphiMaxAbs = 0.0;
+	ReplayTmp1 = 0.0;
+}
+
+CudaDeviceFunction real_t stage16_replay_scalar(real_t value){
+	if (stage16_replay_diagnostics_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getReplayPhaseConsumed(){
+	return stage16_replay_scalar(ReplayPhaseConsumed(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPhaseFromH(){
+	if (ReplayDiagnosticsMode > 0.5) return ReplayPhaseFromH(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getReplayLapPhi(){
+	return stage16_replay_scalar(ReplayLapPhi(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayMu(){
+	return stage16_replay_scalar(ReplayMu(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayGradPhi(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayGradPhiX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayGradPhiY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayGradPhiZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFsurf(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFsurfX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFsurfY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFsurfZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFpressure(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFpressureX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFpressureY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFpressureZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFbody(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFbodyX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFbodyY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFbodyZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFmu(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFmuX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFmuY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFmuZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFtotal(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFtotalX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFtotalY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFtotalZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayRho(){
+	return stage16_replay_scalar(ReplayRho(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayTau(){
+	return stage16_replay_scalar(ReplayTau(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressureMoment(){
+	return stage16_replay_scalar(ReplayPressureMoment(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayUPreForce(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayUPreForceX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayUPreForceY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayUPreForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayUPostForce(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayUPostForceX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayUPostForceY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayUPostForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayPhaseAdvVelocity(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayPhaseAdvVelocityX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayPhaseAdvVelocityY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayPhaseAdvVelocityZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayForceOverRho(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayForceOverRhoX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayForceOverRhoY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayForceOverRhoZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFmuIter1(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFmuIter1X(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFmuIter1Y(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFmuIter1Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFtotalIter1(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFtotalIter1X(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFtotalIter1Y(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFtotalIter1Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayUPostIter1(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayUPostIter1X(0,0,0));
+	out.y = stage16_replay_scalar(ReplayUPostIter1Y(0,0,0));
+	out.z = stage16_replay_scalar(ReplayUPostIter1Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayNormal(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayNormalX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayNormalY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayNormalZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction void stage14_apply_momentum_force_mode(
+	real_t F_total[3],
+	real_t F_surf[3],
+	real_t F_pressure[3],
+	real_t F_body[3],
+	real_t F_mu[3])
+{
+	if (MomentumForceMode > 0.5 && MomentumForceMode < 1.5) {
+		F_total[0] -= F_mu[0];
+		F_total[1] -= F_mu[1];
+		F_total[2] -= F_mu[2];
+	} else if (MomentumForceMode > 1.5 && MomentumForceMode < 2.5) {
+		F_total[0] -= F_pressure[0];
+		F_total[1] -= F_pressure[1];
+		F_total[2] -= F_pressure[2];
+	} else if (MomentumForceMode > 2.5 && MomentumForceMode < 3.5) {
+		F_total[0] -= F_surf[0];
+		F_total[1] -= F_surf[1];
+		F_total[2] -= F_surf[2];
+	} else if (MomentumForceMode > 3.5 && MomentumForceMode < 4.5) {
+		F_total[0] = 0.0;
+		F_total[1] = 0.0;
+		F_total[2] = 0.0;
+	} else if (MomentumForceMode > 4.5 && MomentumForceMode < 5.5) {
+		F_total[0] = F_surf[0] + F_body[0];
+		F_total[1] = F_surf[1] + F_body[1];
+		F_total[2] = F_surf[2] + F_body[2];
+	}
+}
+
+CudaDeviceFunction real_t getReplayStressXX(){
+	return stage16_replay_scalar(ReplayStressXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressXY(){
+	return stage16_replay_scalar(ReplayStressXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressXZ(){
+	return stage16_replay_scalar(ReplayStressXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressYY(){
+	return stage16_replay_scalar(ReplayStressYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressYZ(){
+	return stage16_replay_scalar(ReplayStressYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressZZ(){
+	return stage16_replay_scalar(ReplayStressZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayFphiSum(){
+	return stage16_replay_scalar(ReplayFphiSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayFphiMaxAbs(){
+	return stage16_replay_scalar(ReplayFphiMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayTmp1(){
+	return stage16_replay_scalar(ReplayTmp1(0,0,0));
 }
 
 CudaDeviceFunction real_t getWallGradDeltaMag(){
@@ -622,8 +910,11 @@ CudaDeviceFunction void calcPhaseF()
 	updateBoundary();
 	// NOTE: On the wall we want to take the previous value of the phase field, because
 	// it might be needed for calculation of the gradient
+	ReplayPhaseFromH = 0.0;
 	if (!( IamWall || IamSolid )) {
-		PhaseF = <?R C(sum(h))?>;
+		real_t phase_from_h = <?R C(sum(h))?>;
+		PhaseF = phase_from_h;
+		ReplayPhaseFromH = phase_from_h;
 	} else {
 		PhaseF = PhaseF(0,0,0);
 	}
@@ -697,6 +988,10 @@ CudaDeviceFunction real_t calcMu(real_t C)
 		if (WallMuMode > 1.5) mu += mu_wall;
 	} else {
 		WallMuCandidate = 0.0;
+	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayLapPhi = lpPhi;
+		ReplayMu = mu;
 	}
 	return mu;
 }
@@ -1132,6 +1427,7 @@ CudaDeviceFunction void Run()
 {
 	IsBoundary = IsBoundary(0,0,0); // propagate it into the next iteration
 	UpdateGlobalMarkers();
+	stage16_zero_replay_diagnostics();
 
     if ((NodeType & NODE_ADDITIONALS) == NODE_Smoothing) {
 		// If desired, incorporate a smoothing stage, in this we simply let diffusion occur
@@ -1237,6 +1533,9 @@ CudaDeviceFunction void CollisionMRT()
 	PhaseF = PhaseF(0,0,0);
 	int i, j;
 	real_t C  = PhaseF;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayPhaseConsumed = C;
+	}
 	ForceIterResidual = 0.0;
 	ForceIterCount = 0.0;
 	MassCorrectionApplied = 0.0;
@@ -1277,9 +1576,22 @@ CudaDeviceFunction void CollisionMRT()
 	p = m0[0];
 
 	tau = calcTau( C );
+	if (stage16_replay_diagnostics_active()) {
+		ReplayRho = rho;
+		ReplayTau = tau;
+		ReplayPressureMoment = p;
+		ReplayUPreForceX = m0[1];
+		ReplayUPreForceY = m0[2];
+		ReplayUPreForceZ = m0[3];
+	}
 
 	// GRADIENTS AND NORMALS
 	gradPhi = calcGradPhi();
+	if (stage16_replay_diagnostics_active()) {
+		ReplayGradPhiX = gradPhi.x;
+		ReplayGradPhiY = gradPhi.y;
+		ReplayGradPhiZ = gradPhi.z;
+	}
 	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
 
 	// Stage 15B: DynamicCL shadow. Compute the candidate residual contact-line
@@ -1301,6 +1613,11 @@ CudaDeviceFunction void CollisionMRT()
 		n.y = gradPhi.y/magnPhi;
 		n.z = gradPhi.z/magnPhi;
 	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayNormalX = n.x;
+		ReplayNormalY = n.y;
+		ReplayNormalZ = n.z;
+	}
 	//magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z + 1e-2);
 	//n.x = gradPhi.x/magnPhi;
 	//n.y = gradPhi.y/magnPhi;
@@ -1310,6 +1627,17 @@ CudaDeviceFunction void CollisionMRT()
     calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
 	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
     calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+	if (stage16_replay_diagnostics_active()) {
+		ReplayFpressureX = F_pressure[0];
+		ReplayFpressureY = F_pressure[1];
+		ReplayFpressureZ = F_pressure[2];
+		ReplayFbodyX = F_body[0];
+		ReplayFbodyY = F_body[1];
+		ReplayFbodyZ = F_body[2];
+		ReplayFsurfX = F_surf[0];
+		ReplayFsurfY = F_surf[1];
+		ReplayFsurfZ = F_surf[2];
+	}
 	// Viscous force fixed-point iteration. ForceFixedTol<=0 preserves the
 	// legacy fixed-count loop controlled by force_fixed_iterator.
 	int force_iter_limit = force_fixed_iterator;
@@ -1350,6 +1678,29 @@ CudaDeviceFunction void CollisionMRT()
 			F_total[1] += fcl_y;
 			F_total[2] += fcl_z;
 		}
+		stage14_apply_momentum_force_mode(F_total, F_surf, F_pressure, F_body, F_mu);
+		if (stage16_replay_diagnostics_active()) {
+			ReplayFmuX = F_mu[0];
+			ReplayFmuY = F_mu[1];
+			ReplayFmuZ = F_mu[2];
+			ReplayFtotalX = F_total[0];
+			ReplayFtotalY = F_total[1];
+			ReplayFtotalZ = F_total[2];
+			ReplayStressXX = stress[0];
+			ReplayStressXY = stress[1];
+			ReplayStressXZ = stress[2];
+			ReplayStressYY = stress[3];
+			ReplayStressYZ = stress[4];
+			ReplayStressZZ = stress[5];
+			if (j == 1) {
+				ReplayFmuIter1X = F_mu[0];
+				ReplayFmuIter1Y = F_mu[1];
+				ReplayFmuIter1Z = F_mu[2];
+				ReplayFtotalIter1X = F_total[0];
+				ReplayFtotalIter1Y = F_total[1];
+				ReplayFtotalIter1Z = F_total[2];
+			}
+		}
 		if (j > 1) {
 			real_t dFx = F_total[0] - F_prev[0];
 			real_t dFy = F_total[1] - F_prev[1];
@@ -1364,12 +1715,48 @@ CudaDeviceFunction void CollisionMRT()
 		ForceIterCount = j;
 
 	<?R 	C( u, m0[2:4] + 0.5 * F_total * rho.inv) ?>
+		if (stage16_replay_diagnostics_active()) {
+			real_t inv_rho_diag = (rho != 0.0) ? 1.0/rho : 0.0;
+			ReplayUPostForceX = U;
+			ReplayUPostForceY = V;
+			ReplayUPostForceZ = W;
+			ReplayForceOverRhoX = F_total[0] * inv_rho_diag;
+			ReplayForceOverRhoY = F_total[1] * inv_rho_diag;
+			ReplayForceOverRhoZ = F_total[2] * inv_rho_diag;
+			if (j == 1) {
+				ReplayUPostIter1X = U;
+				ReplayUPostIter1Y = V;
+				ReplayUPostIter1Z = W;
+			}
+		}
 		if (ForceFixedTol > 0.0 && j > 1 && ForceIterResidual < ForceFixedTol) {
 			force_iter_converged = true;
 		}
 	} while (j < force_iter_limit && !force_iter_converged);
 	// PHASE FIELD POPULATION UPDATE:
 	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayTmp1 = tmp1;
+	}
+	real_t momentum_U = U;
+	real_t momentum_V = V;
+	real_t momentum_W = W;
+	real_t phase_adv_U = U;
+	real_t phase_adv_V = V;
+	real_t phase_adv_W = W;
+	if (PhaseAdvectionVelocityMode > 0.5) {
+		phase_adv_U = m0[1];
+		phase_adv_V = m0[2];
+		phase_adv_W = m0[3];
+	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayPhaseAdvVelocityX = phase_adv_U;
+		ReplayPhaseAdvVelocityY = phase_adv_V;
+		ReplayPhaseAdvVelocityZ = phase_adv_W;
+	}
+	U = phase_adv_U;
+	V = phase_adv_V;
+	W = phase_adv_W;
 	<?R
 		n = PV("n",c(".x",".y",".z"))
 		EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),u)
@@ -1383,13 +1770,28 @@ CudaDeviceFunction void CollisionMRT()
         }
 		C(Fphi, wh * PV("tmp1") * (U[1:PF_velocities,] %*% n))
     	C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)
-
+	?>
+	U = momentum_U;
+	V = momentum_V;
+	W = momentum_W;
+	<?R
 		mF = PV(rep(0,27))
 		mF[2:4] = F_total * rho.inv
 
 		C(m, m0 - (m0 - EQ$Req + mF*0.5)[selR] * Omega + mF)
 		C(g, invM %*% m)
 	?>
+	if (stage16_replay_diagnostics_active()) {
+		real_t fphi_sum_diag = 0.0;
+		real_t fphi_max_diag = 0.0;
+		for (i=0; i<hPops; i++) {
+			real_t abs_fphi = fabs(F_phi[i]);
+			fphi_sum_diag += F_phi[i];
+			if (abs_fphi > fphi_max_diag) fphi_max_diag = abs_fphi;
+		}
+		ReplayFphiSum = fphi_sum_diag;
+		ReplayFphiMaxAbs = fphi_max_diag;
+	}
 
     updateTrackers( C );
 }
@@ -1573,6 +1975,9 @@ CudaDeviceFunction void CollisionBGK()
     PhaseF = PhaseF(0,0,0);
 	int i, j;
 	real_t C  = PhaseF; 
+	if (stage16_replay_diagnostics_active()) {
+		ReplayPhaseConsumed = C;
+	}
 	ForceIterResidual = 0.0;
 	ForceIterCount = 0.0;
 	MassCorrectionApplied = 0.0;
@@ -1598,6 +2003,11 @@ CudaDeviceFunction void CollisionBGK()
 
 	// GRADIENTS AND NORMALS
 	gradPhi = calcGradPhi();
+	if (stage16_replay_diagnostics_active()) {
+		ReplayGradPhiX = gradPhi.x;
+		ReplayGradPhiY = gradPhi.y;
+		ReplayGradPhiZ = gradPhi.z;
+	}
 	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z + 1e-32);
 	nx = gradPhi.x/magnPhi;
 	ny = gradPhi.y/magnPhi;
@@ -1616,6 +2026,17 @@ CudaDeviceFunction void CollisionBGK()
     calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
 	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
     calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+	if (stage16_replay_diagnostics_active()) {
+		ReplayFpressureX = F_pressure[0];
+		ReplayFpressureY = F_pressure[1];
+		ReplayFpressureZ = F_pressure[2];
+		ReplayFbodyX = F_body[0];
+		ReplayFbodyY = F_body[1];
+		ReplayFbodyZ = F_body[2];
+		ReplayFsurfX = F_surf[0];
+		ReplayFsurfY = F_surf[1];
+		ReplayFsurfZ = F_surf[2];
+	}
     // VISCOUS FORCE:
     for (j=0;j<2;j++) {
 		ForceIterCount = j + 1;
@@ -1657,6 +2078,15 @@ CudaDeviceFunction void CollisionBGK()
             F_total[0] += fcl_x;
             F_total[1] += fcl_y;
             F_total[2] += fcl_z;
+        }
+        stage14_apply_momentum_force_mode(F_total, F_surf, F_pressure, F_body, F_mu);
+        if (stage16_replay_diagnostics_active()) {
+            ReplayFmuX = F_mu[0];
+            ReplayFmuY = F_mu[1];
+            ReplayFmuZ = F_mu[2];
+            ReplayFtotalX = F_total[0];
+            ReplayFtotalY = F_total[1];
+            ReplayFtotalZ = F_total[2];
         }
 
     <?R C( u, g %*% U) ?>

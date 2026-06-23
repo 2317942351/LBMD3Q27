@@ -1,0 +1,30 @@
+ROOT=/home/yuan/src/TCLB_lbm2026_compile_lane
+TARGET=d3q27_pf_velocity_q27_geometric
+SOURCE_RC=0
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Global.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Lattice.cu
+  RT         CLB/d3q27_pf_velocity_q27_geometric/cuda.cu
+  RT         CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.inc.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/LatticeAccess.inc.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Dynamics.c (model)
+  SP-CONST   CLB/d3q27_pf_velocity_q27_geometric/Dynamics_sp.c
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Solver.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Geometry.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/def.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Global.h
+  RT         CLB/d3q27_pf_velocity_q27_geometric/LatticeContainer.h
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Lattice.h
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Dynamics.h
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Consts.h
+fatal: 不是 git 仓库（或者任何父目录）：.git
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Solver.h
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Lists.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Handlers/acOptimize.cpp
+  RT         CLB/d3q27_pf_velocity_q27_geometric/SUMMARY
+  RT         CLB/d3q27_pf_velocity_q27_geometric/Catalyst.cpp
+make: 放弃循环依赖 CLB/d3q27_pf_velocity_q27_geometric/makefile <- CLB/d3q27_pf_velocity_q27_geometric/makefile 。
+  AUTO-DEP   CLB/d3q27_pf_velocity_q27_geometric/dep.mk
+  RT         CLB/d3q27_pf_velocity_q27_geometric//dictionary.h
+  RT         CLB/d3q27_pf_velocity_q27_geometric/makefile
+  DONE       d3q27_pf_velocity_q27_geometric/source
+COMPILE_RC=0

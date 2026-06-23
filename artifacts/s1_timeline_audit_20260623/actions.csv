@@ -1,0 +1,11 @@
+action,stages,line,raw
+TempToSteadyState,"[""CopyDistributions"", ""RK_1"", ""RK_2"", ""RK_3"", ""RK_4"", ""NonLocalTemp""]",340,"AddAction(""TempToSteadyState"", c(""CopyDistributions"",""RK_1"", ""RK_2"", ""RK_3"", ""RK_4"",""NonLocalTemp""))"
+Iteration,"[""BaseIter"", ""calcPhase"", ""calcWall"", ""RK_1"", ""RK_2"", ""RK_3"", ""RK_4"", ""NonLocalTemp""]",341,"AddAction(""Iteration"", c(""BaseIter"", ""calcPhase"", ""calcWall"",""RK_1"", ""RK_2"", ""RK_3"", ""RK_4"",""NonLocalTemp""))"
+IterationConstantTemp,"[""BaseIter"", ""calcPhase"", ""calcWall"", ""CopyThermal""]",342,"AddAction(""IterationConstantTemp"", c(""BaseIter"", ""calcPhase"", ""calcWall"",""CopyThermal""))"
+Init,"[""PhaseInit"", ""WallInit"", ""calcWall"", ""BaseInit""]",343,"AddAction(""Init"" , c(""PhaseInit"",""WallInit"" , ""calcWall"",""BaseInit""))"
+Iteration,"[""BaseIter"", ""calcPhase"", ""calcGrad"", ""calcWall_CA"", ""calcWallPhase_correction""]",346,"AddAction(""Iteration"", c(""BaseIter"", ""calcPhase"", calcGrad, ""calcWall_CA"", ""calcWallPhase_correction""))"
+Init,"[""PhaseInit"", ""WallInit_CA"", ""calcPhaseGrad_init"", ""calcWall_CA"", ""calcWallPhase_correction"", ""BaseInit""]",347,"AddAction(""Init"" , c(""PhaseInit"",""WallInit_CA"" , ""calcPhaseGrad_init"" , ""calcWall_CA"", ""calcWallPhase_correction"", ""BaseInit""))"
+InitFields,"[""InitFromFieldsStage"", ""WallInit_CA"", ""calcPhaseGrad_init"", ""calcWall_CA"", ""calcWallPhase_correction"", ""BaseInit""]",348,"AddAction(""InitFields"" , c(""InitFromFieldsStage"",""WallInit_CA"" , ""calcPhaseGrad_init"", ""calcWall_CA"", ""calcWallPhase_correction"", ""BaseInit""))"
+Iteration,"[""BaseIter"", ""calcPhase"", ""calcWall"", ""calcWallPhase_correction""]",350,"AddAction(""Iteration"", c(""BaseIter"", ""calcPhase"", ""calcWall"", ""calcWallPhase_correction""))"
+Init,"[""PhaseInit"", ""WallInit"", ""calcWall"", ""calcWallPhase_correction"", ""BaseInit""]",351,"AddAction(""Init"" , c(""PhaseInit"",""WallInit"" , ""calcWall"",""calcWallPhase_correction"", ""BaseInit""))"
+InitFields,"[""InitFromFieldsStage"", ""WallInit"", ""calcWall"", ""calcWallPhase_correction"", ""BaseInit""]",352,"AddAction(""InitFields"", c(""InitFromFieldsStage"",""WallInit"" , ""calcWall"", ""calcWallPhase_correction"", ""BaseInit""))"

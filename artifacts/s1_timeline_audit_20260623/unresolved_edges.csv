@@ -1,0 +1,15 @@
+severity,quantity,consumer_stage,reason
+CHECK,PhaseF,BaseIter,read comes from action-boundary state; S2 must verify time level against C replay
+CHECK,WallGhost,BaseIter,read comes from action-boundary state; S2 must verify time level against C replay
+CHECK,WallGhost,calcPhaseGrad,read comes from action-boundary state; S2 must verify time level against C replay
+CHECK,WallGhost,calcPhaseGrad_init,read comes from action-boundary state; S2 must verify time level against C replay
+COVERED,gradPhi,CollisionMRT,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,mu,CollisionMRT,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,F_surf,CollisionMRT,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,F_pressure,CollisionMRT,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,F_total,CollisionMRT,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,gradPhi,CollisionBGK,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,mu,CollisionBGK,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,F_surf,CollisionBGK,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,F_pressure,CollisionBGK,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level
+COVERED,F_total,CollisionBGK,local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level

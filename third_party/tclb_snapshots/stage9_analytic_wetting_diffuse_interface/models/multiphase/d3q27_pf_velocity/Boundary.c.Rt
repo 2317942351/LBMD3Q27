@@ -587,7 +587,17 @@ CudaDeviceFunction real_t stage13_compact_solution_wall_ghost(
 }
 
 CudaDeviceFunction int stage13_boundary_phase_is_valid(real_t pf) {
-	return (pf > -100.0 && pf < 100.0);
+	if (!(pf == pf)) return 0;
+	real_t lo = PhaseField_l;
+	real_t hi = PhaseField_h;
+	if (lo > hi) {
+		real_t tmp = lo;
+		lo = hi;
+		hi = tmp;
+	}
+	real_t eps = PhaseValidityEps;
+	if (eps < 0.0) eps = 0.0;
+	return (pf >= lo - eps && pf <= hi + eps);
 }
 
 CudaDeviceFunction int stage13_compact_vertex_is_real_fluid(int ox, int oy, int oz, real_t pf)
@@ -1698,7 +1708,7 @@ CudaDeviceFunction void calcWallPhase(){
 				real_t h_a = d_to_surface_a + 0.5;
 				real_t pf_f = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
 				real_t pf_ff = PhaseF_dyn(2*probe_dx, 2*probe_dy, 2*probe_dz);
-				bool both_probes_fluid = (pf_f > -100.0) && (pf_ff > -100.0);
+				bool both_probes_fluid = stage13_boundary_phase_is_valid(pf_f) && stage13_boundary_phase_is_valid(pf_ff);
 				bool compact_write = stage13_compact_write_requested() && (AnalyticSolidType < 1.5);
 				if (h_a > 0.001 && (compact_write || both_probes_fluid)) {
 					AnalyticFlag = 1.0;
@@ -2204,12 +2214,12 @@ CudaDeviceFunction void Init_wallNorm(){
 				// populated by this very stage and neighbours read stale/zero
 				// values. We gate on PhaseF_dyn instead: solid nodes carry
 				// the -999 sentinel (set by PhaseInit), fluid nodes carry a
-				// finite phase value. This is reliable during Init.
+				// physical phase value. This is reliable during Init.
 				int probe_dx = stage9_probe_component(n_w.x);
 				int probe_dy = stage9_probe_component(n_w.y);
 				int probe_dz = stage9_probe_component(n_w.z);
 				real_t probe_pf = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
-				bool probe_is_fluid_node = (probe_pf > -100.0);
+				bool probe_is_fluid_node = stage13_boundary_phase_is_valid(probe_pf);
 				if (probe_is_fluid_node) {
 					// This wall node is genuinely on the analytic surface and
 					// the fluid-side probe is a real fluid node. Keep nw_* as

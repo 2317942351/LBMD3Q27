@@ -1,0 +1,8468 @@
+{
+  "model_dir": "third_party\\tclb_snapshots\\stage9_analytic_wetting_diffuse_interface\\models\\multiphase\\d3q27_pf_velocity",
+  "densities": [
+    {
+      "name": "g0",
+      "dx": 0,
+      "dy": 0,
+      "dz": 0,
+      "group": "g",
+      "streams": false,
+      "line": 1
+    },
+    {
+      "name": "g1",
+      "dx": 1,
+      "dy": 0,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 2
+    },
+    {
+      "name": "g2",
+      "dx": -1,
+      "dy": 0,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 3
+    },
+    {
+      "name": "g3",
+      "dx": 0,
+      "dy": 1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 4
+    },
+    {
+      "name": "g4",
+      "dx": 0,
+      "dy": -1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 5
+    },
+    {
+      "name": "g5",
+      "dx": 0,
+      "dy": 0,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 6
+    },
+    {
+      "name": "g6",
+      "dx": 0,
+      "dy": 0,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 7
+    },
+    {
+      "name": "g7",
+      "dx": 1,
+      "dy": 1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 8
+    },
+    {
+      "name": "g8",
+      "dx": -1,
+      "dy": 1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 9
+    },
+    {
+      "name": "g9",
+      "dx": 1,
+      "dy": -1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 10
+    },
+    {
+      "name": "g10",
+      "dx": -1,
+      "dy": -1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 11
+    },
+    {
+      "name": "g11",
+      "dx": 1,
+      "dy": 1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 12
+    },
+    {
+      "name": "g12",
+      "dx": -1,
+      "dy": 1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 13
+    },
+    {
+      "name": "g13",
+      "dx": 1,
+      "dy": -1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 14
+    },
+    {
+      "name": "g14",
+      "dx": -1,
+      "dy": -1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 15
+    },
+    {
+      "name": "g15",
+      "dx": 1,
+      "dy": 1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 16
+    },
+    {
+      "name": "g16",
+      "dx": -1,
+      "dy": 1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 17
+    },
+    {
+      "name": "g17",
+      "dx": 1,
+      "dy": -1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 18
+    },
+    {
+      "name": "g18",
+      "dx": -1,
+      "dy": -1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 19
+    },
+    {
+      "name": "g19",
+      "dx": 1,
+      "dy": 0,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 20
+    },
+    {
+      "name": "g20",
+      "dx": -1,
+      "dy": 0,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 21
+    },
+    {
+      "name": "g21",
+      "dx": 1,
+      "dy": 0,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 22
+    },
+    {
+      "name": "g22",
+      "dx": -1,
+      "dy": 0,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 23
+    },
+    {
+      "name": "g23",
+      "dx": 0,
+      "dy": 1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 24
+    },
+    {
+      "name": "g24",
+      "dx": 0,
+      "dy": -1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 25
+    },
+    {
+      "name": "g25",
+      "dx": 0,
+      "dy": 1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 26
+    },
+    {
+      "name": "g26",
+      "dx": 0,
+      "dy": -1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 27
+    },
+    {
+      "name": "h0",
+      "dx": 0,
+      "dy": 0,
+      "dz": 0,
+      "group": "h",
+      "streams": false,
+      "line": 31
+    },
+    {
+      "name": "h1",
+      "dx": 1,
+      "dy": 0,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 32
+    },
+    {
+      "name": "h2",
+      "dx": -1,
+      "dy": 0,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 33
+    },
+    {
+      "name": "h3",
+      "dx": 0,
+      "dy": 1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 34
+    },
+    {
+      "name": "h4",
+      "dx": 0,
+      "dy": -1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 35
+    },
+    {
+      "name": "h5",
+      "dx": 0,
+      "dy": 0,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 36
+    },
+    {
+      "name": "h6",
+      "dx": 0,
+      "dy": 0,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 37
+    },
+    {
+      "name": "h7",
+      "dx": 1,
+      "dy": 1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 38
+    },
+    {
+      "name": "h8",
+      "dx": -1,
+      "dy": 1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 39
+    },
+    {
+      "name": "h9",
+      "dx": 1,
+      "dy": -1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 40
+    },
+    {
+      "name": "h10",
+      "dx": -1,
+      "dy": -1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 41
+    },
+    {
+      "name": "h11",
+      "dx": 1,
+      "dy": 1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 42
+    },
+    {
+      "name": "h12",
+      "dx": -1,
+      "dy": 1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 43
+    },
+    {
+      "name": "h13",
+      "dx": 1,
+      "dy": -1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 44
+    },
+    {
+      "name": "h14",
+      "dx": -1,
+      "dy": -1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 45
+    },
+    {
+      "name": "h15",
+      "dx": 1,
+      "dy": 1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 48
+    },
+    {
+      "name": "h16",
+      "dx": -1,
+      "dy": 1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 49
+    },
+    {
+      "name": "h17",
+      "dx": 1,
+      "dy": -1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 50
+    },
+    {
+      "name": "h18",
+      "dx": -1,
+      "dy": -1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 51
+    },
+    {
+      "name": "h19",
+      "dx": 1,
+      "dy": 0,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 52
+    },
+    {
+      "name": "h20",
+      "dx": -1,
+      "dy": 0,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 53
+    },
+    {
+      "name": "h21",
+      "dx": 1,
+      "dy": 0,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 54
+    },
+    {
+      "name": "h22",
+      "dx": -1,
+      "dy": 0,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 55
+    },
+    {
+      "name": "h23",
+      "dx": 0,
+      "dy": 1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 56
+    },
+    {
+      "name": "h24",
+      "dx": 0,
+      "dy": -1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 57
+    },
+    {
+      "name": "h25",
+      "dx": 0,
+      "dy": 1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 58
+    },
+    {
+      "name": "h26",
+      "dx": 0,
+      "dy": -1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 59
+    }
+  ],
+  "fields": [
+    {
+      "name": "IsBoundary",
+      "group": "solid_boundary",
+      "stencil3d": 2,
+      "line": 75
+    },
+    {
+      "name": "IsBoundary",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 77
+    },
+    {
+      "name": "WallGhost",
+      "group": "solid_boundary",
+      "stencil3d": 2,
+      "line": 86
+    },
+    {
+      "name": "WallH",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 87
+    },
+    {
+      "name": "AnalyticFlag",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 88
+    },
+    {
+      "name": "WallGhostRaw",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 89
+    },
+    {
+      "name": "WallGhostClamped",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 90
+    },
+    {
+      "name": "WallGhostClampHit",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 91
+    },
+    {
+      "name": "WettingPathId",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 92
+    },
+    {
+      "name": "LocalRadAngle",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 93
+    },
+    {
+      "name": "WallCSQMode",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 94
+    },
+    {
+      "name": "WallCSQNormalMode",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 95
+    },
+    {
+      "name": "WallCSQValid",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 96
+    },
+    {
+      "name": "WallCSQThetaDeg",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 97
+    },
+    {
+      "name": "WallCSQNormalX",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 98
+    },
+    {
+      "name": "WallCSQNormalY",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 99
+    },
+    {
+      "name": "WallCSQNormalZ",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 100
+    },
+    {
+      "name": "WallCSQDs",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 101
+    },
+    {
+      "name": "WallCSQDf",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 102
+    },
+    {
+      "name": "WallCSQQf",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 103
+    },
+    {
+      "name": "WallCSQQsRaw",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 104
+    },
+    {
+      "name": "WallCSQQsBounded",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 105
+    },
+    {
+      "name": "WallCSQQw",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 106
+    },
+    {
+      "name": "WallCSQResidual",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 107
+    },
+    {
+      "name": "WallCSQAppliedResidual",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 108
+    },
+    {
+      "name": "WallCSQDiscriminant",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 109
+    },
+    {
+      "name": "WallCSQRootChoice",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 110
+    },
+    {
+      "name": "WallCSQStencilCase",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 111
+    },
+    {
+      "name": "WallCSQStencilL",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 112
+    },
+    {
+      "name": "WallCSQFallbackReason",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 113
+    },
+    {
+      "name": "WallCSQBoundedDelta",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 114
+    },
+    {
+      "name": "WallCSQAppliedWeight",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 115
+    },
+    {
+      "name": "WallCSQWriteAllowedFlag",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 116
+    },
+    {
+      "name": "WallCSQCandidateCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 117
+    },
+    {
+      "name": "WallCSQFluidVertexCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 118
+    },
+    {
+      "name": "WallCSQTriangleInside",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 119
+    },
+    {
+      "name": "WallCSQPlaneId",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 120
+    },
+    {
+      "name": "WallCSQBaryMin",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 121
+    },
+    {
+      "name": "WallCSQBaryMax",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 122
+    },
+    {
+      "name": "WallCSQMethodComplete",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 123
+    },
+    {
+      "name": "WallCSQVertexMaskBits",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 124
+    },
+    {
+      "name": "WallCSQVertexRealFluidBits",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 125
+    },
+    {
+      "name": "WallCSQVertexPhaseCleanBits",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 126
+    },
+    {
+      "name": "WallCSQVertexQMin",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 127
+    },
+    {
+      "name": "WallCSQVertexQMax",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 128
+    },
+    {
+      "name": "WallCSQRejectedSolidVertexCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 129
+    },
+    {
+      "name": "WallCSQRejectedSentinelCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 130
+    },
+    {
+      "name": "WallCSQStrictWriteReady",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 131
+    },
+    {
+      "name": "WallGradDeltaMag",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 132
+    },
+    {
+      "name": "WallGradThetaApp",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 133
+    },
+    {
+      "name": "WallMuCandidate",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 134
+    },
+    {
+      "name": "DynamicCLActive",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 137
+    },
+    {
+      "name": "DynamicCLIndicator",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 138
+    },
+    {
+      "name": "DynamicCLCosApp",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 139
+    },
+    {
+      "name": "DynamicCLThetaApp",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 140
+    },
+    {
+      "name": "DynamicCLCosEq",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 141
+    },
+    {
+      "name": "DynamicCLCosResidual",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 142
+    },
+    {
+      "name": "DynamicCLForceCandidateX",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 143
+    },
+    {
+      "name": "DynamicCLForceCandidateY",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 144
+    },
+    {
+      "name": "DynamicCLForceCandidateZ",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 145
+    },
+    {
+      "name": "DynamicCLForceCandidateMag",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 146
+    },
+    {
+      "name": "DynamicCLTangentialX",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 147
+    },
+    {
+      "name": "DynamicCLTangentialY",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 148
+    },
+    {
+      "name": "DynamicCLTangentialZ",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 149
+    },
+    {
+      "name": "DynamicCLWallNormalX",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 150
+    },
+    {
+      "name": "DynamicCLWallNormalY",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 151
+    },
+    {
+      "name": "DynamicCLWallNormalZ",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 152
+    },
+    {
+      "name": "DynamicCLRejectedReason",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 153
+    },
+    {
+      "name": "DynamicCLThetaEq",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 159
+    },
+    {
+      "name": "DynamicCLWallContextFound",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 160
+    },
+    {
+      "name": "DynamicCLBlockedReason",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 161
+    },
+    {
+      "name": "DynamicCLWallDx",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 162
+    },
+    {
+      "name": "DynamicCLWallDy",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 163
+    },
+    {
+      "name": "DynamicCLWallDz",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 164
+    },
+    {
+      "name": "ForceIterResidual",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 191
+    },
+    {
+      "name": "ForceIterCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 192
+    },
+    {
+      "name": "MassCorrectionApplied",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 193
+    },
+    {
+      "name": "PhaseStencilGhostUseCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 194
+    },
+    {
+      "name": "PhaseStencilFallbackCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 195
+    },
+    {
+      "name": "PhaseStencilMidpointFallbackCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 196
+    },
+    {
+      "name": "ReplayPhaseConsumed",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 197
+    },
+    {
+      "name": "ReplayPhaseFromH",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 198
+    },
+    {
+      "name": "ReplayLapPhi",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 199
+    },
+    {
+      "name": "ReplayMu",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 200
+    },
+    {
+      "name": "ReplayGradPhiX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 201
+    },
+    {
+      "name": "ReplayGradPhiY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 202
+    },
+    {
+      "name": "ReplayGradPhiZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 203
+    },
+    {
+      "name": "ReplayFsurfX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 204
+    },
+    {
+      "name": "ReplayFsurfY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 205
+    },
+    {
+      "name": "ReplayFsurfZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 206
+    },
+    {
+      "name": "ReplayFpressureX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 207
+    },
+    {
+      "name": "ReplayFpressureY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 208
+    },
+    {
+      "name": "ReplayFpressureZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 209
+    },
+    {
+      "name": "ReplayFbodyX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 210
+    },
+    {
+      "name": "ReplayFbodyY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 211
+    },
+    {
+      "name": "ReplayFbodyZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 212
+    },
+    {
+      "name": "ReplayFmuX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 213
+    },
+    {
+      "name": "ReplayFmuY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 214
+    },
+    {
+      "name": "ReplayFmuZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 215
+    },
+    {
+      "name": "ReplayFtotalX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 216
+    },
+    {
+      "name": "ReplayFtotalY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 217
+    },
+    {
+      "name": "ReplayFtotalZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 218
+    },
+    {
+      "name": "ReplayRho",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 219
+    },
+    {
+      "name": "ReplayTau",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 220
+    },
+    {
+      "name": "ReplayPressureMoment",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 221
+    },
+    {
+      "name": "ReplayUPreForceX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 222
+    },
+    {
+      "name": "ReplayUPreForceY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 223
+    },
+    {
+      "name": "ReplayUPreForceZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 224
+    },
+    {
+      "name": "ReplayUPostForceX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 225
+    },
+    {
+      "name": "ReplayUPostForceY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 226
+    },
+    {
+      "name": "ReplayUPostForceZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 227
+    },
+    {
+      "name": "ReplayPhaseAdvVelocityX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 228
+    },
+    {
+      "name": "ReplayPhaseAdvVelocityY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 229
+    },
+    {
+      "name": "ReplayPhaseAdvVelocityZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 230
+    },
+    {
+      "name": "ReplayForceOverRhoX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 231
+    },
+    {
+      "name": "ReplayForceOverRhoY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 232
+    },
+    {
+      "name": "ReplayForceOverRhoZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 233
+    },
+    {
+      "name": "ReplayFmuIter1X",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 234
+    },
+    {
+      "name": "ReplayFmuIter1Y",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 235
+    },
+    {
+      "name": "ReplayFmuIter1Z",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 236
+    },
+    {
+      "name": "ReplayFtotalIter1X",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 237
+    },
+    {
+      "name": "ReplayFtotalIter1Y",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 238
+    },
+    {
+      "name": "ReplayFtotalIter1Z",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 239
+    },
+    {
+      "name": "ReplayUPostIter1X",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 240
+    },
+    {
+      "name": "ReplayUPostIter1Y",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 241
+    },
+    {
+      "name": "ReplayUPostIter1Z",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 242
+    },
+    {
+      "name": "ReplayNormalX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 243
+    },
+    {
+      "name": "ReplayNormalY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 244
+    },
+    {
+      "name": "ReplayNormalZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 245
+    },
+    {
+      "name": "ReplayStressXX",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 246
+    },
+    {
+      "name": "ReplayStressXY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 247
+    },
+    {
+      "name": "ReplayStressXZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 248
+    },
+    {
+      "name": "ReplayStressYY",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 249
+    },
+    {
+      "name": "ReplayStressYZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 250
+    },
+    {
+      "name": "ReplayStressZZ",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 251
+    },
+    {
+      "name": "ReplayFphiSum",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 252
+    },
+    {
+      "name": "ReplayFphiMaxAbs",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 253
+    },
+    {
+      "name": "ReplayTmp1",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 254
+    },
+    {
+      "name": "U",
+      "group": "",
+      "stencil3d": null,
+      "line": 268
+    },
+    {
+      "name": "U",
+      "group": "",
+      "stencil3d": null,
+      "line": 269
+    },
+    {
+      "name": "gradPhiVal_x",
+      "group": "gradPhi",
+      "stencil3d": 2,
+      "line": 281
+    },
+    {
+      "name": "gradPhiVal_y",
+      "group": "gradPhi",
+      "stencil3d": 2,
+      "line": 282
+    },
+    {
+      "name": "gradPhiVal_z",
+      "group": "gradPhi",
+      "stencil3d": 2,
+      "line": 283
+    },
+    {
+      "name": "gradPhi_PhaseF",
+      "group": "gradPhi",
+      "stencil3d": 1,
+      "line": 288
+    },
+    {
+      "name": "PhaseF",
+      "group": "PF",
+      "stencil3d": 2,
+      "line": 290
+    },
+    {
+      "name": "PhaseF",
+      "group": "PF",
+      "stencil3d": 1,
+      "line": 292
+    }
+  ],
+  "settings": [
+    {
+      "name": "Density_h",
+      "line": 484,
+      "rest": ", comment='High density'"
+    },
+    {
+      "name": "Density_l",
+      "line": 485,
+      "rest": ", comment='Low  density'"
+    },
+    {
+      "name": "PhaseField_h",
+      "line": 486,
+      "rest": ", default=1, comment='PhaseField in Liquid'"
+    },
+    {
+      "name": "PhaseField_l",
+      "line": 487,
+      "rest": ", default=0, comment='PhaseField gas'"
+    },
+    {
+      "name": "PhaseField",
+      "line": 488,
+      "rest": ", \t   comment='Initial PhaseField distribution', zonal=T"
+    },
+    {
+      "name": "IntWidth",
+      "line": 489,
+      "rest": ", default=4,    comment='Anti-diffusivity coeff'"
+    },
+    {
+      "name": "omega_phi",
+      "line": 490,
+      "rest": ", comment='one over relaxation time (phase field"
+    },
+    {
+      "name": "M",
+      "line": 491,
+      "rest": ", omega_phi='1.0/(3*M+0.5"
+    },
+    {
+      "name": "sigma",
+      "line": 492,
+      "rest": ", comment='surface tension'"
+    },
+    {
+      "name": "force_fixed_iterator",
+      "line": 493,
+      "rest": ", default=2, comment='to resolve implicit relation of viscous force'"
+    },
+    {
+      "name": "ForceFixedTol",
+      "line": 494,
+      "rest": ", default=0.0, comment='Stage13 force fixed-point residual tolerance; <=0 preserves fixed-count iteration'"
+    },
+    {
+      "name": "ForceFixedMaxIter",
+      "line": 495,
+      "rest": ", default=2, comment='Stage13 force fixed-point maximum iterations used when ForceFixedTol>0'"
+    },
+    {
+      "name": "ReplayDiagnosticsMode",
+      "line": 496,
+      "rest": ", default=0, comment='S1/S2 output-only replay diagnostics: 0 zeroed, 1 write collision intermediate fields'"
+    },
+    {
+      "name": "PhaseValidityEps",
+      "line": 497,
+      "rest": ", default=1e-3, comment='Stage14/S2: tolerance for accepting PhaseF/WallGhost as physical stencil input'"
+    },
+    {
+      "name": "PhaseAdvectionVelocityMode",
+      "line": 498,
+      "rest": ", default=0, comment='Stage14 diagnostic: 0 legacy h-equilibrium uses post-force velocity, 1 MRT h-equilibrium uses pre-force m0 velocity'"
+    },
+    {
+      "name": "MomentumForceMode",
+      "line": 499,
+      "rest": ", default=0, comment='Stage14 diagnostic: 0 legacy, 1 omit F_mu, 2 omit F_pressure, 3 omit F_surf, 4 no momentum force, 5 surface-only momentum force'"
+    },
+    {
+      "name": "Washburn_start",
+      "line": 500,
+      "rest": ", default=\"0\", comment='Start of washburn gas phase'"
+    },
+    {
+      "name": "Washburn_end",
+      "line": 501,
+      "rest": ", default=\"0\", comment='End of washburn gas phase'"
+    },
+    {
+      "name": "radAngle",
+      "line": 502,
+      "rest": ", default='1.570796', comment='Contact angle in radians, can use units -> 90d where d=2pi/360', zonal=T"
+    },
+    {
+      "name": "minGradient",
+      "line": 503,
+      "rest": ", default='1e-8', comment='if the phase gradient is less than this, set phase normals to zero'"
+    },
+    {
+      "name": "AnalyticWetting",
+      "line": 510,
+      "rest": ", default=0, comment='Stage9: 1 enables analytic-geometry wetting BC on analytic zones'"
+    },
+    {
+      "name": "AnalyticSolidType",
+      "line": 511,
+      "rest": ", default=0, comment='Stage9: 0 off, 1 plane, 2 infinite cylinder, 3 sphere'"
+    },
+    {
+      "name": "AnalyticSolidCenterX",
+      "line": 512,
+      "rest": ", default=0.0, comment='Stage9: solid center x (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidCenterY",
+      "line": 513,
+      "rest": ", default=0.0, comment='Stage9: solid center y (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidCenterZ",
+      "line": 514,
+      "rest": ", default=0.0, comment='Stage9: solid center z (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidRadius",
+      "line": 515,
+      "rest": ", default=0.0, comment='Stage9: solid radius (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidAxis",
+      "line": 516,
+      "rest": ", default=2, comment='Stage9: plane normal / cylinder axis: 0=x, 1=y, 2=z'"
+    },
+    {
+      "name": "AnalyticSolidPlaneOffset",
+      "line": 517,
+      "rest": ", default=0.0, comment='Stage9: plane offset along axis (plane only"
+    },
+    {
+      "name": "WettingBCMode",
+      "line": 518,
+      "rest": ", default=0, comment='Stage13 analytic wetting BC mode: 0 legacy Briant/Jacqmin, 1 geometric tangent/curvature diagnostic'"
+    },
+    {
+      "name": "WallCompactStencilMode",
+      "line": 519,
+      "rest": ", default=0, comment='Stage13 compact-stencil wetting mode: 0 off, 1 shadow only, 2 write after gate'"
+    },
+    {
+      "name": "WallCompactStencilNormalMode",
+      "line": 520,
+      "rest": ", default=1, comment='Stage13 compact-stencil normal mode: only 1 analytic signed-distance normal is implemented; other modes reject compact writes'"
+    },
+    {
+      "name": "WallCompactStencilMaxL",
+      "line": 521,
+      "rest": ", default=3, comment='Stage13 compact-stencil seven-plane local search radius for shadow diagnostics'"
+    },
+    {
+      "name": "WallCompactStencilThetaEps",
+      "line": 522,
+      "rest": ", default=1e-6, comment='Stage13 compact-stencil neutral-angle epsilon in radians'"
+    },
+    {
+      "name": "WallCompactStencilBoundEps",
+      "line": 523,
+      "rest": ", default=0.0, comment='Stage13 compact-stencil q bound tolerance; strict write keeps q_s inside physical [0,1]'"
+    },
+    {
+      "name": "WallCompactStencilMaxBoundedDelta",
+      "line": 524,
+      "rest": ", default=1e-8, comment='Stage13 compact-stencil write gate: max allowed |q_s_bounded-q_s_raw|'"
+    },
+    {
+      "name": "WallCompactStencilAppliedResidualTol",
+      "line": 525,
+      "rest": ", default=1e-8, comment='Stage13 compact-stencil write gate: max residual after applying bounded q_s'"
+    },
+    {
+      "name": "WallCompactStencilWriteAllowedFlag",
+      "line": 526,
+      "rest": ", default=0, comment='Stage13 hard gate: compact-stencil writes are blocked unless explicitly enabled'"
+    },
+    {
+      "name": "PhaseEquationMode",
+      "line": 527,
+      "rest": ", default=0, comment='Stage13 reserved: 0 legacy phase equation; mass correction inactive until Stage E'"
+    },
+    {
+      "name": "WallGradMode",
+      "line": 529,
+      "rest": ", default=0, comment='Layer1 Wang corrected gradient: 0 off, 1 shadow, 2 write'"
+    },
+    {
+      "name": "WallGradContactSign",
+      "line": 530,
+      "rest": ", default=1.0, comment='Layer1: contact angle sign +1 or -1'"
+    },
+    {
+      "name": "WallGradCapFactor",
+      "line": 531,
+      "rest": ", default=2.0, comment='Layer1: corrected gradient magnitude cap factor'"
+    },
+    {
+      "name": "WallGradContactLineEps",
+      "line": 532,
+      "rest": ", default=0.02, comment='Layer1: skip nodes where q<eps or q>1-eps'"
+    },
+    {
+      "name": "WallMuMode",
+      "line": 533,
+      "rest": ", default=0, comment='Layer2 Ju wall-mu source: 0 off, 1 shadow, 2 write'"
+    },
+    {
+      "name": "WallMuScale",
+      "line": 534,
+      "rest": ", default=1.0, comment='Layer2: mu_wall scaling factor'"
+    },
+    {
+      "name": "WallMuContactLineEps",
+      "line": 535,
+      "rest": ", default=0.02, comment='Layer2: skip nodes where q<eps or q>1-eps'"
+    },
+    {
+      "name": "DynamicCLMode",
+      "line": 541,
+      "rest": ", default=0, comment='Layer3 DynamicCL: 0 off, 1 shadow diagnostics, 2 add residual CL force (reserved 15C"
+    },
+    {
+      "name": "DynamicCLCoeff",
+      "line": 542,
+      "rest": ", default=0.0, comment='Layer3: residual contact-line force coefficient'"
+    },
+    {
+      "name": "DynamicCLForceCap",
+      "line": 543,
+      "rest": ", default=0.02, comment='Layer3: force cap in units of sigma/IntWidth'"
+    },
+    {
+      "name": "DynamicCLEpsQ",
+      "line": 544,
+      "rest": ", default=0.05, comment='Layer3: contact-line band cutoff eps<q<1-eps'"
+    },
+    {
+      "name": "DynamicCLGradMin",
+      "line": 545,
+      "rest": ", default=1e-10, comment='Layer3: minimum |gradPhi| for theta_app'"
+    },
+    {
+      "name": "DynamicCLCosTol",
+      "line": 546,
+      "rest": ", default=1e-3, comment='Layer3: no candidate force below this |cos_eq-cos_app|'"
+    },
+    {
+      "name": "DynamicCLCosSign",
+      "line": 547,
+      "rest": ", default=1.0, comment='Layer3: sign convention for cos_app, calibrated by equilibrium 30/90/150'"
+    },
+    {
+      "name": "DynamicCLForceSign",
+      "line": 548,
+      "rest": ", default=1.0, comment='Layer3: global force direction sign, calibrated by decoupled footprint'"
+    },
+    {
+      "name": "RTI_Characteristic_Length",
+      "line": 551,
+      "rest": ", default=-999, comment='Use for RTI instability'"
+    },
+    {
+      "name": "pseudo2D",
+      "line": 552,
+      "rest": ", default=\"0\", comment=\"if 1, assume model is pseduo2D\""
+    },
+    {
+      "name": "Radius",
+      "line": 554,
+      "rest": ", default=0.0, comment='Diffuse Sphere Radius'"
+    },
+    {
+      "name": "CenterX",
+      "line": 555,
+      "rest": ", default=0.0, comment='Diffuse sphere center_x'"
+    },
+    {
+      "name": "CenterY",
+      "line": 556,
+      "rest": ", default=0.0, comment='Diffuse sphere center_y'"
+    },
+    {
+      "name": "CenterZ",
+      "line": 557,
+      "rest": ", default=0.0, comment='Diffuse sphere center_z'"
+    },
+    {
+      "name": "BubbleType",
+      "line": 558,
+      "rest": ",default=1.0, comment='droplet(1.0"
+    },
+    {
+      "name": "CapInit",
+      "line": 559,
+      "rest": ", default=0.0, comment='Default-off spherical-cap initializer for flat-wall static contact-angle diagnostics'"
+    },
+    {
+      "name": "CapInitRadius",
+      "line": 560,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere radius'"
+    },
+    {
+      "name": "CapInitTheta",
+      "line": 561,
+      "rest": ", default='1.570796', comment='Spherical cap target contact angle in radians; metadata only'"
+    },
+    {
+      "name": "CapInitCenterX",
+      "line": 562,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere center X'"
+    },
+    {
+      "name": "CapInitCenterY",
+      "line": 563,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere center Y'"
+    },
+    {
+      "name": "CapInitCenterZ",
+      "line": 564,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere center Z'"
+    },
+    {
+      "name": "SphereCapInit",
+      "line": 565,
+      "rest": ", default=0.0, comment='Default-off cap-on-sphere initializer for static curved-wall diagnostics'"
+    },
+    {
+      "name": "SphereCapInitParentRadius",
+      "line": 566,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere radius'"
+    },
+    {
+      "name": "SphereCapInitCenterX",
+      "line": 567,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere center X'"
+    },
+    {
+      "name": "SphereCapInitCenterY",
+      "line": 568,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere center Y'"
+    },
+    {
+      "name": "SphereCapInitCenterZ",
+      "line": 569,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere center Z'"
+    },
+    {
+      "name": "SphereCapInitSolidCenterX",
+      "line": 570,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere center X'"
+    },
+    {
+      "name": "SphereCapInitSolidCenterY",
+      "line": 571,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere center Y'"
+    },
+    {
+      "name": "SphereCapInitSolidCenterZ",
+      "line": 572,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere center Z'"
+    },
+    {
+      "name": "SphereCapInitSolidRadius",
+      "line": 573,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere radius'"
+    },
+    {
+      "name": "CylinderCapInit",
+      "line": 574,
+      "rest": ", default=0.0, comment='Default-off cap-on-cylinder initializer for static curved-wall diagnostics'"
+    },
+    {
+      "name": "CylinderCapInitParentRadius",
+      "line": 575,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere radius'"
+    },
+    {
+      "name": "CylinderCapInitCenterX",
+      "line": 576,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere center X'"
+    },
+    {
+      "name": "CylinderCapInitCenterY",
+      "line": 577,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere center Y'"
+    },
+    {
+      "name": "CylinderCapInitCenterZ",
+      "line": 578,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere center Z'"
+    },
+    {
+      "name": "CylinderCapInitSolidCenterX",
+      "line": 579,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder center X'"
+    },
+    {
+      "name": "CylinderCapInitSolidCenterY",
+      "line": 580,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder center Y'"
+    },
+    {
+      "name": "CylinderCapInitSolidCenterZ",
+      "line": 581,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder center Z'"
+    },
+    {
+      "name": "CylinderCapInitSolidRadius",
+      "line": 582,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder radius'"
+    },
+    {
+      "name": "CylinderCapInitSolidAxis",
+      "line": 583,
+      "rest": ", default=0, comment='Cylinder-cap solid cylinder axis: 0=x, 1=y, 2=z'"
+    },
+    {
+      "name": "CompositeDropletTailRadius",
+      "line": 584,
+      "rest": ", default=0.0, comment='optional top cylinder tail radius for a volume-conserved sphere-plus-tail droplet'"
+    },
+    {
+      "name": "CompositeDropletTailLength",
+      "line": 585,
+      "rest": ", default=0.0, comment='optional top cylinder tail length along +Z'"
+    },
+    {
+      "name": "CompositeDropletBodyRadius",
+      "line": 586,
+      "rest": ", default=0.0, comment='optional solved body radius override; <=0 solves volume-conserved radius from Radius'"
+    },
+    {
+      "name": "DonutTime",
+      "line": 588,
+      "rest": ", default=0.0, comment='Radius of a Torus - initialised to travel along x-axis'"
+    },
+    {
+      "name": "Donut_h",
+      "line": 589,
+      "rest": ",   default=0.0, comment='Half donut thickness, i.e. the radius of the cross-section'"
+    },
+    {
+      "name": "Donut_D",
+      "line": 590,
+      "rest": ",   default=0.0, comment='Dilation factor along the x-axis'"
+    },
+    {
+      "name": "Donut_x0",
+      "line": 591,
+      "rest": ",  default=0.0, comment='Position along x-axis'"
+    },
+    {
+      "name": "tau_l",
+      "line": 604,
+      "rest": ", comment='relaxation time (low density fluid"
+    },
+    {
+      "name": "tau_h",
+      "line": 605,
+      "rest": ", comment='relaxation time (high density fluid"
+    },
+    {
+      "name": "tauUpdate",
+      "line": 606,
+      "rest": ", default=\"1\", comment=\"Interpolation: 1-linear, 2- inverse, 3- dyn viscosity\""
+    },
+    {
+      "name": "Viscosity_l",
+      "line": 607,
+      "rest": ", tau_l='(3*Viscosity_l"
+    },
+    {
+      "name": "Viscosity_h",
+      "line": 608,
+      "rest": ", tau_h='(3*Viscosity_h"
+    },
+    {
+      "name": "VelocityX",
+      "line": 609,
+      "rest": ", default=0.0, comment='inlet/outlet/init velocity', zonal=T"
+    },
+    {
+      "name": "VelocityY",
+      "line": 610,
+      "rest": ", default=0.0, comment='inlet/outlet/init velocity', zonal=T"
+    },
+    {
+      "name": "VelocityZ",
+      "line": 611,
+      "rest": ", default=0.0, comment='inlet/outlet/init velocity', zonal=T"
+    },
+    {
+      "name": "DropletOnlyVelocity",
+      "line": 612,
+      "rest": ", default=0.0, comment='0 off, 1 hard droplet mask, 2 smooth phase-fraction weighted droplet velocity'"
+    },
+    {
+      "name": "DropletVelocityX",
+      "line": 613,
+      "rest": ", default=0.0, comment='droplet-only initial velocity x'"
+    },
+    {
+      "name": "DropletVelocityY",
+      "line": 614,
+      "rest": ", default=0.0, comment='droplet-only initial velocity y'"
+    },
+    {
+      "name": "DropletVelocityZ",
+      "line": 615,
+      "rest": ", default=0.0, comment='droplet-only initial velocity z'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityMode",
+      "line": 616,
+      "rest": ", default=0.0, comment='0 off, 1 smooth uniform tail velocity, 2 smooth axial ramp tail velocity'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityX",
+      "line": 617,
+      "rest": ", default=0.0, comment='optional extra tail velocity x'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityY",
+      "line": 618,
+      "rest": ", default=0.0, comment='optional extra tail velocity y'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityZ",
+      "line": 619,
+      "rest": ", default=0.0, comment='optional extra tail velocity z'"
+    },
+    {
+      "name": "Pressure",
+      "line": 620,
+      "rest": ", default=0.0, comment='inlet/outlet/init density', zonal=T"
+    },
+    {
+      "name": "GravitationX",
+      "line": 621,
+      "rest": ", default=0.0, comment='applied (rho"
+    },
+    {
+      "name": "GravitationY",
+      "line": 622,
+      "rest": ", default=0.0, comment='applied (rho"
+    },
+    {
+      "name": "GravitationZ",
+      "line": 623,
+      "rest": ", default=0.0, comment='applied (rho"
+    },
+    {
+      "name": "BuoyancyX",
+      "line": 624,
+      "rest": ", default=0.0, comment='applied (rho_h-rho"
+    },
+    {
+      "name": "BuoyancyY",
+      "line": 625,
+      "rest": ", default=0.0, comment='applied (rho_h-rho"
+    },
+    {
+      "name": "BuoyancyZ",
+      "line": 626,
+      "rest": ", default=0.0, comment='applied (rho_h-rho"
+    },
+    {
+      "name": "xyzTrack",
+      "line": 630,
+      "rest": ", default=1,comment='x<-1, y<-2, z<-3'"
+    }
+  ],
+  "stages": [
+    {
+      "stage": "PhaseInit",
+      "function": "Init",
+      "line": 307,
+      "raw": "AddStage(\"PhaseInit\", \"Init\", save=Fields$group %in% save_initial_PF)"
+    },
+    {
+      "stage": "BaseInit",
+      "function": "Init_distributions",
+      "line": 308,
+      "raw": "AddStage(\"BaseInit\" , \"Init_distributions\", save=Fields$group %in% save_initial)"
+    },
+    {
+      "stage": "calcPhase",
+      "function": "calcPhaseF",
+      "line": 309,
+      "raw": "AddStage(\"calcPhase\", \"calcPhaseF\", save=Fields$name %in% c(\"PhaseF\", \"ReplayPhaseFromH\"), load=DensityAll$group %in% load_phase)"
+    },
+    {
+      "stage": "BaseIter",
+      "function": "Run",
+      "line": 310,
+      "raw": "AddStage(\"BaseIter\" , \"Run\", save=Fields$group %in% save_iteration, load=DensityAll$group %in% load_iteration )"
+    },
+    {
+      "stage": "InitFromFieldsStage",
+      "function": "",
+      "line": 311,
+      "raw": "AddStage(name=\"InitFromFieldsStage\", load=DensityAll$group %in% \"init\",read=FALSE, save=Fields$group %in% save_initial_PF)"
+    },
+    {
+      "stage": "WallInit_CA",
+      "function": "Init_wallNorm",
+      "line": 314,
+      "raw": "AddStage(\"WallInit_CA\" , \"Init_wallNorm\", save=Fields$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcWall_CA",
+      "function": "calcWallPhase",
+      "line": 315,
+      "raw": "AddStage(\"calcWall_CA\" , \"calcWallPhase\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"gradPhi\", \"PF\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcPhaseGrad",
+      "function": "calcPhaseGrad",
+      "line": 317,
+      "raw": "AddStage('calcPhaseGrad', \"calcPhaseGrad\", load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"), save=Fields$group==\"gradPhi\")"
+    },
+    {
+      "stage": "calcPhaseGrad_init",
+      "function": "calcPhaseGrad_init",
+      "line": 318,
+      "raw": "AddStage('calcPhaseGrad_init', \"calcPhaseGrad_init\", load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"), save=Fields$group==\"gradPhi\")"
+    },
+    {
+      "stage": "calcWallPhase_correction",
+      "function": "calcWallPhase_correction",
+      "line": 319,
+      "raw": "AddStage(\"calcWallPhase_correction\", \"calcWallPhase_correction\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"))"
+    },
+    {
+      "stage": "WallInit",
+      "function": "Init_wallNorm",
+      "line": 321,
+      "raw": "AddStage(\"WallInit\" , \"Init_wallNorm\", save=Fields$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcWall",
+      "function": "calcWallPhase",
+      "line": 322,
+      "raw": "AddStage(\"calcWall\" , \"calcWallPhase\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcWallPhase_correction",
+      "function": "calcWallPhase_correction",
+      "line": 323,
+      "raw": "AddStage(\"calcWallPhase_correction\", \"calcWallPhase_correction\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"))"
+    },
+    {
+      "stage": "CopyDistributions",
+      "function": "TempCopy",
+      "line": 326,
+      "raw": "AddStage(\"CopyDistributions\", \"TempCopy\", save=Fields$group %in% c(\"g\",\"h\",\"Vel\",\"nw\", \"PF\",\"Thermal\"))"
+    },
+    {
+      "stage": "CopyThermal",
+      "function": "ThermalCopy",
+      "line": 327,
+      "raw": "AddStage(\"CopyThermal\",\"ThermalCopy\", save=Fields$name %in% c(\"Temp\",\"Cond\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"Temp\",\"Cond\",\"SurfaceTension\"))"
+    },
+    {
+      "stage": "RK_1",
+      "function": "TempUpdate1",
+      "line": 328,
+      "raw": "AddStage(\"RK_1\", \"TempUpdate1\", save=Fields$name==\"RK1\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "RK_2",
+      "function": "TempUpdate2",
+      "line": 329,
+      "raw": "AddStage(\"RK_2\", \"TempUpdate2\", save=Fields$name==\"RK2\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "RK_3",
+      "function": "TempUpdate3",
+      "line": 330,
+      "raw": "AddStage(\"RK_3\", \"TempUpdate3\", save=Fields$name==\"RK3\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"RK2\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "RK_4",
+      "function": "TempUpdate4",
+      "line": 331,
+      "raw": "AddStage(\"RK_4\", \"TempUpdate4\", save=Fields$name %in% c(\"Temp\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"RK2\",\"RK3\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "NonLocalTemp",
+      "function": "BoundUpdate",
+      "line": 333,
+      "raw": "AddStage(\"NonLocalTemp\",\"BoundUpdate\", save=Fields$name %in% c(\"Temp\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"Temp\"))"
+    }
+  ],
+  "actions": [
+    {
+      "action": "TempToSteadyState",
+      "stages": [
+        "CopyDistributions",
+        "RK_1",
+        "RK_2",
+        "RK_3",
+        "RK_4",
+        "NonLocalTemp"
+      ],
+      "line": 340,
+      "raw": "AddAction(\"TempToSteadyState\", c(\"CopyDistributions\",\"RK_1\", \"RK_2\", \"RK_3\", \"RK_4\",\"NonLocalTemp\"))"
+    },
+    {
+      "action": "Iteration",
+      "stages": [
+        "BaseIter",
+        "calcPhase",
+        "calcWall",
+        "RK_1",
+        "RK_2",
+        "RK_3",
+        "RK_4",
+        "NonLocalTemp"
+      ],
+      "line": 341,
+      "raw": "AddAction(\"Iteration\", c(\"BaseIter\", \"calcPhase\", \"calcWall\",\"RK_1\", \"RK_2\", \"RK_3\", \"RK_4\",\"NonLocalTemp\"))"
+    },
+    {
+      "action": "IterationConstantTemp",
+      "stages": [
+        "BaseIter",
+        "calcPhase",
+        "calcWall",
+        "CopyThermal"
+      ],
+      "line": 342,
+      "raw": "AddAction(\"IterationConstantTemp\", c(\"BaseIter\", \"calcPhase\", \"calcWall\",\"CopyThermal\"))"
+    },
+    {
+      "action": "Init",
+      "stages": [
+        "PhaseInit",
+        "WallInit",
+        "calcWall",
+        "BaseInit"
+      ],
+      "line": 343,
+      "raw": "AddAction(\"Init\" , c(\"PhaseInit\",\"WallInit\" , \"calcWall\",\"BaseInit\"))"
+    },
+    {
+      "action": "Iteration",
+      "stages": [
+        "BaseIter",
+        "calcPhase",
+        "calcGrad",
+        "calcWall_CA",
+        "calcWallPhase_correction"
+      ],
+      "line": 346,
+      "raw": "AddAction(\"Iteration\", c(\"BaseIter\", \"calcPhase\", calcGrad, \"calcWall_CA\", \"calcWallPhase_correction\"))"
+    },
+    {
+      "action": "Init",
+      "stages": [
+        "PhaseInit",
+        "WallInit_CA",
+        "calcPhaseGrad_init",
+        "calcWall_CA",
+        "calcWallPhase_correction",
+        "BaseInit"
+      ],
+      "line": 347,
+      "raw": "AddAction(\"Init\" , c(\"PhaseInit\",\"WallInit_CA\" , \"calcPhaseGrad_init\" , \"calcWall_CA\", \"calcWallPhase_correction\", \"BaseInit\"))"
+    },
+    {
+      "action": "InitFields",
+      "stages": [
+        "InitFromFieldsStage",
+        "WallInit_CA",
+        "calcPhaseGrad_init",
+        "calcWall_CA",
+        "calcWallPhase_correction",
+        "BaseInit"
+      ],
+      "line": 348,
+      "raw": "AddAction(\"InitFields\" , c(\"InitFromFieldsStage\",\"WallInit_CA\" , \"calcPhaseGrad_init\", \"calcWall_CA\", \"calcWallPhase_correction\", \"BaseInit\"))"
+    },
+    {
+      "action": "Iteration",
+      "stages": [
+        "BaseIter",
+        "calcPhase",
+        "calcWall",
+        "calcWallPhase_correction"
+      ],
+      "line": 350,
+      "raw": "AddAction(\"Iteration\", c(\"BaseIter\", \"calcPhase\", \"calcWall\", \"calcWallPhase_correction\"))"
+    },
+    {
+      "action": "Init",
+      "stages": [
+        "PhaseInit",
+        "WallInit",
+        "calcWall",
+        "calcWallPhase_correction",
+        "BaseInit"
+      ],
+      "line": 351,
+      "raw": "AddAction(\"Init\" , c(\"PhaseInit\",\"WallInit\" , \"calcWall\",\"calcWallPhase_correction\", \"BaseInit\"))"
+    },
+    {
+      "action": "InitFields",
+      "stages": [
+        "InitFromFieldsStage",
+        "WallInit",
+        "calcWall",
+        "calcWallPhase_correction",
+        "BaseInit"
+      ],
+      "line": 352,
+      "raw": "AddAction(\"InitFields\", c(\"InitFromFieldsStage\",\"WallInit\" , \"calcWall\", \"calcWallPhase_correction\", \"BaseInit\"))"
+    }
+  ],
+  "stage_timeline": [
+    {
+      "order": 1,
+      "stage": "BaseIter",
+      "function": "Run",
+      "line": 310,
+      "reads": [
+        "g*",
+        "h*",
+        "PhaseF",
+        "WallGhost",
+        "IsBoundary",
+        "U",
+        "V",
+        "W",
+        "pnorm"
+      ],
+      "writes": [
+        "g*",
+        "h*",
+        "U",
+        "V",
+        "W",
+        "pnorm",
+        "ForceIterResidual",
+        "ForceIterCount",
+        "MassCorrectionApplied",
+        "PhaseStencilGhostUseCount",
+        "PhaseStencilFallbackCount",
+        "PhaseStencilMidpointFallbackCount",
+        "ReplayPhaseConsumed",
+        "ReplayLapPhi",
+        "ReplayMu",
+        "ReplayGradPhi*",
+        "ReplayFsurf*",
+        "ReplayFpressure*",
+        "ReplayFbody*",
+        "ReplayFmu*",
+        "ReplayFtotal*",
+        "ReplayRho",
+        "ReplayTau",
+        "ReplayPressureMoment",
+        "ReplayUPreForce*",
+        "ReplayUPostForce*",
+        "ReplayPhaseAdvVelocity*",
+        "ReplayForceOverRho*",
+        "ReplayNormal*",
+        "ReplayStress*",
+        "ReplayFphi*",
+        "ReplayTmp1",
+        "WallMuCandidate",
+        "DynamicCL*"
+      ],
+      "time_level_note": "consumes saved fields from previous action boundary and writes populations/macros for next saved state"
+    },
+    {
+      "order": 2,
+      "stage": "calcPhase",
+      "function": "calcPhaseF",
+      "line": 309,
+      "reads": [
+        "h*",
+        "PhaseF",
+        "NodeType"
+      ],
+      "writes": [
+        "PhaseF",
+        "ReplayPhaseFromH"
+      ],
+      "time_level_note": "after Run, writes PhaseF from streamed/collided h populations for next force stage"
+    },
+    {
+      "order": 3,
+      "stage": "calcPhaseGrad",
+      "function": "calcPhaseGrad",
+      "line": 317,
+      "reads": [
+        "PhaseF",
+        "WallGhost",
+        "IsBoundary"
+      ],
+      "writes": [
+        "gradPhiVal_x",
+        "gradPhiVal_y",
+        "gradPhiVal_z",
+        "gradPhi_PhaseF"
+      ],
+      "time_level_note": "after calcPhase, writes cached gradPhiVal for wall reconstruction/output"
+    },
+    {
+      "order": 3,
+      "stage": "calcPhaseGrad_init",
+      "function": "calcPhaseGrad_init",
+      "line": 318,
+      "reads": [
+        "PhaseF",
+        "WallGhost",
+        "IsBoundary",
+        "gradPhiVal_x",
+        "gradPhiVal_y",
+        "gradPhiVal_z"
+      ],
+      "writes": [
+        "gradPhiVal_x",
+        "gradPhiVal_y",
+        "gradPhiVal_z",
+        "gradPhi_PhaseF"
+      ],
+      "time_level_note": "after calcPhase, writes cached gradPhiVal for wall reconstruction/output"
+    },
+    {
+      "order": 4,
+      "stage": "calcWall_CA",
+      "function": "calcWallPhase",
+      "line": 315,
+      "reads": [
+        "PhaseF",
+        "WallGhost",
+        "gradPhiVal_x",
+        "gradPhiVal_y",
+        "gradPhiVal_z",
+        "nw_x",
+        "nw_y",
+        "nw_z"
+      ],
+      "writes": [
+        "PhaseF",
+        "WallGhost",
+        "WallGhostRaw",
+        "WallGhostClamped",
+        "WallGhostClampHit",
+        "WettingPathId",
+        "LocalRadAngle",
+        "WallH",
+        "AnalyticFlag",
+        "WallCSQ*"
+      ],
+      "time_level_note": "after gradient stage, writes passive WallGhost and wall-node PhaseF mirror"
+    },
+    {
+      "order": 5,
+      "stage": "calcWallPhase_correction",
+      "function": "calcWallPhase_correction",
+      "line": 323,
+      "reads": [
+        "PhaseF",
+        "WallGhost",
+        "nw_x",
+        "nw_y",
+        "nw_z",
+        "IsSpecialBoundaryPoint"
+      ],
+      "writes": [
+        "PhaseF",
+        "WallGhost",
+        "WallGhostRaw",
+        "WallGhostClamped",
+        "WallGhostClampHit",
+        "WettingPathId",
+        "LocalRadAngle"
+      ],
+      "time_level_note": "final wall correction before next action boundary"
+    }
+  ],
+  "fields_of_interest": [
+    {
+      "name": "PhaseF",
+      "kind": "field",
+      "group": "PF",
+      "stencil3d": "1,2",
+      "streams": false,
+      "line": "290,292"
+    },
+    {
+      "name": "WallGhost",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "2",
+      "streams": false,
+      "line": "86"
+    },
+    {
+      "name": "WallGhostRaw",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "89"
+    },
+    {
+      "name": "WallGhostClamped",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "90"
+    },
+    {
+      "name": "WallGhostClampHit",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "91"
+    },
+    {
+      "name": "WettingPathId",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "92"
+    },
+    {
+      "name": "LocalRadAngle",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "93"
+    },
+    {
+      "name": "WallH",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "87"
+    },
+    {
+      "name": "AnalyticFlag",
+      "kind": "field",
+      "group": "solid_boundary",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "88"
+    },
+    {
+      "name": "gradPhiVal_x",
+      "kind": "field",
+      "group": "gradPhi",
+      "stencil3d": "2",
+      "streams": false,
+      "line": "281"
+    },
+    {
+      "name": "gradPhiVal_y",
+      "kind": "field",
+      "group": "gradPhi",
+      "stencil3d": "2",
+      "streams": false,
+      "line": "282"
+    },
+    {
+      "name": "gradPhiVal_z",
+      "kind": "field",
+      "group": "gradPhi",
+      "stencil3d": "2",
+      "streams": false,
+      "line": "283"
+    },
+    {
+      "name": "gradPhi_PhaseF",
+      "kind": "field",
+      "group": "gradPhi",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "288"
+    },
+    {
+      "name": "PhaseStencilGhostUseCount",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "194"
+    },
+    {
+      "name": "PhaseStencilFallbackCount",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "195"
+    },
+    {
+      "name": "PhaseStencilMidpointFallbackCount",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "196"
+    },
+    {
+      "name": "ForceIterResidual",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "191"
+    },
+    {
+      "name": "ForceIterCount",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "192"
+    },
+    {
+      "name": "MassCorrectionApplied",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "193"
+    },
+    {
+      "name": "ReplayPhaseConsumed",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "197"
+    },
+    {
+      "name": "ReplayPhaseFromH",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "198"
+    },
+    {
+      "name": "ReplayLapPhi",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "199"
+    },
+    {
+      "name": "ReplayMu",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "200"
+    },
+    {
+      "name": "ReplayGradPhiX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "201"
+    },
+    {
+      "name": "ReplayGradPhiY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "202"
+    },
+    {
+      "name": "ReplayGradPhiZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "203"
+    },
+    {
+      "name": "ReplayFsurfX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "204"
+    },
+    {
+      "name": "ReplayFsurfY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "205"
+    },
+    {
+      "name": "ReplayFsurfZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "206"
+    },
+    {
+      "name": "ReplayFpressureX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "207"
+    },
+    {
+      "name": "ReplayFpressureY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "208"
+    },
+    {
+      "name": "ReplayFpressureZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "209"
+    },
+    {
+      "name": "ReplayFbodyX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "210"
+    },
+    {
+      "name": "ReplayFbodyY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "211"
+    },
+    {
+      "name": "ReplayFbodyZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "212"
+    },
+    {
+      "name": "ReplayFmuX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "213"
+    },
+    {
+      "name": "ReplayFmuY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "214"
+    },
+    {
+      "name": "ReplayFmuZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "215"
+    },
+    {
+      "name": "ReplayFtotalX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "216"
+    },
+    {
+      "name": "ReplayFtotalY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "217"
+    },
+    {
+      "name": "ReplayFtotalZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "218"
+    },
+    {
+      "name": "ReplayRho",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "219"
+    },
+    {
+      "name": "ReplayTau",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "220"
+    },
+    {
+      "name": "ReplayPressureMoment",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "221"
+    },
+    {
+      "name": "ReplayUPreForceX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "222"
+    },
+    {
+      "name": "ReplayUPreForceY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "223"
+    },
+    {
+      "name": "ReplayUPreForceZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "224"
+    },
+    {
+      "name": "ReplayUPostForceX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "225"
+    },
+    {
+      "name": "ReplayUPostForceY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "226"
+    },
+    {
+      "name": "ReplayUPostForceZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "227"
+    },
+    {
+      "name": "ReplayPhaseAdvVelocityX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "228"
+    },
+    {
+      "name": "ReplayPhaseAdvVelocityY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "229"
+    },
+    {
+      "name": "ReplayPhaseAdvVelocityZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "230"
+    },
+    {
+      "name": "ReplayForceOverRhoX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "231"
+    },
+    {
+      "name": "ReplayForceOverRhoY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "232"
+    },
+    {
+      "name": "ReplayForceOverRhoZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "233"
+    },
+    {
+      "name": "ReplayFmuIter1X",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "234"
+    },
+    {
+      "name": "ReplayFmuIter1Y",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "235"
+    },
+    {
+      "name": "ReplayFmuIter1Z",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "236"
+    },
+    {
+      "name": "ReplayFtotalIter1X",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "237"
+    },
+    {
+      "name": "ReplayFtotalIter1Y",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "238"
+    },
+    {
+      "name": "ReplayFtotalIter1Z",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "239"
+    },
+    {
+      "name": "ReplayUPostIter1X",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "240"
+    },
+    {
+      "name": "ReplayUPostIter1Y",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "241"
+    },
+    {
+      "name": "ReplayUPostIter1Z",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "242"
+    },
+    {
+      "name": "ReplayNormalX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "243"
+    },
+    {
+      "name": "ReplayNormalY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "244"
+    },
+    {
+      "name": "ReplayNormalZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "245"
+    },
+    {
+      "name": "ReplayStressXX",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "246"
+    },
+    {
+      "name": "ReplayStressXY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "247"
+    },
+    {
+      "name": "ReplayStressXZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "248"
+    },
+    {
+      "name": "ReplayStressYY",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "249"
+    },
+    {
+      "name": "ReplayStressYZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "250"
+    },
+    {
+      "name": "ReplayStressZZ",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "251"
+    },
+    {
+      "name": "ReplayFphiSum",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "252"
+    },
+    {
+      "name": "ReplayFphiMaxAbs",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "253"
+    },
+    {
+      "name": "ReplayTmp1",
+      "kind": "field",
+      "group": "runtime_diagnostics",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "254"
+    },
+    {
+      "name": "WallMuCandidate",
+      "kind": "field",
+      "group": "wall_grad_diag",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "134"
+    },
+    {
+      "name": "DynamicCLForceCandidateX",
+      "kind": "field",
+      "group": "wall_grad_diag",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "143"
+    },
+    {
+      "name": "DynamicCLForceCandidateY",
+      "kind": "field",
+      "group": "wall_grad_diag",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "144"
+    },
+    {
+      "name": "DynamicCLForceCandidateZ",
+      "kind": "field",
+      "group": "wall_grad_diag",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "145"
+    },
+    {
+      "name": "DynamicCLForceCandidateMag",
+      "kind": "field",
+      "group": "wall_grad_diag",
+      "stencil3d": "1",
+      "streams": false,
+      "line": "146"
+    },
+    {
+      "name": "g*",
+      "kind": "density_streaming",
+      "group": "g",
+      "stencil3d": "",
+      "streams": true,
+      "line": "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27"
+    },
+    {
+      "name": "h*",
+      "kind": "density_streaming",
+      "group": "h",
+      "stencil3d": "",
+      "streams": true,
+      "line": "31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,48,49,50,51,52,53,54,55,56,57,58,59"
+    },
+    {
+      "name": "U",
+      "kind": "field",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": "268,269"
+    },
+    {
+      "name": "V",
+      "kind": "local_or_setting",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": ""
+    },
+    {
+      "name": "W",
+      "kind": "local_or_setting",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": ""
+    },
+    {
+      "name": "pnorm",
+      "kind": "local_or_setting",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": ""
+    },
+    {
+      "name": "nw_x",
+      "kind": "local_or_setting",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": ""
+    },
+    {
+      "name": "nw_y",
+      "kind": "local_or_setting",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": ""
+    },
+    {
+      "name": "nw_z",
+      "kind": "local_or_setting",
+      "group": "",
+      "stencil3d": "",
+      "streams": false,
+      "line": ""
+    }
+  ],
+  "producer_consumer_edges": [
+    {
+      "quantity": "g*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "h*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "U",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "V",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "W",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "pnorm",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ForceIterResidual",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ForceIterCount",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "MassCorrectionApplied",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseStencilGhostUseCount",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseStencilFallbackCount",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseStencilMidpointFallbackCount",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayPhaseConsumed",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayLapPhi",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayMu",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayGradPhi*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayFsurf*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayFpressure*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayFbody*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayFmu*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayFtotal*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayRho",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayTau",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayPressureMoment",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayUPreForce*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayUPostForce*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayPhaseAdvVelocity*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayForceOverRho*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayNormal*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayStress*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayFphi*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayTmp1",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallMuCandidate",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "DynamicCL*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "g*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "h*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "IsBoundary",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "U",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "V",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "W",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "pnorm",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "BaseIter",
+      "consumer_order": 1,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcPhase",
+      "producer_order": 2,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "ReplayPhaseFromH",
+      "producer_stage": "calcPhase",
+      "producer_order": 2,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "h*",
+      "producer_stage": "BaseIter",
+      "producer_order": 1,
+      "consumer_stage": "calcPhase",
+      "consumer_order": 2,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcPhase",
+      "producer_order": 2,
+      "consumer_stage": "calcPhase",
+      "consumer_order": 2,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "NodeType",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcPhase",
+      "consumer_order": 2,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "gradPhiVal_x",
+      "producer_stage": "calcPhaseGrad",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "gradPhiVal_y",
+      "producer_stage": "calcPhaseGrad",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "gradPhiVal_z",
+      "producer_stage": "calcPhaseGrad",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "gradPhi_PhaseF",
+      "producer_stage": "calcPhaseGrad",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcPhase",
+      "producer_order": 2,
+      "consumer_stage": "calcPhaseGrad",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcPhaseGrad",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "IsBoundary",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcPhaseGrad",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "gradPhiVal_x",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "gradPhiVal_y",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "gradPhiVal_z",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "gradPhi_PhaseF",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcPhase",
+      "producer_order": 2,
+      "consumer_stage": "calcPhaseGrad_init",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcPhaseGrad_init",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "IsBoundary",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcPhaseGrad_init",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "gradPhiVal_x",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "calcPhaseGrad_init",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "gradPhiVal_y",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "calcPhaseGrad_init",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "gradPhiVal_z",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "calcPhaseGrad_init",
+      "consumer_order": 3,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhostRaw",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhostClamped",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhostClampHit",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WettingPathId",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "LocalRadAngle",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallH",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "AnalyticFlag",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallCSQ*",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "calcWall_CA",
+      "producer_order": 4,
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "gradPhiVal_x",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "gradPhiVal_y",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "gradPhiVal_z",
+      "producer_stage": "calcPhaseGrad_init",
+      "producer_order": 3,
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "nw_x",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "nw_y",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "nw_z",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWall_CA",
+      "consumer_order": 4,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhostRaw",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhostClamped",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WallGhostClampHit",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "WettingPathId",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "LocalRadAngle",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "",
+      "consumer_order": "",
+      "edge_type": "write",
+      "time_level": "produced during this stage for later saved state"
+    },
+    {
+      "quantity": "PhaseF",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "calcWallPhase_correction",
+      "consumer_order": 5,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "WallGhost",
+      "producer_stage": "calcWallPhase_correction",
+      "producer_order": 5,
+      "consumer_stage": "calcWallPhase_correction",
+      "consumer_order": 5,
+      "edge_type": "read",
+      "time_level": "same action prior stage"
+    },
+    {
+      "quantity": "nw_x",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWallPhase_correction",
+      "consumer_order": 5,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "nw_y",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWallPhase_correction",
+      "consumer_order": 5,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "nw_z",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWallPhase_correction",
+      "consumer_order": 5,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    },
+    {
+      "quantity": "IsSpecialBoundaryPoint",
+      "producer_stage": "previous_action_or_initial_state",
+      "producer_order": "",
+      "consumer_stage": "calcWallPhase_correction",
+      "consumer_order": 5,
+      "edge_type": "read",
+      "time_level": "loaded at action boundary / previous saved state"
+    }
+  ],
+  "unresolved_edges": [
+    {
+      "severity": "CHECK",
+      "quantity": "PhaseF",
+      "consumer_stage": "BaseIter",
+      "reason": "read comes from action-boundary state; S2 must verify time level against C replay"
+    },
+    {
+      "severity": "CHECK",
+      "quantity": "WallGhost",
+      "consumer_stage": "BaseIter",
+      "reason": "read comes from action-boundary state; S2 must verify time level against C replay"
+    },
+    {
+      "severity": "CHECK",
+      "quantity": "WallGhost",
+      "consumer_stage": "calcPhaseGrad",
+      "reason": "read comes from action-boundary state; S2 must verify time level against C replay"
+    },
+    {
+      "severity": "CHECK",
+      "quantity": "WallGhost",
+      "consumer_stage": "calcPhaseGrad_init",
+      "reason": "read comes from action-boundary state; S2 must verify time level against C replay"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "gradPhi",
+      "consumer_stage": "CollisionMRT",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "mu",
+      "consumer_stage": "CollisionMRT",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "F_surf",
+      "consumer_stage": "CollisionMRT",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "F_pressure",
+      "consumer_stage": "CollisionMRT",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "F_total",
+      "consumer_stage": "CollisionMRT",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "gradPhi",
+      "consumer_stage": "CollisionBGK",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "mu",
+      "consumer_stage": "CollisionBGK",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "F_surf",
+      "consumer_stage": "CollisionBGK",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "F_pressure",
+      "consumer_stage": "CollisionBGK",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    },
+    {
+      "severity": "COVERED",
+      "quantity": "F_total",
+      "consumer_stage": "CollisionBGK",
+      "reason": "local collision quantity is covered by Replay* diagnostics; S2 must compare numeric values and time level"
+    }
+  ],
+  "function_access": [
+    {
+      "function": "calcDynamicCLShadow",
+      "function_line": 510,
+      "identifier": "DynamicCLForceCandidateX",
+      "reads_rel": [],
+      "writes_rel": [
+        12,
+        124
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcDynamicCLShadow",
+      "function_line": 510,
+      "identifier": "DynamicCLForceCandidateY",
+      "reads_rel": [],
+      "writes_rel": [
+        13,
+        125
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcDynamicCLShadow",
+      "function_line": 510,
+      "identifier": "DynamicCLForceCandidateZ",
+      "reads_rel": [],
+      "writes_rel": [
+        14,
+        126
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcDynamicCLShadow",
+      "function_line": 510,
+      "identifier": "DynamicCLForceCandidateMag",
+      "reads_rel": [],
+      "writes_rel": [
+        15,
+        127
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcDynamicCLShadow",
+      "function_line": 510,
+      "identifier": "gradPhi",
+      "reads_rel": [
+        1,
+        71,
+        75,
+        76,
+        77
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        1,
+        71
+      ]
+    },
+    {
+      "function": "calcDynamicCLShadow",
+      "function_line": 510,
+      "identifier": "C",
+      "reads_rel": [
+        1,
+        63
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        1,
+        63
+      ]
+    },
+    {
+      "function": "calcWallMuSource",
+      "function_line": 797,
+      "identifier": "C",
+      "reads_rel": [
+        1,
+        15
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        1,
+        15
+      ]
+    },
+    {
+      "function": "calcGradPhiRaw",
+      "function_line": 842,
+      "identifier": "gradPhi",
+      "reads_rel": [
+        6,
+        7,
+        12,
+        18,
+        19,
+        24,
+        30,
+        33,
+        38,
+        41
+      ],
+      "writes_rel": [
+        3
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        3
+      ]
+    },
+    {
+      "function": "calcGradPhi",
+      "function_line": 886,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        21
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseF",
+      "function_line": 908,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        12
+      ],
+      "writes_rel": [
+        9,
+        12
+      ],
+      "calls_rel": [
+        12
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseF",
+      "function_line": 908,
+      "identifier": "ReplayPhaseFromH",
+      "reads_rel": [],
+      "writes_rel": [
+        6,
+        10
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseF",
+      "function_line": 908,
+      "identifier": "mu",
+      "reads_rel": [
+        17
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseF",
+      "function_line": 908,
+      "identifier": "C",
+      "reads_rel": [
+        8
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        8
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        8
+      ]
+    },
+    {
+      "function": "calcMu",
+      "function_line": 928,
+      "identifier": "ReplayLapPhi",
+      "reads_rel": [],
+      "writes_rel": [
+        66
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcMu",
+      "function_line": 928,
+      "identifier": "ReplayMu",
+      "reads_rel": [],
+      "writes_rel": [
+        67
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcMu",
+      "function_line": 928,
+      "identifier": "WallMuCandidate",
+      "reads_rel": [],
+      "writes_rel": [
+        60,
+        63
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcMu",
+      "function_line": 928,
+      "identifier": "lpPhi",
+      "reads_rel": [
+        3,
+        42,
+        47,
+        52,
+        55,
+        66
+      ],
+      "writes_rel": [
+        7,
+        22,
+        39
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        3
+      ]
+    },
+    {
+      "function": "calcMu",
+      "function_line": 928,
+      "identifier": "mu",
+      "reads_rel": [
+        3,
+        67,
+        69
+      ],
+      "writes_rel": [
+        51,
+        54,
+        61
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        3
+      ]
+    },
+    {
+      "function": "calcMu",
+      "function_line": 928,
+      "identifier": "C",
+      "reads_rel": [
+        1,
+        51,
+        54,
+        59
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        1,
+        59
+      ]
+    },
+    {
+      "function": "Init",
+      "function_line": 1132,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        21,
+        30,
+        31
+      ],
+      "writes_rel": [
+        3,
+        5
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        21,
+        30
+      ]
+    },
+    {
+      "function": "Init",
+      "function_line": 1132,
+      "identifier": "U",
+      "reads_rel": [],
+      "writes_rel": [
+        8,
+        12,
+        16,
+        26,
+        33,
+        37,
+        55
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init",
+      "function_line": 1132,
+      "identifier": "V",
+      "reads_rel": [],
+      "writes_rel": [
+        9,
+        13,
+        16,
+        27,
+        34,
+        38,
+        56
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init",
+      "function_line": 1132,
+      "identifier": "W",
+      "reads_rel": [],
+      "writes_rel": [
+        10,
+        14,
+        16,
+        28,
+        35,
+        39,
+        57
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init",
+      "function_line": 1132,
+      "identifier": "pnorm",
+      "reads_rel": [],
+      "writes_rel": [
+        60
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        6,
+        7,
+        36,
+        61
+      ],
+      "writes_rel": [
+        6,
+        58
+      ],
+      "calls_rel": [
+        6
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        7,
+        36
+      ]
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "gradPhiVal_x",
+      "reads_rel": [],
+      "writes_rel": [
+        16
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "gradPhiVal_y",
+      "reads_rel": [],
+      "writes_rel": [
+        17
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "gradPhiVal_z",
+      "reads_rel": [],
+      "writes_rel": [
+        18
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "gradPhi",
+      "reads_rel": [
+        13,
+        16,
+        17,
+        18,
+        23,
+        24,
+        25
+      ],
+      "writes_rel": [
+        12
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        12
+      ]
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "F_phi",
+      "reads_rel": [
+        35,
+        39
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        35
+      ]
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "C",
+      "reads_rel": [
+        44,
+        45,
+        47,
+        55,
+        57,
+        58,
+        66,
+        67
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        44,
+        45,
+        47,
+        55,
+        57,
+        58,
+        66,
+        67
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "U",
+      "reads_rel": [
+        28,
+        32,
+        38
+      ],
+      "writes_rel": [
+        28
+      ],
+      "calls_rel": [
+        28
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        32
+      ]
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "V",
+      "reads_rel": [
+        29,
+        32,
+        38
+      ],
+      "writes_rel": [
+        29
+      ],
+      "calls_rel": [
+        29
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        32
+      ]
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "W",
+      "reads_rel": [
+        30,
+        32,
+        38
+      ],
+      "writes_rel": [
+        30
+      ],
+      "calls_rel": [
+        30
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        32
+      ]
+    },
+    {
+      "function": "Init_distributions",
+      "function_line": 1329,
+      "identifier": "pnorm",
+      "reads_rel": [
+        54
+      ],
+      "writes_rel": [
+        8,
+        57
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Run",
+      "function_line": 1426,
+      "identifier": "C",
+      "reads_rel": [
+        23
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        23
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "Run",
+      "function_line": 1426,
+      "identifier": "pnorm",
+      "reads_rel": [],
+      "writes_rel": [
+        23
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calc_Fs",
+      "function_line": 1495,
+      "identifier": "mu",
+      "reads_rel": [
+        1,
+        16,
+        17,
+        18,
+        25,
+        26,
+        27,
+        30,
+        31,
+        32
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        1
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        3,
+        5
+      ],
+      "writes_rel": [
+        3
+      ],
+      "calls_rel": [
+        3
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        5
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "PhaseStencilGhostUseCount",
+      "reads_rel": [],
+      "writes_rel": [
+        12
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "PhaseStencilFallbackCount",
+      "reads_rel": [],
+      "writes_rel": [
+        13
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "PhaseStencilMidpointFallbackCount",
+      "reads_rel": [],
+      "writes_rel": [
+        14
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ForceIterResidual",
+      "reads_rel": [
+        202
+      ],
+      "writes_rel": [
+        9,
+        180
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ForceIterCount",
+      "reads_rel": [],
+      "writes_rel": [
+        10,
+        185
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "MassCorrectionApplied",
+      "reads_rel": [],
+      "writes_rel": [
+        11
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayPhaseConsumed",
+      "reads_rel": [],
+      "writes_rel": [
+        7
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayGradPhiX",
+      "reads_rel": [],
+      "writes_rel": [
+        61
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayGradPhiY",
+      "reads_rel": [],
+      "writes_rel": [
+        62
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayGradPhiZ",
+      "reads_rel": [],
+      "writes_rel": [
+        63
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFsurfX",
+      "reads_rel": [],
+      "writes_rel": [
+        107
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFsurfY",
+      "reads_rel": [],
+      "writes_rel": [
+        108
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFsurfZ",
+      "reads_rel": [],
+      "writes_rel": [
+        109
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFpressureX",
+      "reads_rel": [],
+      "writes_rel": [
+        101
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFpressureY",
+      "reads_rel": [],
+      "writes_rel": [
+        102
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFpressureZ",
+      "reads_rel": [],
+      "writes_rel": [
+        103
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFbodyX",
+      "reads_rel": [],
+      "writes_rel": [
+        104
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFbodyY",
+      "reads_rel": [],
+      "writes_rel": [
+        105
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFbodyZ",
+      "reads_rel": [],
+      "writes_rel": [
+        106
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFmuX",
+      "reads_rel": [],
+      "writes_rel": [
+        153
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFmuY",
+      "reads_rel": [],
+      "writes_rel": [
+        154
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFmuZ",
+      "reads_rel": [],
+      "writes_rel": [
+        155
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFtotalX",
+      "reads_rel": [],
+      "writes_rel": [
+        156
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFtotalY",
+      "reads_rel": [],
+      "writes_rel": [
+        157
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFtotalZ",
+      "reads_rel": [],
+      "writes_rel": [
+        158
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayRho",
+      "reads_rel": [],
+      "writes_rel": [
+        50
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayTau",
+      "reads_rel": [],
+      "writes_rel": [
+        51
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayPressureMoment",
+      "reads_rel": [],
+      "writes_rel": [
+        52
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPreForceX",
+      "reads_rel": [],
+      "writes_rel": [
+        53
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPreForceY",
+      "reads_rel": [],
+      "writes_rel": [
+        54
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPreForceZ",
+      "reads_rel": [],
+      "writes_rel": [
+        55
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPostForceX",
+      "reads_rel": [],
+      "writes_rel": [
+        190
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPostForceY",
+      "reads_rel": [],
+      "writes_rel": [
+        191
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPostForceZ",
+      "reads_rel": [],
+      "writes_rel": [
+        192
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayPhaseAdvVelocityX",
+      "reads_rel": [],
+      "writes_rel": [
+        223
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayPhaseAdvVelocityY",
+      "reads_rel": [],
+      "writes_rel": [
+        224
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayPhaseAdvVelocityZ",
+      "reads_rel": [],
+      "writes_rel": [
+        225
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayForceOverRhoX",
+      "reads_rel": [],
+      "writes_rel": [
+        193
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayForceOverRhoY",
+      "reads_rel": [],
+      "writes_rel": [
+        194
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayForceOverRhoZ",
+      "reads_rel": [],
+      "writes_rel": [
+        195
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFmuIter1X",
+      "reads_rel": [],
+      "writes_rel": [
+        166
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFmuIter1Y",
+      "reads_rel": [],
+      "writes_rel": [
+        167
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFmuIter1Z",
+      "reads_rel": [],
+      "writes_rel": [
+        168
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFtotalIter1X",
+      "reads_rel": [],
+      "writes_rel": [
+        169
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFtotalIter1Y",
+      "reads_rel": [],
+      "writes_rel": [
+        170
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFtotalIter1Z",
+      "reads_rel": [],
+      "writes_rel": [
+        171
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPostIter1X",
+      "reads_rel": [],
+      "writes_rel": [
+        197
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPostIter1Y",
+      "reads_rel": [],
+      "writes_rel": [
+        198
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayUPostIter1Z",
+      "reads_rel": [],
+      "writes_rel": [
+        199
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayNormalX",
+      "reads_rel": [],
+      "writes_rel": [
+        87
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayNormalY",
+      "reads_rel": [],
+      "writes_rel": [
+        88
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayNormalZ",
+      "reads_rel": [],
+      "writes_rel": [
+        89
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayStressXX",
+      "reads_rel": [],
+      "writes_rel": [
+        159
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayStressXY",
+      "reads_rel": [],
+      "writes_rel": [
+        160
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayStressXZ",
+      "reads_rel": [],
+      "writes_rel": [
+        161
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayStressYY",
+      "reads_rel": [],
+      "writes_rel": [
+        162
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayStressYZ",
+      "reads_rel": [],
+      "writes_rel": [
+        163
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayStressZZ",
+      "reads_rel": [],
+      "writes_rel": [
+        164
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFphiSum",
+      "reads_rel": [],
+      "writes_rel": [
+        262
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayFphiMaxAbs",
+      "reads_rel": [],
+      "writes_rel": [
+        263
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "ReplayTmp1",
+      "reads_rel": [],
+      "writes_rel": [
+        209
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "gradPhi",
+      "reads_rel": [
+        17,
+        61,
+        62,
+        63,
+        65,
+        76,
+        82,
+        83,
+        84,
+        97,
+        99,
+        136,
+        137,
+        138
+      ],
+      "writes_rel": [
+        59
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        17
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "mu",
+      "reads_rel": [
+        99
+      ],
+      "writes_rel": [
+        15
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        15
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "F_surf",
+      "reads_rel": [
+        19,
+        99,
+        107,
+        108,
+        109,
+        139,
+        140,
+        141,
+        151
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        19
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "F_pressure",
+      "reads_rel": [
+        19,
+        97,
+        101,
+        102,
+        103,
+        139,
+        140,
+        141,
+        151
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        19
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "F_body",
+      "reads_rel": [
+        19,
+        98,
+        104,
+        105,
+        106,
+        139,
+        140,
+        141,
+        151
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        19
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "F_mu",
+      "reads_rel": [
+        19,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        151,
+        153,
+        154,
+        155,
+        166,
+        167,
+        168
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        19
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "F_total",
+      "reads_rel": [
+        19,
+        139,
+        140,
+        141,
+        147,
+        148,
+        149,
+        151,
+        156,
+        157,
+        158,
+        169,
+        170,
+        171,
+        175,
+        176,
+        177,
+        182,
+        183,
+        184,
+        187,
+        193,
+        194,
+        195,
+        249
+      ],
+      "writes_rel": [
+        42
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        19,
+        175,
+        176,
+        177
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "F_phi",
+      "reads_rel": [
+        21,
+        258,
+        259
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        21,
+        258
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "p",
+      "reads_rel": [
+        16,
+        35,
+        52,
+        97
+      ],
+      "writes_rel": [
+        46
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        16
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "rho",
+      "reads_rel": [
+        16,
+        44,
+        50,
+        98,
+        187,
+        189,
+        249
+      ],
+      "writes_rel": [
+        27,
+        43
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        16,
+        189
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "C",
+      "reads_rel": [
+        7,
+        15,
+        27,
+        29,
+        41,
+        48,
+        76,
+        125,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        187,
+        207,
+        233,
+        241,
+        242,
+        251,
+        252,
+        266
+      ],
+      "writes_rel": [
+        5
+      ],
+      "calls_rel": [
+        41,
+        125,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        187,
+        233,
+        241,
+        242,
+        251,
+        252
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        5,
+        15
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "U",
+      "reads_rel": [
+        33,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        190,
+        197,
+        211,
+        214,
+        232,
+        234,
+        237,
+        241
+      ],
+      "writes_rel": [
+        227,
+        244
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        211,
+        214
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "V",
+      "reads_rel": [
+        191,
+        198,
+        212,
+        215
+      ],
+      "writes_rel": [
+        228,
+        245
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        212,
+        215
+      ]
+    },
+    {
+      "function": "CollisionMRT",
+      "function_line": 1531,
+      "identifier": "W",
+      "reads_rel": [
+        192,
+        199,
+        213,
+        216
+      ],
+      "writes_rel": [
+        229,
+        246
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        213,
+        216
+      ]
+    },
+    {
+      "function": "updateBoundary",
+      "function_line": 1805,
+      "identifier": "C",
+      "reads_rel": [
+        10,
+        11,
+        13,
+        14
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        10,
+        11,
+        13,
+        14
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        3,
+        5
+      ],
+      "writes_rel": [
+        3
+      ],
+      "calls_rel": [
+        3
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        5
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "PhaseStencilGhostUseCount",
+      "reads_rel": [],
+      "writes_rel": [
+        12
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "PhaseStencilFallbackCount",
+      "reads_rel": [],
+      "writes_rel": [
+        13
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "PhaseStencilMidpointFallbackCount",
+      "reads_rel": [],
+      "writes_rel": [
+        14
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ForceIterResidual",
+      "reads_rel": [],
+      "writes_rel": [
+        9
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ForceIterCount",
+      "reads_rel": [],
+      "writes_rel": [
+        10,
+        70
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "MassCorrectionApplied",
+      "reads_rel": [],
+      "writes_rel": [
+        11
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayPhaseConsumed",
+      "reads_rel": [],
+      "writes_rel": [
+        7
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayGradPhiX",
+      "reads_rel": [],
+      "writes_rel": [
+        35
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayGradPhiY",
+      "reads_rel": [],
+      "writes_rel": [
+        36
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayGradPhiZ",
+      "reads_rel": [],
+      "writes_rel": [
+        37
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFsurfX",
+      "reads_rel": [],
+      "writes_rel": [
+        64
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFsurfY",
+      "reads_rel": [],
+      "writes_rel": [
+        65
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFsurfZ",
+      "reads_rel": [],
+      "writes_rel": [
+        66
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFpressureX",
+      "reads_rel": [],
+      "writes_rel": [
+        58
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFpressureY",
+      "reads_rel": [],
+      "writes_rel": [
+        59
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFpressureZ",
+      "reads_rel": [],
+      "writes_rel": [
+        60
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFbodyX",
+      "reads_rel": [],
+      "writes_rel": [
+        61
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFbodyY",
+      "reads_rel": [],
+      "writes_rel": [
+        62
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFbodyZ",
+      "reads_rel": [],
+      "writes_rel": [
+        63
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFmuX",
+      "reads_rel": [],
+      "writes_rel": [
+        112
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFmuY",
+      "reads_rel": [],
+      "writes_rel": [
+        113
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFmuZ",
+      "reads_rel": [],
+      "writes_rel": [
+        114
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFtotalX",
+      "reads_rel": [],
+      "writes_rel": [
+        115
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFtotalY",
+      "reads_rel": [],
+      "writes_rel": [
+        116
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "ReplayFtotalZ",
+      "reads_rel": [],
+      "writes_rel": [
+        117
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "gradPhi",
+      "reads_rel": [
+        17,
+        35,
+        36,
+        37,
+        39,
+        40,
+        41,
+        42,
+        50,
+        54,
+        56,
+        96,
+        97,
+        98
+      ],
+      "writes_rel": [
+        33
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        17
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "mu",
+      "reads_rel": [
+        56
+      ],
+      "writes_rel": [
+        15
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        15
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "F_surf",
+      "reads_rel": [
+        20,
+        56,
+        64,
+        65,
+        66,
+        99,
+        100,
+        101,
+        110
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        20
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "F_pressure",
+      "reads_rel": [
+        20,
+        54,
+        58,
+        59,
+        60,
+        99,
+        100,
+        101,
+        110
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        20
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "F_body",
+      "reads_rel": [
+        20,
+        55,
+        61,
+        62,
+        63,
+        99,
+        100,
+        101,
+        110
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        20
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "F_mu",
+      "reads_rel": [
+        20,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        110,
+        112,
+        113,
+        114
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        20
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "F_total",
+      "reads_rel": [
+        20,
+        99,
+        100,
+        101,
+        106,
+        107,
+        108,
+        110,
+        115,
+        116,
+        117,
+        121,
+        122,
+        123,
+        137
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        20
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "F_phi",
+      "reads_rel": [
+        22,
+        129
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        22
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "p",
+      "reads_rel": [
+        16,
+        54,
+        75
+      ],
+      "writes_rel": [
+        27
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        16
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "rho",
+      "reads_rel": [
+        16,
+        55,
+        121,
+        122,
+        123,
+        137
+      ],
+      "writes_rel": [
+        26
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        16
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "C",
+      "reads_rel": [
+        7,
+        15,
+        26,
+        27,
+        28,
+        30,
+        50,
+        80,
+        120,
+        127,
+        130,
+        133,
+        142,
+        144
+      ],
+      "writes_rel": [
+        5
+      ],
+      "calls_rel": [
+        27,
+        80,
+        120,
+        133,
+        142
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        5,
+        15
+      ]
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "U",
+      "reads_rel": [
+        72,
+        74,
+        120
+      ],
+      "writes_rel": [
+        121
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "V",
+      "reads_rel": [
+        72,
+        74
+      ],
+      "writes_rel": [
+        122
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "CollisionBGK",
+      "function_line": 1973,
+      "identifier": "W",
+      "reads_rel": [
+        72,
+        74
+      ],
+      "writes_rel": [
+        123
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad",
+      "function_line": 3638,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        11
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        11
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad",
+      "function_line": 3638,
+      "identifier": "gradPhiVal_x",
+      "reads_rel": [],
+      "writes_rel": [
+        6
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad",
+      "function_line": 3638,
+      "identifier": "gradPhiVal_y",
+      "reads_rel": [],
+      "writes_rel": [
+        7
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad",
+      "function_line": 3638,
+      "identifier": "gradPhiVal_z",
+      "reads_rel": [],
+      "writes_rel": [
+        8
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad",
+      "function_line": 3638,
+      "identifier": "gradPhi_PhaseF",
+      "reads_rel": [],
+      "writes_rel": [
+        11
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad",
+      "function_line": 3638,
+      "identifier": "gradPhi",
+      "reads_rel": [
+        2,
+        4,
+        6,
+        7,
+        8
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": [
+        2
+      ]
+    },
+    {
+      "function": "calcPhaseGrad_init",
+      "function_line": 3656,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        23
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        23
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad_init",
+      "function_line": 3656,
+      "identifier": "gradPhiVal_x",
+      "reads_rel": [
+        4
+      ],
+      "writes_rel": [
+        4,
+        8
+      ],
+      "calls_rel": [
+        4
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad_init",
+      "function_line": 3656,
+      "identifier": "gradPhiVal_y",
+      "reads_rel": [
+        5
+      ],
+      "writes_rel": [
+        5,
+        9
+      ],
+      "calls_rel": [
+        5
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad_init",
+      "function_line": 3656,
+      "identifier": "gradPhiVal_z",
+      "reads_rel": [
+        6
+      ],
+      "writes_rel": [
+        6,
+        10
+      ],
+      "calls_rel": [
+        6
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGrad_init",
+      "function_line": 3656,
+      "identifier": "gradPhi_PhaseF",
+      "reads_rel": [],
+      "writes_rel": [
+        23
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGradCloseToBoundary",
+      "function_line": 3687,
+      "identifier": "gradPhiVal_x",
+      "reads_rel": [],
+      "writes_rel": [
+        79
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGradCloseToBoundary",
+      "function_line": 3687,
+      "identifier": "gradPhiVal_y",
+      "reads_rel": [],
+      "writes_rel": [
+        80
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcPhaseGradCloseToBoundary",
+      "function_line": 3687,
+      "identifier": "gradPhiVal_z",
+      "reads_rel": [],
+      "writes_rel": [
+        81
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        2,
+        22,
+        28,
+        29,
+        30
+      ],
+      "writes_rel": [
+        2,
+        24,
+        26
+      ],
+      "calls_rel": [
+        2,
+        22
+      ],
+      "dyn_reads_rel": [
+        22
+      ],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "WallGhost",
+      "reads_rel": [
+        3
+      ],
+      "writes_rel": [
+        3,
+        28
+      ],
+      "calls_rel": [
+        3
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "WallGhostRaw",
+      "reads_rel": [
+        4
+      ],
+      "writes_rel": [
+        4,
+        29
+      ],
+      "calls_rel": [
+        4
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "WallGhostClamped",
+      "reads_rel": [
+        5
+      ],
+      "writes_rel": [
+        5,
+        30
+      ],
+      "calls_rel": [
+        5
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "WallGhostClampHit",
+      "reads_rel": [
+        6
+      ],
+      "writes_rel": [
+        6,
+        31
+      ],
+      "calls_rel": [
+        6
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "WettingPathId",
+      "reads_rel": [
+        7
+      ],
+      "writes_rel": [
+        7,
+        32
+      ],
+      "calls_rel": [
+        7
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "LocalRadAngle",
+      "reads_rel": [
+        8
+      ],
+      "writes_rel": [
+        8,
+        33
+      ],
+      "calls_rel": [
+        8
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase_correction",
+      "function_line": 3779,
+      "identifier": "AnalyticFlag",
+      "reads_rel": [
+        15
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        15
+      ],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "PhaseF",
+      "reads_rel": [
+        2,
+        52,
+        53,
+        125,
+        126,
+        127,
+        130,
+        141,
+        191,
+        307
+      ],
+      "writes_rel": [
+        2,
+        83,
+        85,
+        87,
+        101,
+        119,
+        121,
+        123,
+        154,
+        158,
+        166,
+        168,
+        174,
+        209,
+        304,
+        310
+      ],
+      "calls_rel": [
+        2,
+        52,
+        53
+      ],
+      "dyn_reads_rel": [
+        52,
+        53
+      ],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "WallGhost",
+      "reads_rel": [
+        77,
+        78,
+        309,
+        310
+      ],
+      "writes_rel": [
+        3,
+        66,
+        71,
+        73,
+        75,
+        97,
+        125,
+        308
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "WallGhostRaw",
+      "reads_rel": [
+        67,
+        99,
+        308
+      ],
+      "writes_rel": [
+        6,
+        77,
+        126,
+        307
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "WallGhostClamped",
+      "reads_rel": [
+        67,
+        99
+      ],
+      "writes_rel": [
+        7,
+        78,
+        127,
+        309
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "WallGhostClampHit",
+      "reads_rel": [
+        67,
+        99,
+        308
+      ],
+      "writes_rel": [
+        8,
+        79,
+        128
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "WettingPathId",
+      "reads_rel": [
+        99
+      ],
+      "writes_rel": [
+        9,
+        68,
+        80,
+        129,
+        153,
+        157,
+        164,
+        175,
+        210,
+        303
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "LocalRadAngle",
+      "reads_rel": [],
+      "writes_rel": [
+        10,
+        62,
+        117,
+        137
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "WallH",
+      "reads_rel": [],
+      "writes_rel": [
+        4,
+        61,
+        116
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "AnalyticFlag",
+      "reads_rel": [],
+      "writes_rel": [
+        5,
+        57,
+        112
+      ],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "gradPhiVal_x",
+      "reads_rel": [
+        93
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        93
+      ],
+      "dyn_reads_rel": [
+        93
+      ],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "gradPhiVal_y",
+      "reads_rel": [
+        94
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        94
+      ],
+      "dyn_reads_rel": [
+        94
+      ],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "gradPhiVal_z",
+      "reads_rel": [
+        95
+      ],
+      "writes_rel": [],
+      "calls_rel": [
+        95
+      ],
+      "dyn_reads_rel": [
+        95
+      ],
+      "local_decls_rel": []
+    },
+    {
+      "function": "calcWallPhase",
+      "function_line": 3819,
+      "identifier": "gradPhi_PhaseF",
+      "reads_rel": [
+        141,
+        191
+      ],
+      "writes_rel": [],
+      "calls_rel": [],
+      "dyn_reads_rel": [],
+      "local_decls_rel": []
+    }
+  ],
+  "functions": {
+    "getRho": {
+      "line": 60,
+      "end_line": 69
+    },
+    "getPhaseField": {
+      "line": 69,
+      "end_line": 73
+    },
+    "getU": {
+      "line": 73,
+      "end_line": 83
+    },
+    "getPstar": {
+      "line": 83,
+      "end_line": 87
+    },
+    "getP": {
+      "line": 87,
+      "end_line": 93
+    },
+    "getNormal": {
+      "line": 93,
+      "end_line": 98
+    },
+    "stage13_phase_is_valid": {
+      "line": 98,
+      "end_line": 112
+    },
+    "stage13_select_phase_for_stencil": {
+      "line": 112,
+      "end_line": 145
+    },
+    "getForceIterResidual": {
+      "line": 145,
+      "end_line": 149
+    },
+    "getForceIterCount": {
+      "line": 149,
+      "end_line": 153
+    },
+    "getMassCorrectionApplied": {
+      "line": 153,
+      "end_line": 157
+    },
+    "getPhaseStencilGhostUseCount": {
+      "line": 157,
+      "end_line": 161
+    },
+    "getPhaseStencilFallbackCount": {
+      "line": 161,
+      "end_line": 165
+    },
+    "getPhaseStencilMidpointFallbackCount": {
+      "line": 165,
+      "end_line": 169
+    },
+    "stage16_replay_diagnostics_active": {
+      "line": 169,
+      "end_line": 173
+    },
+    "stage16_zero_replay_diagnostics": {
+      "line": 173,
+      "end_line": 233
+    },
+    "stage16_replay_scalar": {
+      "line": 233,
+      "end_line": 238
+    },
+    "getReplayPhaseConsumed": {
+      "line": 238,
+      "end_line": 242
+    },
+    "getReplayPhaseFromH": {
+      "line": 242,
+      "end_line": 247
+    },
+    "getReplayLapPhi": {
+      "line": 247,
+      "end_line": 251
+    },
+    "getReplayMu": {
+      "line": 251,
+      "end_line": 255
+    },
+    "getReplayGradPhi": {
+      "line": 255,
+      "end_line": 263
+    },
+    "getReplayFsurf": {
+      "line": 263,
+      "end_line": 271
+    },
+    "getReplayFpressure": {
+      "line": 271,
+      "end_line": 279
+    },
+    "getReplayFbody": {
+      "line": 279,
+      "end_line": 287
+    },
+    "getReplayFmu": {
+      "line": 287,
+      "end_line": 295
+    },
+    "getReplayFtotal": {
+      "line": 295,
+      "end_line": 303
+    },
+    "getReplayRho": {
+      "line": 303,
+      "end_line": 307
+    },
+    "getReplayTau": {
+      "line": 307,
+      "end_line": 311
+    },
+    "getReplayPressureMoment": {
+      "line": 311,
+      "end_line": 315
+    },
+    "getReplayUPreForce": {
+      "line": 315,
+      "end_line": 323
+    },
+    "getReplayUPostForce": {
+      "line": 323,
+      "end_line": 331
+    },
+    "getReplayPhaseAdvVelocity": {
+      "line": 331,
+      "end_line": 339
+    },
+    "getReplayForceOverRho": {
+      "line": 339,
+      "end_line": 347
+    },
+    "getReplayFmuIter1": {
+      "line": 347,
+      "end_line": 355
+    },
+    "getReplayFtotalIter1": {
+      "line": 355,
+      "end_line": 363
+    },
+    "getReplayUPostIter1": {
+      "line": 363,
+      "end_line": 371
+    },
+    "getReplayNormal": {
+      "line": 371,
+      "end_line": 379
+    },
+    "stage14_apply_momentum_force_mode": {
+      "line": 379,
+      "end_line": 409
+    },
+    "getReplayStressXX": {
+      "line": 409,
+      "end_line": 413
+    },
+    "getReplayStressXY": {
+      "line": 413,
+      "end_line": 417
+    },
+    "getReplayStressXZ": {
+      "line": 417,
+      "end_line": 421
+    },
+    "getReplayStressYY": {
+      "line": 421,
+      "end_line": 425
+    },
+    "getReplayStressYZ": {
+      "line": 425,
+      "end_line": 429
+    },
+    "getReplayStressZZ": {
+      "line": 429,
+      "end_line": 433
+    },
+    "getReplayFphiSum": {
+      "line": 433,
+      "end_line": 437
+    },
+    "getReplayFphiMaxAbs": {
+      "line": 437,
+      "end_line": 441
+    },
+    "getReplayTmp1": {
+      "line": 441,
+      "end_line": 445
+    },
+    "getWallGradDeltaMag": {
+      "line": 445,
+      "end_line": 448
+    },
+    "getWallGradThetaApp": {
+      "line": 448,
+      "end_line": 451
+    },
+    "getWallMuCandidate": {
+      "line": 451,
+      "end_line": 460
+    },
+    "getDynamicCLActive": {
+      "line": 460,
+      "end_line": 461
+    },
+    "getDynamicCLIndicator": {
+      "line": 461,
+      "end_line": 462
+    },
+    "getDynamicCLCosApp": {
+      "line": 462,
+      "end_line": 463
+    },
+    "getDynamicCLThetaApp": {
+      "line": 463,
+      "end_line": 464
+    },
+    "getDynamicCLCosEq": {
+      "line": 464,
+      "end_line": 465
+    },
+    "getDynamicCLCosResidual": {
+      "line": 465,
+      "end_line": 466
+    },
+    "getDynamicCLForceCandidateX": {
+      "line": 466,
+      "end_line": 467
+    },
+    "getDynamicCLForceCandidateY": {
+      "line": 467,
+      "end_line": 468
+    },
+    "getDynamicCLForceCandidateZ": {
+      "line": 468,
+      "end_line": 469
+    },
+    "getDynamicCLForceCandidateMag": {
+      "line": 469,
+      "end_line": 470
+    },
+    "getDynamicCLTangentialX": {
+      "line": 470,
+      "end_line": 471
+    },
+    "getDynamicCLTangentialY": {
+      "line": 471,
+      "end_line": 472
+    },
+    "getDynamicCLTangentialZ": {
+      "line": 472,
+      "end_line": 473
+    },
+    "getDynamicCLWallNormalX": {
+      "line": 473,
+      "end_line": 474
+    },
+    "getDynamicCLWallNormalY": {
+      "line": 474,
+      "end_line": 475
+    },
+    "getDynamicCLWallNormalZ": {
+      "line": 475,
+      "end_line": 476
+    },
+    "getDynamicCLRejectedReason": {
+      "line": 476,
+      "end_line": 477
+    },
+    "getDynamicCLThetaEq": {
+      "line": 477,
+      "end_line": 478
+    },
+    "getDynamicCLWallContextFound": {
+      "line": 478,
+      "end_line": 479
+    },
+    "getDynamicCLBlockedReason": {
+      "line": 479,
+      "end_line": 480
+    },
+    "getDynamicCLWallDx": {
+      "line": 480,
+      "end_line": 481
+    },
+    "getDynamicCLWallDy": {
+      "line": 481,
+      "end_line": 482
+    },
+    "getDynamicCLWallDz": {
+      "line": 482,
+      "end_line": 510
+    },
+    "calcDynamicCLShadow": {
+      "line": 510,
+      "end_line": 645
+    },
+    "stage13_is_fluid_boundary_node": {
+      "line": 645,
+      "end_line": 699
+    },
+    "stage15_find_wetting_wall_context": {
+      "line": 699,
+      "end_line": 715
+    },
+    "calcGradPhiBoundaryCorrected": {
+      "line": 715,
+      "end_line": 797
+    },
+    "calcWallMuSource": {
+      "line": 797,
+      "end_line": 842
+    },
+    "calcGradPhiRaw": {
+      "line": 842,
+      "end_line": 886
+    },
+    "calcGradPhi": {
+      "line": 886,
+      "end_line": 908
+    },
+    "calcPhaseF": {
+      "line": 908,
+      "end_line": 928
+    },
+    "calcMu": {
+      "line": 928,
+      "end_line": 1003
+    },
+    "calcGamma": {
+      "line": 1003,
+      "end_line": 1016
+    },
+    "calcF_phi": {
+      "line": 1016,
+      "end_line": 1027
+    },
+    "sphereTail_max": {
+      "line": 1027,
+      "end_line": 1032
+    },
+    "sphereTail_min": {
+      "line": 1032,
+      "end_line": 1037
+    },
+    "sphereTail_sphereBelowVolume": {
+      "line": 1037,
+      "end_line": 1042
+    },
+    "sphereTail_compositeVolume": {
+      "line": 1042,
+      "end_line": 1055
+    },
+    "sphereTail_solveBodyRadius": {
+      "line": 1055,
+      "end_line": 1079
+    },
+    "sphereTail_topCappedCylinderSignedDistance": {
+      "line": 1079,
+      "end_line": 1091
+    },
+    "sphereTail_signedDistance": {
+      "line": 1091,
+      "end_line": 1110
+    },
+    "sphereTail_tailVelocityWeight": {
+      "line": 1110,
+      "end_line": 1132
+    },
+    "Init": {
+      "line": 1132,
+      "end_line": 1194
+    },
+    "InitFromFieldsStage": {
+      "line": 1194,
+      "end_line": 1204
+    },
+    "specialCases_Init": {
+      "line": 1204,
+      "end_line": 1329
+    },
+    "Init_distributions": {
+      "line": 1329,
+      "end_line": 1400
+    },
+    "UpdateGlobalMarkers": {
+      "line": 1400,
+      "end_line": 1426
+    },
+    "Run": {
+      "line": 1426,
+      "end_line": 1451
+    },
+    "calcTau": {
+      "line": 1451,
+      "end_line": 1483
+    },
+    "calc_Fp": {
+      "line": 1483,
+      "end_line": 1489
+    },
+    "calc_Fb": {
+      "line": 1489,
+      "end_line": 1495
+    },
+    "calc_Fs": {
+      "line": 1495,
+      "end_line": 1531
+    },
+    "CollisionMRT": {
+      "line": 1531,
+      "end_line": 1805
+    },
+    "updateBoundary": {
+      "line": 1805,
+      "end_line": 1846
+    },
+    "updateMyGlobals": {
+      "line": 1846,
+      "end_line": 1877
+    },
+    "updateTrackers": {
+      "line": 1877,
+      "end_line": 1973
+    },
+    "CollisionBGK": {
+      "line": 1973,
+      "end_line": 2120
+    },
+    "getA": {
+      "line": 2120,
+      "end_line": 2124
+    },
+    "Color": {
+      "line": 2124,
+      "end_line": 2303
+    },
+    "EConvect": {
+      "line": 2303,
+      "end_line": 2316
+    },
+    "WConvect": {
+      "line": 2316,
+      "end_line": 2330
+    },
+    "ENeumann": {
+      "line": 2330,
+      "end_line": 2338
+    },
+    "WNeumann": {
+      "line": 2338,
+      "end_line": 2348
+    },
+    "MovingNWall": {
+      "line": 2348,
+      "end_line": 2367
+    },
+    "MovingSWall": {
+      "line": 2367,
+      "end_line": 2386
+    },
+    "BounceBack": {
+      "line": 2386,
+      "end_line": 2443
+    },
+    "stage9_coord_x": {
+      "line": 2443,
+      "end_line": 2444
+    },
+    "stage9_coord_y": {
+      "line": 2444,
+      "end_line": 2445
+    },
+    "stage9_coord_z": {
+      "line": 2445,
+      "end_line": 2453
+    },
+    "stage9_plane_normal": {
+      "line": 2453,
+      "end_line": 2460
+    },
+    "stage9_plane_signed_distance": {
+      "line": 2460,
+      "end_line": 2469
+    },
+    "stage9_cylinder_perp_components": {
+      "line": 2469,
+      "end_line": 2477
+    },
+    "stage9_cylinder_normal": {
+      "line": 2477,
+      "end_line": 2490
+    },
+    "stage9_cylinder_signed_distance": {
+      "line": 2490,
+      "end_line": 2497
+    },
+    "stage9_sphere_normal": {
+      "line": 2497,
+      "end_line": 2508
+    },
+    "stage9_sphere_signed_distance": {
+      "line": 2508,
+      "end_line": 2515
+    },
+    "stage13_analytic_signed_distance_at_offset": {
+      "line": 2515,
+      "end_line": 2544
+    },
+    "stage13_compact_vertex_is_geometric_fluid": {
+      "line": 2544,
+      "end_line": 2554
+    },
+    "stage9_analytic_wall_normal_and_distance": {
+      "line": 2554,
+      "end_line": 2566
+    },
+    "stage9_probe_component": {
+      "line": 2566,
+      "end_line": 2574
+    },
+    "stage9_analytic_curvature": {
+      "line": 2574,
+      "end_line": 2605
+    },
+    "stage13_clamp_phase_value": {
+      "line": 2605,
+      "end_line": 2620
+    },
+    "stage13_compute_geometric_tangent_raw": {
+      "line": 2620,
+      "end_line": 2641
+    },
+    "stage9_calc_wall_ghost": {
+      "line": 2641,
+      "end_line": 2649
+    },
+    "stage13_compute_briant_wall_ghost_raw": {
+      "line": 2649,
+      "end_line": 2662
+    },
+    "stage13_compute_analytic_wall_ghost": {
+      "line": 2662,
+      "end_line": 2687
+    },
+    "stage13_phase_to_q": {
+      "line": 2687,
+      "end_line": 2694
+    },
+    "stage13_q_to_phase": {
+      "line": 2694,
+      "end_line": 2699
+    },
+    "stage13_compact_write_requested": {
+      "line": 2699,
+      "end_line": 2704
+    },
+    "stage13_compact_normal_mode_allows_write": {
+      "line": 2704,
+      "end_line": 2711
+    },
+    "stage13_csq_fallback_allows_write": {
+      "line": 2711,
+      "end_line": 2717
+    },
+    "stage13_compact_solution_can_write": {
+      "line": 2717,
+      "end_line": 2734
+    },
+    "stage13_compact_solution_wall_ghost": {
+      "line": 2734,
+      "end_line": 2750
+    },
+    "stage13_boundary_phase_is_valid": {
+      "line": 2750,
+      "end_line": 2764
+    },
+    "stage13_compact_vertex_is_real_fluid": {
+      "line": 2764,
+      "end_line": 2774
+    },
+    "stage13_bit3_value": {
+      "line": 2774,
+      "end_line": 2779
+    },
+    "stage13_bound_q": {
+      "line": 2779,
+      "end_line": 2788
+    },
+    "stage13_wall_csq_residual": {
+      "line": 2788,
+      "end_line": 2799
+    },
+    "stage13_floor_int": {
+      "line": 2799,
+      "end_line": 2805
+    },
+    "stage13_ceil_int": {
+      "line": 2805,
+      "end_line": 2811
+    },
+    "stage13_max_int": {
+      "line": 2811,
+      "end_line": 2816
+    },
+    "stage13_min_int": {
+      "line": 2816,
+      "end_line": 2821
+    },
+    "stage13_min_real": {
+      "line": 2821,
+      "end_line": 2826
+    },
+    "stage13_max_real": {
+      "line": 2826,
+      "end_line": 2831
+    },
+    "stage13_coord_span_ok": {
+      "line": 2831,
+      "end_line": 2845
+    },
+    "stage13_barycentric_3d": {
+      "line": 2845,
+      "end_line": 2877
+    },
+    "stage13_barycentric_inside": {
+      "line": 2877,
+      "end_line": 2884
+    },
+    "stage13_try_compact_triangle": {
+      "line": 2884,
+      "end_line": 2946
+    },
+    "stage13_fill_compact_stencil_solution": {
+      "line": 2946,
+      "end_line": 3037
+    },
+    "stage13_find_compact_qf": {
+      "line": 3037,
+      "end_line": 3151
+    },
+    "stage13_reset_wall_csq": {
+      "line": 3151,
+      "end_line": 3193
+    },
+    "stage13_keep_wall_csq": {
+      "line": 3193,
+      "end_line": 3235
+    },
+    "stage13_compute_compact_stencil_solution": {
+      "line": 3235,
+      "end_line": 3294
+    },
+    "getAnalyticWallNormal": {
+      "line": 3294,
+      "end_line": 3302
+    },
+    "getWallH": {
+      "line": 3302,
+      "end_line": 3305
+    },
+    "getWallGhost": {
+      "line": 3305,
+      "end_line": 3308
+    },
+    "getWallGhostRaw": {
+      "line": 3308,
+      "end_line": 3311
+    },
+    "getWallGhostClamped": {
+      "line": 3311,
+      "end_line": 3314
+    },
+    "getWallGhostClampHit": {
+      "line": 3314,
+      "end_line": 3317
+    },
+    "getWettingPathId": {
+      "line": 3317,
+      "end_line": 3320
+    },
+    "getLocalRadAngle": {
+      "line": 3320,
+      "end_line": 3323
+    },
+    "getAnalyticFlag": {
+      "line": 3323,
+      "end_line": 3326
+    },
+    "getWallCSQMode": {
+      "line": 3326,
+      "end_line": 3327
+    },
+    "getWallCSQNormalMode": {
+      "line": 3327,
+      "end_line": 3328
+    },
+    "getWallCSQValid": {
+      "line": 3328,
+      "end_line": 3329
+    },
+    "getWallCSQThetaDeg": {
+      "line": 3329,
+      "end_line": 3330
+    },
+    "getWallCSQNormalX": {
+      "line": 3330,
+      "end_line": 3331
+    },
+    "getWallCSQNormalY": {
+      "line": 3331,
+      "end_line": 3332
+    },
+    "getWallCSQNormalZ": {
+      "line": 3332,
+      "end_line": 3333
+    },
+    "getWallCSQDs": {
+      "line": 3333,
+      "end_line": 3334
+    },
+    "getWallCSQDf": {
+      "line": 3334,
+      "end_line": 3335
+    },
+    "getWallCSQQf": {
+      "line": 3335,
+      "end_line": 3336
+    },
+    "getWallCSQQsRaw": {
+      "line": 3336,
+      "end_line": 3337
+    },
+    "getWallCSQQsBounded": {
+      "line": 3337,
+      "end_line": 3338
+    },
+    "getWallCSQQw": {
+      "line": 3338,
+      "end_line": 3339
+    },
+    "getWallCSQResidual": {
+      "line": 3339,
+      "end_line": 3340
+    },
+    "getWallCSQAppliedResidual": {
+      "line": 3340,
+      "end_line": 3341
+    },
+    "getWallCSQDiscriminant": {
+      "line": 3341,
+      "end_line": 3342
+    },
+    "getWallCSQRootChoice": {
+      "line": 3342,
+      "end_line": 3343
+    },
+    "getWallCSQStencilCase": {
+      "line": 3343,
+      "end_line": 3344
+    },
+    "getWallCSQStencilL": {
+      "line": 3344,
+      "end_line": 3345
+    },
+    "getWallCSQFallbackReason": {
+      "line": 3345,
+      "end_line": 3346
+    },
+    "getWallCSQBoundedDelta": {
+      "line": 3346,
+      "end_line": 3347
+    },
+    "getWallCSQAppliedWeight": {
+      "line": 3347,
+      "end_line": 3348
+    },
+    "getWallCSQWriteAllowedFlag": {
+      "line": 3348,
+      "end_line": 3349
+    },
+    "getWallCSQCandidateCount": {
+      "line": 3349,
+      "end_line": 3350
+    },
+    "getWallCSQFluidVertexCount": {
+      "line": 3350,
+      "end_line": 3351
+    },
+    "getWallCSQTriangleInside": {
+      "line": 3351,
+      "end_line": 3352
+    },
+    "getWallCSQPlaneId": {
+      "line": 3352,
+      "end_line": 3353
+    },
+    "getWallCSQBaryMin": {
+      "line": 3353,
+      "end_line": 3354
+    },
+    "getWallCSQBaryMax": {
+      "line": 3354,
+      "end_line": 3355
+    },
+    "getWallCSQMethodComplete": {
+      "line": 3355,
+      "end_line": 3356
+    },
+    "getWallCSQVertexMaskBits": {
+      "line": 3356,
+      "end_line": 3357
+    },
+    "getWallCSQVertexRealFluidBits": {
+      "line": 3357,
+      "end_line": 3358
+    },
+    "getWallCSQVertexPhaseCleanBits": {
+      "line": 3358,
+      "end_line": 3359
+    },
+    "getWallCSQVertexQMin": {
+      "line": 3359,
+      "end_line": 3360
+    },
+    "getWallCSQVertexQMax": {
+      "line": 3360,
+      "end_line": 3361
+    },
+    "getWallCSQRejectedSolidVertexCount": {
+      "line": 3361,
+      "end_line": 3362
+    },
+    "getWallCSQRejectedSentinelCount": {
+      "line": 3362,
+      "end_line": 3363
+    },
+    "getWallCSQStrictWriteReady": {
+      "line": 3363,
+      "end_line": 3427
+    },
+    "getActualNormal": {
+      "line": 3427,
+      "end_line": 3478
+    },
+    "calcIntersectionTriangleId": {
+      "line": 3478,
+      "end_line": 3613
+    },
+    "getIsItBoundary": {
+      "line": 3613,
+      "end_line": 3617
+    },
+    "stage13_select_boundary_phase": {
+      "line": 3617,
+      "end_line": 3630
+    },
+    "getGradPhi": {
+      "line": 3630,
+      "end_line": 3638
+    },
+    "calcPhaseGrad": {
+      "line": 3638,
+      "end_line": 3656
+    },
+    "calcPhaseGrad_init": {
+      "line": 3656,
+      "end_line": 3687
+    },
+    "calcPhaseGradCloseToBoundary": {
+      "line": 3687,
+      "end_line": 3779
+    },
+    "calcWallPhase_correction": {
+      "line": 3779,
+      "end_line": 3819
+    },
+    "calcWallPhase": {
+      "line": 3819,
+      "end_line": 4132
+    },
+    "getSpecialBoundaryPoint": {
+      "line": 4132,
+      "end_line": 4141
+    },
+    "Init_wallNorm": {
+      "line": 4141,
+      "end_line": 4399
+    }
+  },
+  "occurrences": {
+    "STAGE13_PHASE_FOR_STENCIL": [
+      142,
+      848,
+      849,
+      850,
+      851,
+      852,
+      853,
+      854,
+      855,
+      856,
+      857,
+      860,
+      861,
+      862,
+      863,
+      864,
+      865,
+      866,
+      867,
+      868,
+      869,
+      874,
+      879,
+      934,
+      935,
+      936,
+      937,
+      938,
+      939,
+      940,
+      941,
+      942,
+      943,
+      944,
+      945,
+      946,
+      947,
+      949,
+      950,
+      951,
+      952,
+      953,
+      954,
+      955,
+      956,
+      957,
+      958,
+      959,
+      960,
+      961,
+      962,
+      969,
+      974
+    ],
+    "WallGhost": [
+      113,
+      143,
+      3305,
+      3306,
+      3308,
+      3309,
+      3311,
+      3312,
+      3314,
+      3315,
+      3626,
+      3781,
+      3782,
+      3783,
+      3784,
+      3790,
+      3806,
+      3807,
+      3808,
+      3809,
+      3821,
+      3824,
+      3825,
+      3826,
+      3853,
+      3884,
+      3885,
+      3889,
+      3891,
+      3893,
+      3895,
+      3896,
+      3897,
+      3915,
+      3917,
+      3943,
+      3944,
+      3945,
+      3946,
+      4125,
+      4126,
+      4127,
+      4128,
+      4348,
+      4349,
+      4350,
+      4351
+    ],
+    "PhaseF = -999": [
+      1136,
+      1200
+    ],
+    "SPECIAL_POINT_HUGE_MAGIC_NUMBER": [
+      2429
+    ],
+    "IsBoundary": [
+      143,
+      648,
+      649,
+      650,
+      651,
+      652,
+      653,
+      654,
+      674,
+      692,
+      816,
+      818,
+      819,
+      820,
+      1428,
+      2767,
+      2768,
+      2770,
+      3614,
+      3626,
+      3700,
+      3721,
+      3724,
+      3727,
+      3736,
+      3737,
+      3738,
+      3750,
+      3751,
+      3752,
+      3764,
+      4143,
+      4144,
+      4152,
+      4210,
+      4373,
+      4374
+    ],
+    "BounceBack": [
+      1809,
+      2386
+    ],
+    "calcWallPhase": [
+      2594,
+      2766,
+      3779,
+      3789,
+      3819,
+      4341
+    ],
+    "calcGradPhi": [
+      120,
+      715,
+      842,
+      886,
+      888,
+      890,
+      892,
+      1340,
+      1589,
+      2005,
+      2279
+    ],
+    "calcMu": [
+      928,
+      1545,
+      1987
+    ],
+    "WallCompactStencil": [
+      2701,
+      2708,
+      2719,
+      2720,
+      2781,
+      2952,
+      2995,
+      3051,
+      3175,
+      3239,
+      3240,
+      3245,
+      3246
+    ],
+    "DynamicCL": [
+      456,
+      458,
+      460,
+      461,
+      462,
+      463,
+      464,
+      465,
+      466,
+      467,
+      468,
+      469,
+      470,
+      471,
+      472,
+      473,
+      474,
+      475,
+      476,
+      477,
+      478,
+      479,
+      480,
+      481,
+      482,
+      486,
+      488,
+      490,
+      498,
+      501,
+      504,
+      505,
+      506,
+      508,
+      510,
+      515,
+      516,
+      517,
+      518,
+      519,
+      520,
+      521,
+      522,
+      523,
+      524,
+      525,
+      526,
+      527,
+      528,
+      529,
+      530,
+      531,
+      532,
+      533,
+      534,
+      535,
+      536,
+      537,
+      539,
+      541,
+      551,
+      552,
+      555,
+      556,
+      557,
+      558,
+      563,
+      564,
+      566,
+      567,
+      568,
+      571,
+      578,
+      581,
+      589,
+      597,
+      599,
+      600,
+      601,
+      603,
+      605,
+      614,
+      616,
+      617,
+      618,
+      621,
+      625,
+      626,
+      633,
+      634,
+      635,
+      636,
+      637,
+      661,
+      1597,
+      1599,
+      1600,
+      1606,
+      1673,
+      1676,
+      2015,
+      2016,
+      2017,
+      2022,
+      2075,
+      2077
+    ]
+  },
+  "risks": [
+    {
+      "severity": "INFO",
+      "id": "STREAMING_DENSITY",
+      "message": "g/h are TCLB AddDensity streaming groups; do not treat them as explicit current arrays.",
+      "evidence": [
+        {
+          "name": "g0",
+          "dx": 0,
+          "dy": 0,
+          "dz": 0,
+          "group": "g",
+          "streams": false,
+          "line": 1
+        },
+        {
+          "name": "g1",
+          "dx": 1,
+          "dy": 0,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 2
+        },
+        {
+          "name": "g2",
+          "dx": -1,
+          "dy": 0,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 3
+        },
+        {
+          "name": "g3",
+          "dx": 0,
+          "dy": 1,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 4
+        },
+        {
+          "name": "g4",
+          "dx": 0,
+          "dy": -1,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 5
+        },
+        {
+          "name": "g5",
+          "dx": 0,
+          "dy": 0,
+          "dz": 1,
+          "group": "g",
+          "streams": true,
+          "line": 6
+        }
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_STAGE13_PHASE_FOR_STENCIL",
+      "message": "STAGE13_PHASE_FOR_STENCIL appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        142,
+        848,
+        849,
+        850,
+        851,
+        852,
+        853,
+        854,
+        855,
+        856,
+        857,
+        860,
+        861,
+        862,
+        863,
+        864,
+        865,
+        866,
+        867,
+        868
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_WallGhost",
+      "message": "WallGhost appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        113,
+        143,
+        3305,
+        3306,
+        3308,
+        3309,
+        3311,
+        3312,
+        3314,
+        3315,
+        3626,
+        3781,
+        3782,
+        3783,
+        3784,
+        3790,
+        3806,
+        3807,
+        3808,
+        3809
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_PhaseF_=_-999",
+      "message": "PhaseF = -999 appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        1136,
+        1200
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_IsBoundary",
+      "message": "IsBoundary appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        143,
+        648,
+        649,
+        650,
+        651,
+        652,
+        653,
+        654,
+        674,
+        692,
+        816,
+        818,
+        819,
+        820,
+        1428,
+        2767,
+        2768,
+        2770,
+        3614,
+        3626
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "WALL_BEFORE_ITER",
+      "message": "calcWall_CA/calcWall stage exists before BaseIter in Dynamics.R order; verify fields loaded by BaseIter consume the intended wall ghost time level.",
+      "stage_order": [
+        "PhaseInit",
+        "BaseInit",
+        "calcPhase",
+        "BaseIter",
+        "InitFromFieldsStage",
+        "WallInit_CA",
+        "calcWall_CA",
+        "calcPhaseGrad",
+        "calcPhaseGrad_init",
+        "calcWallPhase_correction",
+        "WallInit",
+        "calcWall",
+        "calcWallPhase_correction",
+        "CopyDistributions",
+        "CopyThermal",
+        "RK_1",
+        "RK_2",
+        "RK_3",
+        "RK_4",
+        "NonLocalTemp"
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcGradPhi",
+      "message": "calcGradPhi is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 886
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcMu",
+      "message": "calcMu is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 928
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcPhaseF",
+      "message": "calcPhaseF is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 908
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_Run",
+      "message": "Run is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 1426
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_BounceBack",
+      "message": "BounceBack is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 2386
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcWallPhase",
+      "message": "calcWallPhase is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 3819
+    },
+    {
+      "severity": "HIGH",
+      "id": "SPECIAL_POINT_MAGIC",
+      "message": "Special-point magic values are present; confirm they cannot enter grad/laplace/mu stencils.",
+      "lines": [
+        2429
+      ]
+    }
+  ],
+  "timeline_summary": {
+    "geometric_iteration_order": [
+      "BaseIter",
+      "calcPhase",
+      "calcPhaseGrad",
+      "calcPhaseGrad_init",
+      "calcWall_CA",
+      "calcWallPhase_correction"
+    ],
+    "field_count_of_interest": 91,
+    "producer_consumer_edge_count": 96,
+    "unresolved_edge_count": 14,
+    "mandatory_s2_diagnostics_needed": [],
+    "s2_replay_diagnostics_covered": [
+      "F_pressure",
+      "F_surf",
+      "F_total",
+      "gradPhi",
+      "mu"
+    ],
+    "s1_gate_status": "needs_review"
+  }
+}

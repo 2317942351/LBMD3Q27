@@ -1,0 +1,1451 @@
+Dynamics.c:60:		real_t current_phase = getPhaseField();
+Dynamics.c:61:		return Density_l + (Density_h-Density_l) * (current_phase - PhaseField_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:65:CudaDeviceFunction real_t getPhaseField(){
+Dynamics.c:66:	return PhaseF(0,0,0);
+Dynamics.c:99:	// Stage 15B-pre safety cleanup: the compact-stencil WallGhost is the single
+Dynamics.c:123:	return 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:127:	stage13_select_phase_for_stencil(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), WallGhost(dx,dy,dz), PhaseF(0,0,0))
+Dynamics.c:198:// F_total unless DynamicCLMode >= 2 (reserved for 15C).
+Dynamics.c:278:	real_t pf_scale = PhaseField_h - PhaseField_l;
+Dynamics.c:280:	real_t q = (C - PhaseField_l) / pf_scale;
+Dynamics.c:331:	// Candidate force magnitude (capped). NOT added to F_total in 15B.
+Dynamics.c:445:	real_t pf = PhaseF(0,0,0);
+Dynamics.c:446:	real_t pf_scale = PhaseField_h - PhaseField_l;
+Dynamics.c:448:	real_t q = (pf - PhaseField_l) / pf_scale;
+Dynamics.c:505:CudaDeviceFunction real_t calcWallMuSource(real_t C)
+Dynamics.c:517:	real_t pf_scale = PhaseField_h - PhaseField_l;
+Dynamics.c:519:	real_t q = (C - PhaseField_l) / pf_scale;
+Dynamics.c:618:	the iteration buffer with updated values of PhaseF.
+Dynamics.c:620:CudaDeviceFunction void calcPhaseF()
+Dynamics.c:626:		PhaseF = h26 + h25 + h24 + h23 + h22 + h21 + h20 + h19 + h18 + h17 + h16 + h15 + h14 + h13 + h12 + h11 + h10 + h9 + h8 + h7 + h6 + h5 + h4 + h3 + h2 + h1 + h0;
+Dynamics.c:628:		PhaseF = PhaseF(0,0,0);
+Dynamics.c:637:CudaDeviceFunction real_t calcMu(real_t C)
+Dynamics.c:640:	pfavg = 0.5*(PhaseField_l+PhaseField_h);
+Dynamics.c:687:		mu = 4.0*(12.0*SurfaceTension(0,0,0)/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+Dynamics.c:690:		mu = 4.0*(12.0*sigma/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+Dynamics.c:695:		real_t mu_wall = calcWallMuSource(C);
+Dynamics.c:839:	PhaseF = PhaseField;
+Dynamics.c:841:	if ( IamWall || IamSolid ) PhaseF = -999;
+Dynamics.c:856:		real_t pf_mid = 0.5*(PhaseField_h + PhaseField_l);
+Dynamics.c:857:		real_t liquid_fraction = (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:866:			int in_droplet = (BubbleType >= 0.0 && PhaseF > pf_mid) ||
+Dynamics.c:867:			                 (BubbleType <  0.0 && PhaseF < pf_mid);
+Dynamics.c:901:	PhaseF = Init_PhaseField_External;
+Dynamics.c:905:	if ( IamWall || IamSolid ) PhaseF = -999;
+Dynamics.c:930:			PhaseF = 0.5 + PLUSMINUS * (0.5) * tanh( (Y - MIDPOINT)/(IntWidth/2) );
+Dynamics.c:937:		Cond = interp(PhaseF, k_h, k_l);
+Dynamics.c:953:                PhaseF = 0.5*(PhaseField_h + PhaseField_l)
+Dynamics.c:954:                       - 0.5*(PhaseField_h - PhaseField_l) * BubbleType * tanh(2 * (Ri - Radius)/IntWidth);
+Dynamics.c:964:		PhaseF = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+Dynamics.c:975:		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+Dynamics.c:977:		PhaseF = (Rs < SphereCapInitSolidRadius) ? PhaseField_l : cap_pf;
+Dynamics.c:995:		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+Dynamics.c:997:		PhaseF = (radial < CylinderCapInitSolidRadius) ? PhaseField_l : cap_pf;
+Dynamics.c:1010:		if (Y < ycutoff) {PhaseF = 0.0; }
+Dynamics.c:1011:		else             {PhaseF = 1.0;	}
+Dynamics.c:1022:			PhaseF = 0.0;
+Dynamics.c:1024:			PhaseF = 1.0;
+Dynamics.c:1029:		PhaseF = 1 - 0.5 *  ( tanh( 2.0 * ( X - Washburn_start ) / IntWidth ) -
+Dynamics.c:1038:	real_t C0 = 0.5*(PhaseField_h - PhaseField_l);
+Dynamics.c:1039:	PhaseF = PhaseF(0,0,0);
+Dynamics.c:1040:	real_t d = Density_l + (Density_h-Density_l) * (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:1049:		gradPhiVal_x = gradPhi.x;
+Dynamics.c:1050:		gradPhiVal_y = gradPhi.y;
+Dynamics.c:1051:		gradPhiVal_z = gradPhi.z;
+Dynamics.c:1069:	real_t tmp1 = (1.0 - 4.0*(PhaseF - C0)*(PhaseF - C0))/IntWidth;
+Dynamics.c:1075:	h0 = Gamma[0]*PhaseF;
+Dynamics.c:1076:h1 = Gamma[1]*PhaseF;
+Dynamics.c:1077:h2 = Gamma[2]*PhaseF;
+Dynamics.c:1078:h3 = Gamma[3]*PhaseF;
+Dynamics.c:1079:h4 = Gamma[4]*PhaseF;
+Dynamics.c:1080:h5 = Gamma[5]*PhaseF;
+Dynamics.c:1081:h6 = Gamma[6]*PhaseF;
+Dynamics.c:1082:h7 = Gamma[7]*PhaseF;
+Dynamics.c:1083:h8 = Gamma[8]*PhaseF;
+Dynamics.c:1084:h9 = Gamma[9]*PhaseF;
+Dynamics.c:1085:h10 = Gamma[10]*PhaseF;
+Dynamics.c:1086:h11 = Gamma[11]*PhaseF;
+Dynamics.c:1087:h12 = Gamma[12]*PhaseF;
+Dynamics.c:1088:h13 = Gamma[13]*PhaseF;
+Dynamics.c:1089:h14 = Gamma[14]*PhaseF;
+Dynamics.c:1090:h15 = Gamma[15]*PhaseF;
+Dynamics.c:1091:h16 = Gamma[16]*PhaseF;
+Dynamics.c:1092:h17 = Gamma[17]*PhaseF;
+Dynamics.c:1093:h18 = Gamma[18]*PhaseF;
+Dynamics.c:1094:h19 = Gamma[19]*PhaseF;
+Dynamics.c:1095:h20 = Gamma[20]*PhaseF;
+Dynamics.c:1096:h21 = Gamma[21]*PhaseF;
+Dynamics.c:1097:h22 = Gamma[22]*PhaseF;
+Dynamics.c:1098:h23 = Gamma[23]*PhaseF;
+Dynamics.c:1099:h24 = Gamma[24]*PhaseF;
+Dynamics.c:1100:h25 = Gamma[25]*PhaseF;
+Dynamics.c:1101:h26 = Gamma[26]*PhaseF;
+Dynamics.c:1134:		PhaseF = h26 + h25 + h24 + h23 + h22 + h21 + h20 + h19 + h18 + h17 + h16 + h15 + h14 + h13 + h12 + h11 + h10 + h9 + h8 + h7 + h6 + h5 + h4 + h3 + h2 + h1 + h0;
+Dynamics.c:1137:		Cond   = interp(PhaseF, k_h, k_l);
+Dynamics.c:1189:				CollisionMRT();
+Dynamics.c:1199:	if ( pf < PhaseField_l){
+Dynamics.c:1201:	} else if (pf > PhaseField_h) {
+Dynamics.c:1205:            tau = 0.5 + tau_l + (pf-PhaseField_l)*(tau_h - tau_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:1207:		    tau = (pf - PhaseField_l)/(PhaseField_h - PhaseField_l) * (1.0/tau_h - 1.0/tau_l) + 1.0/tau_l;
+Dynamics.c:1218:		    real_t DynVisc = mu_l * mu_h * (PhaseField_h - PhaseField_l) / ((pf - PhaseField_l)*mu_l  + (PhaseField_h - pf)*mu_h);
+Dynamics.c:1222:            tau = 0.5 + tau_l + (pf-PhaseField_l)*(tau_h - tau_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:1240:CudaDeviceFunction void calc_Fs(real_t *fx, real_t *fy, real_t *fz, real_t mu, vector_t gPhi){
+Dynamics.c:1284:CudaDeviceFunction void CollisionMRT()
+Dynamics.c:1286:	PhaseF = PhaseF(0,0,0);
+Dynamics.c:1288:	real_t C  = PhaseF;
+Dynamics.c:1295:    real_t mu = calcMu( C );
+Dynamics.c:1299:	real_t F_pressure[3], F_body[3], F_mu[3], F_surf[3], F_total[3]; // Forces
+Dynamics.c:1307:	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:1350:	// F_total (DynamicCLMode<=1). The F_total += F_CL line is reserved for 15C
+Dynamics.c:1356:		// function scope so the 15C write hook below can add it to F_total.
+Dynamics.c:1375:    calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+Dynamics.c:1426:		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+Dynamics.c:1427:		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+Dynamics.c:1428:		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+Dynamics.c:1429:		// Stage 15C write hook: add the residual contact-line force to F_total.
+Dynamics.c:1434:			F_total[0] += fcl_x;
+Dynamics.c:1435:			F_total[1] += fcl_y;
+Dynamics.c:1436:			F_total[2] += fcl_z;
+Dynamics.c:1439:			real_t dFx = F_total[0] - F_prev[0];
+Dynamics.c:1440:			real_t dFy = F_total[1] - F_prev[1];
+Dynamics.c:1441:			real_t dFz = F_total[2] - F_prev[2];
+Dynamics.c:1446:		F_prev[0] = F_total[0];
+Dynamics.c:1447:		F_prev[1] = F_total[1];
+Dynamics.c:1448:		F_prev[2] = F_total[2];
+Dynamics.c:1451:	U = m0[1] + F_total[0]/rho/2.;
+Dynamics.c:1452:V = m0[2] + F_total[1]/rho/2.;
+Dynamics.c:1453:W = m0[3] + F_total[2]/rho/2.;
+Dynamics.c:1543:m[1] = U + F_total[0]/rho/2.;
+Dynamics.c:1544:m[2] = V + F_total[1]/rho/2.;
+Dynamics.c:1545:m[3] = W + F_total[2]/rho/2.;
+Dynamics.c:1629:	h4 = -h3 + PhaseField*5./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V*7. + ( -W*W - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1630:h9 = -h12 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1631:h10 = -h11 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1632:h13 = -h8 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1633:h14 = -h7 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1634:h17 = -h16 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U - V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1635:h18 = -h15 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U + V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1636:h24 = -h25 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W - V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1637:h26 = -h23 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W + V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1654:	h4 = -h3 + PhaseField*5./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V*7. + ( -W*W - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1655:h9 = -h12 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1656:h10 = -h11 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1657:h13 = -h8 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1658:h14 = -h7 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1659:h17 = -h16 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U - V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1660:h18 = -h15 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U + V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1661:h24 = -h25 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W - V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1662:h26 = -h23 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W + V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1692:	h2 = -h1 + PhaseField*5./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( U*U*7. + ( -W*W - V*V )*4. )*PhaseField )/18.;
+Dynamics.c:1693:h8 = -h13 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1694:h10 = -h11 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1695:h12 = -h9 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1696:h14 = -h7 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1697:h16 = -h17 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V - U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1698:h18 = -h15 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V + U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1699:h20 = -h21 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W - U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1700:h22 = -h19 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W + U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1717:	h2 = -h1 + PhaseField*5./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( U*U*7. + ( -W*W - V*V )*4. )*PhaseField )/18.;
+Dynamics.c:1718:h8 = -h13 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1719:h10 = -h11 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1720:h12 = -h9 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1721:h14 = -h7 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1722:h16 = -h17 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V - U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1723:h18 = -h15 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V + U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1724:h20 = -h21 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W - U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1725:h22 = -h19 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W + U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1755:	h3 = -h4 + PhaseField*5./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V*7. + ( -W*W - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1756:h7 = -h14 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1757:h8 = -h13 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1758:h11 = -h10 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1759:h12 = -h9 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1760:h15 = -h18 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U + V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1761:h16 = -h17 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U - V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1762:h23 = -h26 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W + V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1763:h25 = -h24 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W - V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1780:	h3 = -h4 + PhaseField*5./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V*7. + ( -W*W - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1781:h7 = -h14 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1782:h8 = -h13 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1783:h11 = -h10 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1784:h12 = -h9 + PhaseField*0.0462962962962963 + ( ( W*W - V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1785:h15 = -h18 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U + V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1786:h16 = -h17 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( -W*W + V*V + ( U - V*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1787:h23 = -h26 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W + V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1788:h25 = -h24 + PhaseField*2./27. + ( -h22 - h21 - h20 - h19 - h6 - h5 - h2 - h1 - h0 + ( V*V - U*U + ( W - V*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1818:	h1 = -h2 + PhaseField*5./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( U*U*7. + ( -W*W - V*V )*4. )*PhaseField )/18.;
+Dynamics.c:1819:h7 = -h14 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1820:h9 = -h12 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1821:h11 = -h10 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1822:h13 = -h8 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1823:h15 = -h18 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V + U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1824:h17 = -h16 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V - U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1825:h19 = -h22 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W + U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1826:h21 = -h20 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W - U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1843:	h1 = -h2 + PhaseField*5./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( U*U*7. + ( -W*W - V*V )*4. )*PhaseField )/18.;
+Dynamics.c:1844:h7 = -h14 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1845:h9 = -h12 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1846:h11 = -h10 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1847:h13 = -h8 + PhaseField*0.0462962962962963 + ( ( W*W + V*V - U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 )*2. )/36.;
+Dynamics.c:1848:h15 = -h18 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V + U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1849:h17 = -h16 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -W*W + U*U + ( V - U*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1850:h19 = -h22 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W + U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1851:h21 = -h20 + PhaseField*2./27. + ( -h26 - h25 - h24 - h23 - h6 - h5 - h4 - h3 - h0 + ( -V*V + U*U + ( W - U*3. )*W*2. )*PhaseField )/18.;
+Dynamics.c:1881:	h6 = -h5 + PhaseField*5./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W*7. + ( -V*V - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1882:h11 = -h10 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1883:h12 = -h9 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1884:h13 = -h8 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1885:h14 = -h7 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1886:h21 = -h20 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U - W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1887:h22 = -h19 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U + W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1888:h25 = -h24 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V - W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1889:h26 = -h23 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V + W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1906:	h6 = -h5 + PhaseField*5./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W*7. + ( -V*V - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1907:h11 = -h10 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1908:h12 = -h9 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1909:h13 = -h8 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1910:h14 = -h7 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1911:h21 = -h20 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U - W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1912:h22 = -h19 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U + W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1913:h25 = -h24 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V - W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1914:h26 = -h23 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V + W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1944:	h5 = -h6 + PhaseField*5./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W*7. + ( -V*V - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1945:h7 = -h14 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1946:h8 = -h13 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1947:h9 = -h12 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1948:h10 = -h11 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1949:h19 = -h22 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U + W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1950:h20 = -h21 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U - W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1951:h23 = -h26 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V + W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1952:h24 = -h25 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V - W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1969:	h5 = -h6 + PhaseField*5./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W*7. + ( -V*V - U*U )*4. )*PhaseField )/18.;
+Dynamics.c:1970:h7 = -h14 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1971:h8 = -h13 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( W*V + ( -W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1972:h9 = -h12 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( W - V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1973:h10 = -h11 + PhaseField*0.0462962962962963 + ( ( -W*W + V*V + U*U + ( -W*V + ( -W + V )*U )*3. )*PhaseField + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 )*2. )/36.;
+Dynamics.c:1974:h19 = -h22 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U + W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1975:h20 = -h21 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - V*V + ( U - W*3. )*U*2. )*PhaseField )/18.;
+Dynamics.c:1976:h23 = -h26 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V + W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:1977:h24 = -h25 + PhaseField*2./27. + ( -h18 - h17 - h16 - h15 - h4 - h3 - h2 - h1 - h0 + ( W*W - U*U + ( V - W*3. )*V*2. )*PhaseField )/18.;
+Dynamics.c:2027:real_t Rx  =  -PhaseField + h26 + h25 + h24 + h23 + h6 + h5 + h4 + h3 + h0 + ( h21 + h19 + h17 + h15 + h11 + h9 + h13 + h7 + h1 )*2. ;
+Dynamics.c:2059:real_t Rx  =  -PhaseField + h26 + h25 + h24 + h23 + h6 + h5 + h4 + h3 + h0 + ( h21 + h19 + h17 + h15 + h11 + h9 + h13 + h7 + h1 )*2. ;
+Dynamics.c:2267:// NOTE: TCLB's PhaseF(dx,dy,dz) reads RELATIVE to the current node, so absolute
+Dynamics.c:2270:// (gradPhiVal_*), which is already a high-order isotropic estimate of grad(phi)
+Dynamics.c:2271:// at this node. phi_0 = PhaseF(0,0,0). No trilinear probe is needed. This keeps
+Dynamics.c:2275:// Called from calcWallPhase on a wall/solid node, with:
+Dynamics.c:2278://   phi_0: phase at the first fluid node along +n_w (caller passes PhaseF_dyn(nw))
+Dynamics.c:2290:	if (out < PhaseField_l) {
+Dynamics.c:2291:		out = PhaseField_l;
+Dynamics.c:2294:	if (out > PhaseField_h) {
+Dynamics.c:2295:		out = PhaseField_h;
+Dynamics.c:2304:	real_t phase_range = PhaseField_h - PhaseField_l;
+Dynamics.c:2370:	real_t range = PhaseField_h - PhaseField_l;
+Dynamics.c:2372:	return (phi - PhaseField_l) / range;
+Dynamics.c:2377:	return PhaseField_l + q * (PhaseField_h - PhaseField_l);
+Dynamics.c:2437:	// This helper is used from calcWallPhase after Init_wallNorm has saved the
+Dynamics.c:2566:	real_t pf_a = PhaseF_dyn(sx*ax, sy*ay, sz*az);
+Dynamics.c:2567:	real_t pf_b = PhaseF_dyn(sx*bx, sy*by, sz*bz);
+Dynamics.c:2568:	real_t pf_c = PhaseF_dyn(sx*cx, sy*cy, sz*cz);
+Dynamics.c:2925:	real_t range = PhaseField_h - PhaseField_l;
+Dynamics.c:2976:CudaDeviceFunction real_t getWallGhost() {
+Dynamics.c:2977:	return WallGhost(0,0,0);
+Dynamics.c:2979:CudaDeviceFunction real_t getWallGhostRaw() {
+Dynamics.c:2980:	return WallGhostRaw(0,0,0);
+Dynamics.c:2982:CudaDeviceFunction real_t getWallGhostClamped() {
+Dynamics.c:2983:	return WallGhostClamped(0,0,0);
+Dynamics.c:2985:CudaDeviceFunction real_t getWallGhostClampHit() {
+Dynamics.c:2986:	return WallGhostClampHit(0,0,0);
+Dynamics.c:3335:	return 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3339:	stage13_select_boundary_phase(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), WallGhost(dx,dy,dz), PhaseF(0,0,0))
+Dynamics.c:3345:	gradPhi.x = gradPhiVal_x(0,0,0);
+Dynamics.c:3346:	gradPhi.y = gradPhiVal_y(0,0,0);
+Dynamics.c:3347:	gradPhi.z = gradPhiVal_z(0,0,0);
+Dynamics.c:3351:CudaDeviceFunction void calcPhaseGrad(){
+Dynamics.c:3360:    gradPhiVal_x = gradPhi.x;
+Dynamics.c:3361:    gradPhiVal_y = gradPhi.y;
+Dynamics.c:3362:    gradPhiVal_z = gradPhi.z;
+Dynamics.c:3363:	calcPhaseGradCloseToBoundary();
+Dynamics.c:3365:	gradPhi_PhaseF = PhaseF(0,0,0);
+Dynamics.c:3373:CudaDeviceFunction void calcPhaseGrad_init(){
+Dynamics.c:3376:	gradPhiVal_x = gradPhiVal_x(0, 0, 0);
+Dynamics.c:3377:	gradPhiVal_y = gradPhiVal_y(0, 0, 0);
+Dynamics.c:3378:	gradPhiVal_z = gradPhiVal_z(0, 0, 0);
+Dynamics.c:3380:	gradPhiVal_x = (STAGE13_BOUNDARY_PHASE(1, 0, 0) - STAGE13_BOUNDARY_PHASE(-1, 0, 0) )/ (2.0*h);
+Dynamics.c:3381:	gradPhiVal_y = (STAGE13_BOUNDARY_PHASE(0, 1, 0) - STAGE13_BOUNDARY_PHASE(0, -1, 0) )/ (2.0*h);
+Dynamics.c:3382:	gradPhiVal_z = (STAGE13_BOUNDARY_PHASE(0, 0, 1) - STAGE13_BOUNDARY_PHASE(0, 0, -1) )/ (2.0*h);
+Dynamics.c:3384:	calcPhaseGradCloseToBoundary();
+Dynamics.c:3389:		if (fabs(gradPhiVal_x) > 20) {
+Dynamics.c:3390:			gradPhiVal_x = 0;
+Dynamics.c:3393:		if (fabs(gradPhiVal_y) > 20) {
+Dynamics.c:3394:			gradPhiVal_y = 0;
+Dynamics.c:3397:		if (fabs(gradPhiVal_z) > 20) {
+Dynamics.c:3398:			gradPhiVal_z = 0;
+Dynamics.c:3403:	gradPhi_PhaseF = PhaseF(0,0,0);
+Dynamics.c:3412:CudaDeviceFunction void calcPhaseGradCloseToBoundary(){
+Dynamics.c:3445:		gradPhiVal_x = (STAGE13_BOUNDARY_PHASE(1,0,0) - \
+Dynamics.c:3457:			gradPhiVal_x = -(4*STAGE13_BOUNDARY_PHASE(-1,0,0) - \
+Dynamics.c:3471:		gradPhiVal_x = (4*STAGE13_BOUNDARY_PHASE(1,0,0) -
+Dynamics.c:3493:		gradPhiVal_y = (STAGE13_BOUNDARY_PHASE(0,1,0) - \
+Dynamics.c:3505:			gradPhiVal_y = -(4*STAGE13_BOUNDARY_PHASE(0,-1,0) - \
+Dynamics.c:3519:		gradPhiVal_y = (4*STAGE13_BOUNDARY_PHASE(0,1,0) -
+Dynamics.c:3541:		gradPhiVal_z = (STAGE13_BOUNDARY_PHASE(0,0,1) - \
+Dynamics.c:3553:			gradPhiVal_z = -(4*STAGE13_BOUNDARY_PHASE(0,0,-1) - \
+Dynamics.c:3567:		gradPhiVal_z = (4*STAGE13_BOUNDARY_PHASE(0,0,1) -
+Dynamics.c:3576:		gradPhiVal_x = 0.;
+Dynamics.c:3577:		gradPhiVal_y = 0.;
+Dynamics.c:3578:		gradPhiVal_z = 0.;
+Dynamics.c:3585:/* Correct PhaseField values on the boundary nodes
+Dynamics.c:3590:CudaDeviceFunction void calcWallPhase_correction() {
+Dynamics.c:3591:	PhaseF = PhaseF(0,0,0);
+Dynamics.c:3592:	WallGhost = WallGhost(0,0,0);
+Dynamics.c:3593:	WallGhostRaw = WallGhostRaw(0,0,0);
+Dynamics.c:3594:	WallGhostClamped = WallGhostClamped(0,0,0);
+Dynamics.c:3595:	WallGhostClampHit = WallGhostClampHit(0,0,0);
+Dynamics.c:3600:	// Stage9 analytic path: the ghost was already written in calcWallPhase and
+Dynamics.c:3601:	// stored in WallGhost. Nothing to correct; analytic normals never point
+Dynamics.c:3611:		real_t corrected = PhaseF_dyn(nw_x, nw_y, nw_z);
+Dynamics.c:3613:			PhaseF = corrected;
+Dynamics.c:3615:			PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3617:		WallGhost = PhaseF;
+Dynamics.c:3618:		WallGhostRaw = PhaseF;
+Dynamics.c:3619:		WallGhostClamped = PhaseF;
+Dynamics.c:3620:		WallGhostClampHit = 0.0;
+Dynamics.c:3630:CudaDeviceFunction void calcWallPhase(){
+Dynamics.c:3631:	PhaseF = PhaseF(0,0,0); //For fluid nodes.
+Dynamics.c:3632:	WallGhost = 0.0;
+Dynamics.c:3635:	WallGhostRaw = 0.0;
+Dynamics.c:3636:	WallGhostClamped = 0.0;
+Dynamics.c:3637:	WallGhostClampHit = 0.0;
+Dynamics.c:3664:		// The result goes into WallGhost; PhaseF on this wall node is set
+Dynamics.c:3681:				real_t pf_f = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
+Dynamics.c:3682:				real_t pf_ff = PhaseF_dyn(2*probe_dx, 2*probe_dy, 2*probe_dz);
+Dynamics.c:3695:							WallGhost = stage13_compact_solution_wall_ghost(
+Dynamics.c:3696:								&WallGhostRaw, &WallGhostClamped, &WallGhostClampHit);
+Dynamics.c:3700:								WallGhost = pf_f;
+Dynamics.c:3702:								WallGhost = pf_ff;
+Dynamics.c:3704:								WallGhost = 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3706:							WallGhostRaw = WallGhost;
+Dynamics.c:3707:							WallGhostClamped = WallGhost;
+Dynamics.c:3708:							WallGhostClampHit = 0.0;
+Dynamics.c:3712:							PhaseF = pf_f;
+Dynamics.c:3714:							PhaseF = pf_ff;
+Dynamics.c:3716:							PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3722:					grad_f.x = gradPhiVal_x_dyn(probe_dx, probe_dy, probe_dz);
+Dynamics.c:3723:					grad_f.y = gradPhiVal_y_dyn(probe_dx, probe_dy, probe_dz);
+Dynamics.c:3724:					grad_f.z = gradPhiVal_z_dyn(probe_dx, probe_dy, probe_dz);
+Dynamics.c:3726:					WallGhost = stage13_compute_analytic_wall_ghost(
+Dynamics.c:3728:						&WallGhostRaw, &WallGhostClamped, &WallGhostClampHit, &WettingPathId);
+Dynamics.c:3730:					PhaseF = pf_f;
+Dynamics.c:3748:					PhaseF = pf_f;
+Dynamics.c:3750:					PhaseF = pf_ff;
+Dynamics.c:3752:					PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3754:				WallGhost = PhaseF;
+Dynamics.c:3755:				WallGhostRaw = PhaseF;
+Dynamics.c:3756:				WallGhostClamped = PhaseF;
+Dynamics.c:3757:				WallGhostClampHit = 0.0;
+Dynamics.c:3759:				stage13_compute_compact_stencil_solution(n_w_a, d_to_surface_a, PhaseF, radAngle);
+Dynamics.c:3772:        pf_f = gradPhi_PhaseF_dyn(nw_x, nw_y, nw_z);
+Dynamics.c:3774:			pf_f = 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3783:			PhaseF = 1;
+Dynamics.c:3787:			PhaseF = pf_f;
+Dynamics.c:3795:				PhaseF = pf_f;
+Dynamics.c:3797:				PhaseF = 0.5*(PhaseField_l + PhaseField_h);
+Dynamics.c:3803:			PhaseF = stage13_compute_briant_wall_ghost_raw(pf_f, h, radAngle, &path_id);
+Dynamics.c:3829:				real_t pf_v1 = gradPhi_PhaseF_dyn(v1_x, v1_y, v1_z);
+Dynamics.c:3831:				real_t pf_v2 = gradPhi_PhaseF_dyn(v2_x, v2_y, v2_z);
+Dynamics.c:3833:				real_t pf_v3 = gradPhi_PhaseF_dyn(v3_x, v3_y, v3_z);
+Dynamics.c:3848:			PhaseF = stage13_compute_briant_wall_ghost_raw(pf_f, h, radAngle, &path_id);
+Dynamics.c:3862:				der_x_1 =   coeff_v1*gradPhiVal_x_dyn(v1_x, v1_y, v1_z) + \
+Dynamics.c:3863:									coeff_v2*gradPhiVal_x_dyn(v2_x, v2_y, v2_z) +  \
+Dynamics.c:3864:									coeff_v3*gradPhiVal_x_dyn(v3_x, v3_y, v3_z);
+Dynamics.c:3866:				der_y_1 =   coeff_v1*gradPhiVal_y_dyn(v1_x, v1_y, v1_z) + \
+Dynamics.c:3867:									coeff_v2*gradPhiVal_y_dyn(v2_x, v2_y, v2_z) +  \
+Dynamics.c:3868:									coeff_v3*gradPhiVal_y_dyn(v3_x, v3_y, v3_z);
+Dynamics.c:3870:				der_z_1 =   coeff_v1*gradPhiVal_z_dyn(v1_x, v1_y, v1_z) + \
+Dynamics.c:3871:									coeff_v2*gradPhiVal_z_dyn(v2_x, v2_y, v2_z) +  \
+Dynamics.c:3872:									coeff_v3*gradPhiVal_z_dyn(v3_x, v3_y, v3_z);
+Dynamics.c:3879:				der_x_2 =   coeff_v1*gradPhiVal_x_dyn(2*v1_x, 2*v1_y, 2*v1_z) + \
+Dynamics.c:3880:									coeff_v2*gradPhiVal_x_dyn(2*v2_x, 2*v2_y, 2*v2_z) +  \
+Dynamics.c:3881:									coeff_v3*gradPhiVal_x_dyn(2*v3_x, 2*v3_y, 2*v3_z);
+Dynamics.c:3884:				der_y_2 =   coeff_v1*gradPhiVal_y_dyn(2*v1_x, 2*v1_y, 2*v1_z) + \
+Dynamics.c:3885:									coeff_v2*gradPhiVal_y_dyn(2*v2_x, 2*v2_y, 2*v2_z) +  \
+Dynamics.c:3886:									coeff_v3*gradPhiVal_y_dyn(2*v3_x, 2*v3_y, 2*v3_z);
+Dynamics.c:3889:				der_z_2 =   coeff_v1*gradPhiVal_z_dyn(2*v1_x, 2*v1_y, 2*v1_z) + \
+Dynamics.c:3890:									coeff_v2*gradPhiVal_z_dyn(2*v2_x, 2*v2_y, 2*v2_z) +  \
+Dynamics.c:3891:									coeff_v3*gradPhiVal_z_dyn(2*v3_x, 2*v3_y, 2*v3_z);
+Dynamics.c:3925:				der_x_2 =   coeff2_v1*gradPhiVal_x_dyn(v2a_1_x, v2a_1_y, v2a_1_z) + \
+Dynamics.c:3926:									coeff2_v2*gradPhiVal_x_dyn(v2a_2_x, v2a_2_y, v2a_2_z) + \
+Dynamics.c:3927:									coeff2_v3*gradPhiVal_x_dyn(v2a_3_x, v2a_3_y, v2a_3_z);
+Dynamics.c:3929:				der_y_2 =   coeff2_v1*gradPhiVal_y_dyn(v2a_1_x, v2a_1_y, v2a_1_z) + \
+Dynamics.c:3930:									coeff2_v2*gradPhiVal_y_dyn(v2a_2_x, v2a_2_y, v2a_2_z) + \
+Dynamics.c:3931:									coeff2_v3*gradPhiVal_y_dyn(v2a_3_x, v2a_3_y, v2a_3_z);
+Dynamics.c:3933:				der_z_2 =   coeff2_v1*gradPhiVal_z_dyn(v2a_1_x, v2a_1_y, v2a_1_z) + \
+Dynamics.c:3934:									coeff2_v2*gradPhiVal_z_dyn(v2a_2_x, v2a_2_y, v2a_2_z) + \
+Dynamics.c:3935:									coeff2_v3*gradPhiVal_z_dyn(v2a_3_x, v2a_3_y, v2a_3_z);
+Dynamics.c:3945:					der_x_1 = gradPhiVal_x_dyn(nw_x,    nw_y,   nw_z);
+Dynamics.c:3947:					der_x_2 = gradPhiVal_x_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+Dynamics.c:3951:					der_y_1 = gradPhiVal_y_dyn(nw_x,    nw_y,   nw_z);
+Dynamics.c:3953:					der_y_2 = gradPhiVal_y_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+Dynamics.c:3957:					der_z_1 = gradPhiVal_z_dyn(nw_x,    nw_y,   nw_z);
+Dynamics.c:3959:					der_z_2 = gradPhiVal_z_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+Dynamics.c:3967:				real_t der_x_1 = gradPhiVal_x_dyn(nw_x,   nw_y,     nw_z);
+Dynamics.c:3969:				real_t der_x_2 = gradPhiVal_x_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+Dynamics.c:3972:				real_t der_y_1 = gradPhiVal_y_dyn(nw_x,   nw_y,     nw_z);
+Dynamics.c:3974:				real_t der_y_2 = gradPhiVal_y_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+Dynamics.c:3977:				real_t der_z_1 = gradPhiVal_z_dyn(nw_x,   nw_y,     nw_z);
+Dynamics.c:3979:				real_t der_z_2 = gradPhiVal_z_dyn(2*nw_x, 2*nw_y, 2*nw_z);
+Dynamics.c:4008:			PhaseF =  tan(PI/2.0 - radAngle) * grad_tangent * 2.0*h + pf_f;
+Dynamics.c:4011:		WallGhostRaw = PhaseF;
+Dynamics.c:4012:		WallGhost = stage13_clamp_phase_value(WallGhostRaw, &WallGhostClampHit);
+Dynamics.c:4013:		WallGhostClamped = WallGhost;
+Dynamics.c:4014:		PhaseF = WallGhost;
+Dynamics.c:4028:	PhaseF = PhaseF(0,0,0);
+Dynamics.c:4042:			tmp += PhaseF_dyn(i,j,k);
+Dynamics.c:4061:			// negative PhaseF into actual solid flags
+Dynamics.c:4062:			solidFlag[0] = PhaseF(0,0,0)/-998;
+Dynamics.c:4063:solidFlag[1] = PhaseF(1,0,0)/-998;
+Dynamics.c:4064:solidFlag[2] = PhaseF(-1,0,0)/-998;
+Dynamics.c:4065:solidFlag[3] = PhaseF(0,1,0)/-998;
+Dynamics.c:4066:solidFlag[4] = PhaseF(0,-1,0)/-998;
+Dynamics.c:4067:solidFlag[5] = PhaseF(0,0,1)/-998;
+Dynamics.c:4068:solidFlag[6] = PhaseF(0,0,-1)/-998;
+Dynamics.c:4069:solidFlag[7] = PhaseF(1,1,1)/-998;
+Dynamics.c:4070:solidFlag[8] = PhaseF(-1,1,1)/-998;
+Dynamics.c:4071:solidFlag[9] = PhaseF(1,-1,1)/-998;
+Dynamics.c:4072:solidFlag[10] = PhaseF(-1,-1,1)/-998;
+Dynamics.c:4073:solidFlag[11] = PhaseF(1,1,-1)/-998;
+Dynamics.c:4074:solidFlag[12] = PhaseF(-1,1,-1)/-998;
+Dynamics.c:4075:solidFlag[13] = PhaseF(1,-1,-1)/-998;
+Dynamics.c:4076:solidFlag[14] = PhaseF(-1,-1,-1)/-998;
+Dynamics.c:4077:solidFlag[15] = PhaseF(1,1,0)/-998;
+Dynamics.c:4078:solidFlag[16] = PhaseF(-1,1,0)/-998;
+Dynamics.c:4079:solidFlag[17] = PhaseF(1,-1,0)/-998;
+Dynamics.c:4080:solidFlag[18] = PhaseF(-1,-1,0)/-998;
+Dynamics.c:4081:solidFlag[19] = PhaseF(1,0,1)/-998;
+Dynamics.c:4082:solidFlag[20] = PhaseF(-1,0,1)/-998;
+Dynamics.c:4083:solidFlag[21] = PhaseF(1,0,-1)/-998;
+Dynamics.c:4084:solidFlag[22] = PhaseF(-1,0,-1)/-998;
+Dynamics.c:4085:solidFlag[23] = PhaseF(0,1,1)/-998;
+Dynamics.c:4086:solidFlag[24] = PhaseF(0,-1,1)/-998;
+Dynamics.c:4087:solidFlag[25] = PhaseF(0,1,-1)/-998;
+Dynamics.c:4088:solidFlag[26] = PhaseF(0,-1,-1)/-998;
+Dynamics.c:4119:				if (PhaseF_dyn(nw_x, nw_y, nw_z) < -100) {
+Dynamics.c:4165:			real_t pf_v1 = PhaseF_dyn(v1_x, v1_y, v1_z);
+Dynamics.c:4169:			real_t pf_v2 = PhaseF_dyn(v2_x, v2_y, v2_z);
+Dynamics.c:4173:			real_t pf_v3 = PhaseF_dyn(v3_x, v3_y, v3_z);
+Dynamics.c:4213:			bool will_interpolate_further_from_the_boundary = PhaseF_dyn(v2a_1_x, v2a_1_y, v2a_1_z) < -100 || PhaseF_dyn(v2a_2_x, v2a_2_y, v2a_2_z) < -100 || PhaseF_dyn(v2a_3_x, v2a_3_y, v2a_3_z) < -100;
+Dynamics.c:4215:			bool will_interpolate_further_from_the_boundary = PhaseF_dyn(2*v1_x, 2*v1_y, 2*v1_z) < -100 || PhaseF_dyn(2*v2_x, 2*v2_y, 2*v2_z) < -100 || PhaseF_dyn(2*v3_x, 2*v3_y, 2*v3_z) < -100;
+Dynamics.c:4218:		bool normal_pointing_into_solid_on_further_next_node = PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z) < -100;
+Dynamics.c:4236:		if (IsSpecialBoundaryPoint != 1 && PhaseF_dyn(2*nw_x, 2*nw_y, 2*nw_z) < -100) {
+Dynamics.c:4270:	// WallH, and set AnalyticFlag=1 so calcWallPhase takes the analytic    //
+Dynamics.c:4277:	WallGhost = 0.0;
+Dynamics.c:4278:	WallGhostRaw = 0.0;
+Dynamics.c:4279:	WallGhostClamped = 0.0;
+Dynamics.c:4280:	WallGhostClampHit = 0.0;
+Dynamics.c:4305:				// values. We gate on PhaseF_dyn instead: solid nodes carry
+Dynamics.c:4311:				real_t probe_pf = PhaseF_dyn(probe_dx, probe_dy, probe_dz);
+Dynamics.c:4406:	real_t rho = Density_l + ((pf) - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:4440:		if ( C < 0.5 && PhaseF(0, -1, 0) > 0.5) {
+Dynamics.c:4441:			location = Y - (C-0.5)/(C-PhaseF(0,-1,0));
+Dynamics.c:4450:                if (C < 0.5 && PhaseF(1,0,0) > 0.5)
+Dynamics.c:4452:                    location = X + (C-0.5)/(C-PhaseF(1,0,0));
+Dynamics.c:4456:                if (C >0.5 && PhaseF(-1,0,0) < 0.5)
+Dynamics.c:4462:                if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+Dynamics.c:4464:                    location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+Dynamics.c:4468:                if (C >0.5 && PhaseF(0,-1,0) < 0.5)
+Dynamics.c:4474:			if (C < 0.5 && PhaseF(0,0,1) > 0.5)
+Dynamics.c:4476:                    location = Z + (C-0.5)/(C-PhaseF(0,0,1));
+Dynamics.c:4480:                if (C >0.5 && PhaseF(0,0,-1) < 0.5)
+Dynamics.c:4486:                if (C < 0.5 && PhaseF(-1,0,0) > 0.5)
+Dynamics.c:4488:                    location = X - (C-0.5)/(C-PhaseF(-1,0,0));
+Dynamics.c:4495:                if (C < 0.5 && PhaseF(0,-1,0) > 0.5)
+Dynamics.c:4497:                    location = Y - (C-0.5)/(C-PhaseF(0,-1,0));
+Dynamics.c:4503:			if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+Dynamics.c:4505:				location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+Dynamics.c:4509:			if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+Dynamics.c:4511:				location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+Dynamics.c:4515:			if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+Dynamics.c:4517:				location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+Dynamics.c:4591:    PhaseF = PhaseF(0,0,0);
+Dynamics.c:4606:    PhaseF = PhaseF(0,0,0);
+Dynamics.c:4615:        myCp = interp(PhaseF, cp_h, cp_l);
+Dynamics.c:4616:        rho  = interp(PhaseF, Density_h, Density_l);
+Dynamics.c:4638:    PhaseF = PhaseF(0,0,0);
+Dynamics.c:4647:        myCp = interp(PhaseF, cp_h, cp_l);
+Dynamics.c:4648:        rho  = interp(PhaseF, Density_h, Density_l);
+Dynamics.c:4671:    PhaseF = PhaseF(0,0,0);
+Dynamics.c:4683:        myCp = interp(PhaseF, cp_h, cp_l);
+Dynamics.c:4684:        rho  = interp(PhaseF, Density_h, Density_l);
+Dynamics.c:4707:    PhaseF = PhaseF(0,0,0);
+Dynamics.c:4719:        myCp = interp(PhaseF, cp_h, cp_l);
+Dynamics.c:4720:        rho  = interp(PhaseF, Density_h, Density_l);
+Dynamics.c:4777:    PhaseF = PhaseF(0,0,0);
+Dynamics.c:4779:	real_t C  = PhaseF;
+Dynamics.c:4786:    real_t mu = calcMu( C );
+Dynamics.c:4791:	real_t F_surf[3], F_pressure[3], F_body[3], F_mu[3], F_total[3]; // Forces
+Dynamics.c:4797:	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+Dynamics.c:4810:	// F_total in 15B. See the MRT path above and calcDynamicCLShadow for the
+Dynamics.c:4822:    calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+Dynamics.c:4878:        F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+Dynamics.c:4879:        F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+Dynamics.c:4880:        F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+Dynamics.c:4881:        // Stage 15C write hook: add residual contact-line force to F_total.
+Dynamics.c:4885:            F_total[0] += fcl_x;
+Dynamics.c:4886:            F_total[1] += fcl_y;
+Dynamics.c:4887:            F_total[2] += fcl_z;
+Dynamics.c:4894:        U = U + (0.5*F_total[0])/rho;
+Dynamics.c:4895:        V = V + (0.5*F_total[1])/rho;
+Dynamics.c:4896:        W = W + (0.5*F_total[2])/rho;
+Dynamics.c:4906:	h0 = F_phi[0] + h0 + ( -h0 + PhaseField*wg[0]*8./27. + ( -F_phi[0]*9. + ( -W*W - V*V - U*U )*PhaseField*wg[0]*8. )/18. )*omega_phi;
+Dynamics.c:4907:h1 = F_phi[1] + h1 + ( -h1 + PhaseField*wg[1]*2./27. + ( -F_phi[1]*9. + ( -W*W - V*V + ( 1 + U )*U*2. )*PhaseField*wg[1]*2. )/18. )*omega_phi;
+Dynamics.c:4908:h2 = F_phi[2] + h2 + ( -h2 + PhaseField*wg[2]*2./27. + ( -F_phi[2]*9. + ( -W*W - V*V + ( -1 + U )*U*2. )*PhaseField*wg[2]*2. )/18. )*omega_phi;
+Dynamics.c:4909:h3 = F_phi[3] + h3 + ( -h3 + PhaseField*wg[3]*2./27. + ( -F_phi[3]*9. + ( -W*W - U*U + ( 1 + V )*V*2. )*PhaseField*wg[3]*2. )/18. )*omega_phi;
+Dynamics.c:4910:h4 = F_phi[4] + h4 + ( -h4 + PhaseField*wg[4]*2./27. + ( -F_phi[4]*9. + ( -W*W - U*U + ( -1 + V )*V*2. )*PhaseField*wg[4]*2. )/18. )*omega_phi;
+Dynamics.c:4911:h5 = F_phi[5] + h5 + ( -h5 + PhaseField*wg[5]*2./27. + ( -F_phi[5]*9. + ( -V*V - U*U + ( 1 + W )*W*2. )*PhaseField*wg[5]*2. )/18. )*omega_phi;
+Dynamics.c:4912:h6 = F_phi[6] + h6 + ( -h6 + PhaseField*wg[6]*2./27. + ( -F_phi[6]*9. + ( -V*V - U*U + ( -1 + W )*W*2. )*PhaseField*wg[6]*2. )/18. )*omega_phi;
+Dynamics.c:4913:h7 = F_phi[7] + h7 + ( -h7 + ( PhaseField*wg[7] + ( -F_phi[7]*36. + ( ( 1 + W )*W + ( 1 + V + W*3. )*V + ( 1 + U + ( W + V )*3. )*U )*PhaseField*wg[7] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4914:h8 = F_phi[8] + h8 + ( -h8 + ( PhaseField*wg[8] + ( -F_phi[8]*36. + ( ( 1 + W )*W + ( 1 + V + W*3. )*V + ( -1 + U + ( -W - V )*3. )*U )*PhaseField*wg[8] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4915:h9 = F_phi[9] + h9 + ( -h9 + ( PhaseField*wg[9] + ( -F_phi[9]*36. + ( ( 1 + W )*W + ( -1 + V - W*3. )*V + ( 1 + U + ( W - V )*3. )*U )*PhaseField*wg[9] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4916:h10 = F_phi[10] + h10 + ( -h10 + ( PhaseField*wg[10] + ( -F_phi[10]*36. + ( ( 1 + W )*W + ( -1 + V - W*3. )*V + ( -1 + U + ( -W + V )*3. )*U )*PhaseField*wg[10] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4917:h11 = F_phi[11] + h11 + ( -h11 + ( PhaseField*wg[11] + ( -F_phi[11]*36. + ( ( -1 + W )*W + ( 1 + V - W*3. )*V + ( 1 + U + ( -W + V )*3. )*U )*PhaseField*wg[11] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4918:h12 = F_phi[12] + h12 + ( -h12 + ( PhaseField*wg[12] + ( -F_phi[12]*36. + ( ( -1 + W )*W + ( 1 + V - W*3. )*V + ( -1 + U + ( W - V )*3. )*U )*PhaseField*wg[12] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4919:h13 = F_phi[13] + h13 + ( -h13 + ( PhaseField*wg[13] + ( -F_phi[13]*36. + ( ( -1 + W )*W + ( -1 + V + W*3. )*V + ( 1 + U + ( -W - V )*3. )*U )*PhaseField*wg[13] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4920:h14 = F_phi[14] + h14 + ( -h14 + ( PhaseField*wg[14] + ( -F_phi[14]*36. + ( ( -1 + W )*W + ( -1 + V + W*3. )*V + ( -1 + U + ( W + V )*3. )*U )*PhaseField*wg[14] )*3. )*0.00462962962962964 )*omega_phi;
+Dynamics.c:4921:h15 = F_phi[15] + h15 + ( -h15 + PhaseField*wg[15]*0.0185185185185185 + ( -W*W*PhaseField*wg[15] + ( -F_phi[15]*9. + ( ( 1 + V )*V + ( 1 + U + V*3. )*U )*PhaseField*wg[15] )*2. )/36. )*omega_phi;
+Dynamics.c:4922:h16 = F_phi[16] + h16 + ( -h16 + PhaseField*wg[16]*0.0185185185185185 + ( -W*W*PhaseField*wg[16] + ( -F_phi[16]*9. + ( ( 1 + V )*V + ( -1 + U - V*3. )*U )*PhaseField*wg[16] )*2. )/36. )*omega_phi;
+Dynamics.c:4923:h17 = F_phi[17] + h17 + ( -h17 + PhaseField*wg[17]*0.0185185185185185 + ( -W*W*PhaseField*wg[17] + ( -F_phi[17]*9. + ( ( -1 + V )*V + ( 1 + U - V*3. )*U )*PhaseField*wg[17] )*2. )/36. )*omega_phi;
+Dynamics.c:4924:h18 = F_phi[18] + h18 + ( -h18 + PhaseField*wg[18]*0.0185185185185185 + ( -W*W*PhaseField*wg[18] + ( -F_phi[18]*9. + ( ( -1 + V )*V + ( -1 + U + V*3. )*U )*PhaseField*wg[18] )*2. )/36. )*omega_phi;
+Dynamics.c:4925:h19 = F_phi[19] + h19 + ( -h19 + PhaseField*wg[19]*0.0185185185185185 + ( -V*V*PhaseField*wg[19] + ( -F_phi[19]*9. + ( ( 1 + W )*W + ( 1 + U + W*3. )*U )*PhaseField*wg[19] )*2. )/36. )*omega_phi;
+Dynamics.c:4926:h20 = F_phi[20] + h20 + ( -h20 + PhaseField*wg[20]*0.0185185185185185 + ( -V*V*PhaseField*wg[20] + ( -F_phi[20]*9. + ( ( 1 + W )*W + ( -1 + U - W*3. )*U )*PhaseField*wg[20] )*2. )/36. )*omega_phi;
+Dynamics.c:4927:h21 = F_phi[21] + h21 + ( -h21 + PhaseField*wg[21]*0.0185185185185185 + ( -V*V*PhaseField*wg[21] + ( -F_phi[21]*9. + ( ( -1 + W )*W + ( 1 + U - W*3. )*U )*PhaseField*wg[21] )*2. )/36. )*omega_phi;
+Dynamics.c:4928:h22 = F_phi[22] + h22 + ( -h22 + PhaseField*wg[22]*0.0185185185185185 + ( -V*V*PhaseField*wg[22] + ( -F_phi[22]*9. + ( ( -1 + W )*W + ( -1 + U + W*3. )*U )*PhaseField*wg[22] )*2. )/36. )*omega_phi;
+Dynamics.c:4929:h23 = F_phi[23] + h23 + ( -h23 + PhaseField*wg[23]*0.0185185185185185 + ( -U*U*PhaseField*wg[23] + ( -F_phi[23]*9. + ( ( 1 + W )*W + ( 1 + V + W*3. )*V )*PhaseField*wg[23] )*2. )/36. )*omega_phi;
+Dynamics.c:4930:h24 = F_phi[24] + h24 + ( -h24 + PhaseField*wg[24]*0.0185185185185185 + ( -U*U*PhaseField*wg[24] + ( -F_phi[24]*9. + ( ( 1 + W )*W + ( -1 + V - W*3. )*V )*PhaseField*wg[24] )*2. )/36. )*omega_phi;
+Dynamics.c:4931:h25 = F_phi[25] + h25 + ( -h25 + PhaseField*wg[25]*0.0185185185185185 + ( -U*U*PhaseField*wg[25] + ( -F_phi[25]*9. + ( ( -1 + W )*W + ( 1 + V - W*3. )*V )*PhaseField*wg[25] )*2. )/36. )*omega_phi;
+Dynamics.c:4932:h26 = F_phi[26] + h26 + ( -h26 + PhaseField*wg[26]*0.0185185185185185 + ( -U*U*PhaseField*wg[26] + ( -F_phi[26]*9. + ( ( -1 + W )*W + ( -1 + V + W*3. )*V )*PhaseField*wg[26] )*2. )/36. )*omega_phi;
+Dynamics.c:4937:		F_i[i] = 3.0*wg[i] * (F_total[0]*d3q27_ex[i] + F_total[1]*d3q27_ey[i] + F_total[2]*d3q27_ez[i])/rho;
+Dynamics.c:4979:        ret.x = PhaseF(0,0);
+Dynamics.h:65:    real_t Init_PhaseField_External;
+Dynamics.h:75:    real_t WallGhost;
+Dynamics.h:78:    real_t WallGhostRaw;
+Dynamics.h:79:    real_t WallGhostClamped;
+Dynamics.h:80:    real_t WallGhostClampHit;
+Dynamics.h:153:    real_t gradPhiVal_x;
+Dynamics.h:154:    real_t gradPhiVal_y;
+Dynamics.h:155:    real_t gradPhiVal_z;
+Dynamics.h:156:    real_t gradPhi_PhaseF;
+Dynamics.h:157:    real_t PhaseF;
+Lattice.cu:143://        zSet.set( ZONESETTINGS_PhaseField , -1, units.alt("0"));
+Lattice.cu:1264:	DEBUG_PROF_PUSH("BaseIter");
+Lattice.cu:1272:		container->RunBorder< Primal, NoGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1274:		container->RunBorder< Primal, IntegrateGlobals, BaseIter >(kernelStream); break;
+Lattice.cu:1277:		container->RunBorder< Primal, OnlyObjective, BaseIter >(kernelStream); break;
+Lattice.cu:1284:		container->RunInterior< Primal, NoGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1286:		container->RunInterior< Primal, IntegrateGlobals, BaseIter >(kernelStream); break;
+Lattice.cu:1289:		container->RunInterior< Primal, OnlyObjective, BaseIter >(kernelStream); break;
+Lattice.cu:1297:	DEBUG_PROF_PUSH("calcPhase");
+Lattice.cu:1308:		container->RunBorder< Primal, NoGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1310:		container->RunBorder< Primal, IntegrateGlobals, calcPhase >(kernelStream); break;
+Lattice.cu:1313:		container->RunBorder< Primal, OnlyObjective, calcPhase >(kernelStream); break;
+Lattice.cu:1320:		container->RunInterior< Primal, NoGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1322:		container->RunInterior< Primal, IntegrateGlobals, calcPhase >(kernelStream); break;
+Lattice.cu:1325:		container->RunInterior< Primal, OnlyObjective, calcPhase >(kernelStream); break;
+Lattice.cu:1333:	DEBUG_PROF_PUSH("calcPhaseGrad_init");
+Lattice.cu:1344:		container->RunBorder< Primal, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1346:		container->RunBorder< Primal, IntegrateGlobals, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:1349:		container->RunBorder< Primal, OnlyObjective, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:1356:		container->RunInterior< Primal, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1358:		container->RunInterior< Primal, IntegrateGlobals, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:1361:		container->RunInterior< Primal, OnlyObjective, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:1369:	DEBUG_PROF_PUSH("calcWall_CA");
+Lattice.cu:1380:		container->RunBorder< Primal, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1382:		container->RunBorder< Primal, IntegrateGlobals, calcWall_CA >(kernelStream); break;
+Lattice.cu:1385:		container->RunBorder< Primal, OnlyObjective, calcWall_CA >(kernelStream); break;
+Lattice.cu:1392:		container->RunInterior< Primal, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1394:		container->RunInterior< Primal, IntegrateGlobals, calcWall_CA >(kernelStream); break;
+Lattice.cu:1397:		container->RunInterior< Primal, OnlyObjective, calcWall_CA >(kernelStream); break;
+Lattice.cu:1405:	DEBUG_PROF_PUSH("calcWallPhase_correction");
+Lattice.cu:1416:		container->RunBorder< Primal, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1418:		container->RunBorder< Primal, IntegrateGlobals, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:1421:		container->RunBorder< Primal, OnlyObjective, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:1428:		container->RunInterior< Primal, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1430:		container->RunInterior< Primal, IntegrateGlobals, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:1433:		container->RunInterior< Primal, OnlyObjective, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:1854:	        container->RunInterior< Adjoint, NoGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1856:	        container->RunInterior< Adjoint, IntegrateGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1858:	        container->RunInterior< SteadyAdjoint, NoGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1860:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1868:	        container->RunBorder< Adjoint, NoGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1870:	        container->RunBorder< Adjoint, IntegrateGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1872:	        container->RunBorder< SteadyAdjoint, NoGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1874:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, BaseIter > (kernelStream); break;
+Lattice.cu:1886:	        container->RunInterior< Adjoint, NoGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1888:	        container->RunInterior< Adjoint, IntegrateGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1890:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1892:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1900:	        container->RunBorder< Adjoint, NoGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1902:	        container->RunBorder< Adjoint, IntegrateGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1904:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1906:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcPhase > (kernelStream); break;
+Lattice.cu:1918:	        container->RunInterior< Adjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1920:	        container->RunInterior< Adjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1922:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1924:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1932:	        container->RunBorder< Adjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1934:	        container->RunBorder< Adjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1936:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1938:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:1950:	        container->RunInterior< Adjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1952:	        container->RunInterior< Adjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1954:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1956:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1964:	        container->RunBorder< Adjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1966:	        container->RunBorder< Adjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1968:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1970:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:1982:	        container->RunInterior< Adjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1984:	        container->RunInterior< Adjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1986:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1988:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1996:	        container->RunBorder< Adjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:1998:	        container->RunBorder< Adjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2000:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2002:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2029:        container->RunInterior< Optimize, NoGlobals, calcWallPhase_correction > (kernelStream);
+Lattice.cu:2030:        container->RunBorder< Optimize, NoGlobals, calcWallPhase_correction > (kernelStream);
+Lattice.cu:2046:void Lattice::Action_Init(int tab0, int tab1, int iter_type)
+Lattice.cu:2055:	debug1("ZoneIter: %d (in Action_Init)\n", ZoneIter);
+Lattice.cu:2128:	DEBUG_PROF_PUSH("calcPhaseGrad_init");
+Lattice.cu:2139:		container->RunBorder< Primal, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2141:		container->RunBorder< Primal, IntegrateGlobals, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:2144:		container->RunBorder< Primal, OnlyObjective, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:2151:		container->RunInterior< Primal, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2153:		container->RunInterior< Primal, IntegrateGlobals, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:2156:		container->RunInterior< Primal, OnlyObjective, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:2164:	DEBUG_PROF_PUSH("calcWall_CA");
+Lattice.cu:2175:		container->RunBorder< Primal, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2177:		container->RunBorder< Primal, IntegrateGlobals, calcWall_CA >(kernelStream); break;
+Lattice.cu:2180:		container->RunBorder< Primal, OnlyObjective, calcWall_CA >(kernelStream); break;
+Lattice.cu:2187:		container->RunInterior< Primal, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2189:		container->RunInterior< Primal, IntegrateGlobals, calcWall_CA >(kernelStream); break;
+Lattice.cu:2192:		container->RunInterior< Primal, OnlyObjective, calcWall_CA >(kernelStream); break;
+Lattice.cu:2200:	DEBUG_PROF_PUSH("calcWallPhase_correction");
+Lattice.cu:2211:		container->RunBorder< Primal, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2213:		container->RunBorder< Primal, IntegrateGlobals, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:2216:		container->RunBorder< Primal, OnlyObjective, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:2223:		container->RunInterior< Primal, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2225:		container->RunInterior< Primal, IntegrateGlobals, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:2228:		container->RunInterior< Primal, OnlyObjective, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:2287:inline void Lattice::Action_Init_Adj(int tab0, int tab1, int adjtab0, int adjtab1, int iter_type)
+Lattice.cu:2298:	debug1("ZoneIter: %d (in Action_Init_Adj)\n", ZoneIter);
+Lattice.cu:2749:	        container->RunInterior< Adjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2751:	        container->RunInterior< Adjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2753:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2755:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2763:	        container->RunBorder< Adjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2765:	        container->RunBorder< Adjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2767:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2769:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:2781:	        container->RunInterior< Adjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2783:	        container->RunInterior< Adjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2785:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2787:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2795:	        container->RunBorder< Adjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2797:	        container->RunBorder< Adjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2799:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2801:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:2813:	        container->RunInterior< Adjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2815:	        container->RunInterior< Adjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2817:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2819:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2827:	        container->RunBorder< Adjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2829:	        container->RunBorder< Adjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2831:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2833:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:2887:inline void Lattice::Action_Init_Opt(int tab0, int tab1, int adjtab0, int adjtab1, int iter_type)
+Lattice.cu:2890:        Action_Init(tab0, tab1, iter_type);
+Lattice.cu:2891:        Action_Init_Adj(tab0, tab1, adjtab0, adjtab1, iter_type | ITER_STEADY);
+Lattice.cu:2909:void Lattice::Action_InitFields(int tab0, int tab1, int iter_type)
+Lattice.cu:2918:	debug1("ZoneIter: %d (in Action_InitFields)\n", ZoneIter);
+Lattice.cu:2991:	DEBUG_PROF_PUSH("calcPhaseGrad_init");
+Lattice.cu:3002:		container->RunBorder< Primal, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3004:		container->RunBorder< Primal, IntegrateGlobals, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:3007:		container->RunBorder< Primal, OnlyObjective, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:3014:		container->RunInterior< Primal, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3016:		container->RunInterior< Primal, IntegrateGlobals, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:3019:		container->RunInterior< Primal, OnlyObjective, calcPhaseGrad_init >(kernelStream); break;
+Lattice.cu:3027:	DEBUG_PROF_PUSH("calcWall_CA");
+Lattice.cu:3038:		container->RunBorder< Primal, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3040:		container->RunBorder< Primal, IntegrateGlobals, calcWall_CA >(kernelStream); break;
+Lattice.cu:3043:		container->RunBorder< Primal, OnlyObjective, calcWall_CA >(kernelStream); break;
+Lattice.cu:3050:		container->RunInterior< Primal, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3052:		container->RunInterior< Primal, IntegrateGlobals, calcWall_CA >(kernelStream); break;
+Lattice.cu:3055:		container->RunInterior< Primal, OnlyObjective, calcWall_CA >(kernelStream); break;
+Lattice.cu:3063:	DEBUG_PROF_PUSH("calcWallPhase_correction");
+Lattice.cu:3074:		container->RunBorder< Primal, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3076:		container->RunBorder< Primal, IntegrateGlobals, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:3079:		container->RunBorder< Primal, OnlyObjective, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:3086:		container->RunInterior< Primal, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3088:		container->RunInterior< Primal, IntegrateGlobals, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:3091:		container->RunInterior< Primal, OnlyObjective, calcWallPhase_correction >(kernelStream); break;
+Lattice.cu:3150:inline void Lattice::Action_InitFields_Adj(int tab0, int tab1, int adjtab0, int adjtab1, int iter_type)
+Lattice.cu:3161:	debug1("ZoneIter: %d (in Action_InitFields_Adj)\n", ZoneIter);
+Lattice.cu:3612:	        container->RunInterior< Adjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3614:	        container->RunInterior< Adjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3616:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3618:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3626:	        container->RunBorder< Adjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3628:	        container->RunBorder< Adjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3630:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3632:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > (kernelStream); break;
+Lattice.cu:3644:	        container->RunInterior< Adjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3646:	        container->RunInterior< Adjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3648:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3650:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3658:	        container->RunBorder< Adjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3660:	        container->RunBorder< Adjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3662:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3664:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcWall_CA > (kernelStream); break;
+Lattice.cu:3676:	        container->RunInterior< Adjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3678:	        container->RunInterior< Adjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3680:	        container->RunInterior< SteadyAdjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3682:	        container->RunInterior< SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3690:	        container->RunBorder< Adjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3692:	        container->RunBorder< Adjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3694:	        container->RunBorder< SteadyAdjoint, NoGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3696:	        container->RunBorder< SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > (kernelStream); break;
+Lattice.cu:3750:inline void Lattice::Action_InitFields_Opt(int tab0, int tab1, int adjtab0, int adjtab1, int iter_type)
+Lattice.cu:3753:        Action_InitFields(tab0, tab1, iter_type);
+Lattice.cu:3754:        Action_InitFields_Adj(tab0, tab1, adjtab0, adjtab1, iter_type | ITER_STEADY);
+Lattice.cu:4061:   Action_Init(1,0,ITER_NO);
+Lattice.cu:4240:/// Run Action
+Lattice.cu:4241:void Lattice::IterateAction(int action, int niter, int iter_type)
+Lattice.cu:4248:		ERROR("Run Action not supported in Adjoint"); exit(-1);
+Lattice.cu:4252:			ERROR("Run Action not supported in Adjoint"); exit(-1);
+Lattice.cu:4260:				RunAction(action, Snap, (Snap+1) % 2, iter_type);
+Lattice.cu:4266:			ERROR("Run Action not supported in Adjoint"); exit(-1);
+Lattice.cu:4348:	if (id ==  FIELDS_Init_PhaseField_External ) return Get_Init_PhaseField_External(tab);
+Lattice.cu:4355:	if (id ==  FIELDS_Init_PhaseField_External ) return Get_Init_PhaseField_External_Adj(tab);
+Lattice.cu:4362:	if (id ==  FIELDS_Init_PhaseField_External ) return Set_Init_PhaseField_External(tab);
+Lattice.cu:4670:/// Get [Init_PhaseField_External]
+Lattice.cu:4672:        Retrive the values of the density Init_PhaseField_External (Init_PhaseField_External)
+Lattice.cu:4675:void Lattice::Get_Init_PhaseField_External_Adj(real_t * tab)
+Lattice.cu:4677:	debug2("Pulling all Init_PhaseField_External\n");
+Lattice.cu:4680:		&aSnaps[aSnap].block14[ FIELDS_Init_PhaseField_External *region.sizeL()],
+Lattice.cu:4685:/// Clear [Init_PhaseField_External]
+Lattice.cu:4688:        the density Init_PhaseField_External (Init_PhaseField_External)
+Lattice.cu:4691:void Lattice::Clear_Init_PhaseField_External_Adj()
+Lattice.cu:4693:	debug2("Clearing all Init_PhaseField_External\n");
+Lattice.cu:4695:		&aSnaps[aSnap].block14[ FIELDS_Init_PhaseField_External *region.sizeL()],
+Lattice.cu:4700:/// Set [Init_PhaseField_External]
+Lattice.cu:4703:        the density Init_PhaseField_External (Init_PhaseField_External)
+Lattice.cu:4706:void Lattice::Set_Init_PhaseField_External_Adj(real_t * tab)
+Lattice.cu:4708:	debug2("Setting all Init_PhaseField_External\n");
+Lattice.cu:4710:		&aSnaps[aSnap].block14[ FIELDS_Init_PhaseField_External *region.sizeL()],
+Lattice.cu:4720:/// Get [Init_PhaseField_External]
+Lattice.cu:4722:        Retrive the values of the density Init_PhaseField_External (Init_PhaseField_External)
+Lattice.cu:4725:void Lattice::Get_Init_PhaseField_External(real_t * tab)
+Lattice.cu:4727:	debug2("Pulling all Init_PhaseField_External\n");
+Lattice.cu:4730:		&Snaps[Snap].block14[ FIELDS_Init_PhaseField_External *region.sizeL()],
+Lattice.cu:4735:/// Clear [Init_PhaseField_External]
+Lattice.cu:4738:        the density Init_PhaseField_External (Init_PhaseField_External)
+Lattice.cu:4741:void Lattice::Clear_Init_PhaseField_External()
+Lattice.cu:4743:	debug2("Clearing all Init_PhaseField_External\n");
+Lattice.cu:4745:		&Snaps[Snap].block14[ FIELDS_Init_PhaseField_External *region.sizeL()],
+Lattice.cu:4750:/// Set [Init_PhaseField_External]
+Lattice.cu:4753:        the density Init_PhaseField_External (Init_PhaseField_External)
+Lattice.cu:4756:void Lattice::Set_Init_PhaseField_External(real_t * tab)
+Lattice.cu:4758:	debug2("Setting all Init_PhaseField_External\n");
+Lattice.cu:4760:		&Snaps[Snap].block14[ FIELDS_Init_PhaseField_External *region.sizeL()],
+Lattice.cu:4779:		case  QUANTITIES_PhaseField : return GetPhaseField(over, (real_t *) tab, scale);
+Lattice.cu:4786:		case  QUANTITIES_WallGhost : return GetWallGhost(over, (real_t *) tab, scale);
+Lattice.cu:4787:		case  QUANTITIES_WallGhostRaw : return GetWallGhostRaw(over, (real_t *) tab, scale);
+Lattice.cu:4788:		case  QUANTITIES_WallGhostClamped : return GetWallGhostClamped(over, (real_t *) tab, scale);
+Lattice.cu:4789:		case  QUANTITIES_WallGhostClampHit : return GetWallGhostClampHit(over, (real_t *) tab, scale);
+Lattice.cu:4925:/// Get [PhaseField]
+Lattice.cu:4927:        Retrive the values of the Quantity PhaseField (PhaseField)
+Lattice.cu:4930:void Lattice::GetPhaseField(lbRegion over, real_t * tab, real_t scale)
+Lattice.cu:4944:		CudaKernelRun( getPhaseField , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+Lattice.cu:5114:/// Get [WallGhost]
+Lattice.cu:5116:        Retrive the values of the Quantity WallGhost (WallGhost)
+Lattice.cu:5119:void Lattice::GetWallGhost(lbRegion over, real_t * tab, real_t scale)
+Lattice.cu:5133:		CudaKernelRun( getWallGhost , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+Lattice.cu:5141:/// Get [WallGhostRaw]
+Lattice.cu:5143:        Retrive the values of the Quantity WallGhostRaw (WallGhostRaw)
+Lattice.cu:5146:void Lattice::GetWallGhostRaw(lbRegion over, real_t * tab, real_t scale)
+Lattice.cu:5160:		CudaKernelRun( getWallGhostRaw , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+Lattice.cu:5168:/// Get [WallGhostClamped]
+Lattice.cu:5170:        Retrive the values of the Quantity WallGhostClamped (WallGhostClamped)
+Lattice.cu:5173:void Lattice::GetWallGhostClamped(lbRegion over, real_t * tab, real_t scale)
+Lattice.cu:5187:		CudaKernelRun( getWallGhostClamped , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+Lattice.cu:5195:/// Get [WallGhostClampHit]
+Lattice.cu:5197:        Retrive the values of the Quantity WallGhostClampHit (WallGhostClampHit)
+Lattice.cu:5200:void Lattice::GetWallGhostClampHit(lbRegion over, real_t * tab, real_t scale)
+Lattice.cu:5214:		CudaKernelRun( getWallGhostClampHit , dim3(small.nx,small.ny,small.nz) , dim3(1) , small, buf, scale);
+Lattice.cu:7427:void Lattice::GetSamplePhaseField(lbRegion over, real_t scale,real_t* buf)
+Lattice.cu:7433:	CudaKernelRun( getPhaseField , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+Lattice.cu:7490:void Lattice::GetSampleWallGhost(lbRegion over, real_t scale,real_t* buf)
+Lattice.cu:7496:	CudaKernelRun( getWallGhost , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+Lattice.cu:7499:void Lattice::GetSampleWallGhostRaw(lbRegion over, real_t scale,real_t* buf)
+Lattice.cu:7505:	CudaKernelRun( getWallGhostRaw , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+Lattice.cu:7508:void Lattice::GetSampleWallGhostClamped(lbRegion over, real_t scale,real_t* buf)
+Lattice.cu:7514:	CudaKernelRun( getWallGhostClamped , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+Lattice.cu:7517:void Lattice::GetSampleWallGhostClampHit(lbRegion over, real_t scale,real_t* buf)
+Lattice.cu:7523:	CudaKernelRun( getWallGhostClampHit , dim3(small.nx,small.ny) , dim3(1) , small, (real_t*) buf, scale);
+Lattice.cu:8218:		 if (sample->quant->in("PhaseField"))
+Lattice.cu:8221:			GetSamplePhaseField(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["PhaseField"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+Lattice.cu:8260:		 if (sample->quant->in("WallGhost"))
+Lattice.cu:8263:			GetSampleWallGhost(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallGhost"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+Lattice.cu:8266:		 if (sample->quant->in("WallGhostRaw"))
+Lattice.cu:8269:			GetSampleWallGhostRaw(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallGhostRaw"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+Lattice.cu:8272:		 if (sample->quant->in("WallGhostClamped"))
+Lattice.cu:8275:			GetSampleWallGhostClamped(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallGhostClamped"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+Lattice.cu:8278:		 if (sample->quant->in("WallGhostClampHit"))
+Lattice.cu:8281:			GetSampleWallGhostClampHit(sample->spoints[j].location,1/v,&sample->gpu_buffer[sample->location["WallGhostClampHit"]+(container->iter - sample->startIter)*sample->size + sample->totalIter*j*sample->size]);
+cuda.cu:50:/// GPU Constant memory variable for [PhaseField in Liquid]
+cuda.cu:51:CudaDeviceFunction CudaConstantMemory real_t PhaseField_h = 0.0f;
+cuda.cu:52:/// GPU Constant memory variable for [PhaseField gas]
+cuda.cu:53:CudaDeviceFunction CudaConstantMemory real_t PhaseField_l = 0.0f;
+cuda.cu:437:#define Init_PhaseField_External(...) acc.template load_Init_PhaseField_External< __VA_ARGS__ >()
+cuda.cu:447:#define WallGhost(...) acc.template load_WallGhost< __VA_ARGS__ >()
+cuda.cu:450:#define WallGhostRaw(...) acc.template load_WallGhostRaw< __VA_ARGS__ >()
+cuda.cu:451:#define WallGhostClamped(...) acc.template load_WallGhostClamped< __VA_ARGS__ >()
+cuda.cu:452:#define WallGhostClampHit(...) acc.template load_WallGhostClampHit< __VA_ARGS__ >()
+cuda.cu:525:#define gradPhiVal_x(...) acc.template load_gradPhiVal_x< __VA_ARGS__ >()
+cuda.cu:526:#define gradPhiVal_y(...) acc.template load_gradPhiVal_y< __VA_ARGS__ >()
+cuda.cu:527:#define gradPhiVal_z(...) acc.template load_gradPhiVal_z< __VA_ARGS__ >()
+cuda.cu:528:#define gradPhi_PhaseF(...) acc.template load_gradPhi_PhaseF< __VA_ARGS__ >()
+cuda.cu:529:#define PhaseF(...) acc.template load_PhaseF< __VA_ARGS__ >()
+cuda.cu:587:#define Init_PhaseField_External_dyn(...) acc.template load_Init_PhaseField_External(__VA_ARGS__)
+cuda.cu:597:#define WallGhost_dyn(...) acc.template load_WallGhost(__VA_ARGS__)
+cuda.cu:600:#define WallGhostRaw_dyn(...) acc.template load_WallGhostRaw(__VA_ARGS__)
+cuda.cu:601:#define WallGhostClamped_dyn(...) acc.template load_WallGhostClamped(__VA_ARGS__)
+cuda.cu:602:#define WallGhostClampHit_dyn(...) acc.template load_WallGhostClampHit(__VA_ARGS__)
+cuda.cu:675:#define gradPhiVal_x_dyn(...) acc.template load_gradPhiVal_x(__VA_ARGS__)
+cuda.cu:676:#define gradPhiVal_y_dyn(...) acc.template load_gradPhiVal_y(__VA_ARGS__)
+cuda.cu:677:#define gradPhiVal_z_dyn(...) acc.template load_gradPhiVal_z(__VA_ARGS__)
+cuda.cu:678:#define gradPhi_PhaseF_dyn(...) acc.template load_gradPhi_PhaseF(__VA_ARGS__)
+cuda.cu:679:#define PhaseF_dyn(...) acc.template load_PhaseF(__VA_ARGS__)
+cuda.cu:739:#define PhaseField_DT constContainer.ZoneSetting_DT( ZONESETTINGS_PhaseField , acc.getNodeType() >> ZONE_SHIFT)
+cuda.cu:839://-------------------[                 Node --- Action:   No, Globals:   No ]--------------------
+cuda.cu:844:	real_t PhaseField;
+cuda.cu:854:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:874://-------------------[           Node_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:879:	real_t PhaseField;
+cuda.cu:889:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:911://-------------------[             Node_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:916:	real_t PhaseField;
+cuda.cu:926:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:946://-------------------[             Node_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:951:	real_t PhaseField;
+cuda.cu:961:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:983://-------------------[       Node_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:988:	real_t PhaseField;
+cuda.cu:998:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1020://-------------------[            Node_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:1025:	real_t PhaseField;
+cuda.cu:1035:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1057://-------------------[      Node_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:1062:	real_t PhaseField;
+cuda.cu:1072:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1094://-------------------[             Node_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:1099:	real_t PhaseField;
+cuda.cu:1109:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1131://-------------------[       Node_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:1136:	real_t PhaseField;
+cuda.cu:1146:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1170://-------------------[       Node_PhaseInit --- Action:   No, Globals:   No ]--------------------
+cuda.cu:1175:	real_t PhaseField;
+cuda.cu:1185:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1227://-------------------[ Node_PhaseInit_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:1232:	real_t PhaseField;
+cuda.cu:1242:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1286://-------------------[   Node_PhaseInit_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:1291:	real_t PhaseField;
+cuda.cu:1301:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1343://-------------------[   Node_PhaseInit_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:1348:	real_t PhaseField;
+cuda.cu:1358:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1403://-------------------[ Node_PhaseInit_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:1408:	real_t PhaseField;
+cuda.cu:1418:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1445:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:1454:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:1464:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:1465:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:1479://-------------------[  Node_PhaseInit_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:1484:	real_t PhaseField;
+cuda.cu:1494:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1526:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:1543://-------------------[ Node_PhaseInit_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:1548:	real_t PhaseField;
+cuda.cu:1558:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1585:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:1597:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:1598:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:1608:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:1609:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:1623://-------------------[   Node_PhaseInit_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:1628:	real_t PhaseField;
+cuda.cu:1638:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1685://-------------------[ Node_PhaseInit_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:1690:	real_t PhaseField;
+cuda.cu:1700:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1749://-------------------[        Node_BaseInit --- Action:   No, Globals:   No ]--------------------
+cuda.cu:1754:	real_t PhaseField;
+cuda.cu:1764:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1806://-------------------[  Node_BaseInit_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:1811:	real_t PhaseField;
+cuda.cu:1821:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1865://-------------------[    Node_BaseInit_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:1870:	real_t PhaseField;
+cuda.cu:1880:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1922://-------------------[    Node_BaseInit_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:1927:	real_t PhaseField;
+cuda.cu:1937:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:1982://-------------------[ Node_BaseInit_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:1987:	real_t PhaseField;
+cuda.cu:1997:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2024:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:2033:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:2043:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:2044:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:2058://-------------------[   Node_BaseInit_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:2063:	real_t PhaseField;
+cuda.cu:2073:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2105:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:2122://-------------------[ Node_BaseInit_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:2127:	real_t PhaseField;
+cuda.cu:2137:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2164:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:2176:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:2177:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:2187:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:2188:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:2202://-------------------[    Node_BaseInit_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:2207:	real_t PhaseField;
+cuda.cu:2217:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2264://-------------------[ Node_BaseInit_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:2269:	real_t PhaseField;
+cuda.cu:2279:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2328://-------------------[       Node_calcPhase --- Action:   No, Globals:   No ]--------------------
+cuda.cu:2329:template < class LA > struct Node_Run < LA, Primal, NoGlobals, calcPhase > {
+cuda.cu:2333:	real_t PhaseField;
+cuda.cu:2343:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2368:	        acc.pop_calcPhase(*this);
+cuda.cu:2372:		acc.push_calcPhase(*this);
+cuda.cu:2376:		calcPhaseF();
+cuda.cu:2385://-------------------[ Node_calcPhase_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:2386:template < class LA > struct Node_Run < LA, Primal, IntegrateGlobals, calcPhase > {
+cuda.cu:2390:	real_t PhaseField;
+cuda.cu:2400:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2425:	        acc.pop_calcPhase(*this);
+cuda.cu:2429:		acc.push_calcPhase(*this);
+cuda.cu:2433:		calcPhaseF();
+cuda.cu:2444://-------------------[   Node_calcPhase_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:2445:template < class LA > struct Node_Run < LA, Primal, OnlyObjective, calcPhase > {
+cuda.cu:2449:	real_t PhaseField;
+cuda.cu:2459:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2484:	        acc.pop_calcPhase(*this);
+cuda.cu:2488:		acc.push_calcPhase(*this);
+cuda.cu:2492:		calcPhaseF();
+cuda.cu:2501://-------------------[   Node_calcPhase_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:2502:template < class LA > struct Node_Run < LA, Adjoint, NoGlobals, calcPhase > {
+cuda.cu:2506:	real_t PhaseField;
+cuda.cu:2516:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2543:		acc.pop_calcPhase(*this);
+cuda.cu:2544:		acc.pop_calcPhase_adj(*this);
+cuda.cu:2548:		acc.push_calcPhase_adj(*this);
+cuda.cu:2561://-------------------[ Node_calcPhase_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:2562:template < class LA > struct Node_Run < LA, Adjoint, IntegrateGlobals, calcPhase > {
+cuda.cu:2566:	real_t PhaseField;
+cuda.cu:2576:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2603:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:2607:		acc.pop_calcPhase(*this);
+cuda.cu:2608:		acc.pop_calcPhase_adj(*this);
+cuda.cu:2612:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:2622:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:2623:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:2624:		acc.push_calcPhase_adj(*this);
+cuda.cu:2637://-------------------[  Node_calcPhase_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:2638:template < class LA > struct Node_Run < LA, SteadyAdjoint, NoGlobals, calcPhase > {
+cuda.cu:2642:	real_t PhaseField;
+cuda.cu:2652:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2679:		acc.pop_calcPhase(*this);
+cuda.cu:2680:		acc.pop_calcPhase_adj(*this);
+cuda.cu:2684:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:2688:		acc.push_calcPhase_adj(*this);
+cuda.cu:2701://-------------------[ Node_calcPhase_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:2702:template < class LA > struct Node_Run < LA, SteadyAdjoint, IntegrateGlobals, calcPhase > {
+cuda.cu:2706:	real_t PhaseField;
+cuda.cu:2716:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2743:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:2747:		acc.pop_calcPhase(*this);
+cuda.cu:2748:		acc.pop_calcPhase_adj(*this);
+cuda.cu:2755:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:2756:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:2766:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:2767:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:2768:		acc.push_calcPhase_adj(*this);
+cuda.cu:2781://-------------------[   Node_calcPhase_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:2782:template < class LA > struct Node_Run < LA, Optimize, NoGlobals, calcPhase > {
+cuda.cu:2786:	real_t PhaseField;
+cuda.cu:2796:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2843://-------------------[ Node_calcPhase_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:2844:template < class LA > struct Node_Run < LA, Optimize, IntegrateGlobals, calcPhase > {
+cuda.cu:2848:	real_t PhaseField;
+cuda.cu:2858:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2907://-------------------[        Node_BaseIter --- Action:   No, Globals:   No ]--------------------
+cuda.cu:2908:template < class LA > struct Node_Run < LA, Primal, NoGlobals, BaseIter > {
+cuda.cu:2912:	real_t PhaseField;
+cuda.cu:2922:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:2947:	        acc.pop_BaseIter(*this);
+cuda.cu:2951:		acc.push_BaseIter(*this);
+cuda.cu:2964://-------------------[  Node_BaseIter_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:2965:template < class LA > struct Node_Run < LA, Primal, IntegrateGlobals, BaseIter > {
+cuda.cu:2969:	real_t PhaseField;
+cuda.cu:2979:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3004:	        acc.pop_BaseIter(*this);
+cuda.cu:3008:		acc.push_BaseIter(*this);
+cuda.cu:3023://-------------------[    Node_BaseIter_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:3024:template < class LA > struct Node_Run < LA, Primal, OnlyObjective, BaseIter > {
+cuda.cu:3028:	real_t PhaseField;
+cuda.cu:3038:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3063:	        acc.pop_BaseIter(*this);
+cuda.cu:3067:		acc.push_BaseIter(*this);
+cuda.cu:3080://-------------------[    Node_BaseIter_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:3081:template < class LA > struct Node_Run < LA, Adjoint, NoGlobals, BaseIter > {
+cuda.cu:3085:	real_t PhaseField;
+cuda.cu:3095:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3122:		acc.pop_BaseIter(*this);
+cuda.cu:3123:		acc.pop_BaseIter_adj(*this);
+cuda.cu:3127:		acc.push_BaseIter_adj(*this);
+cuda.cu:3140://-------------------[ Node_BaseIter_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:3141:template < class LA > struct Node_Run < LA, Adjoint, IntegrateGlobals, BaseIter > {
+cuda.cu:3145:	real_t PhaseField;
+cuda.cu:3155:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3182:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:3186:		acc.pop_BaseIter(*this);
+cuda.cu:3187:		acc.pop_BaseIter_adj(*this);
+cuda.cu:3191:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:3201:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:3202:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:3203:		acc.push_BaseIter_adj(*this);
+cuda.cu:3216://-------------------[   Node_BaseIter_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:3217:template < class LA > struct Node_Run < LA, SteadyAdjoint, NoGlobals, BaseIter > {
+cuda.cu:3221:	real_t PhaseField;
+cuda.cu:3231:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3258:		acc.pop_BaseIter(*this);
+cuda.cu:3259:		acc.pop_BaseIter_adj(*this);
+cuda.cu:3263:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:3267:		acc.push_BaseIter_adj(*this);
+cuda.cu:3280://-------------------[ Node_BaseIter_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:3281:template < class LA > struct Node_Run < LA, SteadyAdjoint, IntegrateGlobals, BaseIter > {
+cuda.cu:3285:	real_t PhaseField;
+cuda.cu:3295:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3322:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:3326:		acc.pop_BaseIter(*this);
+cuda.cu:3327:		acc.pop_BaseIter_adj(*this);
+cuda.cu:3334:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:3335:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:3345:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:3346:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:3347:		acc.push_BaseIter_adj(*this);
+cuda.cu:3360://-------------------[    Node_BaseIter_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:3361:template < class LA > struct Node_Run < LA, Optimize, NoGlobals, BaseIter > {
+cuda.cu:3365:	real_t PhaseField;
+cuda.cu:3375:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3422://-------------------[ Node_BaseIter_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:3423:template < class LA > struct Node_Run < LA, Optimize, IntegrateGlobals, BaseIter > {
+cuda.cu:3427:	real_t PhaseField;
+cuda.cu:3437:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3486://-------------------[ Node_InitFromFieldsStage --- Action:   No, Globals:   No ]--------------------
+cuda.cu:3491:	real_t PhaseField;
+cuda.cu:3501:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3543://-------------------[ Node_InitFromFieldsStage_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:3548:	real_t PhaseField;
+cuda.cu:3558:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3602://-------------------[ Node_InitFromFieldsStage_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:3607:	real_t PhaseField;
+cuda.cu:3617:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3659://-------------------[ Node_InitFromFieldsStage_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:3664:	real_t PhaseField;
+cuda.cu:3674:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3719://-------------------[ Node_InitFromFieldsStage_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:3724:	real_t PhaseField;
+cuda.cu:3734:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3761:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:3770:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:3780:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:3781:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:3795://-------------------[ Node_InitFromFieldsStage_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:3800:	real_t PhaseField;
+cuda.cu:3810:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3842:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:3859://-------------------[ Node_InitFromFieldsStage_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:3864:	real_t PhaseField;
+cuda.cu:3874:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:3901:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:3913:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:3914:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:3924:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:3925:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:3939://-------------------[ Node_InitFromFieldsStage_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:3944:	real_t PhaseField;
+cuda.cu:3954:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4001://-------------------[ Node_InitFromFieldsStage_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:4006:	real_t PhaseField;
+cuda.cu:4016:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4065://-------------------[     Node_WallInit_CA --- Action:   No, Globals:   No ]--------------------
+cuda.cu:4070:	real_t PhaseField;
+cuda.cu:4080:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4122://-------------------[ Node_WallInit_CA_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:4127:	real_t PhaseField;
+cuda.cu:4137:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4181://-------------------[ Node_WallInit_CA_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:4186:	real_t PhaseField;
+cuda.cu:4196:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4238://-------------------[ Node_WallInit_CA_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:4243:	real_t PhaseField;
+cuda.cu:4253:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4298://-------------------[ Node_WallInit_CA_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:4303:	real_t PhaseField;
+cuda.cu:4313:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4340:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:4349:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:4359:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:4360:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:4374://-------------------[ Node_WallInit_CA_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:4379:	real_t PhaseField;
+cuda.cu:4389:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4421:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:4438://-------------------[ Node_WallInit_CA_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:4443:	real_t PhaseField;
+cuda.cu:4453:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4480:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:4492:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:4493:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:4503:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:4504:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:4518://-------------------[ Node_WallInit_CA_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:4523:	real_t PhaseField;
+cuda.cu:4533:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4580://-------------------[ Node_WallInit_CA_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:4585:	real_t PhaseField;
+cuda.cu:4595:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4644://-------------------[     Node_calcWall_CA --- Action:   No, Globals:   No ]--------------------
+cuda.cu:4645:template < class LA > struct Node_Run < LA, Primal, NoGlobals, calcWall_CA > {
+cuda.cu:4649:	real_t PhaseField;
+cuda.cu:4659:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4684:	        acc.pop_calcWall_CA(*this);
+cuda.cu:4688:		acc.push_calcWall_CA(*this);
+cuda.cu:4692:		calcWallPhase();
+cuda.cu:4701://-------------------[ Node_calcWall_CA_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:4702:template < class LA > struct Node_Run < LA, Primal, IntegrateGlobals, calcWall_CA > {
+cuda.cu:4706:	real_t PhaseField;
+cuda.cu:4716:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4741:	        acc.pop_calcWall_CA(*this);
+cuda.cu:4745:		acc.push_calcWall_CA(*this);
+cuda.cu:4749:		calcWallPhase();
+cuda.cu:4760://-------------------[ Node_calcWall_CA_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:4761:template < class LA > struct Node_Run < LA, Primal, OnlyObjective, calcWall_CA > {
+cuda.cu:4765:	real_t PhaseField;
+cuda.cu:4775:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4800:	        acc.pop_calcWall_CA(*this);
+cuda.cu:4804:		acc.push_calcWall_CA(*this);
+cuda.cu:4808:		calcWallPhase();
+cuda.cu:4817://-------------------[ Node_calcWall_CA_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:4818:template < class LA > struct Node_Run < LA, Adjoint, NoGlobals, calcWall_CA > {
+cuda.cu:4822:	real_t PhaseField;
+cuda.cu:4832:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4859:		acc.pop_calcWall_CA(*this);
+cuda.cu:4860:		acc.pop_calcWall_CA_adj(*this);
+cuda.cu:4864:		acc.push_calcWall_CA_adj(*this);
+cuda.cu:4877://-------------------[ Node_calcWall_CA_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:4878:template < class LA > struct Node_Run < LA, Adjoint, IntegrateGlobals, calcWall_CA > {
+cuda.cu:4882:	real_t PhaseField;
+cuda.cu:4892:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4919:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:4923:		acc.pop_calcWall_CA(*this);
+cuda.cu:4924:		acc.pop_calcWall_CA_adj(*this);
+cuda.cu:4928:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:4938:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:4939:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:4940:		acc.push_calcWall_CA_adj(*this);
+cuda.cu:4953://-------------------[ Node_calcWall_CA_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:4954:template < class LA > struct Node_Run < LA, SteadyAdjoint, NoGlobals, calcWall_CA > {
+cuda.cu:4958:	real_t PhaseField;
+cuda.cu:4968:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:4995:		acc.pop_calcWall_CA(*this);
+cuda.cu:4996:		acc.pop_calcWall_CA_adj(*this);
+cuda.cu:5000:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:5004:		acc.push_calcWall_CA_adj(*this);
+cuda.cu:5017://-------------------[ Node_calcWall_CA_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:5018:template < class LA > struct Node_Run < LA, SteadyAdjoint, IntegrateGlobals, calcWall_CA > {
+cuda.cu:5022:	real_t PhaseField;
+cuda.cu:5032:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5059:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:5063:		acc.pop_calcWall_CA(*this);
+cuda.cu:5064:		acc.pop_calcWall_CA_adj(*this);
+cuda.cu:5071:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:5072:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:5082:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:5083:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:5084:		acc.push_calcWall_CA_adj(*this);
+cuda.cu:5097://-------------------[ Node_calcWall_CA_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:5098:template < class LA > struct Node_Run < LA, Optimize, NoGlobals, calcWall_CA > {
+cuda.cu:5102:	real_t PhaseField;
+cuda.cu:5112:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5159://-------------------[ Node_calcWall_CA_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:5160:template < class LA > struct Node_Run < LA, Optimize, IntegrateGlobals, calcWall_CA > {
+cuda.cu:5164:	real_t PhaseField;
+cuda.cu:5174:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5223://-------------------[   Node_calcPhaseGrad --- Action:   No, Globals:   No ]--------------------
+cuda.cu:5224:template < class LA > struct Node_Run < LA, Primal, NoGlobals, calcPhaseGrad > {
+cuda.cu:5228:	real_t PhaseField;
+cuda.cu:5238:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5263:	        acc.pop_calcPhaseGrad(*this);
+cuda.cu:5267:		acc.push_calcPhaseGrad(*this);
+cuda.cu:5271:		calcPhaseGrad();
+cuda.cu:5280://-------------------[ Node_calcPhaseGrad_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:5281:template < class LA > struct Node_Run < LA, Primal, IntegrateGlobals, calcPhaseGrad > {
+cuda.cu:5285:	real_t PhaseField;
+cuda.cu:5295:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5320:	        acc.pop_calcPhaseGrad(*this);
+cuda.cu:5324:		acc.push_calcPhaseGrad(*this);
+cuda.cu:5328:		calcPhaseGrad();
+cuda.cu:5339://-------------------[ Node_calcPhaseGrad_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:5340:template < class LA > struct Node_Run < LA, Primal, OnlyObjective, calcPhaseGrad > {
+cuda.cu:5344:	real_t PhaseField;
+cuda.cu:5354:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5379:	        acc.pop_calcPhaseGrad(*this);
+cuda.cu:5383:		acc.push_calcPhaseGrad(*this);
+cuda.cu:5387:		calcPhaseGrad();
+cuda.cu:5396://-------------------[ Node_calcPhaseGrad_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:5397:template < class LA > struct Node_Run < LA, Adjoint, NoGlobals, calcPhaseGrad > {
+cuda.cu:5401:	real_t PhaseField;
+cuda.cu:5411:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5438:		acc.pop_calcPhaseGrad(*this);
+cuda.cu:5439:		acc.pop_calcPhaseGrad_adj(*this);
+cuda.cu:5443:		acc.push_calcPhaseGrad_adj(*this);
+cuda.cu:5456://-------------------[ Node_calcPhaseGrad_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:5457:template < class LA > struct Node_Run < LA, Adjoint, IntegrateGlobals, calcPhaseGrad > {
+cuda.cu:5461:	real_t PhaseField;
+cuda.cu:5471:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5498:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:5502:		acc.pop_calcPhaseGrad(*this);
+cuda.cu:5503:		acc.pop_calcPhaseGrad_adj(*this);
+cuda.cu:5507:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:5517:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:5518:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:5519:		acc.push_calcPhaseGrad_adj(*this);
+cuda.cu:5532://-------------------[ Node_calcPhaseGrad_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:5533:template < class LA > struct Node_Run < LA, SteadyAdjoint, NoGlobals, calcPhaseGrad > {
+cuda.cu:5537:	real_t PhaseField;
+cuda.cu:5547:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5574:		acc.pop_calcPhaseGrad(*this);
+cuda.cu:5575:		acc.pop_calcPhaseGrad_adj(*this);
+cuda.cu:5579:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:5583:		acc.push_calcPhaseGrad_adj(*this);
+cuda.cu:5596://-------------------[ Node_calcPhaseGrad_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:5597:template < class LA > struct Node_Run < LA, SteadyAdjoint, IntegrateGlobals, calcPhaseGrad > {
+cuda.cu:5601:	real_t PhaseField;
+cuda.cu:5611:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5638:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:5642:		acc.pop_calcPhaseGrad(*this);
+cuda.cu:5643:		acc.pop_calcPhaseGrad_adj(*this);
+cuda.cu:5650:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:5651:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:5661:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:5662:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:5663:		acc.push_calcPhaseGrad_adj(*this);
+cuda.cu:5676://-------------------[ Node_calcPhaseGrad_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:5677:template < class LA > struct Node_Run < LA, Optimize, NoGlobals, calcPhaseGrad > {
+cuda.cu:5681:	real_t PhaseField;
+cuda.cu:5691:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5738://-------------------[ Node_calcPhaseGrad_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:5739:template < class LA > struct Node_Run < LA, Optimize, IntegrateGlobals, calcPhaseGrad > {
+cuda.cu:5743:	real_t PhaseField;
+cuda.cu:5753:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5802://-------------------[ Node_calcPhaseGrad_init --- Action:   No, Globals:   No ]--------------------
+cuda.cu:5803:template < class LA > struct Node_Run < LA, Primal, NoGlobals, calcPhaseGrad_init > {
+cuda.cu:5807:	real_t PhaseField;
+cuda.cu:5817:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5842:	        acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:5846:		acc.push_calcPhaseGrad_init(*this);
+cuda.cu:5850:		calcPhaseGrad_init();
+cuda.cu:5859://-------------------[ Node_calcPhaseGrad_init_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:5860:template < class LA > struct Node_Run < LA, Primal, IntegrateGlobals, calcPhaseGrad_init > {
+cuda.cu:5864:	real_t PhaseField;
+cuda.cu:5874:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5899:	        acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:5903:		acc.push_calcPhaseGrad_init(*this);
+cuda.cu:5907:		calcPhaseGrad_init();
+cuda.cu:5918://-------------------[ Node_calcPhaseGrad_init_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:5919:template < class LA > struct Node_Run < LA, Primal, OnlyObjective, calcPhaseGrad_init > {
+cuda.cu:5923:	real_t PhaseField;
+cuda.cu:5933:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:5958:	        acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:5962:		acc.push_calcPhaseGrad_init(*this);
+cuda.cu:5966:		calcPhaseGrad_init();
+cuda.cu:5975://-------------------[ Node_calcPhaseGrad_init_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:5976:template < class LA > struct Node_Run < LA, Adjoint, NoGlobals, calcPhaseGrad_init > {
+cuda.cu:5980:	real_t PhaseField;
+cuda.cu:5990:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6017:		acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:6018:		acc.pop_calcPhaseGrad_init_adj(*this);
+cuda.cu:6022:		acc.push_calcPhaseGrad_init_adj(*this);
+cuda.cu:6035://-------------------[ Node_calcPhaseGrad_init_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:6036:template < class LA > struct Node_Run < LA, Adjoint, IntegrateGlobals, calcPhaseGrad_init > {
+cuda.cu:6040:	real_t PhaseField;
+cuda.cu:6050:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6077:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:6081:		acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:6082:		acc.pop_calcPhaseGrad_init_adj(*this);
+cuda.cu:6086:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:6096:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:6097:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:6098:		acc.push_calcPhaseGrad_init_adj(*this);
+cuda.cu:6111://-------------------[ Node_calcPhaseGrad_init_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:6112:template < class LA > struct Node_Run < LA, SteadyAdjoint, NoGlobals, calcPhaseGrad_init > {
+cuda.cu:6116:	real_t PhaseField;
+cuda.cu:6126:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6153:		acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:6154:		acc.pop_calcPhaseGrad_init_adj(*this);
+cuda.cu:6158:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:6162:		acc.push_calcPhaseGrad_init_adj(*this);
+cuda.cu:6175://-------------------[ Node_calcPhaseGrad_init_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:6176:template < class LA > struct Node_Run < LA, SteadyAdjoint, IntegrateGlobals, calcPhaseGrad_init > {
+cuda.cu:6180:	real_t PhaseField;
+cuda.cu:6190:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6217:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:6221:		acc.pop_calcPhaseGrad_init(*this);
+cuda.cu:6222:		acc.pop_calcPhaseGrad_init_adj(*this);
+cuda.cu:6229:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:6230:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:6240:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:6241:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:6242:		acc.push_calcPhaseGrad_init_adj(*this);
+cuda.cu:6255://-------------------[ Node_calcPhaseGrad_init_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:6256:template < class LA > struct Node_Run < LA, Optimize, NoGlobals, calcPhaseGrad_init > {
+cuda.cu:6260:	real_t PhaseField;
+cuda.cu:6270:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6317://-------------------[ Node_calcPhaseGrad_init_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:6318:template < class LA > struct Node_Run < LA, Optimize, IntegrateGlobals, calcPhaseGrad_init > {
+cuda.cu:6322:	real_t PhaseField;
+cuda.cu:6332:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6381://-------------------[ Node_calcWallPhase_correction --- Action:   No, Globals:   No ]--------------------
+cuda.cu:6382:template < class LA > struct Node_Run < LA, Primal, NoGlobals, calcWallPhase_correction > {
+cuda.cu:6386:	real_t PhaseField;
+cuda.cu:6396:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6421:	        acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6425:		acc.push_calcWallPhase_correction(*this);
+cuda.cu:6429:		calcWallPhase_correction();
+cuda.cu:6438://-------------------[ Node_calcWallPhase_correction_Globs --- Action:   No, Globals:Globs ]--------------------
+cuda.cu:6439:template < class LA > struct Node_Run < LA, Primal, IntegrateGlobals, calcWallPhase_correction > {
+cuda.cu:6443:	real_t PhaseField;
+cuda.cu:6453:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6478:	        acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6482:		acc.push_calcWallPhase_correction(*this);
+cuda.cu:6486:		calcWallPhase_correction();
+cuda.cu:6497://-------------------[ Node_calcWallPhase_correction_Obj --- Action:   No, Globals:  Obj ]--------------------
+cuda.cu:6498:template < class LA > struct Node_Run < LA, Primal, OnlyObjective, calcWallPhase_correction > {
+cuda.cu:6502:	real_t PhaseField;
+cuda.cu:6512:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6537:	        acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6541:		acc.push_calcWallPhase_correction(*this);
+cuda.cu:6545:		calcWallPhase_correction();
+cuda.cu:6554://-------------------[ Node_calcWallPhase_correction_Adj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:6555:template < class LA > struct Node_Run < LA, Adjoint, NoGlobals, calcWallPhase_correction > {
+cuda.cu:6559:	real_t PhaseField;
+cuda.cu:6569:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6596:		acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6597:		acc.pop_calcWallPhase_correction_adj(*this);
+cuda.cu:6601:		acc.push_calcWallPhase_correction_adj(*this);
+cuda.cu:6614://-------------------[ Node_calcWallPhase_correction_Globs_Adj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:6615:template < class LA > struct Node_Run < LA, Adjoint, IntegrateGlobals, calcWallPhase_correction > {
+cuda.cu:6619:	real_t PhaseField;
+cuda.cu:6629:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6656:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:6660:		acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6661:		acc.pop_calcWallPhase_correction_adj(*this);
+cuda.cu:6665:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:6675:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:6676:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:6677:		acc.push_calcWallPhase_correction_adj(*this);
+cuda.cu:6690://-------------------[ Node_calcWallPhase_correction_SAdj --- Action:  Adj, Globals:   No ]--------------------
+cuda.cu:6691:template < class LA > struct Node_Run < LA, SteadyAdjoint, NoGlobals, calcWallPhase_correction > {
+cuda.cu:6695:	real_t PhaseField;
+cuda.cu:6705:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6732:		acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6733:		acc.pop_calcWallPhase_correction_adj(*this);
+cuda.cu:6737:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:6741:		acc.push_calcWallPhase_correction_adj(*this);
+cuda.cu:6754://-------------------[ Node_calcWallPhase_correction_Globs_SAdj --- Action:  Adj, Globals:Globs ]--------------------
+cuda.cu:6755:template < class LA > struct Node_Run < LA, SteadyAdjoint, IntegrateGlobals, calcWallPhase_correction > {
+cuda.cu:6759:	real_t PhaseField;
+cuda.cu:6769:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6796:        real_t old_Init_PhaseField_Externalb;
+cuda.cu:6800:		acc.pop_calcWallPhase_correction(*this);
+cuda.cu:6801:		acc.pop_calcWallPhase_correction_adj(*this);
+cuda.cu:6808:                old_Init_PhaseField_Externalb = Init_PhaseField_Externalb;
+cuda.cu:6809:                Init_PhaseField_Externalb = 0.0f;
+cuda.cu:6819:                old_Init_PhaseField_Externalb -= Init_PhaseField_Externalb;
+cuda.cu:6820:                AddToAdjointRes(old_Init_PhaseField_Externalb*old_Init_PhaseField_Externalb);
+cuda.cu:6821:		acc.push_calcWallPhase_correction_adj(*this);
+cuda.cu:6834://-------------------[ Node_calcWallPhase_correction_Opt --- Action:  Opt, Globals:   No ]--------------------
+cuda.cu:6835:template < class LA > struct Node_Run < LA, Optimize, NoGlobals, calcWallPhase_correction > {
+cuda.cu:6839:	real_t PhaseField;
+cuda.cu:6849:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:6896://-------------------[ Node_calcWallPhase_correction_Globs_Opt --- Action:  Opt, Globals:Globs ]--------------------
+cuda.cu:6897:template < class LA > struct Node_Run < LA, Optimize, IntegrateGlobals, calcWallPhase_correction > {
+cuda.cu:6901:	real_t PhaseField;
+cuda.cu:6911:		PhaseField =  constContainer.ZoneSetting( ZONESETTINGS_PhaseField , z);
+cuda.cu:7017:#undef Init_PhaseField_External
+cuda.cu:7027:#undef WallGhost
+cuda.cu:7030:#undef WallGhostRaw
+cuda.cu:7031:#undef WallGhostClamped
+cuda.cu:7032:#undef WallGhostClampHit
+cuda.cu:7105:#undef gradPhiVal_x
+cuda.cu:7106:#undef gradPhiVal_y
+cuda.cu:7107:#undef gradPhiVal_z
+cuda.cu:7108:#undef gradPhi_PhaseF
+cuda.cu:7109:#undef PhaseF
+cuda.cu:7167:#undef Init_PhaseField_External_dyn
+cuda.cu:7177:#undef WallGhost_dyn
+cuda.cu:7180:#undef WallGhostRaw_dyn
+cuda.cu:7181:#undef WallGhostClamped_dyn
+cuda.cu:7182:#undef WallGhostClampHit_dyn
+cuda.cu:7255:#undef gradPhiVal_x_dyn
+cuda.cu:7256:#undef gradPhiVal_y_dyn
+cuda.cu:7257:#undef gradPhiVal_z_dyn
+cuda.cu:7258:#undef gradPhi_PhaseF_dyn
+cuda.cu:7259:#undef PhaseF_dyn
+cuda.cu:7319:#undef PhaseField_DT
+Consts.h:68:#define  SETTINGS_PhaseField_h                       2
+Consts.h:69:#define  SETTINGS_PhaseField_l                       3
+Consts.h:238:#define  DENSITYALL_Init_PhaseField_External        57
+Consts.h:305:#define  DENSITY_Init_PhaseField_External           57
+Consts.h:352:#define  QUANTITIES_PhaseField                       2
+Consts.h:359:#define  QUANTITIES_WallGhost                        9
+Consts.h:360:#define  QUANTITIES_WallGhostRaw                    10
+Consts.h:361:#define  QUANTITIES_WallGhostClamped                11
+Consts.h:362:#define  QUANTITIES_WallGhostClampHit               12
+Consts.h:500:#define  FIELDS_Init_PhaseField_External            57
+Consts.h:510:#define  FIELDS_WallGhost                           67
+Consts.h:513:#define  FIELDS_WallGhostRaw                        70
+Consts.h:514:#define  FIELDS_WallGhostClamped                    71
+Consts.h:515:#define  FIELDS_WallGhostClampHit                   72
+Consts.h:588:#define  FIELDS_gradPhiVal_x                       145
+Consts.h:589:#define  FIELDS_gradPhiVal_y                       146
+Consts.h:590:#define  FIELDS_gradPhiVal_z                       147
+Consts.h:591:#define  FIELDS_gradPhi_PhaseF                     148
+Consts.h:592:#define  FIELDS_PhaseF                             149
+Consts.h:596:#define  STAGES_calcPhase                            2
+Consts.h:597:#define  STAGES_BaseIter                             3
+Consts.h:600:#define  STAGES_calcWall_CA                          6
+Consts.h:601:#define  STAGES_calcPhaseGrad                        7
+Consts.h:602:#define  STAGES_calcPhaseGrad_init                   8
+Consts.h:603:#define  STAGES_calcWallPhase_correction             9
+Consts.h:605:#define  ZONESETTINGS_PhaseField                     0
+Consts.h:657:enum eAction { Iteration,Init,InitFields };
+Consts.h:658:enum eStage { PhaseInit,BaseInit,calcPhase,BaseIter,InitFromFieldsStage,WallInit_CA,calcWall_CA,calcPhaseGrad,calcPhaseGrad_init,calcWallPhase_correction,Get };
