@@ -136,6 +136,11 @@ def audit(root: Path) -> dict[str, Any]:
             and boundary.find("if (compact_write)")
             < boundary.find("WallGhost = stage13_compute_analytic_wall_ghost")
         ),
+        "curved_analytic_compact_write_is_flat_only_gated": contains(
+            boundary,
+            r"compact_write\s*=\s*stage13_compact_write_requested\s*\(\s*\)\s*&&\s*"
+            r"\(\s*AnalyticSolidType\s*<\s*1\.5\s*\)",
+        ),
         "true_compact_three_vertex_search_present": all(
             token in boundary
             for token in [
