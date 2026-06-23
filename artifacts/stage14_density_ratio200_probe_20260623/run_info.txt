@@ -1,0 +1,5 @@
+GPU=1
+RUN probe_R200_B0_legacy 
+RUN probe_R200_C2_single_pass --force-fixed-point-mode 2
+RUN probe_R200_B1_pressure_physical --pressure-closure-mode 1
+RUN probe_R200_B1C2_pressure_physical_single_pass --pressure-closure-mode 1 --force-fixed-point-mode 2
