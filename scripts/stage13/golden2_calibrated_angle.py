@@ -35,7 +35,7 @@ def measure_pvti(p):
     pf3=get("PhaseField")
     if pf3 is None: pf3=get("PhaseF")
     iy=np.arange(ny)*sp[1]+orig[1]+0.5*sp[1]; ix=np.arange(nx)*sp[0]+orig[0]+0.5*sp[0]
-    bs=[]; 
+    bs=[]
     for kz in range(max(0,nz//2-1),min(nz,nz//2+2)):
         b,_=bbox_theta(pf3[kz], ix, iy, orig[1]); bs.append(b)
     return float(np.nanmean(bs))
