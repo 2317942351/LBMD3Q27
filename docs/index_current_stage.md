@@ -10,6 +10,9 @@ The current working baseline is defined by:
 docs/stage14/56_phasefield_rebuild_baseline_20260623.md
 docs/stage14/57_mcmp_c_reference_bridge_20260623.md
 docs/stage14/55_tclb_execution_semantics_constraints_20260623.md
+docs/stage14/58_phasefield_rebuild_execution_plan_20260623.md
+docs/stage14/59_current_progress_and_next_solver_targets_20260623.md
+docs/stage14/60_stage18_p100_semantics_smoke_20260623.md
 ```
 
 Branch:
@@ -33,6 +36,17 @@ freeze DynamicCL, WallGhostV2, direct curved compact-write, and old-BC curved cl
 use external MCMP C++ codes only as structural references, not as phase-field physics
 build a minimal phase-field C/C++ reference or equivalent TCLB semantics map before
 new solver physics edits
+```
+
+Current extension on branch `work/phasefield-c-reference-20260623`:
+
+```text
+reference_solvers/phasefield_d3q27_c now contains an executable C++ scaffold
+server g++ self-test passed with checks=96 failures=0
+scripts/audit_tclb_execution_semantics.py extracts TCLB density/field/stage risks
+remote P100/storage audit summaries are under artifacts/remote_space_audit_20260623
+stage18 P100 smoke: flat and corrected z-axis cylinder runtime chains run; old axis=0 cylinder template fails with P NaN
+no solver physics has been changed yet on this branch
 ```
 
 The rest of this file preserves earlier stage history and should not be read as

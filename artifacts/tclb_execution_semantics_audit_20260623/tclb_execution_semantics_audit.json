@@ -1,0 +1,2803 @@
+{
+  "model_dir": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage9_analytic_wetting_diffuse_interface\\models\\multiphase\\d3q27_pf_velocity",
+  "densities": [
+    {
+      "name": "g0",
+      "dx": 0,
+      "dy": 0,
+      "dz": 0,
+      "group": "g",
+      "streams": false,
+      "line": 1
+    },
+    {
+      "name": "g1",
+      "dx": 1,
+      "dy": 0,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 2
+    },
+    {
+      "name": "g2",
+      "dx": -1,
+      "dy": 0,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 3
+    },
+    {
+      "name": "g3",
+      "dx": 0,
+      "dy": 1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 4
+    },
+    {
+      "name": "g4",
+      "dx": 0,
+      "dy": -1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 5
+    },
+    {
+      "name": "g5",
+      "dx": 0,
+      "dy": 0,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 6
+    },
+    {
+      "name": "g6",
+      "dx": 0,
+      "dy": 0,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 7
+    },
+    {
+      "name": "g7",
+      "dx": 1,
+      "dy": 1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 8
+    },
+    {
+      "name": "g8",
+      "dx": -1,
+      "dy": 1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 9
+    },
+    {
+      "name": "g9",
+      "dx": 1,
+      "dy": -1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 10
+    },
+    {
+      "name": "g10",
+      "dx": -1,
+      "dy": -1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 11
+    },
+    {
+      "name": "g11",
+      "dx": 1,
+      "dy": 1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 12
+    },
+    {
+      "name": "g12",
+      "dx": -1,
+      "dy": 1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 13
+    },
+    {
+      "name": "g13",
+      "dx": 1,
+      "dy": -1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 14
+    },
+    {
+      "name": "g14",
+      "dx": -1,
+      "dy": -1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 15
+    },
+    {
+      "name": "g15",
+      "dx": 1,
+      "dy": 1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 16
+    },
+    {
+      "name": "g16",
+      "dx": -1,
+      "dy": 1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 17
+    },
+    {
+      "name": "g17",
+      "dx": 1,
+      "dy": -1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 18
+    },
+    {
+      "name": "g18",
+      "dx": -1,
+      "dy": -1,
+      "dz": 0,
+      "group": "g",
+      "streams": true,
+      "line": 19
+    },
+    {
+      "name": "g19",
+      "dx": 1,
+      "dy": 0,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 20
+    },
+    {
+      "name": "g20",
+      "dx": -1,
+      "dy": 0,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 21
+    },
+    {
+      "name": "g21",
+      "dx": 1,
+      "dy": 0,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 22
+    },
+    {
+      "name": "g22",
+      "dx": -1,
+      "dy": 0,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 23
+    },
+    {
+      "name": "g23",
+      "dx": 0,
+      "dy": 1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 24
+    },
+    {
+      "name": "g24",
+      "dx": 0,
+      "dy": -1,
+      "dz": 1,
+      "group": "g",
+      "streams": true,
+      "line": 25
+    },
+    {
+      "name": "g25",
+      "dx": 0,
+      "dy": 1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 26
+    },
+    {
+      "name": "g26",
+      "dx": 0,
+      "dy": -1,
+      "dz": -1,
+      "group": "g",
+      "streams": true,
+      "line": 27
+    },
+    {
+      "name": "h0",
+      "dx": 0,
+      "dy": 0,
+      "dz": 0,
+      "group": "h",
+      "streams": false,
+      "line": 31
+    },
+    {
+      "name": "h1",
+      "dx": 1,
+      "dy": 0,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 32
+    },
+    {
+      "name": "h2",
+      "dx": -1,
+      "dy": 0,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 33
+    },
+    {
+      "name": "h3",
+      "dx": 0,
+      "dy": 1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 34
+    },
+    {
+      "name": "h4",
+      "dx": 0,
+      "dy": -1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 35
+    },
+    {
+      "name": "h5",
+      "dx": 0,
+      "dy": 0,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 36
+    },
+    {
+      "name": "h6",
+      "dx": 0,
+      "dy": 0,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 37
+    },
+    {
+      "name": "h7",
+      "dx": 1,
+      "dy": 1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 38
+    },
+    {
+      "name": "h8",
+      "dx": -1,
+      "dy": 1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 39
+    },
+    {
+      "name": "h9",
+      "dx": 1,
+      "dy": -1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 40
+    },
+    {
+      "name": "h10",
+      "dx": -1,
+      "dy": -1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 41
+    },
+    {
+      "name": "h11",
+      "dx": 1,
+      "dy": 1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 42
+    },
+    {
+      "name": "h12",
+      "dx": -1,
+      "dy": 1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 43
+    },
+    {
+      "name": "h13",
+      "dx": 1,
+      "dy": -1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 44
+    },
+    {
+      "name": "h14",
+      "dx": -1,
+      "dy": -1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 45
+    },
+    {
+      "name": "h15",
+      "dx": 1,
+      "dy": 1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 48
+    },
+    {
+      "name": "h16",
+      "dx": -1,
+      "dy": 1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 49
+    },
+    {
+      "name": "h17",
+      "dx": 1,
+      "dy": -1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 50
+    },
+    {
+      "name": "h18",
+      "dx": -1,
+      "dy": -1,
+      "dz": 0,
+      "group": "h",
+      "streams": true,
+      "line": 51
+    },
+    {
+      "name": "h19",
+      "dx": 1,
+      "dy": 0,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 52
+    },
+    {
+      "name": "h20",
+      "dx": -1,
+      "dy": 0,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 53
+    },
+    {
+      "name": "h21",
+      "dx": 1,
+      "dy": 0,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 54
+    },
+    {
+      "name": "h22",
+      "dx": -1,
+      "dy": 0,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 55
+    },
+    {
+      "name": "h23",
+      "dx": 0,
+      "dy": 1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 56
+    },
+    {
+      "name": "h24",
+      "dx": 0,
+      "dy": -1,
+      "dz": 1,
+      "group": "h",
+      "streams": true,
+      "line": 57
+    },
+    {
+      "name": "h25",
+      "dx": 0,
+      "dy": 1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 58
+    },
+    {
+      "name": "h26",
+      "dx": 0,
+      "dy": -1,
+      "dz": -1,
+      "group": "h",
+      "streams": true,
+      "line": 59
+    }
+  ],
+  "fields": [
+    {
+      "name": "IsBoundary",
+      "group": "solid_boundary",
+      "stencil3d": 2,
+      "line": 75
+    },
+    {
+      "name": "IsBoundary",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 77
+    },
+    {
+      "name": "WallGhost",
+      "group": "solid_boundary",
+      "stencil3d": 2,
+      "line": 86
+    },
+    {
+      "name": "WallH",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 87
+    },
+    {
+      "name": "AnalyticFlag",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 88
+    },
+    {
+      "name": "WallGhostRaw",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 89
+    },
+    {
+      "name": "WallGhostClamped",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 90
+    },
+    {
+      "name": "WallGhostClampHit",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 91
+    },
+    {
+      "name": "WettingPathId",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 92
+    },
+    {
+      "name": "LocalRadAngle",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 93
+    },
+    {
+      "name": "WallCSQMode",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 94
+    },
+    {
+      "name": "WallCSQNormalMode",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 95
+    },
+    {
+      "name": "WallCSQValid",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 96
+    },
+    {
+      "name": "WallCSQThetaDeg",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 97
+    },
+    {
+      "name": "WallCSQNormalX",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 98
+    },
+    {
+      "name": "WallCSQNormalY",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 99
+    },
+    {
+      "name": "WallCSQNormalZ",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 100
+    },
+    {
+      "name": "WallCSQDs",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 101
+    },
+    {
+      "name": "WallCSQDf",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 102
+    },
+    {
+      "name": "WallCSQQf",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 103
+    },
+    {
+      "name": "WallCSQQsRaw",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 104
+    },
+    {
+      "name": "WallCSQQsBounded",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 105
+    },
+    {
+      "name": "WallCSQQw",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 106
+    },
+    {
+      "name": "WallCSQResidual",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 107
+    },
+    {
+      "name": "WallCSQAppliedResidual",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 108
+    },
+    {
+      "name": "WallCSQDiscriminant",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 109
+    },
+    {
+      "name": "WallCSQRootChoice",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 110
+    },
+    {
+      "name": "WallCSQStencilCase",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 111
+    },
+    {
+      "name": "WallCSQStencilL",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 112
+    },
+    {
+      "name": "WallCSQFallbackReason",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 113
+    },
+    {
+      "name": "WallCSQBoundedDelta",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 114
+    },
+    {
+      "name": "WallCSQAppliedWeight",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 115
+    },
+    {
+      "name": "WallCSQWriteAllowedFlag",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 116
+    },
+    {
+      "name": "WallCSQCandidateCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 117
+    },
+    {
+      "name": "WallCSQFluidVertexCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 118
+    },
+    {
+      "name": "WallCSQTriangleInside",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 119
+    },
+    {
+      "name": "WallCSQPlaneId",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 120
+    },
+    {
+      "name": "WallCSQBaryMin",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 121
+    },
+    {
+      "name": "WallCSQBaryMax",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 122
+    },
+    {
+      "name": "WallCSQMethodComplete",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 123
+    },
+    {
+      "name": "WallCSQVertexMaskBits",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 124
+    },
+    {
+      "name": "WallCSQVertexRealFluidBits",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 125
+    },
+    {
+      "name": "WallCSQVertexPhaseCleanBits",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 126
+    },
+    {
+      "name": "WallCSQVertexQMin",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 127
+    },
+    {
+      "name": "WallCSQVertexQMax",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 128
+    },
+    {
+      "name": "WallCSQRejectedSolidVertexCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 129
+    },
+    {
+      "name": "WallCSQRejectedSentinelCount",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 130
+    },
+    {
+      "name": "WallCSQStrictWriteReady",
+      "group": "solid_boundary",
+      "stencil3d": 1,
+      "line": 131
+    },
+    {
+      "name": "WallGradDeltaMag",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 132
+    },
+    {
+      "name": "WallGradThetaApp",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 133
+    },
+    {
+      "name": "WallMuCandidate",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 134
+    },
+    {
+      "name": "DynamicCLActive",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 137
+    },
+    {
+      "name": "DynamicCLIndicator",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 138
+    },
+    {
+      "name": "DynamicCLCosApp",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 139
+    },
+    {
+      "name": "DynamicCLThetaApp",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 140
+    },
+    {
+      "name": "DynamicCLCosEq",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 141
+    },
+    {
+      "name": "DynamicCLCosResidual",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 142
+    },
+    {
+      "name": "DynamicCLForceCandidateX",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 143
+    },
+    {
+      "name": "DynamicCLForceCandidateY",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 144
+    },
+    {
+      "name": "DynamicCLForceCandidateZ",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 145
+    },
+    {
+      "name": "DynamicCLForceCandidateMag",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 146
+    },
+    {
+      "name": "DynamicCLTangentialX",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 147
+    },
+    {
+      "name": "DynamicCLTangentialY",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 148
+    },
+    {
+      "name": "DynamicCLTangentialZ",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 149
+    },
+    {
+      "name": "DynamicCLWallNormalX",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 150
+    },
+    {
+      "name": "DynamicCLWallNormalY",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 151
+    },
+    {
+      "name": "DynamicCLWallNormalZ",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 152
+    },
+    {
+      "name": "DynamicCLRejectedReason",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 153
+    },
+    {
+      "name": "DynamicCLThetaEq",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 159
+    },
+    {
+      "name": "DynamicCLWallContextFound",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 160
+    },
+    {
+      "name": "DynamicCLBlockedReason",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 161
+    },
+    {
+      "name": "DynamicCLWallDx",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 162
+    },
+    {
+      "name": "DynamicCLWallDy",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 163
+    },
+    {
+      "name": "DynamicCLWallDz",
+      "group": "wall_grad_diag",
+      "stencil3d": 1,
+      "line": 164
+    },
+    {
+      "name": "ForceIterResidual",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 191
+    },
+    {
+      "name": "ForceIterCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 192
+    },
+    {
+      "name": "MassCorrectionApplied",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 193
+    },
+    {
+      "name": "PhaseStencilGhostUseCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 194
+    },
+    {
+      "name": "PhaseStencilFallbackCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 195
+    },
+    {
+      "name": "PhaseStencilMidpointFallbackCount",
+      "group": "runtime_diagnostics",
+      "stencil3d": 1,
+      "line": 196
+    },
+    {
+      "name": "U",
+      "group": "",
+      "stencil3d": null,
+      "line": 210
+    },
+    {
+      "name": "U",
+      "group": "",
+      "stencil3d": null,
+      "line": 211
+    },
+    {
+      "name": "gradPhiVal_x",
+      "group": "gradPhi",
+      "stencil3d": 2,
+      "line": 223
+    },
+    {
+      "name": "gradPhiVal_y",
+      "group": "gradPhi",
+      "stencil3d": 2,
+      "line": 224
+    },
+    {
+      "name": "gradPhiVal_z",
+      "group": "gradPhi",
+      "stencil3d": 2,
+      "line": 225
+    },
+    {
+      "name": "gradPhi_PhaseF",
+      "group": "gradPhi",
+      "stencil3d": 1,
+      "line": 230
+    },
+    {
+      "name": "PhaseF",
+      "group": "PF",
+      "stencil3d": 2,
+      "line": 232
+    },
+    {
+      "name": "PhaseF",
+      "group": "PF",
+      "stencil3d": 1,
+      "line": 234
+    }
+  ],
+  "settings": [
+    {
+      "name": "Density_h",
+      "line": 396,
+      "rest": ", comment='High density'"
+    },
+    {
+      "name": "Density_l",
+      "line": 397,
+      "rest": ", comment='Low  density'"
+    },
+    {
+      "name": "PhaseField_h",
+      "line": 398,
+      "rest": ", default=1, comment='PhaseField in Liquid'"
+    },
+    {
+      "name": "PhaseField_l",
+      "line": 399,
+      "rest": ", default=0, comment='PhaseField gas'"
+    },
+    {
+      "name": "PhaseField",
+      "line": 400,
+      "rest": ", \t   comment='Initial PhaseField distribution', zonal=T"
+    },
+    {
+      "name": "IntWidth",
+      "line": 401,
+      "rest": ", default=4,    comment='Anti-diffusivity coeff'"
+    },
+    {
+      "name": "omega_phi",
+      "line": 402,
+      "rest": ", comment='one over relaxation time (phase field"
+    },
+    {
+      "name": "M",
+      "line": 403,
+      "rest": ", omega_phi='1.0/(3*M+0.5"
+    },
+    {
+      "name": "sigma",
+      "line": 404,
+      "rest": ", comment='surface tension'"
+    },
+    {
+      "name": "force_fixed_iterator",
+      "line": 405,
+      "rest": ", default=2, comment='to resolve implicit relation of viscous force'"
+    },
+    {
+      "name": "ForceFixedTol",
+      "line": 406,
+      "rest": ", default=0.0, comment='Stage13 force fixed-point residual tolerance; <=0 preserves fixed-count iteration'"
+    },
+    {
+      "name": "ForceFixedMaxIter",
+      "line": 407,
+      "rest": ", default=2, comment='Stage13 force fixed-point maximum iterations used when ForceFixedTol>0'"
+    },
+    {
+      "name": "Washburn_start",
+      "line": 408,
+      "rest": ", default=\"0\", comment='Start of washburn gas phase'"
+    },
+    {
+      "name": "Washburn_end",
+      "line": 409,
+      "rest": ", default=\"0\", comment='End of washburn gas phase'"
+    },
+    {
+      "name": "radAngle",
+      "line": 410,
+      "rest": ", default='1.570796', comment='Contact angle in radians, can use units -> 90d where d=2pi/360', zonal=T"
+    },
+    {
+      "name": "minGradient",
+      "line": 411,
+      "rest": ", default='1e-8', comment='if the phase gradient is less than this, set phase normals to zero'"
+    },
+    {
+      "name": "AnalyticWetting",
+      "line": 418,
+      "rest": ", default=0, comment='Stage9: 1 enables analytic-geometry wetting BC on analytic zones'"
+    },
+    {
+      "name": "AnalyticSolidType",
+      "line": 419,
+      "rest": ", default=0, comment='Stage9: 0 off, 1 plane, 2 infinite cylinder, 3 sphere'"
+    },
+    {
+      "name": "AnalyticSolidCenterX",
+      "line": 420,
+      "rest": ", default=0.0, comment='Stage9: solid center x (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidCenterY",
+      "line": 421,
+      "rest": ", default=0.0, comment='Stage9: solid center y (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidCenterZ",
+      "line": 422,
+      "rest": ", default=0.0, comment='Stage9: solid center z (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidRadius",
+      "line": 423,
+      "rest": ", default=0.0, comment='Stage9: solid radius (cylinder/sphere"
+    },
+    {
+      "name": "AnalyticSolidAxis",
+      "line": 424,
+      "rest": ", default=2, comment='Stage9: plane normal / cylinder axis: 0=x, 1=y, 2=z'"
+    },
+    {
+      "name": "AnalyticSolidPlaneOffset",
+      "line": 425,
+      "rest": ", default=0.0, comment='Stage9: plane offset along axis (plane only"
+    },
+    {
+      "name": "WettingBCMode",
+      "line": 426,
+      "rest": ", default=0, comment='Stage13 analytic wetting BC mode: 0 legacy Briant/Jacqmin, 1 geometric tangent/curvature diagnostic'"
+    },
+    {
+      "name": "WallCompactStencilMode",
+      "line": 427,
+      "rest": ", default=0, comment='Stage13 compact-stencil wetting mode: 0 off, 1 shadow only, 2 write after gate'"
+    },
+    {
+      "name": "WallCompactStencilNormalMode",
+      "line": 428,
+      "rest": ", default=1, comment='Stage13 compact-stencil normal mode: only 1 analytic signed-distance normal is implemented; other modes reject compact writes'"
+    },
+    {
+      "name": "WallCompactStencilMaxL",
+      "line": 429,
+      "rest": ", default=3, comment='Stage13 compact-stencil seven-plane local search radius for shadow diagnostics'"
+    },
+    {
+      "name": "WallCompactStencilThetaEps",
+      "line": 430,
+      "rest": ", default=1e-6, comment='Stage13 compact-stencil neutral-angle epsilon in radians'"
+    },
+    {
+      "name": "WallCompactStencilBoundEps",
+      "line": 431,
+      "rest": ", default=0.0, comment='Stage13 compact-stencil q bound tolerance; strict write keeps q_s inside physical [0,1]'"
+    },
+    {
+      "name": "WallCompactStencilMaxBoundedDelta",
+      "line": 432,
+      "rest": ", default=1e-8, comment='Stage13 compact-stencil write gate: max allowed |q_s_bounded-q_s_raw|'"
+    },
+    {
+      "name": "WallCompactStencilAppliedResidualTol",
+      "line": 433,
+      "rest": ", default=1e-8, comment='Stage13 compact-stencil write gate: max residual after applying bounded q_s'"
+    },
+    {
+      "name": "WallCompactStencilWriteAllowedFlag",
+      "line": 434,
+      "rest": ", default=0, comment='Stage13 hard gate: compact-stencil writes are blocked unless explicitly enabled'"
+    },
+    {
+      "name": "PhaseEquationMode",
+      "line": 435,
+      "rest": ", default=0, comment='Stage13 reserved: 0 legacy phase equation; mass correction inactive until Stage E'"
+    },
+    {
+      "name": "WallGradMode",
+      "line": 437,
+      "rest": ", default=0, comment='Layer1 Wang corrected gradient: 0 off, 1 shadow, 2 write'"
+    },
+    {
+      "name": "WallGradContactSign",
+      "line": 438,
+      "rest": ", default=1.0, comment='Layer1: contact angle sign +1 or -1'"
+    },
+    {
+      "name": "WallGradCapFactor",
+      "line": 439,
+      "rest": ", default=2.0, comment='Layer1: corrected gradient magnitude cap factor'"
+    },
+    {
+      "name": "WallGradContactLineEps",
+      "line": 440,
+      "rest": ", default=0.02, comment='Layer1: skip nodes where q<eps or q>1-eps'"
+    },
+    {
+      "name": "WallMuMode",
+      "line": 441,
+      "rest": ", default=0, comment='Layer2 Ju wall-mu source: 0 off, 1 shadow, 2 write'"
+    },
+    {
+      "name": "WallMuScale",
+      "line": 442,
+      "rest": ", default=1.0, comment='Layer2: mu_wall scaling factor'"
+    },
+    {
+      "name": "WallMuContactLineEps",
+      "line": 443,
+      "rest": ", default=0.02, comment='Layer2: skip nodes where q<eps or q>1-eps'"
+    },
+    {
+      "name": "DynamicCLMode",
+      "line": 449,
+      "rest": ", default=0, comment='Layer3 DynamicCL: 0 off, 1 shadow diagnostics, 2 add residual CL force (reserved 15C"
+    },
+    {
+      "name": "DynamicCLCoeff",
+      "line": 450,
+      "rest": ", default=0.0, comment='Layer3: residual contact-line force coefficient'"
+    },
+    {
+      "name": "DynamicCLForceCap",
+      "line": 451,
+      "rest": ", default=0.02, comment='Layer3: force cap in units of sigma/IntWidth'"
+    },
+    {
+      "name": "DynamicCLEpsQ",
+      "line": 452,
+      "rest": ", default=0.05, comment='Layer3: contact-line band cutoff eps<q<1-eps'"
+    },
+    {
+      "name": "DynamicCLGradMin",
+      "line": 453,
+      "rest": ", default=1e-10, comment='Layer3: minimum |gradPhi| for theta_app'"
+    },
+    {
+      "name": "DynamicCLCosTol",
+      "line": 454,
+      "rest": ", default=1e-3, comment='Layer3: no candidate force below this |cos_eq-cos_app|'"
+    },
+    {
+      "name": "DynamicCLCosSign",
+      "line": 455,
+      "rest": ", default=1.0, comment='Layer3: sign convention for cos_app, calibrated by equilibrium 30/90/150'"
+    },
+    {
+      "name": "DynamicCLForceSign",
+      "line": 456,
+      "rest": ", default=1.0, comment='Layer3: global force direction sign, calibrated by decoupled footprint'"
+    },
+    {
+      "name": "RTI_Characteristic_Length",
+      "line": 459,
+      "rest": ", default=-999, comment='Use for RTI instability'"
+    },
+    {
+      "name": "pseudo2D",
+      "line": 460,
+      "rest": ", default=\"0\", comment=\"if 1, assume model is pseduo2D\""
+    },
+    {
+      "name": "Radius",
+      "line": 462,
+      "rest": ", default=0.0, comment='Diffuse Sphere Radius'"
+    },
+    {
+      "name": "CenterX",
+      "line": 463,
+      "rest": ", default=0.0, comment='Diffuse sphere center_x'"
+    },
+    {
+      "name": "CenterY",
+      "line": 464,
+      "rest": ", default=0.0, comment='Diffuse sphere center_y'"
+    },
+    {
+      "name": "CenterZ",
+      "line": 465,
+      "rest": ", default=0.0, comment='Diffuse sphere center_z'"
+    },
+    {
+      "name": "BubbleType",
+      "line": 466,
+      "rest": ",default=1.0, comment='droplet(1.0"
+    },
+    {
+      "name": "CapInit",
+      "line": 467,
+      "rest": ", default=0.0, comment='Default-off spherical-cap initializer for flat-wall static contact-angle diagnostics'"
+    },
+    {
+      "name": "CapInitRadius",
+      "line": 468,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere radius'"
+    },
+    {
+      "name": "CapInitTheta",
+      "line": 469,
+      "rest": ", default='1.570796', comment='Spherical cap target contact angle in radians; metadata only'"
+    },
+    {
+      "name": "CapInitCenterX",
+      "line": 470,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere center X'"
+    },
+    {
+      "name": "CapInitCenterY",
+      "line": 471,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere center Y'"
+    },
+    {
+      "name": "CapInitCenterZ",
+      "line": 472,
+      "rest": ", default=0.0, comment='Spherical cap parent-sphere center Z'"
+    },
+    {
+      "name": "SphereCapInit",
+      "line": 473,
+      "rest": ", default=0.0, comment='Default-off cap-on-sphere initializer for static curved-wall diagnostics'"
+    },
+    {
+      "name": "SphereCapInitParentRadius",
+      "line": 474,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere radius'"
+    },
+    {
+      "name": "SphereCapInitCenterX",
+      "line": 475,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere center X'"
+    },
+    {
+      "name": "SphereCapInitCenterY",
+      "line": 476,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere center Y'"
+    },
+    {
+      "name": "SphereCapInitCenterZ",
+      "line": 477,
+      "rest": ", default=0.0, comment='Sphere-cap liquid parent-sphere center Z'"
+    },
+    {
+      "name": "SphereCapInitSolidCenterX",
+      "line": 478,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere center X'"
+    },
+    {
+      "name": "SphereCapInitSolidCenterY",
+      "line": 479,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere center Y'"
+    },
+    {
+      "name": "SphereCapInitSolidCenterZ",
+      "line": 480,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere center Z'"
+    },
+    {
+      "name": "SphereCapInitSolidRadius",
+      "line": 481,
+      "rest": ", default=0.0, comment='Sphere-cap solid sphere radius'"
+    },
+    {
+      "name": "CylinderCapInit",
+      "line": 482,
+      "rest": ", default=0.0, comment='Default-off cap-on-cylinder initializer for static curved-wall diagnostics'"
+    },
+    {
+      "name": "CylinderCapInitParentRadius",
+      "line": 483,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere radius'"
+    },
+    {
+      "name": "CylinderCapInitCenterX",
+      "line": 484,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere center X'"
+    },
+    {
+      "name": "CylinderCapInitCenterY",
+      "line": 485,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere center Y'"
+    },
+    {
+      "name": "CylinderCapInitCenterZ",
+      "line": 486,
+      "rest": ", default=0.0, comment='Cylinder-cap liquid parent-sphere center Z'"
+    },
+    {
+      "name": "CylinderCapInitSolidCenterX",
+      "line": 487,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder center X'"
+    },
+    {
+      "name": "CylinderCapInitSolidCenterY",
+      "line": 488,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder center Y'"
+    },
+    {
+      "name": "CylinderCapInitSolidCenterZ",
+      "line": 489,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder center Z'"
+    },
+    {
+      "name": "CylinderCapInitSolidRadius",
+      "line": 490,
+      "rest": ", default=0.0, comment='Cylinder-cap solid cylinder radius'"
+    },
+    {
+      "name": "CylinderCapInitSolidAxis",
+      "line": 491,
+      "rest": ", default=0, comment='Cylinder-cap solid cylinder axis: 0=x, 1=y, 2=z'"
+    },
+    {
+      "name": "CompositeDropletTailRadius",
+      "line": 492,
+      "rest": ", default=0.0, comment='optional top cylinder tail radius for a volume-conserved sphere-plus-tail droplet'"
+    },
+    {
+      "name": "CompositeDropletTailLength",
+      "line": 493,
+      "rest": ", default=0.0, comment='optional top cylinder tail length along +Z'"
+    },
+    {
+      "name": "CompositeDropletBodyRadius",
+      "line": 494,
+      "rest": ", default=0.0, comment='optional solved body radius override; <=0 solves volume-conserved radius from Radius'"
+    },
+    {
+      "name": "DonutTime",
+      "line": 496,
+      "rest": ", default=0.0, comment='Radius of a Torus - initialised to travel along x-axis'"
+    },
+    {
+      "name": "Donut_h",
+      "line": 497,
+      "rest": ",   default=0.0, comment='Half donut thickness, i.e. the radius of the cross-section'"
+    },
+    {
+      "name": "Donut_D",
+      "line": 498,
+      "rest": ",   default=0.0, comment='Dilation factor along the x-axis'"
+    },
+    {
+      "name": "Donut_x0",
+      "line": 499,
+      "rest": ",  default=0.0, comment='Position along x-axis'"
+    },
+    {
+      "name": "tau_l",
+      "line": 512,
+      "rest": ", comment='relaxation time (low density fluid"
+    },
+    {
+      "name": "tau_h",
+      "line": 513,
+      "rest": ", comment='relaxation time (high density fluid"
+    },
+    {
+      "name": "tauUpdate",
+      "line": 514,
+      "rest": ", default=\"1\", comment=\"Interpolation: 1-linear, 2- inverse, 3- dyn viscosity\""
+    },
+    {
+      "name": "Viscosity_l",
+      "line": 515,
+      "rest": ", tau_l='(3*Viscosity_l"
+    },
+    {
+      "name": "Viscosity_h",
+      "line": 516,
+      "rest": ", tau_h='(3*Viscosity_h"
+    },
+    {
+      "name": "VelocityX",
+      "line": 517,
+      "rest": ", default=0.0, comment='inlet/outlet/init velocity', zonal=T"
+    },
+    {
+      "name": "VelocityY",
+      "line": 518,
+      "rest": ", default=0.0, comment='inlet/outlet/init velocity', zonal=T"
+    },
+    {
+      "name": "VelocityZ",
+      "line": 519,
+      "rest": ", default=0.0, comment='inlet/outlet/init velocity', zonal=T"
+    },
+    {
+      "name": "DropletOnlyVelocity",
+      "line": 520,
+      "rest": ", default=0.0, comment='0 off, 1 hard droplet mask, 2 smooth phase-fraction weighted droplet velocity'"
+    },
+    {
+      "name": "DropletVelocityX",
+      "line": 521,
+      "rest": ", default=0.0, comment='droplet-only initial velocity x'"
+    },
+    {
+      "name": "DropletVelocityY",
+      "line": 522,
+      "rest": ", default=0.0, comment='droplet-only initial velocity y'"
+    },
+    {
+      "name": "DropletVelocityZ",
+      "line": 523,
+      "rest": ", default=0.0, comment='droplet-only initial velocity z'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityMode",
+      "line": 524,
+      "rest": ", default=0.0, comment='0 off, 1 smooth uniform tail velocity, 2 smooth axial ramp tail velocity'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityX",
+      "line": 525,
+      "rest": ", default=0.0, comment='optional extra tail velocity x'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityY",
+      "line": 526,
+      "rest": ", default=0.0, comment='optional extra tail velocity y'"
+    },
+    {
+      "name": "CompositeDropletTailVelocityZ",
+      "line": 527,
+      "rest": ", default=0.0, comment='optional extra tail velocity z'"
+    },
+    {
+      "name": "Pressure",
+      "line": 528,
+      "rest": ", default=0.0, comment='inlet/outlet/init density', zonal=T"
+    },
+    {
+      "name": "GravitationX",
+      "line": 529,
+      "rest": ", default=0.0, comment='applied (rho"
+    },
+    {
+      "name": "GravitationY",
+      "line": 530,
+      "rest": ", default=0.0, comment='applied (rho"
+    },
+    {
+      "name": "GravitationZ",
+      "line": 531,
+      "rest": ", default=0.0, comment='applied (rho"
+    },
+    {
+      "name": "BuoyancyX",
+      "line": 532,
+      "rest": ", default=0.0, comment='applied (rho_h-rho"
+    },
+    {
+      "name": "BuoyancyY",
+      "line": 533,
+      "rest": ", default=0.0, comment='applied (rho_h-rho"
+    },
+    {
+      "name": "BuoyancyZ",
+      "line": 534,
+      "rest": ", default=0.0, comment='applied (rho_h-rho"
+    },
+    {
+      "name": "xyzTrack",
+      "line": 538,
+      "rest": ", default=1,comment='x<-1, y<-2, z<-3'"
+    }
+  ],
+  "stages": [
+    {
+      "stage": "PhaseInit",
+      "function": "Init",
+      "line": 249,
+      "raw": "AddStage(\"PhaseInit\", \"Init\", save=Fields$group %in% save_initial_PF)"
+    },
+    {
+      "stage": "BaseInit",
+      "function": "Init_distributions",
+      "line": 250,
+      "raw": "AddStage(\"BaseInit\" , \"Init_distributions\", save=Fields$group %in% save_initial)"
+    },
+    {
+      "stage": "calcPhase",
+      "function": "calcPhaseF",
+      "line": 251,
+      "raw": "AddStage(\"calcPhase\", \"calcPhaseF\", save=Fields$name==\"PhaseF\", load=DensityAll$group %in% load_phase)"
+    },
+    {
+      "stage": "BaseIter",
+      "function": "Run",
+      "line": 252,
+      "raw": "AddStage(\"BaseIter\" , \"Run\", save=Fields$group %in% save_iteration, load=DensityAll$group %in% load_iteration )"
+    },
+    {
+      "stage": "InitFromFieldsStage",
+      "function": "",
+      "line": 253,
+      "raw": "AddStage(name=\"InitFromFieldsStage\", load=DensityAll$group %in% \"init\",read=FALSE, save=Fields$group %in% save_initial_PF)"
+    },
+    {
+      "stage": "WallInit_CA",
+      "function": "Init_wallNorm",
+      "line": 256,
+      "raw": "AddStage(\"WallInit_CA\" , \"Init_wallNorm\", save=Fields$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcWall_CA",
+      "function": "calcWallPhase",
+      "line": 257,
+      "raw": "AddStage(\"calcWall_CA\" , \"calcWallPhase\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"gradPhi\", \"PF\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcPhaseGrad",
+      "function": "calcPhaseGrad",
+      "line": 259,
+      "raw": "AddStage('calcPhaseGrad', \"calcPhaseGrad\", load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"), save=Fields$group==\"gradPhi\")"
+    },
+    {
+      "stage": "calcPhaseGrad_init",
+      "function": "calcPhaseGrad_init",
+      "line": 260,
+      "raw": "AddStage('calcPhaseGrad_init', \"calcPhaseGrad_init\", load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"), save=Fields$group==\"gradPhi\")"
+    },
+    {
+      "stage": "calcWallPhase_correction",
+      "function": "calcWallPhase_correction",
+      "line": 261,
+      "raw": "AddStage(\"calcWallPhase_correction\", \"calcWallPhase_correction\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"))"
+    },
+    {
+      "stage": "WallInit",
+      "function": "Init_wallNorm",
+      "line": 263,
+      "raw": "AddStage(\"WallInit\" , \"Init_wallNorm\", save=Fields$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcWall",
+      "function": "calcWallPhase",
+      "line": 264,
+      "raw": "AddStage(\"calcWall\" , \"calcWallPhase\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+    },
+    {
+      "stage": "calcWallPhase_correction",
+      "function": "calcWallPhase_correction",
+      "line": 265,
+      "raw": "AddStage(\"calcWallPhase_correction\", \"calcWallPhase_correction\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"))"
+    },
+    {
+      "stage": "CopyDistributions",
+      "function": "TempCopy",
+      "line": 268,
+      "raw": "AddStage(\"CopyDistributions\", \"TempCopy\", save=Fields$group %in% c(\"g\",\"h\",\"Vel\",\"nw\", \"PF\",\"Thermal\"))"
+    },
+    {
+      "stage": "CopyThermal",
+      "function": "ThermalCopy",
+      "line": 269,
+      "raw": "AddStage(\"CopyThermal\",\"ThermalCopy\", save=Fields$name %in% c(\"Temp\",\"Cond\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"Temp\",\"Cond\",\"SurfaceTension\"))"
+    },
+    {
+      "stage": "RK_1",
+      "function": "TempUpdate1",
+      "line": 270,
+      "raw": "AddStage(\"RK_1\", \"TempUpdate1\", save=Fields$name==\"RK1\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "RK_2",
+      "function": "TempUpdate2",
+      "line": 271,
+      "raw": "AddStage(\"RK_2\", \"TempUpdate2\", save=Fields$name==\"RK2\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "RK_3",
+      "function": "TempUpdate3",
+      "line": 272,
+      "raw": "AddStage(\"RK_3\", \"TempUpdate3\", save=Fields$name==\"RK3\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"RK2\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "RK_4",
+      "function": "TempUpdate4",
+      "line": 273,
+      "raw": "AddStage(\"RK_4\", \"TempUpdate4\", save=Fields$name %in% c(\"Temp\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"RK2\",\"RK3\",\"Cond\",\"PhaseF\",\"Temp\"))"
+    },
+    {
+      "stage": "NonLocalTemp",
+      "function": "BoundUpdate",
+      "line": 275,
+      "raw": "AddStage(\"NonLocalTemp\",\"BoundUpdate\", save=Fields$name %in% c(\"Temp\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"Temp\"))"
+    }
+  ],
+  "functions": {
+    "getRho": {
+      "line": 60
+    },
+    "getPhaseField": {
+      "line": 69
+    },
+    "getU": {
+      "line": 73
+    },
+    "getPstar": {
+      "line": 83
+    },
+    "getP": {
+      "line": 87
+    },
+    "getNormal": {
+      "line": 93
+    },
+    "stage13_phase_is_valid": {
+      "line": 98
+    },
+    "stage13_select_phase_for_stencil": {
+      "line": 102
+    },
+    "getForceIterResidual": {
+      "line": 133
+    },
+    "getForceIterCount": {
+      "line": 137
+    },
+    "getMassCorrectionApplied": {
+      "line": 141
+    },
+    "getPhaseStencilGhostUseCount": {
+      "line": 145
+    },
+    "getPhaseStencilFallbackCount": {
+      "line": 149
+    },
+    "getPhaseStencilMidpointFallbackCount": {
+      "line": 153
+    },
+    "getWallGradDeltaMag": {
+      "line": 157
+    },
+    "getWallGradThetaApp": {
+      "line": 160
+    },
+    "getWallMuCandidate": {
+      "line": 163
+    },
+    "getDynamicCLActive": {
+      "line": 172
+    },
+    "getDynamicCLIndicator": {
+      "line": 173
+    },
+    "getDynamicCLCosApp": {
+      "line": 174
+    },
+    "getDynamicCLThetaApp": {
+      "line": 175
+    },
+    "getDynamicCLCosEq": {
+      "line": 176
+    },
+    "getDynamicCLCosResidual": {
+      "line": 177
+    },
+    "getDynamicCLForceCandidateX": {
+      "line": 178
+    },
+    "getDynamicCLForceCandidateY": {
+      "line": 179
+    },
+    "getDynamicCLForceCandidateZ": {
+      "line": 180
+    },
+    "getDynamicCLForceCandidateMag": {
+      "line": 181
+    },
+    "getDynamicCLTangentialX": {
+      "line": 182
+    },
+    "getDynamicCLTangentialY": {
+      "line": 183
+    },
+    "getDynamicCLTangentialZ": {
+      "line": 184
+    },
+    "getDynamicCLWallNormalX": {
+      "line": 185
+    },
+    "getDynamicCLWallNormalY": {
+      "line": 186
+    },
+    "getDynamicCLWallNormalZ": {
+      "line": 187
+    },
+    "getDynamicCLRejectedReason": {
+      "line": 188
+    },
+    "getDynamicCLThetaEq": {
+      "line": 189
+    },
+    "getDynamicCLWallContextFound": {
+      "line": 190
+    },
+    "getDynamicCLBlockedReason": {
+      "line": 191
+    },
+    "getDynamicCLWallDx": {
+      "line": 192
+    },
+    "getDynamicCLWallDy": {
+      "line": 193
+    },
+    "getDynamicCLWallDz": {
+      "line": 194
+    },
+    "calcDynamicCLShadow": {
+      "line": 222
+    },
+    "stage13_is_fluid_boundary_node": {
+      "line": 357
+    },
+    "stage15_find_wetting_wall_context": {
+      "line": 411
+    },
+    "calcGradPhiBoundaryCorrected": {
+      "line": 427
+    },
+    "calcWallMuSource": {
+      "line": 509
+    },
+    "calcGradPhiRaw": {
+      "line": 554
+    },
+    "calcGradPhi": {
+      "line": 598
+    },
+    "calcPhaseF": {
+      "line": 620
+    },
+    "calcMu": {
+      "line": 637
+    },
+    "calcGamma": {
+      "line": 708
+    },
+    "calcF_phi": {
+      "line": 721
+    },
+    "sphereTail_max": {
+      "line": 732
+    },
+    "sphereTail_min": {
+      "line": 737
+    },
+    "sphereTail_sphereBelowVolume": {
+      "line": 742
+    },
+    "sphereTail_compositeVolume": {
+      "line": 747
+    },
+    "sphereTail_solveBodyRadius": {
+      "line": 760
+    },
+    "sphereTail_topCappedCylinderSignedDistance": {
+      "line": 784
+    },
+    "sphereTail_signedDistance": {
+      "line": 796
+    },
+    "sphereTail_tailVelocityWeight": {
+      "line": 815
+    },
+    "Init": {
+      "line": 837
+    },
+    "InitFromFieldsStage": {
+      "line": 899
+    },
+    "specialCases_Init": {
+      "line": 909
+    },
+    "Init_distributions": {
+      "line": 1034
+    },
+    "UpdateGlobalMarkers": {
+      "line": 1105
+    },
+    "Run": {
+      "line": 1131
+    },
+    "calcTau": {
+      "line": 1155
+    },
+    "calc_Fp": {
+      "line": 1187
+    },
+    "calc_Fb": {
+      "line": 1193
+    },
+    "calc_Fs": {
+      "line": 1199
+    },
+    "CollisionMRT": {
+      "line": 1235
+    },
+    "updateBoundary": {
+      "line": 1403
+    },
+    "updateMyGlobals": {
+      "line": 1444
+    },
+    "updateTrackers": {
+      "line": 1475
+    },
+    "CollisionBGK": {
+      "line": 1571
+    },
+    "getA": {
+      "line": 1690
+    },
+    "Color": {
+      "line": 1694
+    },
+    "EConvect": {
+      "line": 1873
+    },
+    "WConvect": {
+      "line": 1886
+    },
+    "ENeumann": {
+      "line": 1900
+    },
+    "WNeumann": {
+      "line": 1908
+    },
+    "MovingNWall": {
+      "line": 1918
+    },
+    "MovingSWall": {
+      "line": 1937
+    },
+    "BounceBack": {
+      "line": 1956
+    },
+    "stage9_coord_x": {
+      "line": 2013
+    },
+    "stage9_coord_y": {
+      "line": 2014
+    },
+    "stage9_coord_z": {
+      "line": 2015
+    },
+    "stage9_plane_normal": {
+      "line": 2023
+    },
+    "stage9_plane_signed_distance": {
+      "line": 2030
+    },
+    "stage9_cylinder_perp_components": {
+      "line": 2039
+    },
+    "stage9_cylinder_normal": {
+      "line": 2047
+    },
+    "stage9_cylinder_signed_distance": {
+      "line": 2060
+    },
+    "stage9_sphere_normal": {
+      "line": 2067
+    },
+    "stage9_sphere_signed_distance": {
+      "line": 2078
+    },
+    "stage13_analytic_signed_distance_at_offset": {
+      "line": 2085
+    },
+    "stage13_compact_vertex_is_geometric_fluid": {
+      "line": 2114
+    },
+    "stage9_analytic_wall_normal_and_distance": {
+      "line": 2124
+    },
+    "stage9_probe_component": {
+      "line": 2136
+    },
+    "stage9_analytic_curvature": {
+      "line": 2144
+    },
+    "stage13_clamp_phase_value": {
+      "line": 2175
+    },
+    "stage13_compute_geometric_tangent_raw": {
+      "line": 2190
+    },
+    "stage9_calc_wall_ghost": {
+      "line": 2211
+    },
+    "stage13_compute_briant_wall_ghost_raw": {
+      "line": 2219
+    },
+    "stage13_compute_analytic_wall_ghost": {
+      "line": 2232
+    },
+    "stage13_phase_to_q": {
+      "line": 2257
+    },
+    "stage13_q_to_phase": {
+      "line": 2264
+    },
+    "stage13_compact_write_requested": {
+      "line": 2269
+    },
+    "stage13_compact_normal_mode_allows_write": {
+      "line": 2274
+    },
+    "stage13_csq_fallback_allows_write": {
+      "line": 2281
+    },
+    "stage13_compact_solution_can_write": {
+      "line": 2287
+    },
+    "stage13_compact_solution_wall_ghost": {
+      "line": 2304
+    },
+    "stage13_boundary_phase_is_valid": {
+      "line": 2320
+    },
+    "stage13_compact_vertex_is_real_fluid": {
+      "line": 2324
+    },
+    "stage13_bit3_value": {
+      "line": 2334
+    },
+    "stage13_bound_q": {
+      "line": 2339
+    },
+    "stage13_wall_csq_residual": {
+      "line": 2348
+    },
+    "stage13_floor_int": {
+      "line": 2359
+    },
+    "stage13_ceil_int": {
+      "line": 2365
+    },
+    "stage13_max_int": {
+      "line": 2371
+    },
+    "stage13_min_int": {
+      "line": 2376
+    },
+    "stage13_min_real": {
+      "line": 2381
+    },
+    "stage13_max_real": {
+      "line": 2386
+    },
+    "stage13_coord_span_ok": {
+      "line": 2391
+    },
+    "stage13_barycentric_3d": {
+      "line": 2405
+    },
+    "stage13_barycentric_inside": {
+      "line": 2437
+    },
+    "stage13_try_compact_triangle": {
+      "line": 2444
+    },
+    "stage13_fill_compact_stencil_solution": {
+      "line": 2506
+    },
+    "stage13_find_compact_qf": {
+      "line": 2597
+    },
+    "stage13_reset_wall_csq": {
+      "line": 2711
+    },
+    "stage13_keep_wall_csq": {
+      "line": 2753
+    },
+    "stage13_compute_compact_stencil_solution": {
+      "line": 2795
+    },
+    "getAnalyticWallNormal": {
+      "line": 2854
+    },
+    "getWallH": {
+      "line": 2862
+    },
+    "getWallGhost": {
+      "line": 2865
+    },
+    "getWallGhostRaw": {
+      "line": 2868
+    },
+    "getWallGhostClamped": {
+      "line": 2871
+    },
+    "getWallGhostClampHit": {
+      "line": 2874
+    },
+    "getWettingPathId": {
+      "line": 2877
+    },
+    "getLocalRadAngle": {
+      "line": 2880
+    },
+    "getAnalyticFlag": {
+      "line": 2883
+    },
+    "getWallCSQMode": {
+      "line": 2886
+    },
+    "getWallCSQNormalMode": {
+      "line": 2887
+    },
+    "getWallCSQValid": {
+      "line": 2888
+    },
+    "getWallCSQThetaDeg": {
+      "line": 2889
+    },
+    "getWallCSQNormalX": {
+      "line": 2890
+    },
+    "getWallCSQNormalY": {
+      "line": 2891
+    },
+    "getWallCSQNormalZ": {
+      "line": 2892
+    },
+    "getWallCSQDs": {
+      "line": 2893
+    },
+    "getWallCSQDf": {
+      "line": 2894
+    },
+    "getWallCSQQf": {
+      "line": 2895
+    },
+    "getWallCSQQsRaw": {
+      "line": 2896
+    },
+    "getWallCSQQsBounded": {
+      "line": 2897
+    },
+    "getWallCSQQw": {
+      "line": 2898
+    },
+    "getWallCSQResidual": {
+      "line": 2899
+    },
+    "getWallCSQAppliedResidual": {
+      "line": 2900
+    },
+    "getWallCSQDiscriminant": {
+      "line": 2901
+    },
+    "getWallCSQRootChoice": {
+      "line": 2902
+    },
+    "getWallCSQStencilCase": {
+      "line": 2903
+    },
+    "getWallCSQStencilL": {
+      "line": 2904
+    },
+    "getWallCSQFallbackReason": {
+      "line": 2905
+    },
+    "getWallCSQBoundedDelta": {
+      "line": 2906
+    },
+    "getWallCSQAppliedWeight": {
+      "line": 2907
+    },
+    "getWallCSQWriteAllowedFlag": {
+      "line": 2908
+    },
+    "getWallCSQCandidateCount": {
+      "line": 2909
+    },
+    "getWallCSQFluidVertexCount": {
+      "line": 2910
+    },
+    "getWallCSQTriangleInside": {
+      "line": 2911
+    },
+    "getWallCSQPlaneId": {
+      "line": 2912
+    },
+    "getWallCSQBaryMin": {
+      "line": 2913
+    },
+    "getWallCSQBaryMax": {
+      "line": 2914
+    },
+    "getWallCSQMethodComplete": {
+      "line": 2915
+    },
+    "getWallCSQVertexMaskBits": {
+      "line": 2916
+    },
+    "getWallCSQVertexRealFluidBits": {
+      "line": 2917
+    },
+    "getWallCSQVertexPhaseCleanBits": {
+      "line": 2918
+    },
+    "getWallCSQVertexQMin": {
+      "line": 2919
+    },
+    "getWallCSQVertexQMax": {
+      "line": 2920
+    },
+    "getWallCSQRejectedSolidVertexCount": {
+      "line": 2921
+    },
+    "getWallCSQRejectedSentinelCount": {
+      "line": 2922
+    },
+    "getWallCSQStrictWriteReady": {
+      "line": 2923
+    },
+    "getActualNormal": {
+      "line": 2987
+    },
+    "calcIntersectionTriangleId": {
+      "line": 3038
+    },
+    "getIsItBoundary": {
+      "line": 3173
+    },
+    "stage13_select_boundary_phase": {
+      "line": 3177
+    },
+    "getGradPhi": {
+      "line": 3190
+    },
+    "calcPhaseGrad": {
+      "line": 3198
+    },
+    "calcPhaseGrad_init": {
+      "line": 3216
+    },
+    "calcPhaseGradCloseToBoundary": {
+      "line": 3247
+    },
+    "calcWallPhase_correction": {
+      "line": 3339
+    },
+    "calcWallPhase": {
+      "line": 3379
+    },
+    "getSpecialBoundaryPoint": {
+      "line": 3692
+    },
+    "Init_wallNorm": {
+      "line": 3701
+    }
+  },
+  "occurrences": {
+    "STAGE13_PHASE_FOR_STENCIL": [
+      130,
+      560,
+      561,
+      562,
+      563,
+      564,
+      565,
+      566,
+      567,
+      568,
+      569,
+      572,
+      573,
+      574,
+      575,
+      576,
+      577,
+      578,
+      579,
+      580,
+      581,
+      586,
+      591,
+      643,
+      644,
+      645,
+      646,
+      647,
+      648,
+      649,
+      650,
+      651,
+      652,
+      653,
+      654,
+      655,
+      656,
+      658,
+      659,
+      660,
+      661,
+      662,
+      663,
+      664,
+      665,
+      666,
+      667,
+      668,
+      669,
+      670,
+      671,
+      678,
+      683
+    ],
+    "WallGhost": [
+      103,
+      131,
+      2865,
+      2866,
+      2868,
+      2869,
+      2871,
+      2872,
+      2874,
+      2875,
+      3186,
+      3341,
+      3342,
+      3343,
+      3344,
+      3350,
+      3366,
+      3367,
+      3368,
+      3369,
+      3381,
+      3384,
+      3385,
+      3386,
+      3413,
+      3444,
+      3445,
+      3449,
+      3451,
+      3453,
+      3455,
+      3456,
+      3457,
+      3475,
+      3477,
+      3503,
+      3504,
+      3505,
+      3506,
+      3685,
+      3686,
+      3687,
+      3688,
+      3908,
+      3909,
+      3910,
+      3911
+    ],
+    "PhaseF = -999": [
+      841,
+      905
+    ],
+    "SPECIAL_POINT_HUGE_MAGIC_NUMBER": [
+      1999
+    ],
+    "IsBoundary": [
+      131,
+      360,
+      361,
+      362,
+      363,
+      364,
+      365,
+      366,
+      386,
+      404,
+      528,
+      530,
+      531,
+      532,
+      1133,
+      2327,
+      2328,
+      2330,
+      3174,
+      3186,
+      3260,
+      3281,
+      3284,
+      3287,
+      3296,
+      3297,
+      3298,
+      3310,
+      3311,
+      3312,
+      3324,
+      3703,
+      3704,
+      3712,
+      3770,
+      3933,
+      3934
+    ],
+    "BounceBack": [
+      1407,
+      1956
+    ],
+    "calcWallPhase": [
+      2164,
+      2326,
+      3339,
+      3349,
+      3379,
+      3901
+    ],
+    "calcGradPhi": [
+      110,
+      427,
+      554,
+      598,
+      600,
+      602,
+      604,
+      1045,
+      1282,
+      1600,
+      1849
+    ],
+    "calcMu": [
+      637,
+      1246,
+      1582
+    ],
+    "WallCompactStencil": [
+      2271,
+      2278,
+      2289,
+      2290,
+      2341,
+      2512,
+      2555,
+      2611,
+      2735,
+      2799,
+      2800,
+      2805,
+      2806
+    ],
+    "DynamicCL": [
+      168,
+      170,
+      172,
+      173,
+      174,
+      175,
+      176,
+      177,
+      178,
+      179,
+      180,
+      181,
+      182,
+      183,
+      184,
+      185,
+      186,
+      187,
+      188,
+      189,
+      190,
+      191,
+      192,
+      193,
+      194,
+      198,
+      200,
+      202,
+      210,
+      213,
+      216,
+      217,
+      218,
+      220,
+      222,
+      227,
+      228,
+      229,
+      230,
+      231,
+      232,
+      233,
+      234,
+      235,
+      236,
+      237,
+      238,
+      239,
+      240,
+      241,
+      242,
+      243,
+      244,
+      245,
+      246,
+      247,
+      248,
+      249,
+      251,
+      253,
+      263,
+      264,
+      267,
+      268,
+      269,
+      270,
+      275,
+      276,
+      278,
+      279,
+      280,
+      283,
+      290,
+      293,
+      301,
+      309,
+      311,
+      312,
+      313,
+      315,
+      317,
+      326,
+      328,
+      329,
+      330,
+      333,
+      337,
+      338,
+      345,
+      346,
+      347,
+      348,
+      349,
+      373,
+      1285,
+      1287,
+      1288,
+      1294,
+      1345,
+      1348,
+      1605,
+      1606,
+      1607,
+      1612,
+      1654,
+      1656
+    ]
+  },
+  "risks": [
+    {
+      "severity": "INFO",
+      "id": "STREAMING_DENSITY",
+      "message": "g/h are TCLB AddDensity streaming groups; do not treat them as explicit current arrays.",
+      "evidence": [
+        {
+          "name": "g0",
+          "dx": 0,
+          "dy": 0,
+          "dz": 0,
+          "group": "g",
+          "streams": false,
+          "line": 1
+        },
+        {
+          "name": "g1",
+          "dx": 1,
+          "dy": 0,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 2
+        },
+        {
+          "name": "g2",
+          "dx": -1,
+          "dy": 0,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 3
+        },
+        {
+          "name": "g3",
+          "dx": 0,
+          "dy": 1,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 4
+        },
+        {
+          "name": "g4",
+          "dx": 0,
+          "dy": -1,
+          "dz": 0,
+          "group": "g",
+          "streams": true,
+          "line": 5
+        },
+        {
+          "name": "g5",
+          "dx": 0,
+          "dy": 0,
+          "dz": 1,
+          "group": "g",
+          "streams": true,
+          "line": 6
+        }
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_STAGE13_PHASE_FOR_STENCIL",
+      "message": "STAGE13_PHASE_FOR_STENCIL appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        130,
+        560,
+        561,
+        562,
+        563,
+        564,
+        565,
+        566,
+        567,
+        568,
+        569,
+        572,
+        573,
+        574,
+        575,
+        576,
+        577,
+        578,
+        579,
+        580
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_WallGhost",
+      "message": "WallGhost appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        103,
+        131,
+        2865,
+        2866,
+        2868,
+        2869,
+        2871,
+        2872,
+        2874,
+        2875,
+        3186,
+        3341,
+        3342,
+        3343,
+        3344,
+        3350,
+        3366,
+        3367,
+        3368,
+        3369
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_PhaseF_=_-999",
+      "message": "PhaseF = -999 appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        841,
+        905
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "OCCURS_IsBoundary",
+      "message": "IsBoundary appears in source and must be traced through producer/consumer stages.",
+      "lines": [
+        131,
+        360,
+        361,
+        362,
+        363,
+        364,
+        365,
+        366,
+        386,
+        404,
+        528,
+        530,
+        531,
+        532,
+        1133,
+        2327,
+        2328,
+        2330,
+        3174,
+        3186
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "WALL_BEFORE_ITER",
+      "message": "calcWall_CA/calcWall stage exists before BaseIter in Dynamics.R order; verify fields loaded by BaseIter consume the intended wall ghost time level.",
+      "stage_order": [
+        "PhaseInit",
+        "BaseInit",
+        "calcPhase",
+        "BaseIter",
+        "InitFromFieldsStage",
+        "WallInit_CA",
+        "calcWall_CA",
+        "calcPhaseGrad",
+        "calcPhaseGrad_init",
+        "calcWallPhase_correction",
+        "WallInit",
+        "calcWall",
+        "calcWallPhase_correction",
+        "CopyDistributions",
+        "CopyThermal",
+        "RK_1",
+        "RK_2",
+        "RK_3",
+        "RK_4",
+        "NonLocalTemp"
+      ]
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcGradPhi",
+      "message": "calcGradPhi is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 598
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcMu",
+      "message": "calcMu is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 637
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcPhaseF",
+      "message": "calcPhaseF is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 620
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_Run",
+      "message": "Run is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 1131
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_BounceBack",
+      "message": "BounceBack is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 1956
+    },
+    {
+      "severity": "CHECK",
+      "id": "FUNCTION_calcWallPhase",
+      "message": "calcWallPhase is present; inspect its field reads/writes when changing wetting semantics.",
+      "line": 3379
+    },
+    {
+      "severity": "HIGH",
+      "id": "SPECIAL_POINT_MAGIC",
+      "message": "Special-point magic values are present; confirm they cannot enter grad/laplace/mu stencils.",
+      "lines": [
+        1999
+      ]
+    }
+  ]
+}

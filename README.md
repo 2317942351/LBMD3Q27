@@ -22,9 +22,12 @@ Read in this order:
 4. `docs/stage14/56_phasefield_rebuild_baseline_20260623.md`
 5. `docs/stage14/57_mcmp_c_reference_bridge_20260623.md`
 6. `docs/stage14/55_tclb_execution_semantics_constraints_20260623.md`
-7. `docs/stage14/53_project_state_comprehensive_20260620.md`
-8. `docs/stage14/54_stage17_optionB_B1_diffuse_solid_validated_20260620.md`
-9. older Stage7/8/9/12 documents only as historical evidence
+7. `docs/stage14/58_phasefield_rebuild_execution_plan_20260623.md`
+8. `docs/stage14/59_current_progress_and_next_solver_targets_20260623.md`
+9. `docs/stage14/60_stage18_p100_semantics_smoke_20260623.md`
+10. `docs/stage14/53_project_state_comprehensive_20260620.md`
+11. `docs/stage14/54_stage17_optionB_B1_diffuse_solid_validated_20260620.md`
+12. older Stage7/8/9/12 documents only as historical evidence
 
 ## Source Layout
 

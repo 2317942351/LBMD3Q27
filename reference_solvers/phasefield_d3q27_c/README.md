@@ -1,9 +1,9 @@
 # Phase-Field D3Q27 C Reference Solver
 
-Status: planned baseline scaffold.
+Status: initial executable baseline scaffold.
 
-This directory is the intended location for a minimal explicit-array C/C++
-reference solver for the TCLB D3Q27 phase-field wetting route.
+This directory contains the first minimal explicit-array C++ reference scaffold
+for the TCLB D3Q27 phase-field wetting route.
 
 The purpose is not performance. The purpose is time-level clarity and
 C-to-TCLB replay.
@@ -38,22 +38,38 @@ mu no-flux
 
 ## Minimum Scope
 
-First implementation target:
+Implemented first scope:
 
 ```text
 D3Q27 q ordering and weights
-explicit f/g population arrays
-explicit non-streaming phi/mu/gradPhi/lapPhi/force caches
-flat wall
-analytic cylinder signed distance
-analytic sphere signed distance
-VTK output
-CSV diagnostics
+opposite-link table
+explicit scalar field storage
+solid sentinel separated from passive wall ghost
+isotropic gradient manufactured-field test
+isotropic Laplace manufactured-field test
+flat wall signed distance
+analytic cylinder signed distance and normal
+analytic sphere signed distance and normal
+geometric wall ghost sign checks for theta 30/90/150
+VTK demo output
+CSV self-test diagnostics
+```
+
+Run:
+
+```text
+make test
+```
+
+Verified on `yuan@192.168.1.16` with `/usr/bin/g++`:
+
+```text
+checks=96 failures=0
 ```
 
 ## Required Stages
 
-The first version should make time levels visible:
+The production reference solver still needs to grow toward this full stage list:
 
 ```text
 initialize_geometry()
@@ -78,7 +94,14 @@ write_vtk()
 
 ## Required Diagnostics
 
-Every run should write:
+The current self-test writes:
+
+```text
+selftest_diagnostics.csv
+selftest_fields.vtk
+```
+
+The later time-marching reference should write:
 
 ```text
 step
@@ -103,6 +126,8 @@ Not in the first version:
 
 ```text
 high density ratio production tuning
+full LBM collide/stream loop
+full Allen-Cahn or Cahn-Hilliard update
 GPU acceleration
 MPI
 STL geometry
@@ -112,4 +137,3 @@ cylinder array detachment
 
 Those are later gates after the flat/cylinder/sphere static wetting ladder is
 closed.
-
