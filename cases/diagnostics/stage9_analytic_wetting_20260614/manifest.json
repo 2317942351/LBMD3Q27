@@ -1,0 +1,127 @@
+{
+  "stage": "stage9_analytic_wetting_20260614",
+  "status": "exploratory_not_validation",
+  "purpose": "Gate A/B/C/D regression and validation cases for the Stage9 analytic-geometry diffuse-interface wetting boundary condition. Plane cases verify the analytic path does not break the previously-passing flat-wall result. Cylinder and sphere cases verify the analytic path fixes the curved-wall wetting failure that stages 5-8 could not resolve.",
+  "design_doc": "docs/stage9/analytic_wetting_bc_design_20260614.md",
+  "source_snapshot": "third_party/tclb_snapshots/stage9_analytic_wetting_diffuse_interface/",
+  "source_patch": "third_party/tclb_snapshots/patches/stage9_analytic_wetting_diffuse_interface_20260614.diff",
+  "baseline_source": "third_party/tclb_snapshots/upstream_base/",
+  "build_variant_required": "d3q27_pf_velocity_q27_geometric (OPTIONS_q27=on, OPTIONS_geometric=on). AnalyticWetting=1 requires the geometric build so gradPhiVal_* fields are available.",
+  "cases": [
+    {
+      "name": "plane_theta030",
+      "file": "plane_theta030/case.xml",
+      "gate": "A",
+      "geometry": "plane (axis=y, offset=0)",
+      "target_angle_deg": 30,
+      "purpose": "Flat-wall regression: analytic path must match legacy flat-wall theta030 to within fitting noise.",
+      "pass_criteria": {
+        "two_row_near_wall_angle_deg": [28, 32],
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    },
+    {
+      "name": "plane_theta090",
+      "file": "plane_theta090/case.xml",
+      "gate": "A",
+      "geometry": "plane (axis=y, offset=0)",
+      "target_angle_deg": 90,
+      "purpose": "Flat-wall neutral-wetting regression.",
+      "pass_criteria": {
+        "two_row_near_wall_angle_deg": [88, 92],
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    },
+    {
+      "name": "plane_theta150",
+      "file": "plane_theta150/case.xml",
+      "gate": "A",
+      "geometry": "plane (axis=y, offset=0)",
+      "target_angle_deg": 150,
+      "purpose": "Flat-wall hydrophobic regression.",
+      "pass_criteria": {
+        "two_row_near_wall_angle_deg": [148, 152],
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    },
+    {
+      "name": "cylinder_theta030",
+      "file": "cylinder_theta030/case.xml",
+      "gate": "D",
+      "geometry": "infinite cylinder (axis=x, center=(64,48), R=24)",
+      "target_angle_deg": 30,
+      "purpose": "Curved-wall wetting gate D. Verifies the analytic normal (radial in the y-z plane) fixes the curved-wall wetting response.",
+      "pass_criteria": {
+        "two_row_near_wall_angle_deg": [28, 32],
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    },
+    {
+      "name": "cylinder_theta090",
+      "file": "cylinder_theta090/case.xml",
+      "gate": "D",
+      "geometry": "infinite cylinder (axis=x, center=(64,48), R=24)",
+      "target_angle_deg": 90,
+      "purpose": "Curved-wall neutral-wetting gate D.",
+      "pass_criteria": {
+        "two_row_near_wall_angle_deg": [88, 92],
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    },
+    {
+      "name": "sphere_theta030",
+      "file": "sphere_theta030/case.xml",
+      "gate": "B/C",
+      "geometry": "sphere (center=(40,40,48), R=24), 80x80x180 domain, 24-lu bottom gap",
+      "target_angle_deg": 30,
+      "purpose": "THE CASE THAT WAS FAILING IN STAGES 5-8. Originally fitted ~107 deg for a 30 deg target (sign reversal from lattice-normal quantisation). The analytic radial normal must recover the wetting response. Gate B = 1000-step smoke; gate C = 200000-step long.",
+      "pass_criteria": {
+        "num_special_points_legacy": 0,
+        "two_row_near_wall_angle_deg": [28, 32],
+        "H1_minus_H2_relative_error_pct_lt": 5.0,
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    },
+    {
+      "name": "sphere_theta090",
+      "file": "sphere_theta090/case.xml",
+      "gate": "B/C",
+      "geometry": "sphere (center=(40,40,48), R=24), 80x80x180 domain, 24-lu bottom gap",
+      "target_angle_deg": 90,
+      "purpose": "Sphere neutral-wetting gate B/C.",
+      "pass_criteria": {
+        "num_special_points_legacy": 0,
+        "two_row_near_wall_angle_deg": [88, 92],
+        "H1_minus_H2_relative_error_pct_lt": 5.0,
+        "nonfinite_total": 0,
+        "max_mach_lt": 0.001,
+        "fluid_phase_drift_pct_lt": 1.0
+      }
+    }
+  ],
+  "execution_boundary": {
+    "raw_outputs_remote_only": true,
+    "allowed_public_artifacts": ["XML", "JSON", "CSV", "PNG", "logs", "summaries", "source snapshots", "patches"],
+    "forbidden_public_artifacts": ["*.vti", "*.pvti", "*.pri", "binaries", "*.tar", "*.zip"],
+    "required_metadata_per_run": ["status_label", "source_lane", "binary_sha", "options.R_snapshot", "Consts.h_snapshot", "case_geometry", "lattice_size", "contact_angle_convention", "M", "IntWidth", "run_length", "nonfinite_result", "mass_drift", "max_mach"]
+  },
+  "honest_caveats": [
+    "Stage9 is exploratory_not_validation until a separate read-only audit accepts the gate results.",
+    "The analytic wetting BC requires a lattice solid mask for the analytic surface (cylinder/sphere) so bounce-back still works. The case XML declares the analytic geometry via Model params; the user must still supply the solid mask through TCLB's standard geometry tool or an STL.",
+    "The diffuse-interface BC has O(W/R_drop) sharp-interface approximation error. For R_drop=24 lu and W=6 lu this is ~25% on the leading tan term; the curvature correction absorbs the O(h^2/R) wall-geometry error (~1% for R=24, h=0.5).",
+    "Gate E (dynamic plane impact) is not included in this case set; it is a post-validation extension that reuses the same BC.",
+    "The first-iteration gradient reads PhaseF=-999 on wall nodes before calcWallPhase writes the mirrored fluid value. This is one iteration of gradient noise and is inherited from upstream TCLB; it does not affect the steady-state result."
+  ]
+}

@@ -1,0 +1,122 @@
+C2-pre: minimal Dynamics.c.Rt hook to add the residual contact-line force
+F_CL to F_total when DynamicCLMode > 1.5 (Stage 15C write path).
+
+DESIGN (meets the 6-item review checklist):
+  1. Mode=1 (DynamicCLMode<=1) is UNCHANGED: the only new executable line is
+     `if (DynamicCLMode > 1.5) { F_total[...] += fcl_...; }`, which is dead at
+     Mode=1. calcDynamicCLShadow still runs for diagnostics, as in 15B.
+  2. F_CL is added EXACTLY ONCE per F_total assembly, in the force-iteration
+     loop (MRT) and once per BGK force update. No second add elsewhere.
+  3. MRT and BGK paths are symmetric: identical hoist + identical guarded add.
+  4. NO double scaling: calcDynamicCLShadow already returns the FULLY scaled,
+     capped force vector (mag = ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl,
+     capped at ForceCap*sigma/IntWidth, then *t_CL). The caller adds it raw.
+  5. PhaseF / gradPhi / mu / WallGhost are NOT touched. F_CL only enters F_total.
+  6. Force cap is preserved (applied inside calcDynamicCLShadow, untouched).
+     Diagnostics (ForceCandidate*, CosResidual, Active, ...) are still written
+     by calcDynamicCLShadow on every call, Mode-independent.
+
+This is DIFF-ONLY. Do NOT compile, run, or commit until reviewed and authorised.
+
+======================================================================
+HUNK 1 — MRT path: hoist fcl out of the { } block so it is in scope at the
+         F_total assembly inside the force-iteration loop.
+File: models/multiphase/d3q27_pf_velocity/Dynamics.c.Rt
+Context: lines ~1285-1294
+----------------------------------------------------------------------
+BEFORE (current):
+	{
+		real_t fcl_x, fcl_y, fcl_z;
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+		// 15C write hook (disabled in 15B; runner refuses DynamicCLMode>=2):
+		// if (DynamicCLMode > 1.5) { F_cl[0]=fcl_x; F_cl[1]=fcl_y; F_cl[2]=fcl_z; }
+	}
+
+AFTER:
+	real_t fcl_x = 0.0, fcl_y = 0.0, fcl_z = 0.0;
+	{
+		// Stage 15B/15C: compute the candidate residual contact-line force and
+		// write diagnostics on every call (Mode>=1). fcl_* is hoisted to
+		// function scope so the 15C write hook below can add it to F_total.
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+	}
+
+======================================================================
+HUNK 2 — MRT path: add F_CL to F_total inside the force-iteration loop.
+         (F_CL is body-force-like and independent of the viscous iteration, so
+          adding it once per F_total assembly, every iteration, is correct.)
+Context: immediately after the three F_total[...] = ... + F_mu[...] lines (~1340-1342)
+         and before the `if (j > 1) {` residual block.
+         Indentation is ONE TAB (matches the surrounding MRT code).
+----------------------------------------------------------------------
+BEFORE (current):
+		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+		if (j > 1) {
+
+AFTER:
+		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+		// Stage 15C write hook: add the residual contact-line force to F_total.
+		// Shadow-only at Mode<=1 (no-op). calcDynamicCLShadow already applied
+		// ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl and the ForceCap; do NOT
+		// rescale here. Mode>1.5 is refused by the runner until 15C is cleared.
+		if (DynamicCLMode > 1.5) {
+			F_total[0] += fcl_x;
+			F_total[1] += fcl_y;
+			F_total[2] += fcl_z;
+		}
+		if (j > 1) {
+
+======================================================================
+HUNK 3 — BGK path: hoist fcl out of the { } block (symmetric with MRT).
+Context: lines ~1598-1601
+----------------------------------------------------------------------
+BEFORE (current):
+	{
+		real_t fcl_x, fcl_y, fcl_z;
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+	}
+
+AFTER:
+	real_t fcl_x = 0.0, fcl_y = 0.0, fcl_z = 0.0;
+	{
+		// Stage 15B/15C: diagnostics on every call; fcl_* hoisted for the 15C
+		// write hook below (BGK path, symmetric with MRT).
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+	}
+
+======================================================================
+HUNK 4 — BGK path: add F_CL to F_total (symmetric with MRT).
+Context: immediately after the three F_total[...] = ... + F_mu[...] lines (~1638-1640).
+         Indentation is EIGHT SPACES (matches the surrounding BGK code).
+----------------------------------------------------------------------
+BEFORE (current):
+        F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+        F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+        F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+
+    <?R C( u, g %*% U) ?>
+
+AFTER:
+        F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+        F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+        F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+        // Stage 15C write hook: add residual contact-line force to F_total.
+        // Shadow-only at Mode<=1 (no-op). calcDynamicCLShadow already applied
+        // ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl and the ForceCap.
+        if (DynamicCLMode > 1.5) {
+            F_total[0] += fcl_x;
+            F_total[1] += fcl_y;
+            F_total[2] += fcl_z;
+        }
+
+    <?R C( u, g %*% U) ?>
+
+======================================================================
+NET CHANGE: 4 hunks, +30 / -6 lines, all in Dynamics.c.Rt.
+No other file touched. No AddField/AddSetting/AddQuantity change (the settings
+and fields already exist from 15B). No Boundary.c.Rt, no generated CUDA, no
+binary.

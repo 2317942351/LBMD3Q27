@@ -1,0 +1,487 @@
+{
+  "case_count": 7,
+  "claim_limit": "deterministic stencil audit only; not solver validation",
+  "expected_fallback_count": 1,
+  "failures": [],
+  "four_node_triangle_case_count": 5,
+  "incremental_equivalence_failures": [],
+  "max_l": 3,
+  "method_complete_count": 6,
+  "out_dir": "artifacts\\stage13_compact_stencil_unit_audit_20260616",
+  "rows": [
+    {
+      "all_fluid_triangle_count": 30,
+      "bary_max": 1.0,
+      "bary_min": 0.0,
+      "barycentric": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "bounded_delta": 0.0,
+      "candidate_count": 39,
+      "case": "flat_wall_y_plus",
+      "d_f": 0.5,
+      "d_line": 1.0,
+      "d_s": 0.5,
+      "fallback_reason": "ok",
+      "fluid_vertex_count": 3,
+      "incremental_d_line": 1.0,
+      "incremental_equivalent": 1,
+      "incremental_plane_id": 2,
+      "incremental_plane_l": 1,
+      "inside_triangle_count": 23,
+      "method_complete": 1,
+      "normal_x": 0.0,
+      "normal_y": 1.0,
+      "normal_z": 0.0,
+      "plane_fluid_node_count": 4,
+      "plane_id": 2,
+      "plane_l": 1,
+      "plane_name": "y=Ly",
+      "q_clean_triangle_count": 30,
+      "q_f": 0.33999999999999997,
+      "q_s_bounded": 0.33999999999999997,
+      "q_s_raw": 0.33999999999999997,
+      "q_w": 0.33999999999999997,
+      "residual": 0.0,
+      "root_choice": "neutral_90",
+      "solid_node_x": 3,
+      "solid_node_y": 0,
+      "solid_node_z": 3,
+      "status": "PASS",
+      "vertices_global": [
+        [
+          3,
+          1,
+          3
+        ],
+        [
+          3,
+          1,
+          4
+        ],
+        [
+          4,
+          1,
+          3
+        ]
+      ],
+      "vertices_local": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "all_fluid_triangle_count": 60,
+      "bary_max": 0.75,
+      "bary_min": 0.0,
+      "barycentric": [
+        0.75,
+        0.25,
+        0.0
+      ],
+      "bounded_delta": 0.0,
+      "candidate_count": 123,
+      "case": "four_node_plane_triangle_selection",
+      "d_f": 0.5307764064044151,
+      "d_line": 1.0307764064044151,
+      "d_s": 0.5,
+      "fallback_reason": "ok",
+      "fluid_vertex_count": 3,
+      "incremental_d_line": 1.0307764064044151,
+      "incremental_equivalent": 1,
+      "incremental_plane_id": 2,
+      "incremental_plane_l": 1,
+      "inside_triangle_count": 28,
+      "method_complete": 1,
+      "normal_x": 0.0,
+      "normal_y": 1.0,
+      "normal_z": 0.25,
+      "plane_fluid_node_count": 4,
+      "plane_id": 2,
+      "plane_l": 1,
+      "plane_name": "y=Ly",
+      "q_clean_triangle_count": 60,
+      "q_f": 0.34750000000000003,
+      "q_s_bounded": 0.34750000000000003,
+      "q_s_raw": 0.34750000000000003,
+      "q_w": 0.34750000000000003,
+      "residual": 0.0,
+      "root_choice": "neutral_90",
+      "solid_node_x": 3,
+      "solid_node_y": 0,
+      "solid_node_z": 3,
+      "status": "PASS",
+      "vertices_global": [
+        [
+          3,
+          1,
+          3
+        ],
+        [
+          3,
+          1,
+          4
+        ],
+        [
+          4,
+          1,
+          3
+        ]
+      ],
+      "vertices_local": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          0,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          0
+        ]
+      ]
+    },
+    {
+      "all_fluid_triangle_count": 130,
+      "bary_max": 0.6000000000000001,
+      "bary_min": 0.0,
+      "barycentric": [
+        0.3999999999999999,
+        0.6000000000000001,
+        0.0
+      ],
+      "bounded_delta": 0.0,
+      "candidate_count": 153,
+      "case": "sphere_diagonal",
+      "d_f": 0.2211102550927978,
+      "d_line": 0.7211102550927978,
+      "d_s": 0.5,
+      "fallback_reason": "ok",
+      "fluid_vertex_count": 3,
+      "incremental_d_line": 0.7211102550927978,
+      "incremental_equivalent": 1,
+      "incremental_plane_id": 4,
+      "incremental_plane_l": 1,
+      "inside_triangle_count": 43,
+      "method_complete": 1,
+      "normal_x": 0.8320502943378437,
+      "normal_y": 0.5547001962252291,
+      "normal_z": 0.0,
+      "plane_fluid_node_count": 4,
+      "plane_id": 4,
+      "plane_l": 1,
+      "plane_name": "x+y=Lxy",
+      "q_clean_triangle_count": 130,
+      "q_f": 0.704,
+      "q_s_bounded": 0.8239222373038727,
+      "q_s_raw": 0.8239222373038727,
+      "q_w": 0.7407711265985893,
+      "residual": -7.494005416219807e-16,
+      "root_choice": "bounded_root",
+      "solid_node_x": 10,
+      "solid_node_y": 9,
+      "solid_node_z": 7,
+      "status": "PASS",
+      "vertices_global": [
+        [
+          10,
+          10,
+          7
+        ],
+        [
+          11,
+          9,
+          7
+        ],
+        [
+          11,
+          9,
+          8
+        ]
+      ],
+      "vertices_local": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "all_fluid_triangle_count": 273,
+      "bary_max": 0.5000000000000001,
+      "bary_min": 0.16666666666666663,
+      "barycentric": [
+        0.16666666666666663,
+        0.3333333333333332,
+        0.5000000000000001
+      ],
+      "bounded_delta": 0.0,
+      "candidate_count": 329,
+      "case": "sphere_full_3d_diagonal",
+      "d_f": 0.12360956446232363,
+      "d_line": 0.6236095644623236,
+      "d_s": 0.5,
+      "fallback_reason": "ok",
+      "fluid_vertex_count": 3,
+      "incremental_d_line": 0.6236095644623236,
+      "incremental_equivalent": 1,
+      "incremental_plane_id": 7,
+      "incremental_plane_l": 1,
+      "inside_triangle_count": 85,
+      "method_complete": 1,
+      "normal_x": 0.8017837257372732,
+      "normal_y": 0.5345224838248488,
+      "normal_z": 0.2672612419124244,
+      "plane_fluid_node_count": 3,
+      "plane_id": 7,
+      "plane_l": 1,
+      "plane_name": "x+y+z=Lxyz",
+      "q_clean_triangle_count": 273,
+      "q_f": 0.7366666666666666,
+      "q_s_bounded": 0.8361801749432891,
+      "q_s_raw": 0.8361801749432891,
+      "q_w": 0.7563918635160717,
+      "residual": -2.1371793224034263e-15,
+      "root_choice": "bounded_root",
+      "solid_node_x": 10,
+      "solid_node_y": 9,
+      "solid_node_z": 8,
+      "status": "PASS",
+      "vertices_global": [
+        [
+          10,
+          9,
+          9
+        ],
+        [
+          10,
+          10,
+          8
+        ],
+        [
+          11,
+          9,
+          8
+        ]
+      ],
+      "vertices_local": [
+        [
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ]
+      ]
+    },
+    {
+      "all_fluid_triangle_count": 130,
+      "bary_max": 0.6000000000000001,
+      "bary_min": 0.0,
+      "barycentric": [
+        0.3999999999999999,
+        0.6000000000000001,
+        0.0
+      ],
+      "bounded_delta": 0.0,
+      "candidate_count": 153,
+      "case": "cylinder_z_diagonal",
+      "d_f": 0.2211102550927978,
+      "d_line": 0.7211102550927978,
+      "d_s": 0.5,
+      "fallback_reason": "ok",
+      "fluid_vertex_count": 3,
+      "incremental_d_line": 0.7211102550927978,
+      "incremental_equivalent": 1,
+      "incremental_plane_id": 4,
+      "incremental_plane_l": 1,
+      "inside_triangle_count": 43,
+      "method_complete": 1,
+      "normal_x": 0.8320502943378437,
+      "normal_y": 0.5547001962252291,
+      "normal_z": 0.0,
+      "plane_fluid_node_count": 4,
+      "plane_id": 4,
+      "plane_l": 1,
+      "plane_name": "x+y=Lxy",
+      "q_clean_triangle_count": 130,
+      "q_f": 0.704,
+      "q_s_bounded": 0.5640823806746281,
+      "q_s_raw": 0.5640823806746281,
+      "q_w": 0.6610977942935665,
+      "residual": 0.0,
+      "root_choice": "bounded_root",
+      "solid_node_x": 10,
+      "solid_node_y": 9,
+      "solid_node_z": 7,
+      "status": "PASS",
+      "vertices_global": [
+        [
+          10,
+          10,
+          7
+        ],
+        [
+          11,
+          9,
+          7
+        ],
+        [
+          11,
+          9,
+          8
+        ]
+      ],
+      "vertices_local": [
+        [
+          0,
+          1,
+          0
+        ],
+        [
+          1,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "all_fluid_triangle_count": 0,
+      "candidate_count": 39,
+      "case": "fallback_no_fluid_vertices",
+      "fallback_reason": "no_all_fluid_triangle",
+      "incremental_equivalent": 1,
+      "inside_triangle_count": 0,
+      "method_complete": 0,
+      "normal_x": 0.0,
+      "normal_y": 1.0,
+      "normal_z": 0.0,
+      "q_clean_triangle_count": 0,
+      "solid_node_x": 3,
+      "solid_node_y": 3,
+      "solid_node_z": 3,
+      "status": "EXPECTED_FALLBACK"
+    },
+    {
+      "all_fluid_triangle_count": 30,
+      "bary_max": 1.0,
+      "bary_min": 0.0,
+      "barycentric": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "bounded_delta": 0.0,
+      "candidate_count": 39,
+      "case": "q_hygiene_reject_sentinel_vertices",
+      "d_f": 1.5,
+      "d_line": 2.0,
+      "d_s": 0.5,
+      "fallback_reason": "ok",
+      "fluid_vertex_count": 3,
+      "incremental_d_line": 2.0,
+      "incremental_equivalent": 1,
+      "incremental_plane_id": 2,
+      "incremental_plane_l": 2,
+      "inside_triangle_count": 17,
+      "method_complete": 1,
+      "normal_x": 0.0,
+      "normal_y": 1.0,
+      "normal_z": 0.0,
+      "plane_fluid_node_count": 4,
+      "plane_id": 2,
+      "plane_l": 2,
+      "plane_name": "y=Ly",
+      "q_clean_triangle_count": 22,
+      "q_f": 0.38,
+      "q_s_bounded": 0.38,
+      "q_s_raw": 0.38,
+      "q_w": 0.38,
+      "residual": 0.0,
+      "root_choice": "neutral_90",
+      "solid_node_x": 3,
+      "solid_node_y": 1,
+      "solid_node_z": 3,
+      "status": "PASS",
+      "vertices_global": [
+        [
+          3,
+          3,
+          3
+        ],
+        [
+          3,
+          3,
+          4
+        ],
+        [
+          4,
+          3,
+          3
+        ]
+      ],
+      "vertices_local": [
+        [
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          1,
+          2,
+          0
+        ]
+      ]
+    }
+  ],
+  "status": "PASS_C1B_UNIT_STENCIL_AUDIT"
+}

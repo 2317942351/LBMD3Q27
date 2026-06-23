@@ -1,0 +1,92 @@
+{
+  "analytic_flag_cells": 19928,
+  "analytic_near_surface_cells": 18400,
+  "audit": {
+    "angle_validation": "diagnostic_only_not_a_contact_angle_validation",
+    "failures": [],
+    "status": "PASS_RUNTIME_GEOMETRY_CONTACT_DIAGNOSTIC",
+    "warnings": []
+  },
+  "contact_angles": [
+    {
+      "contact_point": [
+        33.5,
+        63.488208832897215
+      ],
+      "local_points": 7,
+      "points": 3,
+      "side": "left",
+      "signed_distance": 1.2163760536863428,
+      "status": "ok",
+      "theta_grad_deg": 83.4682950863155,
+      "theta_tangent_abs_deg": 66.65388415245188
+    },
+    {
+      "contact_point": [
+        62.5,
+        63.48820883292615
+      ],
+      "local_points": 7,
+      "points": 3,
+      "side": "right",
+      "signed_distance": 1.2163760537074637,
+      "status": "ok",
+      "theta_grad_deg": 83.46829508636556,
+      "theta_tangent_abs_deg": 66.65388415255019
+    }
+  ],
+  "contact_info": {
+    "contact_tolerance": 2.5,
+    "min_abs_surface_distance": 1.2163760536863428,
+    "note": "Angle is diagnostic only unless the initial condition is a validated cap/contact-line setup.",
+    "status": "contacted"
+  },
+  "contour_point_count": 82,
+  "cylinder_axis": 2,
+  "drop_center": [
+    48.0,
+    70.0,
+    48.0
+  ],
+  "drop_center_boundary": 0.0,
+  "drop_center_in_bounds": true,
+  "drop_center_index": [
+    48,
+    70,
+    48
+  ],
+  "drop_center_is_fluid": true,
+  "drop_center_phase": 0.9998692000369732,
+  "drop_radius": 16.0,
+  "figure": "/home/yuan/data_sda/RUNS/runs/stage12_native_static_axisfix_20260614/native_cylinder_theta090/native_cylinder_theta090_audit.png",
+  "fluid_cells": 711768,
+  "fluid_phase_max": 1.0000065100726678,
+  "fluid_phase_min": -9.064665420571011e-07,
+  "fluid_phase_out_of_range_count": 0,
+  "geometry": "cylinder",
+  "grid": [
+    96,
+    96,
+    96
+  ],
+  "inside_core_cells": 92460,
+  "inside_core_solid_fraction": 1.0,
+  "outside_far_cells": 639124,
+  "outside_far_fluid_fraction": 1.0,
+  "phase": {
+    "count": 884736,
+    "finite": 884736,
+    "max": 1.0000065100726678,
+    "min": -9.064665420571011e-07,
+    "nonfinite": 0
+  },
+  "solid_cells": 172968,
+  "solid_center": [
+    48.0,
+    48.0,
+    48.0
+  ],
+  "solid_radius": 20.0,
+  "speed_max": 3.497986978549518e-05,
+  "vti": "/home/yuan/data_sda/RUNS/runs/stage12_native_static_axisfix_20260614/native_cylinder_theta090/output/case_VTK_P00_00000200.vti"
+}
