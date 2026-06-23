@@ -1,5 +1,43 @@
 # Current Stage Index
 
+## Current Baseline: Phase-Field Rebuild (2026-06-23)
+
+Status: `audit_baseline / exploratory_not_validation`.
+
+The current working baseline is defined by:
+
+```text
+docs/stage14/56_phasefield_rebuild_baseline_20260623.md
+docs/stage14/57_mcmp_c_reference_bridge_20260623.md
+docs/stage14/55_tclb_execution_semantics_constraints_20260623.md
+```
+
+Branch:
+
+```text
+stage15-dynamicCL-residual
+```
+
+Baseline tag:
+
+```text
+baseline/phasefield-rebuild-20260623
+```
+
+Current decision:
+
+```text
+inherit flat-wall calibrated compact-ghost evidence and diagnostic tooling
+inherit the flat-only compact-write safety gate
+freeze DynamicCL, WallGhostV2, direct curved compact-write, and old-BC curved claims
+use external MCMP C++ codes only as structural references, not as phase-field physics
+build a minimal phase-field C/C++ reference or equivalent TCLB semantics map before
+new solver physics edits
+```
+
+The rest of this file preserves earlier stage history and should not be read as
+the current modification authority.
+
 Status: `runtime_sanity / exploratory_not_validation`.
 
 Current diagnostic lane:
@@ -189,4 +227,3 @@ building d3q27_pf_velocity_q27_geometric from the stage9 snapshot
 running the gate A/B/C/D cases in cases/diagnostics/stage9_analytic_wetting_20260614/
 reporting the resulting metrics as exploratory_not_validation
 ```
-
