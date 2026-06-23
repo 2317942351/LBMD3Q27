@@ -56,6 +56,7 @@ surface-force residual check
 Allen-Cahn source moment check
 VTK demo output
 CSV self-test diagnostics
+single-node momentum closure algebra harness
 ```
 
 Run:
@@ -75,6 +76,19 @@ The formula-level diagnostics are written to:
 ```text
 math_validation_diagnostics.csv
 ```
+
+The momentum harness is deliberately narrower than a solver. It computes only:
+
+```text
+m0
+F_total/rho
+U_half = m0 + 0.5 F_total/rho
+expected momentum delta for a selected mF injection scale
+```
+
+It is used to compare local algebra against TCLB `ReplayMomentumAfterG`. It
+does not validate TCLB streaming, stage save/load timing, wall semantics, or
+contact angle.
 
 Representative 2026-06-23 values:
 

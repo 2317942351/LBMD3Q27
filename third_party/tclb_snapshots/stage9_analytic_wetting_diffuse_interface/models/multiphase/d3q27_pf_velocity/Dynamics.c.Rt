@@ -170,6 +170,10 @@ CudaDeviceFunction int stage16_replay_diagnostics_active(){
 	return (ReplayDiagnosticsMode > 0.5 && !(IamWall || IamSolid));
 }
 
+CudaDeviceFunction int stage14_momentum_closure_diagnostics_active(){
+	return (stage16_replay_diagnostics_active() && MomentumClosureDiagnosticsMode > 0.5);
+}
+
 CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayPhaseConsumed = 0.0;
 	ReplayLapPhi = 0.0;
@@ -228,10 +232,60 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayFphiSum = 0.0;
 	ReplayFphiMaxAbs = 0.0;
 	ReplayTmp1 = 0.0;
+	ReplayM0X = 0.0;
+	ReplayM0Y = 0.0;
+	ReplayM0Z = 0.0;
+	ReplayVelocityHalfForceX = 0.0;
+	ReplayVelocityHalfForceY = 0.0;
+	ReplayVelocityHalfForceZ = 0.0;
+	ReplayMFx = 0.0;
+	ReplayMFy = 0.0;
+	ReplayMFz = 0.0;
+	ReplayMomentumAfterGX = 0.0;
+	ReplayMomentumAfterGY = 0.0;
+	ReplayMomentumAfterGZ = 0.0;
+	ReplayMomentumDeltaGX = 0.0;
+	ReplayMomentumDeltaGY = 0.0;
+	ReplayMomentumDeltaGZ = 0.0;
+	ReplayPressureInput = 0.0;
+	ReplayPressureForceScale = 0.0;
+	ReplayPressurePhysicalInput = 0.0;
+	ReplayFpressureNoThirdX = 0.0;
+	ReplayFpressureNoThirdY = 0.0;
+	ReplayFpressureNoThirdZ = 0.0;
+	ReplayFpressurePhysicalX = 0.0;
+	ReplayFpressurePhysicalY = 0.0;
+	ReplayFpressurePhysicalZ = 0.0;
+	ReplayStressInputXX = 0.0;
+	ReplayStressInputXY = 0.0;
+	ReplayStressInputXZ = 0.0;
+	ReplayStressInputYY = 0.0;
+	ReplayStressInputYZ = 0.0;
+	ReplayStressInputZZ = 0.0;
+	ReplayStressIter1XX = 0.0;
+	ReplayStressIter1XY = 0.0;
+	ReplayStressIter1XZ = 0.0;
+	ReplayStressIter1YY = 0.0;
+	ReplayStressIter1YZ = 0.0;
+	ReplayStressIter1ZZ = 0.0;
+	ReplayFmuRawX = 0.0;
+	ReplayFmuRawY = 0.0;
+	ReplayFmuRawZ = 0.0;
+	ReplayFmuDeltaX = 0.0;
+	ReplayFmuDeltaY = 0.0;
+	ReplayFmuDeltaZ = 0.0;
+	ReplayTauUsed = 0.0;
+	ReplayRhoForForce = 0.0;
+	ReplayForceInjectionMode = 0.0;
 }
 
 CudaDeviceFunction real_t stage16_replay_scalar(real_t value){
 	if (stage16_replay_diagnostics_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t stage14_momentum_closure_scalar(real_t value){
+	if (stage14_momentum_closure_diagnostics_active()) return value;
 	return 0.0;
 }
 
@@ -440,6 +494,150 @@ CudaDeviceFunction real_t getReplayFphiMaxAbs(){
 
 CudaDeviceFunction real_t getReplayTmp1(){
 	return stage16_replay_scalar(ReplayTmp1(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayM0(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayM0X(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayM0Y(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayM0Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayVelocityHalfForce(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayVelocityHalfForceX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayVelocityHalfForceY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayVelocityHalfForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayMF(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayMFx(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayMFy(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayMFz(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayMomentumAfterG(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayMomentumAfterGX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayMomentumAfterGY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayMomentumAfterGZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayMomentumDeltaG(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayMomentumDeltaGX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayMomentumDeltaGY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayMomentumDeltaGZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayPressureInput(){
+	return stage14_momentum_closure_scalar(ReplayPressureInput(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressureForceScale(){
+	return stage14_momentum_closure_scalar(ReplayPressureForceScale(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressurePhysicalInput(){
+	return stage14_momentum_closure_scalar(ReplayPressurePhysicalInput(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayFpressureNoThird(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFpressureNoThirdX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFpressureNoThirdY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFpressureNoThirdZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFpressurePhysical(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFpressurePhysicalX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFpressurePhysicalY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFpressurePhysicalZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayStressInputXX(){
+	return stage14_momentum_closure_scalar(ReplayStressInputXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputXY(){
+	return stage14_momentum_closure_scalar(ReplayStressInputXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputXZ(){
+	return stage14_momentum_closure_scalar(ReplayStressInputXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputYY(){
+	return stage14_momentum_closure_scalar(ReplayStressInputYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputYZ(){
+	return stage14_momentum_closure_scalar(ReplayStressInputYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressInputZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1XX(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1XX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1XY(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1XY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1XZ(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1XZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1YY(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1YY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1YZ(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1YZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1ZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1ZZ(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayFmuRaw(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFmuRawX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFmuRawY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFmuRawZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFmuDelta(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFmuDeltaX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFmuDeltaY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFmuDeltaZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayTauUsed(){
+	return stage14_momentum_closure_scalar(ReplayTauUsed(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayRhoForForce(){
+	return stage14_momentum_closure_scalar(ReplayRhoForForce(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayForceInjectionMode(){
+	return stage14_momentum_closure_scalar(ReplayForceInjectionMode(0,0,0));
 }
 
 CudaDeviceFunction real_t getWallGradDeltaMag(){
@@ -1552,6 +1750,7 @@ CudaDeviceFunction void CollisionMRT()
 	real_t F_i[27];							// Momentum distribution forcing term
 	real_t m[27]; 							//MRT Details
 	real_t F_prev[3] = {0.0, 0.0, 0.0};
+	real_t F_mu_iter1[3] = {0.0, 0.0, 0.0};
 
 	// Find Macroscopic Details
 	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
@@ -1583,6 +1782,17 @@ CudaDeviceFunction void CollisionMRT()
 		ReplayUPreForceX = m0[1];
 		ReplayUPreForceY = m0[2];
 		ReplayUPreForceZ = m0[3];
+	}
+	if (stage14_momentum_closure_diagnostics_active()) {
+		ReplayM0X = m0[1];
+		ReplayM0Y = m0[2];
+		ReplayM0Z = m0[3];
+		ReplayPressureInput = p;
+		ReplayPressureForceScale = (-1.0/3.0) * (Density_h - Density_l);
+		ReplayPressurePhysicalInput = p * rho * cs2;
+		ReplayTauUsed = tau;
+		ReplayRhoForForce = rho;
+		ReplayForceInjectionMode = MomentumClosureProbeMode;
 	}
 
 	// GRADIENTS AND NORMALS
@@ -1627,6 +1837,15 @@ CudaDeviceFunction void CollisionMRT()
     calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
 	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
     calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+	if (stage14_momentum_closure_diagnostics_active()) {
+		real_t p_physical = p * rho * cs2;
+		ReplayFpressureNoThirdX = -1.0 * p * (Density_h - Density_l) * gradPhi.x;
+		ReplayFpressureNoThirdY = -1.0 * p * (Density_h - Density_l) * gradPhi.y;
+		ReplayFpressureNoThirdZ = -1.0 * p * (Density_h - Density_l) * gradPhi.z;
+		ReplayFpressurePhysicalX = (-1.0/3.0) * p_physical * (Density_h - Density_l) * gradPhi.x;
+		ReplayFpressurePhysicalY = (-1.0/3.0) * p_physical * (Density_h - Density_l) * gradPhi.y;
+		ReplayFpressurePhysicalZ = (-1.0/3.0) * p_physical * (Density_h - Density_l) * gradPhi.z;
+	}
 	if (stage16_replay_diagnostics_active()) {
 		ReplayFpressureX = F_pressure[0];
 		ReplayFpressureY = F_pressure[1];
@@ -1666,6 +1885,7 @@ CudaDeviceFunction void CollisionMRT()
 		F_mu[0] = (0.5-tau) * (Density_h-Density_l) * (stress[0]*gradPhi.x + stress[1]*gradPhi.y + stress[2]*gradPhi.z);
 		F_mu[1] = (0.5-tau) * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
 		F_mu[2] = (0.5-tau) * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
+		real_t F_mu_raw[3] = {F_mu[0], F_mu[1], F_mu[2]};
 		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
 		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
 		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
@@ -1692,13 +1912,35 @@ CudaDeviceFunction void CollisionMRT()
 			ReplayStressYY = stress[3];
 			ReplayStressYZ = stress[4];
 			ReplayStressZZ = stress[5];
+			if (stage14_momentum_closure_diagnostics_active()) {
+				ReplayFmuRawX = F_mu_raw[0];
+				ReplayFmuRawY = F_mu_raw[1];
+				ReplayFmuRawZ = F_mu_raw[2];
+				ReplayStressInputXX = stress[0];
+				ReplayStressInputXY = stress[1];
+				ReplayStressInputXZ = stress[2];
+				ReplayStressInputYY = stress[3];
+				ReplayStressInputYZ = stress[4];
+				ReplayStressInputZZ = stress[5];
+			}
 			if (j == 1) {
+				F_mu_iter1[0] = F_mu[0];
+				F_mu_iter1[1] = F_mu[1];
+				F_mu_iter1[2] = F_mu[2];
 				ReplayFmuIter1X = F_mu[0];
 				ReplayFmuIter1Y = F_mu[1];
 				ReplayFmuIter1Z = F_mu[2];
 				ReplayFtotalIter1X = F_total[0];
 				ReplayFtotalIter1Y = F_total[1];
 				ReplayFtotalIter1Z = F_total[2];
+				if (stage14_momentum_closure_diagnostics_active()) {
+					ReplayStressIter1XX = stress[0];
+					ReplayStressIter1XY = stress[1];
+					ReplayStressIter1XZ = stress[2];
+					ReplayStressIter1YY = stress[3];
+					ReplayStressIter1YZ = stress[4];
+					ReplayStressIter1ZZ = stress[5];
+				}
 			}
 		}
 		if (j > 1) {
@@ -1723,6 +1965,14 @@ CudaDeviceFunction void CollisionMRT()
 			ReplayForceOverRhoX = F_total[0] * inv_rho_diag;
 			ReplayForceOverRhoY = F_total[1] * inv_rho_diag;
 			ReplayForceOverRhoZ = F_total[2] * inv_rho_diag;
+			if (stage14_momentum_closure_diagnostics_active()) {
+				ReplayVelocityHalfForceX = U;
+				ReplayVelocityHalfForceY = V;
+				ReplayVelocityHalfForceZ = W;
+				ReplayMFx = F_total[0] * inv_rho_diag;
+				ReplayMFy = F_total[1] * inv_rho_diag;
+				ReplayMFz = F_total[2] * inv_rho_diag;
+			}
 			if (j == 1) {
 				ReplayUPostIter1X = U;
 				ReplayUPostIter1Y = V;
@@ -1733,6 +1983,11 @@ CudaDeviceFunction void CollisionMRT()
 			force_iter_converged = true;
 		}
 	} while (j < force_iter_limit && !force_iter_converged);
+	if (stage14_momentum_closure_diagnostics_active()) {
+		ReplayFmuDeltaX = F_mu[0] - F_mu_iter1[0];
+		ReplayFmuDeltaY = F_mu[1] - F_mu_iter1[1];
+		ReplayFmuDeltaZ = F_mu[2] - F_mu_iter1[2];
+	}
 	// PHASE FIELD POPULATION UPDATE:
 	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
 	if (stage16_replay_diagnostics_active()) {
@@ -1774,13 +2029,27 @@ CudaDeviceFunction void CollisionMRT()
 	U = momentum_U;
 	V = momentum_V;
 	W = momentum_W;
+	if (MomentumClosureProbeMode > 1.5 && MomentumClosureProbeMode < 2.5) {
+		U = m0[1];
+		V = m0[2];
+		W = m0[3];
+	}
+	real_t momentum_force_injection_scale = 1.0;
+	if (MomentumClosureProbeMode > 2.5 && MomentumClosureProbeMode < 3.5) {
+		momentum_force_injection_scale = 0.0;
+	} else if (MomentumClosureProbeMode > 3.5 && MomentumClosureProbeMode < 4.5) {
+		momentum_force_injection_scale = 0.5;
+	}
 	<?R
 		mF = PV(rep(0,27))
-		mF[2:4] = F_total * rho.inv
+		mF[2:4] = PV("momentum_force_injection_scale") * F_total * rho.inv
 
 		C(m, m0 - (m0 - EQ$Req + mF*0.5)[selR] * Omega + mF)
 		C(g, invM %*% m)
 	?>
+	U = momentum_U;
+	V = momentum_V;
+	W = momentum_W;
 	if (stage16_replay_diagnostics_active()) {
 		real_t fphi_sum_diag = 0.0;
 		real_t fphi_max_diag = 0.0;
@@ -1791,6 +2060,21 @@ CudaDeviceFunction void CollisionMRT()
 		}
 		ReplayFphiSum = fphi_sum_diag;
 		ReplayFphiMaxAbs = fphi_max_diag;
+	}
+	if (stage14_momentum_closure_diagnostics_active()) {
+		real_t momentum_after_g[3] = {0.0, 0.0, 0.0};
+		<?R
+			momentum_after_g = PV("momentum_after_g[",1:3-1,"]")
+			C(momentum_after_g[1], sum(U[,1] * g))
+			C(momentum_after_g[2], sum(U[,2] * g))
+			C(momentum_after_g[3], sum(U[,3] * g))
+		?>
+		ReplayMomentumAfterGX = momentum_after_g[0];
+		ReplayMomentumAfterGY = momentum_after_g[1];
+		ReplayMomentumAfterGZ = momentum_after_g[2];
+		ReplayMomentumDeltaGX = momentum_after_g[0] - m0[1];
+		ReplayMomentumDeltaGY = momentum_after_g[1] - m0[2];
+		ReplayMomentumDeltaGZ = momentum_after_g[2] - m0[3];
 	}
 
     updateTrackers( C );
