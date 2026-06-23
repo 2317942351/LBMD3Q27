@@ -229,9 +229,17 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayStressYY = 0.0;
 	ReplayStressYZ = 0.0;
 	ReplayStressZZ = 0.0;
+	ReplayHPreSum = 0.0;
+	ReplayHPostSum = 0.0;
+	ReplayHeqSum = 0.0;
+	ReplayHPreMaxAbs = 0.0;
+	ReplayHPostMaxAbs = 0.0;
+	ReplayHeqMaxAbs = 0.0;
 	ReplayFphiSum = 0.0;
 	ReplayFphiMaxAbs = 0.0;
 	ReplayTmp1 = 0.0;
+	ReplayTmp1BoundedShadow = 0.0;
+	ReplayPhaseOutOfBoundsFlag = 0.0;
 	ReplayM0X = 0.0;
 	ReplayM0Y = 0.0;
 	ReplayM0Z = 0.0;
@@ -268,6 +276,18 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayStressIter1YY = 0.0;
 	ReplayStressIter1YZ = 0.0;
 	ReplayStressIter1ZZ = 0.0;
+	ReplayStressPreForceShadowXX = 0.0;
+	ReplayStressPreForceShadowXY = 0.0;
+	ReplayStressPreForceShadowXZ = 0.0;
+	ReplayStressPreForceShadowYY = 0.0;
+	ReplayStressPreForceShadowYZ = 0.0;
+	ReplayStressPreForceShadowZZ = 0.0;
+	ReplayStressPostForceShadowXX = 0.0;
+	ReplayStressPostForceShadowXY = 0.0;
+	ReplayStressPostForceShadowXZ = 0.0;
+	ReplayStressPostForceShadowYY = 0.0;
+	ReplayStressPostForceShadowYZ = 0.0;
+	ReplayStressPostForceShadowZZ = 0.0;
 	ReplayFmuRawX = 0.0;
 	ReplayFmuRawY = 0.0;
 	ReplayFmuRawZ = 0.0;
@@ -491,6 +511,12 @@ CudaDeviceFunction real_t stage14_inv_force_rho(real_t rho) {
 	return 1.0 / rho_eff;
 }
 
+CudaDeviceFunction real_t stage14_max_abs2(real_t a, real_t b) {
+	real_t aa = fabs(a);
+	real_t bb = fabs(b);
+	return (aa > bb) ? aa : bb;
+}
+
 CudaDeviceFunction int stage14_force_iter_limit_from_mode() {
 	if (ForceFixedPointMode > 1.5 && ForceFixedPointMode < 2.5) {
 		return 1;
@@ -532,6 +558,30 @@ CudaDeviceFunction real_t getReplayStressZZ(){
 	return stage16_replay_scalar(ReplayStressZZ(0,0,0));
 }
 
+CudaDeviceFunction real_t getReplayHPreSum(){
+	return stage16_replay_scalar(ReplayHPreSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPostSum(){
+	return stage16_replay_scalar(ReplayHPostSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHeqSum(){
+	return stage16_replay_scalar(ReplayHeqSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPreMaxAbs(){
+	return stage16_replay_scalar(ReplayHPreMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPostMaxAbs(){
+	return stage16_replay_scalar(ReplayHPostMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHeqMaxAbs(){
+	return stage16_replay_scalar(ReplayHeqMaxAbs(0,0,0));
+}
+
 CudaDeviceFunction real_t getReplayFphiSum(){
 	return stage16_replay_scalar(ReplayFphiSum(0,0,0));
 }
@@ -542,6 +592,14 @@ CudaDeviceFunction real_t getReplayFphiMaxAbs(){
 
 CudaDeviceFunction real_t getReplayTmp1(){
 	return stage16_replay_scalar(ReplayTmp1(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayTmp1BoundedShadow(){
+	return stage16_replay_scalar(ReplayTmp1BoundedShadow(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPhaseOutOfBoundsFlag(){
+	return stage16_replay_scalar(ReplayPhaseOutOfBoundsFlag(0,0,0));
 }
 
 CudaDeviceFunction vector_t getReplayM0(){
@@ -658,6 +716,54 @@ CudaDeviceFunction real_t getReplayStressIter1YZ(){
 
 CudaDeviceFunction real_t getReplayStressIter1ZZ(){
 	return stage14_momentum_closure_scalar(ReplayStressIter1ZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowXX(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowXY(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowXZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowYY(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowYZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowXX(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowXY(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowXZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowYY(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowYZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowZZ(0,0,0));
 }
 
 CudaDeviceFunction vector_t getReplayFmuRaw(){
@@ -2004,6 +2110,12 @@ CudaDeviceFunction void CollisionMRT()
 				ReplayFmuRawX = F_mu_raw[0];
 				ReplayFmuRawY = F_mu_raw[1];
 				ReplayFmuRawZ = F_mu_raw[2];
+				ReplayStressPreForceShadowXX = stress[0];
+				ReplayStressPreForceShadowXY = stress[1];
+				ReplayStressPreForceShadowXZ = stress[2];
+				ReplayStressPreForceShadowYY = stress[3];
+				ReplayStressPreForceShadowYZ = stress[4];
+				ReplayStressPreForceShadowZZ = stress[5];
 				ReplayStressInputXX = stress[0];
 				ReplayStressInputXY = stress[1];
 				ReplayStressInputXZ = stress[2];
@@ -2067,6 +2179,12 @@ CudaDeviceFunction void CollisionMRT()
 			ReplayStressYZ = stress[4];
 			ReplayStressZZ = stress[5];
 			if (stage14_momentum_closure_diagnostics_active()) {
+				ReplayStressPreForceShadowXX = stress[0];
+				ReplayStressPreForceShadowXY = stress[1];
+				ReplayStressPreForceShadowXZ = stress[2];
+				ReplayStressPreForceShadowYY = stress[3];
+				ReplayStressPreForceShadowYZ = stress[4];
+				ReplayStressPreForceShadowZZ = stress[5];
 				ReplayStressInputXX = stress[0];
 				ReplayStressInputXY = stress[1];
 				ReplayStressInputXZ = stress[2];
@@ -2111,6 +2229,30 @@ CudaDeviceFunction void CollisionMRT()
 				ReplayUPostIter1Z = W;
 			}
 		}
+		if (stage14_momentum_closure_diagnostics_active()) {
+			real_t m_post_force_shadow[27] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			real_t stress_post_force_shadow[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			<?R
+				m_post_force_shadow = PV("m_post_force_shadow[",1:27-1,"]")
+				stress_post_force_shadow = PV("stress_post_force_shadow[",1:6-1,"]")
+				C(m_post_force_shadow[selR], (m0 - EQ$Req)[selR] * Omega)
+				new_g_post_force_shadow = solve(M) %*% m_post_force_shadow
+				C(stress_post_force_shadow[1], sum( U[,1]*U[,1] * new_g_post_force_shadow )); # XX
+				C(stress_post_force_shadow[2], sum( U[,1]*U[,2] * new_g_post_force_shadow )); # XY
+				C(stress_post_force_shadow[3], sum( U[,1]*U[,3] * new_g_post_force_shadow )); # XZ
+				C(stress_post_force_shadow[4], sum( U[,2]*U[,2] * new_g_post_force_shadow )); # YY
+				C(stress_post_force_shadow[5], sum( U[,2]*U[,3] * new_g_post_force_shadow )); # YZ
+				C(stress_post_force_shadow[6], sum( U[,3]*U[,3] * new_g_post_force_shadow )); # ZZ
+			?>
+			ReplayStressPostForceShadowXX = stress_post_force_shadow[0];
+			ReplayStressPostForceShadowXY = stress_post_force_shadow[1];
+			ReplayStressPostForceShadowXZ = stress_post_force_shadow[2];
+			ReplayStressPostForceShadowYY = stress_post_force_shadow[3];
+			ReplayStressPostForceShadowYZ = stress_post_force_shadow[4];
+			ReplayStressPostForceShadowZZ = stress_post_force_shadow[5];
+		}
 		if (force_iter_guard_stop) {
 			force_iter_converged = true;
 		}
@@ -2127,6 +2269,11 @@ CudaDeviceFunction void CollisionMRT()
 	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
 	if (stage16_replay_diagnostics_active()) {
 		ReplayTmp1 = tmp1;
+		real_t bounded_phase_shadow = C;
+		if (bounded_phase_shadow < PhaseField_l) bounded_phase_shadow = PhaseField_l;
+		if (bounded_phase_shadow > PhaseField_h) bounded_phase_shadow = PhaseField_h;
+		ReplayTmp1BoundedShadow = (1.0 - 4.0*(bounded_phase_shadow - 0.5)*(bounded_phase_shadow - 0.5))/IntWidth;
+		ReplayPhaseOutOfBoundsFlag = (C < PhaseField_l || C > PhaseField_h) ? 1.0 : 0.0;
 	}
 	real_t momentum_U = U;
 	real_t momentum_V = V;
@@ -2157,8 +2304,24 @@ CudaDeviceFunction void CollisionMRT()
 		    EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),u)
 		} else {
 			wh = c(rep(16/72,1),rep(8/72,6),rep(1/72,8))
-        }
+		}
 		C(Fphi, wh * PV("tmp1") * (U[1:PF_velocities,] %*% n))
+	?>
+	if (stage16_replay_diagnostics_active()) {
+		ReplayHPreSum = <?R C(sum(h)) ?>;
+		ReplayHeqSum = <?R C(sum(heq)) ?>;
+		real_t h_pre_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_pre_max_diag = stage14_max_abs2(h_pre_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		real_t heq_max_diag = 0.0;
+		for (int stage14_hi=0; stage14_hi<hPops; stage14_hi++) {
+			heq_max_diag = stage14_max_abs2(heq_max_diag, heq[stage14_hi]);
+		}
+		ReplayHPreMaxAbs = h_pre_max_diag;
+		ReplayHeqMaxAbs = heq_max_diag;
+	}
+	<?R
     	C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)
 	?>
 	U = momentum_U;
@@ -2193,6 +2356,12 @@ CudaDeviceFunction void CollisionMRT()
 			fphi_sum_diag += F_phi[i];
 			if (abs_fphi > fphi_max_diag) fphi_max_diag = abs_fphi;
 		}
+		ReplayHPostSum = <?R C(sum(h)) ?>;
+		real_t h_post_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_post_max_diag = stage14_max_abs2(h_post_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		ReplayHPostMaxAbs = h_post_max_diag;
 		ReplayFphiSum = fphi_sum_diag;
 		ReplayFphiMaxAbs = fphi_max_diag;
 	}
@@ -2516,12 +2685,51 @@ CudaDeviceFunction void CollisionBGK()
 
 	// PHASE FIELD POPULATION UPDATE:
 	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayTmp1 = tmp1;
+		real_t bounded_phase_shadow = C;
+		if (bounded_phase_shadow < PhaseField_l) bounded_phase_shadow = PhaseField_l;
+		if (bounded_phase_shadow > PhaseField_h) bounded_phase_shadow = PhaseField_h;
+		ReplayTmp1BoundedShadow = (1.0 - 4.0*(bounded_phase_shadow - 0.5)*(bounded_phase_shadow - 0.5))/IntWidth;
+		ReplayPhaseOutOfBoundsFlag = (C < PhaseField_l || C > PhaseField_h) ? 1.0 : 0.0;
+	}
 	for (i=0; i< hPops; i++){
 		F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz); 		// Forcing Terms
 		heq[i] = C * Gamma[i];      	// heq
 	}
 
+	if (stage16_replay_diagnostics_active()) {
+		ReplayHPreSum = <?R C(sum(h)) ?>;
+		ReplayHeqSum = <?R C(sum(heq)) ?>;
+		real_t h_pre_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_pre_max_diag = stage14_max_abs2(h_pre_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		real_t heq_max_diag = 0.0;
+		for (int stage14_hi=0; stage14_hi<hPops; stage14_hi++) {
+			heq_max_diag = stage14_max_abs2(heq_max_diag, heq[stage14_hi]);
+		}
+		ReplayHPreMaxAbs = h_pre_max_diag;
+		ReplayHeqMaxAbs = heq_max_diag;
+	}
 	<?R	C(h, h - omega * ( h - w_h*heq + 0.5*Fphi) + Fphi) ?>
+	if (stage16_replay_diagnostics_active()) {
+		real_t fphi_sum_diag = 0.0;
+		real_t fphi_max_diag = 0.0;
+		for (i=0; i<hPops; i++) {
+			real_t abs_fphi = fabs(F_phi[i]);
+			fphi_sum_diag += F_phi[i];
+			if (abs_fphi > fphi_max_diag) fphi_max_diag = abs_fphi;
+		}
+		ReplayHPostSum = <?R C(sum(h)) ?>;
+		real_t h_post_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_post_max_diag = stage14_max_abs2(h_post_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		ReplayHPostMaxAbs = h_post_max_diag;
+		ReplayFphiSum = fphi_sum_diag;
+		ReplayFphiMaxAbs = fphi_max_diag;
+	}
 
 	// PRESSURE EVOLUTION UPDATE:
 	for (i=0; i< 27; i++) {
