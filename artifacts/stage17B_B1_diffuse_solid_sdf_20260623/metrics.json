@@ -1,0 +1,102 @@
+{
+  "status": "b1_offline_geometry_gate_passed",
+  "parameters": {
+    "n": 96,
+    "radius": 20.0,
+    "eps_solid": 1.25,
+    "sweep": true,
+    "radii": [
+      12.0,
+      16.0,
+      20.0,
+      24.0
+    ],
+    "eps_values": [
+      0.8,
+      1.0,
+      1.2,
+      1.25,
+      1.5
+    ],
+    "near_band": 2.0,
+    "ghost_band": 1.5,
+    "thetas_deg": [
+      60.0,
+      90.0,
+      120.0
+    ],
+    "phi_lo": 0.0,
+    "phi_hi": 1.0
+  },
+  "metrics": [
+    {
+      "case": "plane",
+      "radius": 20.0,
+      "near_band": 2.0,
+      "ghost_band": 1.5,
+      "eps_solid": 1.25,
+      "diffuse_grad_std": 0.04412278118546393,
+      "sharp_grad_std": 0.25,
+      "diffuse_grad_max": 0.24145844546104572,
+      "sharp_grad_max": 0.5,
+      "grad_std_improvement": 5.6660072933562375,
+      "grad_max_improvement": 2.070749685500914,
+      "diffuse_jump_p99": 2.2989939790784164e-16,
+      "sharp_jump_p99": 0.0,
+      "jump_p99_improvement": 0.0,
+      "diffuse_alignment_min": 1.0,
+      "max_ghost_clamp_fraction": 0.390625,
+      "max_ghost_clamp_excess": 0.00020577545689597597,
+      "all_shadow_ghost_bounded": true,
+      "b1_pass": true
+    },
+    {
+      "case": "cylinder_z",
+      "radius": 20.0,
+      "near_band": 2.0,
+      "ghost_band": 1.5,
+      "eps_solid": 1.25,
+      "diffuse_grad_std": 0.05101896596641368,
+      "sharp_grad_std": 0.29812717517961457,
+      "diffuse_grad_max": 0.2675533925571682,
+      "sharp_grad_max": 0.7071067811865476,
+      "grad_std_improvement": 5.843457810883012,
+      "grad_max_improvement": 2.6428623252663854,
+      "diffuse_jump_p99": 0.05973044989203895,
+      "sharp_jump_p99": 0.7653668647301795,
+      "jump_p99_improvement": 12.813679892141408,
+      "diffuse_alignment_min": 0.9996827195270285,
+      "max_ghost_clamp_fraction": 0.38783914728682173,
+      "max_ghost_clamp_excess": 0.0002056895425076831,
+      "all_shadow_ghost_bounded": true,
+      "b1_pass": true
+    },
+    {
+      "case": "sphere",
+      "radius": 20.0,
+      "near_band": 2.0,
+      "ghost_band": 1.5,
+      "eps_solid": 1.25,
+      "diffuse_grad_std": 0.05290080588903452,
+      "sharp_grad_std": 0.3369744313497377,
+      "diffuse_grad_max": 0.27279559521953334,
+      "sharp_grad_max": 0.8660254037844386,
+      "grad_std_improvement": 6.369930016880651,
+      "grad_max_improvement": 3.17463118525613,
+      "diffuse_jump_p99": 0.058816616567396465,
+      "sharp_jump_p99": 0.9194016867619662,
+      "jump_p99_improvement": 15.631665682578786,
+      "diffuse_alignment_min": 0.9995669066633257,
+      "max_ghost_clamp_fraction": 0.08080808080808081,
+      "max_ghost_clamp_excess": 0.00013861594877387882,
+      "all_shadow_ghost_bounded": true,
+      "b1_pass": true
+    }
+  ],
+  "sweep_summary": {
+    "rows": 60,
+    "pass_count": 60,
+    "fail_count": 0
+  },
+  "claim_limit": "offline geometry and shadow ghost only; no TCLB run; no contact-angle validation"
+}
