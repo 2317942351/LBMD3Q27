@@ -1,4 +1,5 @@
 #include <array>
+#include <algorithm>
 #include <cmath>
 #include <cstdint>
 #include <cstdlib>
@@ -27,6 +28,36 @@ struct Lattice {
     std::array<int, Q> ez{};
     std::array<double, Q> w{};
     std::array<int, Q> opp{};
+};
+
+struct PhaseParams {
+    double phi_l = 0.0;
+    double phi_h = 1.0;
+    double sigma = 1.0;
+    double int_width = 4.0;
+};
+
+struct ScalarMetrics {
+    double max_abs = 0.0;
+    double sum_abs = 0.0;
+    double sum_sq = 0.0;
+    int n = 0;
+
+    void add(double v) {
+        const double a = std::fabs(v);
+        if (a > max_abs) max_abs = a;
+        sum_abs += a;
+        sum_sq += v * v;
+        ++n;
+    }
+
+    double mean_abs() const {
+        return n > 0 ? sum_abs / static_cast<double>(n) : 0.0;
+    }
+
+    double rms() const {
+        return n > 0 ? std::sqrt(sum_sq / static_cast<double>(n)) : 0.0;
+    }
 };
 
 Lattice make_d3q27_tclb_order() {
@@ -179,6 +210,49 @@ double geometric_wall_ghost(double phi_f, double tangent_grad_mag, double h, dou
     return clamped;
 }
 
+double phase_tanh_profile(double x, const PhaseParams& p, int sign = -1) {
+    const double mid = 0.5 * (p.phi_h + p.phi_l);
+    const double amp = 0.5 * (p.phi_h - p.phi_l);
+    return mid + static_cast<double>(sign) * amp * std::tanh(2.0 * x / p.int_width);
+}
+
+double phase_tanh_second_derivative(double x, const PhaseParams& p, int sign = -1) {
+    const double a = 2.0 / p.int_width;
+    const double t = std::tanh(a * x);
+    const double sech2 = 1.0 - t * t;
+    const double amp = 0.5 * (p.phi_h - p.phi_l);
+    return static_cast<double>(sign) * amp * (-2.0 * a * a * sech2 * t);
+}
+
+double phase_tanh_first_derivative(double x, const PhaseParams& p, int sign = -1) {
+    const double a = 2.0 / p.int_width;
+    const double t = std::tanh(a * x);
+    const double sech2 = 1.0 - t * t;
+    const double amp = 0.5 * (p.phi_h - p.phi_l);
+    return static_cast<double>(sign) * amp * a * sech2;
+}
+
+double calc_mu_tclb(double c, double lap_phi, const PhaseParams& p) {
+    const double pfavg = 0.5 * (p.phi_l + p.phi_h);
+    return 4.0 * (12.0 * p.sigma / p.int_width) * (c - p.phi_l) * (c - p.phi_h) * (c - pfavg)
+         - (1.5 * p.sigma * p.int_width) * lap_phi;
+}
+
+double allen_cahn_tmp1(double c, const PhaseParams& p) {
+    const double c0 = 0.5 * (p.phi_l + p.phi_h);
+    const double range = p.phi_h - p.phi_l;
+    const double normalized = range != 0.0 ? (c - c0) / range : 0.0;
+    return (1.0 - 4.0 * normalized * normalized) / p.int_width;
+}
+
+double calc_f_phi(const Lattice& lat, int q, double tmp1, const Vec3& n) {
+    return lat.w[q] * tmp1 * (lat.ex[q] * n.x + lat.ey[q] * n.y + lat.ez[q] * n.z);
+}
+
+Vec3 calc_fs(double mu, const Vec3& grad_phi) {
+    return {mu * grad_phi.x, mu * grad_phi.y, mu * grad_phi.z};
+}
+
 struct TestStats {
     int checks = 0;
     int failures = 0;
@@ -196,6 +270,118 @@ void check(TestStats& stats, bool ok, const std::string& name) {
 
 bool near(double a, double b, double tol) {
     return std::fabs(a - b) <= tol;
+}
+
+double norm(Vec3 v) {
+    return std::sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+struct MathValidation {
+    ScalarMetrics planar_mu_discrete;
+    ScalarMetrics planar_mu_exact_laplace;
+    ScalarMetrics planar_laplace_error;
+    ScalarMetrics planar_grad_error;
+    ScalarMetrics planar_surface_force;
+    double bulk_mu_liquid = 0.0;
+    double bulk_mu_gas = 0.0;
+    double bulk_grad_norm = 0.0;
+    double allen_cahn_sum_error = 0.0;
+    double allen_cahn_first_moment_error = 0.0;
+    double allen_cahn_bulk_tmp1_liquid = 0.0;
+    double allen_cahn_bulk_tmp1_gas = 0.0;
+    double allen_cahn_interface_tmp1 = 0.0;
+};
+
+MathValidation run_phasefield_math_validation(const Lattice& lat) {
+    MathValidation mv;
+    const PhaseParams p;
+
+    Grid bulk(7, 7, 7);
+    for (double& v : bulk.phi) v = p.phi_l;
+    const Vec3 grad_l = isotropic_grad(bulk, 3, 3, 3);
+    const double lap_l = isotropic_laplace(bulk, 3, 3, 3);
+    mv.bulk_mu_gas = calc_mu_tclb(p.phi_l, lap_l, p);
+    for (double& v : bulk.phi) v = p.phi_h;
+    const Vec3 grad_h = isotropic_grad(bulk, 3, 3, 3);
+    const double lap_h = isotropic_laplace(bulk, 3, 3, 3);
+    mv.bulk_mu_liquid = calc_mu_tclb(p.phi_h, lap_h, p);
+    mv.bulk_grad_norm = std::max(norm(grad_l), norm(grad_h));
+
+    const int nx = 129;
+    const int ny = 5;
+    const int nz = 5;
+    Grid planar(nx, ny, nz);
+    const double x0 = 0.5 * static_cast<double>(nx - 1);
+    for (int k = 0; k < planar.nz; ++k) {
+        for (int j = 0; j < planar.ny; ++j) {
+            for (int i = 0; i < planar.nx; ++i) {
+                const double x = static_cast<double>(i) - x0;
+                planar.phi[planar.id(i, j, k)] = phase_tanh_profile(x, p, -1);
+            }
+        }
+    }
+    for (int i = 8; i < planar.nx - 8; ++i) {
+        const double x = static_cast<double>(i) - x0;
+        const double c = planar.raw_phi(i, 2, 2);
+        const double lap_d = isotropic_laplace(planar, i, 2, 2);
+        const double lap_e = phase_tanh_second_derivative(x, p, -1);
+        const Vec3 grad_d = isotropic_grad(planar, i, 2, 2);
+        const double grad_e = phase_tanh_first_derivative(x, p, -1);
+        const double mu_d = calc_mu_tclb(c, lap_d, p);
+        const double mu_e = calc_mu_tclb(c, lap_e, p);
+        const Vec3 fs = calc_fs(mu_d, grad_d);
+        mv.planar_mu_discrete.add(mu_d);
+        mv.planar_mu_exact_laplace.add(mu_e);
+        mv.planar_laplace_error.add(lap_d - lap_e);
+        mv.planar_grad_error.add(grad_d.x - grad_e);
+        mv.planar_surface_force.add(norm(fs));
+    }
+
+    const Vec3 n = normalize({1.0, 2.0, -0.5});
+    const double tmp1 = allen_cahn_tmp1(0.5 * (p.phi_l + p.phi_h), p);
+    double source_sum = 0.0;
+    Vec3 first_moment;
+    for (int q = 0; q < Q; ++q) {
+        const double f = calc_f_phi(lat, q, tmp1, n);
+        source_sum += f;
+        first_moment.x += lat.ex[q] * f;
+        first_moment.y += lat.ey[q] * f;
+        first_moment.z += lat.ez[q] * f;
+    }
+    const Vec3 expected = {tmp1 * n.x / 3.0, tmp1 * n.y / 3.0, tmp1 * n.z / 3.0};
+    mv.allen_cahn_sum_error = std::fabs(source_sum);
+    mv.allen_cahn_first_moment_error = norm({first_moment.x - expected.x,
+                                             first_moment.y - expected.y,
+                                             first_moment.z - expected.z});
+    mv.allen_cahn_bulk_tmp1_gas = allen_cahn_tmp1(p.phi_l, p);
+    mv.allen_cahn_bulk_tmp1_liquid = allen_cahn_tmp1(p.phi_h, p);
+    mv.allen_cahn_interface_tmp1 = tmp1;
+    return mv;
+}
+
+void write_math_validation_csv(const std::string& path, const MathValidation& mv) {
+    std::ofstream csv(path);
+    csv << std::setprecision(17);
+    csv << "metric,value\n";
+    csv << "planar_mu_discrete_max_abs," << mv.planar_mu_discrete.max_abs << "\n";
+    csv << "planar_mu_discrete_mean_abs," << mv.planar_mu_discrete.mean_abs() << "\n";
+    csv << "planar_mu_discrete_rms," << mv.planar_mu_discrete.rms() << "\n";
+    csv << "planar_mu_exact_laplace_max_abs," << mv.planar_mu_exact_laplace.max_abs << "\n";
+    csv << "planar_mu_exact_laplace_rms," << mv.planar_mu_exact_laplace.rms() << "\n";
+    csv << "planar_laplace_error_max_abs," << mv.planar_laplace_error.max_abs << "\n";
+    csv << "planar_laplace_error_rms," << mv.planar_laplace_error.rms() << "\n";
+    csv << "planar_grad_error_max_abs," << mv.planar_grad_error.max_abs << "\n";
+    csv << "planar_grad_error_rms," << mv.planar_grad_error.rms() << "\n";
+    csv << "planar_surface_force_max_abs," << mv.planar_surface_force.max_abs << "\n";
+    csv << "planar_surface_force_rms," << mv.planar_surface_force.rms() << "\n";
+    csv << "bulk_mu_gas," << mv.bulk_mu_gas << "\n";
+    csv << "bulk_mu_liquid," << mv.bulk_mu_liquid << "\n";
+    csv << "bulk_grad_norm," << mv.bulk_grad_norm << "\n";
+    csv << "allen_cahn_sum_error," << mv.allen_cahn_sum_error << "\n";
+    csv << "allen_cahn_first_moment_error," << mv.allen_cahn_first_moment_error << "\n";
+    csv << "allen_cahn_bulk_tmp1_gas," << mv.allen_cahn_bulk_tmp1_gas << "\n";
+    csv << "allen_cahn_bulk_tmp1_liquid," << mv.allen_cahn_bulk_tmp1_liquid << "\n";
+    csv << "allen_cahn_interface_tmp1," << mv.allen_cahn_interface_tmp1 << "\n";
 }
 
 void write_vtk_demo(const std::string& path) {
@@ -298,9 +484,26 @@ int run_self_test() {
     check(stats, std::isfinite(lap) && std::fabs(lap) < 1e-12, "solid sentinel blocked by passive ghost in stencil");
     check(stats, sg.phi[sid] == -999.0, "passive ghost does not overwrite solid phi");
 
+    const MathValidation mv = run_phasefield_math_validation(lat);
+    write_math_validation_csv("math_validation_diagnostics.csv", mv);
+    check(stats, std::fabs(mv.bulk_mu_gas) < 1e-14, "phase-field bulk gas mu is zero");
+    check(stats, std::fabs(mv.bulk_mu_liquid) < 1e-14, "phase-field bulk liquid mu is zero");
+    check(stats, mv.bulk_grad_norm < 1e-14, "phase-field bulk gradient is zero");
+    check(stats, mv.planar_mu_exact_laplace.max_abs < 1e-14, "continuous tanh profile closes TCLB mu formula");
+    check(stats, mv.planar_laplace_error.max_abs < 1.0e-2, "discrete Laplace resolves tanh interface");
+    check(stats, mv.planar_mu_discrete.max_abs < 6.0e-2, "discrete tanh mu residual stays bounded");
+    check(stats, mv.planar_surface_force.max_abs < 2.0e-2, "discrete tanh surface force residual stays bounded");
+    check(stats, mv.allen_cahn_sum_error < 1e-16, "Allen-Cahn source zeroth moment is zero");
+    check(stats, mv.allen_cahn_first_moment_error < 1e-16, "Allen-Cahn source first moment matches D3Q27 tensor");
+    check(stats, std::fabs(mv.allen_cahn_bulk_tmp1_gas) < 1e-16, "Allen-Cahn source vanishes in gas bulk");
+    check(stats, std::fabs(mv.allen_cahn_bulk_tmp1_liquid) < 1e-16, "Allen-Cahn source vanishes in liquid bulk");
+    check(stats, near(mv.allen_cahn_interface_tmp1, 0.25, 1e-16), "Allen-Cahn source peaks at interface");
+
     std::ofstream csv("selftest_diagnostics.csv");
-    csv << "checks,failures,weight_sum,laplace_sentinel_test\n";
-    csv << stats.checks << "," << stats.failures << "," << std::setprecision(17) << wsum << "," << lap << "\n";
+    csv << "checks,failures,weight_sum,laplace_sentinel_test,planar_mu_discrete_max_abs,planar_surface_force_max_abs,allen_cahn_first_moment_error\n";
+    csv << stats.checks << "," << stats.failures << "," << std::setprecision(17) << wsum << "," << lap << ","
+        << mv.planar_mu_discrete.max_abs << "," << mv.planar_surface_force.max_abs << ","
+        << mv.allen_cahn_first_moment_error << "\n";
     write_vtk_demo("selftest_fields.vtk");
 
     std::cout << "checks=" << stats.checks << " failures=" << stats.failures << "\n";

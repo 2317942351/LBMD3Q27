@@ -15,4 +15,4 @@ test: $(TARGET)
 	./$(TARGET) --self-test
 
 clean:
-	rm -f $(TARGET) *.o selftest_diagnostics.csv selftest_fields.vtk
+	rm -f $(TARGET) *.o selftest_diagnostics.csv math_validation_diagnostics.csv selftest_fields.vtk

@@ -1,6 +1,6 @@
 # Phase-Field D3Q27 C Reference Solver
 
-Status: initial executable baseline scaffold.
+Status: executable baseline scaffold with formula/operator self-tests.
 
 This directory contains the first minimal explicit-array C++ reference scaffold
 for the TCLB D3Q27 phase-field wetting route.
@@ -51,6 +51,9 @@ flat wall signed distance
 analytic cylinder signed distance and normal
 analytic sphere signed distance and normal
 geometric wall ghost sign checks for theta 30/90/150
+TCLB calcMu formula check against planar tanh equilibrium
+surface-force residual check
+Allen-Cahn source moment check
 VTK demo output
 CSV self-test diagnostics
 ```
@@ -64,8 +67,27 @@ make test
 Verified on `yuan@192.168.1.16` with `/usr/bin/g++`:
 
 ```text
-checks=96 failures=0
+checks=108 failures=0
 ```
+
+The formula-level diagnostics are written to:
+
+```text
+math_validation_diagnostics.csv
+```
+
+Representative 2026-06-23 values:
+
+```text
+planar_mu_exact_laplace_max_abs = 4.06e-16
+planar_mu_discrete_max_abs      = 5.72e-02
+planar_surface_force_max_abs    = 1.09e-02
+allen_cahn_first_moment_error   = 7.76e-18
+```
+
+Interpretation: the continuous tanh profile closes the current TCLB chemical
+potential formula to roundoff, while the finite D3Q27 stencil has a measurable
+but bounded residual at `IntWidth=4`.
 
 ## Required Stages
 
@@ -98,6 +120,7 @@ The current self-test writes:
 
 ```text
 selftest_diagnostics.csv
+math_validation_diagnostics.csv
 selftest_fields.vtk
 ```
 

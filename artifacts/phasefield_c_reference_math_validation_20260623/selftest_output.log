@@ -1,0 +1,112 @@
+rm -f phasefield_reference *.o selftest_diagnostics.csv math_validation_diagnostics.csv selftest_fields.vtk
+g++ -std=c++17 -O2 -Wall -Wextra -pedantic -o phasefield_reference phasefield_reference.cpp
+./phasefield_reference --self-test
+PASS D3Q27 weights sum to one
+PASS opposite link exists q=0
+PASS opposite involution q=0
+PASS opposite velocity q=0
+PASS opposite link exists q=1
+PASS opposite involution q=1
+PASS opposite velocity q=1
+PASS opposite link exists q=2
+PASS opposite involution q=2
+PASS opposite velocity q=2
+PASS opposite link exists q=3
+PASS opposite involution q=3
+PASS opposite velocity q=3
+PASS opposite link exists q=4
+PASS opposite involution q=4
+PASS opposite velocity q=4
+PASS opposite link exists q=5
+PASS opposite involution q=5
+PASS opposite velocity q=5
+PASS opposite link exists q=6
+PASS opposite involution q=6
+PASS opposite velocity q=6
+PASS opposite link exists q=7
+PASS opposite involution q=7
+PASS opposite velocity q=7
+PASS opposite link exists q=8
+PASS opposite involution q=8
+PASS opposite velocity q=8
+PASS opposite link exists q=9
+PASS opposite involution q=9
+PASS opposite velocity q=9
+PASS opposite link exists q=10
+PASS opposite involution q=10
+PASS opposite velocity q=10
+PASS opposite link exists q=11
+PASS opposite involution q=11
+PASS opposite velocity q=11
+PASS opposite link exists q=12
+PASS opposite involution q=12
+PASS opposite velocity q=12
+PASS opposite link exists q=13
+PASS opposite involution q=13
+PASS opposite velocity q=13
+PASS opposite link exists q=14
+PASS opposite involution q=14
+PASS opposite velocity q=14
+PASS opposite link exists q=15
+PASS opposite involution q=15
+PASS opposite velocity q=15
+PASS opposite link exists q=16
+PASS opposite involution q=16
+PASS opposite velocity q=16
+PASS opposite link exists q=17
+PASS opposite involution q=17
+PASS opposite velocity q=17
+PASS opposite link exists q=18
+PASS opposite involution q=18
+PASS opposite velocity q=18
+PASS opposite link exists q=19
+PASS opposite involution q=19
+PASS opposite velocity q=19
+PASS opposite link exists q=20
+PASS opposite involution q=20
+PASS opposite velocity q=20
+PASS opposite link exists q=21
+PASS opposite involution q=21
+PASS opposite velocity q=21
+PASS opposite link exists q=22
+PASS opposite involution q=22
+PASS opposite velocity q=22
+PASS opposite link exists q=23
+PASS opposite involution q=23
+PASS opposite velocity q=23
+PASS opposite link exists q=24
+PASS opposite involution q=24
+PASS opposite velocity q=24
+PASS opposite link exists q=25
+PASS opposite involution q=25
+PASS opposite velocity q=25
+PASS opposite link exists q=26
+PASS opposite involution q=26
+PASS opposite velocity q=26
+PASS isotropic grad linear x
+PASS isotropic grad linear y
+PASS isotropic grad linear z
+PASS isotropic laplace quadratic
+PASS plane SDF sign
+PASS cylinder SDF
+PASS cylinder normal
+PASS sphere SDF
+PASS sphere normal
+PASS theta90 ghost leaves phi unchanged
+PASS acute wall ghost biases liquid side
+PASS obtuse wall ghost biases gas side
+PASS solid sentinel blocked by passive ghost in stencil
+PASS passive ghost does not overwrite solid phi
+PASS phase-field bulk gas mu is zero
+PASS phase-field bulk liquid mu is zero
+PASS phase-field bulk gradient is zero
+PASS continuous tanh profile closes TCLB mu formula
+PASS discrete Laplace resolves tanh interface
+PASS discrete tanh mu residual stays bounded
+PASS discrete tanh surface force residual stays bounded
+PASS Allen-Cahn source zeroth moment is zero
+PASS Allen-Cahn source first moment matches D3Q27 tensor
+PASS Allen-Cahn source vanishes in gas bulk
+PASS Allen-Cahn source vanishes in liquid bulk
+PASS Allen-Cahn source peaks at interface
+checks=108 failures=0
