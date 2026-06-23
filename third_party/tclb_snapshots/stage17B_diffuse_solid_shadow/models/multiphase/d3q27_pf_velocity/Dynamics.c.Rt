@@ -1,0 +1,2850 @@
+<?R
+    source("conf.R")
+    c_header();
+    source("lib/feq.R")
+    source("lib/boundary.R")
+	source("model.R")
+?>
+// 04/02/2017 - Model Developed: A. Fakhari, T. Mitchell
+//    Extension to 3D from:
+// """" A roust phase-field lattice Boltzmann model
+//		for immiscible fluids at high density ratios """"
+//
+// Maintainer: Travis-Mitchell @TravisMitchell
+
+// Major code updates:
+//		01/04/2017: Initial implementation
+//			    Plan is d3q27 for hydrodynamics
+//			    and d3q15 for interface dynamics
+//		08/04/2017: Verification and validation
+//				- Layered Poiseuille flow
+//				- Rayleigh Taylor up to water-air like properties and Re=3000
+//				- Validated with air Taylor bubble rising through olive oil
+//				  experiment by Bugg et al. (2002)
+//		14/08/2017: Look to improve readability by incorporating more R code
+//				- e.g. for MRT operations etc.
+//		12/12/2017: Model updated for inclusion in v6.2
+//				- MRT collision updated to moment space
+//				- Symmetry bounds removed, autosym added to options
+//				- BGK made option
+//		21/03/2018: Fix of solid contact
+//				- Previous issue with bulk solid regions i.e. solid cells
+//				  surrounded by all solid nodes
+//				- Check added for these cases to stop nan appearances
+//		28/04/2020: Added thermocapillary effects option
+//		07/04/2021: Code clean up
+//				- thermocapillary moved to the bottom of the file to separate
+//				- forces broken up into individual functions, set up so that additional
+//				  physics can be added simply if only a force needs to be altered
+// 				- edge case for wall phase calculation in which normal direction points
+//				  towards a solid node was found. Temporary fix by setting this to a
+//				  reasonable value (1) has been made - this is not ideal...
+//		xx/xx/2022: Extension of phase field to d3q27 option to move away from crappy q15 lattice.
+//		xx/xx/2022: Development of geometric wetting B.C. option as well as existing surface energy.
+//		xx/xx/2023: Code extension for wetting on curved boundaries.
+
+#include <math.h>
+#define PI 3.14159265
+#define cs2 0.33333333
+#ifdef OPTIONS_q27
+#define hPops 27
+#else
+#define hPops 15
+#endif
+
+<?R
+###################################################
+# Get functions to define outputs indicated in .R #
+###################################################
+?>
+CudaDeviceFunction real_t getRho(){
+	if ( IamWall || IamSolid) {
+		return 0.0;
+	} else {
+		real_t current_phase = getPhaseField();
+		return Density_l + (Density_h-Density_l) * (current_phase - PhaseField_l)/(PhaseField_h - PhaseField_l);
+	}
+}
+
+CudaDeviceFunction real_t getPhaseField(){
+	return PhaseF(0,0,0);
+}
+
+CudaDeviceFunction vector_t getU(){
+	vector_t u;
+	if ( IamWall || IamSolid ) {
+		u.x = 0.0; u.y = 0.0; u.z = 0.0;
+	} else {
+		u.x = U; u.y = V; u.z = W;
+	}
+	return u;
+}
+
+CudaDeviceFunction real_t getPstar(){
+	return <?R C(sum(g)) ?>;
+}
+
+CudaDeviceFunction real_t getP(){
+	real_t d = getRho();
+	real_t pstar = getPstar();
+	return pstar*d*cs2;
+}
+
+CudaDeviceFunction vector_t getNormal(){
+	vector_t n = {nw_x, nw_y, nw_z};
+	return n;
+}
+
+CudaDeviceFunction int stage13_phase_is_valid(real_t pf) {
+	if (!(pf == pf)) return 0;
+	real_t lo = PhaseField_l;
+	real_t hi = PhaseField_h;
+	if (lo > hi) {
+		real_t tmp = lo;
+		lo = hi;
+		hi = tmp;
+	}
+	real_t eps = PhaseValidityEps;
+	if (eps < 0.0) eps = 0.0;
+	return (pf >= lo - eps && pf <= hi + eps);
+}
+
+CudaDeviceFunction real_t stage13_select_phase_for_stencil(real_t pf, real_t is_boundary, real_t ghost, real_t center) {
+	// Stage 15B-pre safety cleanup: the compact-stencil WallGhost is the single
+	// main physics channel for the geometric contact-angle boundary (14A/14C-prime
+	// proved it healthy on the contact-line band). It must ALWAYS be consumed by
+	// the stencil when valid, independent of WallGradMode. The prior WallGradMode
+	// guard skipped ghost substitution when Layer1 (>=2) was active, which would
+	// let the already-disproven corrected-gradient write path bypass the compact
+	// ghost and silently change both gradPhi and lapPhi/mu. That path is now
+	// disabled in calcGradPhi(); the guard here is removed so the compact ghost
+	// is the sole source of the wall phase seen by the stencil.
+	if (is_boundary > 0.5 && stage13_phase_is_valid(ghost)) {
+		if (ReplayDiagnosticsMode > 0.5) PhaseStencilGhostUseCount = PhaseStencilGhostUseCount + 1.0;
+		return ghost;
+	}
+	if (stage13_phase_is_valid(pf)) return pf;
+	if (stage13_phase_is_valid(ghost)) {
+		if (ReplayDiagnosticsMode > 0.5) PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		return ghost;
+	}
+	if (stage13_phase_is_valid(center)) {
+		if (ReplayDiagnosticsMode > 0.5) PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		return center;
+	}
+	if (ReplayDiagnosticsMode > 0.5) {
+		PhaseStencilFallbackCount = PhaseStencilFallbackCount + 1.0;
+		PhaseStencilMidpointFallbackCount = PhaseStencilMidpointFallbackCount + 1.0;
+	}
+	return 0.5*(PhaseField_l + PhaseField_h);
+}
+
+#define STAGE13_PHASE_FOR_STENCIL(dx,dy,dz) \
+	stage13_select_phase_for_stencil(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), WallGhost(dx,dy,dz), PhaseF(0,0,0))
+
+CudaDeviceFunction real_t getForceIterResidual(){
+	return ForceIterResidual(0,0,0);
+}
+
+CudaDeviceFunction real_t getForceIterCount(){
+	return ForceIterCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getMassCorrectionApplied(){
+	return MassCorrectionApplied(0,0,0);
+}
+
+CudaDeviceFunction real_t getPhaseStencilGhostUseCount(){
+	return PhaseStencilGhostUseCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getPhaseStencilFallbackCount(){
+	return PhaseStencilFallbackCount(0,0,0);
+}
+
+CudaDeviceFunction real_t getPhaseStencilMidpointFallbackCount(){
+	return PhaseStencilMidpointFallbackCount(0,0,0);
+}
+
+CudaDeviceFunction int stage16_replay_diagnostics_active(){
+	return (ReplayDiagnosticsMode > 0.5 && !(IamWall || IamSolid));
+}
+
+CudaDeviceFunction int stage14_momentum_closure_diagnostics_active(){
+	return (stage16_replay_diagnostics_active() && MomentumClosureDiagnosticsMode > 0.5);
+}
+
+CudaDeviceFunction void stage16_zero_replay_diagnostics(){
+	ReplayPhaseConsumed = 0.0;
+	ReplayLapPhi = 0.0;
+	ReplayMu = 0.0;
+	ReplayGradPhiX = 0.0;
+	ReplayGradPhiY = 0.0;
+	ReplayGradPhiZ = 0.0;
+	ReplayFsurfX = 0.0;
+	ReplayFsurfY = 0.0;
+	ReplayFsurfZ = 0.0;
+	ReplayFpressureX = 0.0;
+	ReplayFpressureY = 0.0;
+	ReplayFpressureZ = 0.0;
+	ReplayFbodyX = 0.0;
+	ReplayFbodyY = 0.0;
+	ReplayFbodyZ = 0.0;
+	ReplayFmuX = 0.0;
+	ReplayFmuY = 0.0;
+	ReplayFmuZ = 0.0;
+	ReplayFtotalX = 0.0;
+	ReplayFtotalY = 0.0;
+	ReplayFtotalZ = 0.0;
+	ReplayRho = 0.0;
+	ReplayTau = 0.0;
+	ReplayPressureMoment = 0.0;
+	ReplayUPreForceX = 0.0;
+	ReplayUPreForceY = 0.0;
+	ReplayUPreForceZ = 0.0;
+	ReplayUPostForceX = 0.0;
+	ReplayUPostForceY = 0.0;
+	ReplayUPostForceZ = 0.0;
+	ReplayPhaseAdvVelocityX = 0.0;
+	ReplayPhaseAdvVelocityY = 0.0;
+	ReplayPhaseAdvVelocityZ = 0.0;
+	ReplayForceOverRhoX = 0.0;
+	ReplayForceOverRhoY = 0.0;
+	ReplayForceOverRhoZ = 0.0;
+	ReplayFmuIter1X = 0.0;
+	ReplayFmuIter1Y = 0.0;
+	ReplayFmuIter1Z = 0.0;
+	ReplayFtotalIter1X = 0.0;
+	ReplayFtotalIter1Y = 0.0;
+	ReplayFtotalIter1Z = 0.0;
+	ReplayUPostIter1X = 0.0;
+	ReplayUPostIter1Y = 0.0;
+	ReplayUPostIter1Z = 0.0;
+	ReplayNormalX = 0.0;
+	ReplayNormalY = 0.0;
+	ReplayNormalZ = 0.0;
+	ReplayStressXX = 0.0;
+	ReplayStressXY = 0.0;
+	ReplayStressXZ = 0.0;
+	ReplayStressYY = 0.0;
+	ReplayStressYZ = 0.0;
+	ReplayStressZZ = 0.0;
+	ReplayHPreSum = 0.0;
+	ReplayHPostSum = 0.0;
+	ReplayHeqSum = 0.0;
+	ReplayHPreMaxAbs = 0.0;
+	ReplayHPostMaxAbs = 0.0;
+	ReplayHeqMaxAbs = 0.0;
+	ReplayFphiSum = 0.0;
+	ReplayFphiMaxAbs = 0.0;
+	ReplayTmp1 = 0.0;
+	ReplayTmp1BoundedShadow = 0.0;
+	ReplayPhaseOutOfBoundsFlag = 0.0;
+	ReplayM0X = 0.0;
+	ReplayM0Y = 0.0;
+	ReplayM0Z = 0.0;
+	ReplayVelocityHalfForceX = 0.0;
+	ReplayVelocityHalfForceY = 0.0;
+	ReplayVelocityHalfForceZ = 0.0;
+	ReplayMFx = 0.0;
+	ReplayMFy = 0.0;
+	ReplayMFz = 0.0;
+	ReplayMomentumAfterGX = 0.0;
+	ReplayMomentumAfterGY = 0.0;
+	ReplayMomentumAfterGZ = 0.0;
+	ReplayMomentumDeltaGX = 0.0;
+	ReplayMomentumDeltaGY = 0.0;
+	ReplayMomentumDeltaGZ = 0.0;
+	ReplayPressureInput = 0.0;
+	ReplayPressureForceScale = 0.0;
+	ReplayPressurePhysicalInput = 0.0;
+	ReplayFpressureNoThirdX = 0.0;
+	ReplayFpressureNoThirdY = 0.0;
+	ReplayFpressureNoThirdZ = 0.0;
+	ReplayFpressurePhysicalX = 0.0;
+	ReplayFpressurePhysicalY = 0.0;
+	ReplayFpressurePhysicalZ = 0.0;
+	ReplayStressInputXX = 0.0;
+	ReplayStressInputXY = 0.0;
+	ReplayStressInputXZ = 0.0;
+	ReplayStressInputYY = 0.0;
+	ReplayStressInputYZ = 0.0;
+	ReplayStressInputZZ = 0.0;
+	ReplayStressIter1XX = 0.0;
+	ReplayStressIter1XY = 0.0;
+	ReplayStressIter1XZ = 0.0;
+	ReplayStressIter1YY = 0.0;
+	ReplayStressIter1YZ = 0.0;
+	ReplayStressIter1ZZ = 0.0;
+	ReplayStressPreForceShadowXX = 0.0;
+	ReplayStressPreForceShadowXY = 0.0;
+	ReplayStressPreForceShadowXZ = 0.0;
+	ReplayStressPreForceShadowYY = 0.0;
+	ReplayStressPreForceShadowYZ = 0.0;
+	ReplayStressPreForceShadowZZ = 0.0;
+	ReplayStressPostForceShadowXX = 0.0;
+	ReplayStressPostForceShadowXY = 0.0;
+	ReplayStressPostForceShadowXZ = 0.0;
+	ReplayStressPostForceShadowYY = 0.0;
+	ReplayStressPostForceShadowYZ = 0.0;
+	ReplayStressPostForceShadowZZ = 0.0;
+	ReplayFmuRawX = 0.0;
+	ReplayFmuRawY = 0.0;
+	ReplayFmuRawZ = 0.0;
+	ReplayFmuDeltaX = 0.0;
+	ReplayFmuDeltaY = 0.0;
+	ReplayFmuDeltaZ = 0.0;
+	ReplayTauUsed = 0.0;
+	ReplayRhoForForce = 0.0;
+	ReplayForceInjectionMode = 0.0;
+	ReplayPressureClosureMode = 0.0;
+	ReplayForceDensityClosureMode = 0.0;
+	ReplayForceFixedPointMode = 0.0;
+	ReplayForceRhoRaw = 0.0;
+	ReplayForceRhoEffective = 0.0;
+}
+
+CudaDeviceFunction real_t stage16_replay_scalar(real_t value){
+	if (stage16_replay_diagnostics_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t stage14_momentum_closure_scalar(real_t value){
+	if (stage14_momentum_closure_diagnostics_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getReplayPhaseConsumed(){
+	return stage16_replay_scalar(ReplayPhaseConsumed(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPhaseFromH(){
+	if (ReplayDiagnosticsMode > 0.5) return ReplayPhaseFromH(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getReplayLapPhi(){
+	return stage16_replay_scalar(ReplayLapPhi(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayMu(){
+	return stage16_replay_scalar(ReplayMu(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayGradPhi(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayGradPhiX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayGradPhiY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayGradPhiZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFsurf(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFsurfX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFsurfY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFsurfZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFpressure(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFpressureX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFpressureY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFpressureZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFbody(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFbodyX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFbodyY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFbodyZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFmu(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFmuX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFmuY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFmuZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFtotal(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFtotalX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFtotalY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFtotalZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayRho(){
+	return stage16_replay_scalar(ReplayRho(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayTau(){
+	return stage16_replay_scalar(ReplayTau(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressureMoment(){
+	return stage16_replay_scalar(ReplayPressureMoment(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayUPreForce(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayUPreForceX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayUPreForceY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayUPreForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayUPostForce(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayUPostForceX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayUPostForceY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayUPostForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayPhaseAdvVelocity(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayPhaseAdvVelocityX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayPhaseAdvVelocityY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayPhaseAdvVelocityZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayForceOverRho(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayForceOverRhoX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayForceOverRhoY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayForceOverRhoZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFmuIter1(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFmuIter1X(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFmuIter1Y(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFmuIter1Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFtotalIter1(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayFtotalIter1X(0,0,0));
+	out.y = stage16_replay_scalar(ReplayFtotalIter1Y(0,0,0));
+	out.z = stage16_replay_scalar(ReplayFtotalIter1Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayUPostIter1(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayUPostIter1X(0,0,0));
+	out.y = stage16_replay_scalar(ReplayUPostIter1Y(0,0,0));
+	out.z = stage16_replay_scalar(ReplayUPostIter1Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayNormal(){
+	vector_t out;
+	out.x = stage16_replay_scalar(ReplayNormalX(0,0,0));
+	out.y = stage16_replay_scalar(ReplayNormalY(0,0,0));
+	out.z = stage16_replay_scalar(ReplayNormalZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction void stage14_apply_momentum_force_mode(
+	real_t F_total[3],
+	real_t F_surf[3],
+	real_t F_pressure[3],
+	real_t F_body[3],
+	real_t F_mu[3])
+{
+	if (MomentumForceMode > 0.5 && MomentumForceMode < 1.5) {
+		F_total[0] -= F_mu[0];
+		F_total[1] -= F_mu[1];
+		F_total[2] -= F_mu[2];
+	} else if (MomentumForceMode > 1.5 && MomentumForceMode < 2.5) {
+		F_total[0] -= F_pressure[0];
+		F_total[1] -= F_pressure[1];
+		F_total[2] -= F_pressure[2];
+	} else if (MomentumForceMode > 2.5 && MomentumForceMode < 3.5) {
+		F_total[0] -= F_surf[0];
+		F_total[1] -= F_surf[1];
+		F_total[2] -= F_surf[2];
+	} else if (MomentumForceMode > 3.5 && MomentumForceMode < 4.5) {
+		F_total[0] = 0.0;
+		F_total[1] = 0.0;
+		F_total[2] = 0.0;
+	} else if (MomentumForceMode > 4.5 && MomentumForceMode < 5.5) {
+		F_total[0] = F_surf[0] + F_body[0];
+		F_total[1] = F_surf[1] + F_body[1];
+		F_total[2] = F_surf[2] + F_body[2];
+	}
+}
+
+CudaDeviceFunction real_t stage14_pressure_force_input(real_t pressure_moment, real_t rho) {
+	if (PressureClosureMode > 0.5 && PressureClosureMode < 1.5) {
+		return pressure_moment * rho * cs2;
+	}
+	if (PressureClosureMode > 1.5 && PressureClosureMode < 2.5) {
+		return pressure_moment - PressureClosureReference;
+	}
+	return pressure_moment;
+}
+
+CudaDeviceFunction real_t stage14_effective_force_rho(real_t rho) {
+	real_t rho_eff = rho;
+	if (ForceDensityClosureMode > 0.5 && ForceDensityClosureMode < 1.5) {
+		real_t rho_floor = ForceDensityRhoFloor;
+		if (rho_floor <= 0.0) rho_floor = Density_l;
+		if (rho_floor < 1.0e-30) rho_floor = 1.0e-30;
+		if (rho_eff < rho_floor) rho_eff = rho_floor;
+	}
+	return rho_eff;
+}
+
+CudaDeviceFunction real_t stage14_inv_force_rho(real_t rho) {
+	real_t rho_eff = stage14_effective_force_rho(rho);
+	return 1.0 / rho_eff;
+}
+
+CudaDeviceFunction real_t stage17b_dyn_signed_distance_current()
+{
+	if (AnalyticWetting < 0.5 || AnalyticSolidType < 0.5) return 1.0e30;
+	if (AnalyticSolidType < 1.5) {
+		real_t coord = (AnalyticSolidAxis < 0.5) ? X
+		             : (AnalyticSolidAxis < 1.5) ? Y : Z;
+		return coord - AnalyticSolidPlaneOffset;
+	}
+	if (AnalyticSolidType < 2.5) {
+		real_t dx = X - AnalyticSolidCenterX;
+		real_t dy = Y - AnalyticSolidCenterY;
+		real_t dz = Z - AnalyticSolidCenterZ;
+		real_t a = 0.0;
+		real_t b = 0.0;
+		if (AnalyticSolidAxis < 0.5)        { a = dy; b = dz; }
+		else if (AnalyticSolidAxis < 1.5)   { a = dx; b = dz; }
+		else                                { a = dx; b = dy; }
+		return sqrt(a*a + b*b) - AnalyticSolidRadius;
+	}
+	real_t dx = X - AnalyticSolidCenterX;
+	real_t dy = Y - AnalyticSolidCenterY;
+	real_t dz = Z - AnalyticSolidCenterZ;
+	return sqrt(dx*dx + dy*dy + dz*dz) - AnalyticSolidRadius;
+}
+
+CudaDeviceFunction void stage17b_reset_near_wall_force_shadow()
+{
+	NearWallForceMag = 0.0;
+	NearWallGradPhiMag = 0.0;
+	NearWallForceOverRhoShadow = 0.0;
+}
+
+CudaDeviceFunction void stage17b_write_near_wall_force_shadow(vector_t gradPhi, real_t rho_for_force, real_t F_total[3])
+{
+	stage17b_reset_near_wall_force_shadow();
+	if (Stage17BDiffuseSolidMode < 0.5 || AnalyticWetting < 0.5 || AnalyticSolidType < 1.5) return;
+	real_t sd = stage17b_dyn_signed_distance_current();
+	if (sd < 0.0 || sd > Stage17BWriteBand) return;
+	real_t fmag = sqrt(F_total[0]*F_total[0] + F_total[1]*F_total[1] + F_total[2]*F_total[2]);
+	real_t gmag = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+	NearWallForceMag = fmag;
+	NearWallGradPhiMag = gmag;
+	NearWallForceOverRhoShadow = fmag / (rho_for_force + 1.0e-30);
+}
+
+CudaDeviceFunction real_t getNearWallForceMag(){
+	return NearWallForceMag(0,0,0);
+}
+
+CudaDeviceFunction real_t getNearWallGradPhiMag(){
+	return NearWallGradPhiMag(0,0,0);
+}
+
+CudaDeviceFunction real_t getNearWallForceOverRhoShadow(){
+	return NearWallForceOverRhoShadow(0,0,0);
+}
+
+CudaDeviceFunction real_t stage14_max_abs2(real_t a, real_t b) {
+	real_t aa = fabs(a);
+	real_t bb = fabs(b);
+	return (aa > bb) ? aa : bb;
+}
+
+CudaDeviceFunction int stage14_force_iter_limit_from_mode() {
+	if (ForceFixedPointMode > 1.5 && ForceFixedPointMode < 2.5) {
+		return 1;
+	}
+	if (ForceFixedPointMode > 0.5 && ForceFixedPointMode < 1.5) {
+		int limit = ForceFixedMaxIter;
+		if (limit < 1) limit = 1;
+		return limit;
+	}
+	int limit = force_fixed_iterator;
+	if (ForceFixedTol > 0.0) {
+		limit = ForceFixedMaxIter;
+	}
+	if (limit < 1) limit = 1;
+	return limit;
+}
+
+CudaDeviceFunction real_t getReplayStressXX(){
+	return stage16_replay_scalar(ReplayStressXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressXY(){
+	return stage16_replay_scalar(ReplayStressXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressXZ(){
+	return stage16_replay_scalar(ReplayStressXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressYY(){
+	return stage16_replay_scalar(ReplayStressYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressYZ(){
+	return stage16_replay_scalar(ReplayStressYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressZZ(){
+	return stage16_replay_scalar(ReplayStressZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPreSum(){
+	return stage16_replay_scalar(ReplayHPreSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPostSum(){
+	return stage16_replay_scalar(ReplayHPostSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHeqSum(){
+	return stage16_replay_scalar(ReplayHeqSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPreMaxAbs(){
+	return stage16_replay_scalar(ReplayHPreMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHPostMaxAbs(){
+	return stage16_replay_scalar(ReplayHPostMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayHeqMaxAbs(){
+	return stage16_replay_scalar(ReplayHeqMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayFphiSum(){
+	return stage16_replay_scalar(ReplayFphiSum(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayFphiMaxAbs(){
+	return stage16_replay_scalar(ReplayFphiMaxAbs(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayTmp1(){
+	return stage16_replay_scalar(ReplayTmp1(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayTmp1BoundedShadow(){
+	return stage16_replay_scalar(ReplayTmp1BoundedShadow(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPhaseOutOfBoundsFlag(){
+	return stage16_replay_scalar(ReplayPhaseOutOfBoundsFlag(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayM0(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayM0X(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayM0Y(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayM0Z(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayVelocityHalfForce(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayVelocityHalfForceX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayVelocityHalfForceY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayVelocityHalfForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayMF(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayMFx(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayMFy(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayMFz(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayMomentumAfterG(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayMomentumAfterGX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayMomentumAfterGY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayMomentumAfterGZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayMomentumDeltaG(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayMomentumDeltaGX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayMomentumDeltaGY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayMomentumDeltaGZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayPressureInput(){
+	return stage14_momentum_closure_scalar(ReplayPressureInput(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressureForceScale(){
+	return stage14_momentum_closure_scalar(ReplayPressureForceScale(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressurePhysicalInput(){
+	return stage14_momentum_closure_scalar(ReplayPressurePhysicalInput(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayFpressureNoThird(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFpressureNoThirdX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFpressureNoThirdY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFpressureNoThirdZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFpressurePhysical(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFpressurePhysicalX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFpressurePhysicalY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFpressurePhysicalZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayStressInputXX(){
+	return stage14_momentum_closure_scalar(ReplayStressInputXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputXY(){
+	return stage14_momentum_closure_scalar(ReplayStressInputXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputXZ(){
+	return stage14_momentum_closure_scalar(ReplayStressInputXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputYY(){
+	return stage14_momentum_closure_scalar(ReplayStressInputYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputYZ(){
+	return stage14_momentum_closure_scalar(ReplayStressInputYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressInputZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressInputZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1XX(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1XX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1XY(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1XY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1XZ(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1XZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1YY(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1YY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1YZ(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1YZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressIter1ZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressIter1ZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowXX(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowXY(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowXZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowYY(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowYZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPreForceShadowZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPreForceShadowZZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowXX(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowXX(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowXY(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowXY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowXZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowXZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowYY(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowYY(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowYZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowYZ(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayStressPostForceShadowZZ(){
+	return stage14_momentum_closure_scalar(ReplayStressPostForceShadowZZ(0,0,0));
+}
+
+CudaDeviceFunction vector_t getReplayFmuRaw(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFmuRawX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFmuRawY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFmuRawZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getReplayFmuDelta(){
+	vector_t out;
+	out.x = stage14_momentum_closure_scalar(ReplayFmuDeltaX(0,0,0));
+	out.y = stage14_momentum_closure_scalar(ReplayFmuDeltaY(0,0,0));
+	out.z = stage14_momentum_closure_scalar(ReplayFmuDeltaZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getReplayTauUsed(){
+	return stage14_momentum_closure_scalar(ReplayTauUsed(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayRhoForForce(){
+	return stage14_momentum_closure_scalar(ReplayRhoForForce(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayForceInjectionMode(){
+	return stage14_momentum_closure_scalar(ReplayForceInjectionMode(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayPressureClosureMode(){
+	return stage14_momentum_closure_scalar(ReplayPressureClosureMode(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayForceDensityClosureMode(){
+	return stage14_momentum_closure_scalar(ReplayForceDensityClosureMode(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayForceFixedPointMode(){
+	return stage14_momentum_closure_scalar(ReplayForceFixedPointMode(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayForceRhoRaw(){
+	return stage14_momentum_closure_scalar(ReplayForceRhoRaw(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayForceRhoEffective(){
+	return stage14_momentum_closure_scalar(ReplayForceRhoEffective(0,0,0));
+}
+
+CudaDeviceFunction real_t getWallGradDeltaMag(){
+	return WallGradDeltaMag(0,0,0);
+}
+CudaDeviceFunction real_t getWallGradThetaApp(){
+	return WallGradThetaApp(0,0,0);
+}
+CudaDeviceFunction real_t getWallMuCandidate(){
+	return WallMuCandidate(0,0,0);
+}
+
+// ================================================================
+// Layer 3 (DynamicCL, Stage 15B): residual contact-line shadow diagnostics
+// ================================================================
+// Getters for the DynamicCL diagnostic fields. Each AddQuantity above needs a
+// get<Name>() device function returning the cell-field value.
+CudaDeviceFunction real_t getDynamicCLActive(){ return DynamicCLActive(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLIndicator(){ return DynamicCLIndicator(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLCosApp(){ return DynamicCLCosApp(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLThetaApp(){ return DynamicCLThetaApp(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLCosEq(){ return DynamicCLCosEq(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLCosResidual(){ return DynamicCLCosResidual(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateX(){ return DynamicCLForceCandidateX(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateY(){ return DynamicCLForceCandidateY(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateZ(){ return DynamicCLForceCandidateZ(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLForceCandidateMag(){ return DynamicCLForceCandidateMag(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLTangentialX(){ return DynamicCLTangentialX(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLTangentialY(){ return DynamicCLTangentialY(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLTangentialZ(){ return DynamicCLTangentialZ(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallNormalX(){ return DynamicCLWallNormalX(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallNormalY(){ return DynamicCLWallNormalY(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallNormalZ(){ return DynamicCLWallNormalZ(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLRejectedReason(){ return DynamicCLRejectedReason(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLThetaEq(){ return DynamicCLThetaEq(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallContextFound(){ return DynamicCLWallContextFound(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLBlockedReason(){ return DynamicCLBlockedReason(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallDx(){ return DynamicCLWallDx(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallDy(){ return DynamicCLWallDy(0,0,0); }
+CudaDeviceFunction real_t getDynamicCLWallDz(){ return DynamicCLWallDz(0,0,0); }
+
+// ----------------------------------------------------------------
+// Stage 15B: compute the contact-line residual R_theta and a candidate
+// force F_CL = DynamicCLForceSign * DynamicCLCoeff * sigma/IntWidth * R_theta
+//            * I_CL * t_CL.
+// This is SHADOW ONLY in 15B: it writes the DynamicCL* diagnostic fields and
+// returns the candidate force vector, but the caller must NOT add it to
+// F_total unless DynamicCLMode >= 2 (reserved for 15C).
+//
+// R_theta = cos(theta_eq) - cos(theta_app) vanishes at equilibrium by
+// construction. theta_app is read from the interface normal n_i = gradPhi/|g|
+// vs the analytic wall normal n_w. theta_eq is the zone-resolved contact
+// angle taken from the adjacent WETTING wall node's LocalRadAngle (NOT this
+// fluid node's own zonal radAngle, which reads the global 90 deg default off
+// the wetting-wall zone — that produced the cos_eq=0 artifact). The sign
+// convention DynamicCLCosSign is calibrated by the equilibrium 30/90/150
+// cases (the value that makes cos_app -> cos(theta_eq) there).
+//
+// Rejected-reason codes (DynamicCLRejectedReason / legacy):
+//   0 accepted, 1 wall/solid node, 2 no adjacent wetting wall, 3 invalid/too-far
+//   wall normal, 4 q out of contact-line band, 5 |gradPhi| too small,
+//   6 |R_theta| below DynamicCLCosTol.
+// Blocked-reason codes (DynamicCLBlockedReason / 15B, more granular):
+//   0 accepted or DynamicCLMode off, 1 wall/solid, 2 no adjacent wetting wall,
+//   3 invalid/too-far wall normal, 5 q out of band, 6 |gradPhi| too small,
+//   7 |R_theta| below DynamicCLCosTol.
+// ----------------------------------------------------------------
+CudaDeviceFunction void calcDynamicCLShadow(vector_t gradPhi, real_t C,
+	real_t *fx, real_t *fy, real_t *fz)
+{
+	// Defaults: zero candidate + zero diagnostics.
+	*fx = 0.0; *fy = 0.0; *fz = 0.0;
+	DynamicCLActive = 0.0;
+	DynamicCLIndicator = 0.0;
+	DynamicCLCosApp = 0.0;
+	DynamicCLThetaApp = 0.0;
+	DynamicCLCosEq = 0.0;
+	DynamicCLCosResidual = 0.0;
+	DynamicCLForceCandidateX = 0.0;
+	DynamicCLForceCandidateY = 0.0;
+	DynamicCLForceCandidateZ = 0.0;
+	DynamicCLForceCandidateMag = 0.0;
+	DynamicCLTangentialX = 0.0;
+	DynamicCLTangentialY = 0.0;
+	DynamicCLTangentialZ = 0.0;
+	DynamicCLWallNormalX = 0.0;
+	DynamicCLWallNormalY = 0.0;
+	DynamicCLWallNormalZ = 0.0;
+	DynamicCLRejectedReason = 0.0;
+	DynamicCLThetaEq = 0.0;
+	DynamicCLWallContextFound = 0.0;
+	DynamicCLBlockedReason = 0.0;
+	DynamicCLWallDx = 0.0;
+	DynamicCLWallDy = 0.0;
+	DynamicCLWallDz = 0.0;
+
+	if (DynamicCLMode < 0.5) return;
+
+	if (IamWall || IamSolid) { DynamicCLRejectedReason = 1.0; DynamicCLBlockedReason = 1.0; return; }
+
+	// Stage 15B fix: require an adjacent WETTING wall (AnalyticFlag>0 with a
+	// populated LocalRadAngle), not merely "any boundary neighbour". This
+	// rejects OuterDomain walls (AnalyticFlag=0) which otherwise leak the
+	// contact-line force band onto the outer-domain skin. The coarse
+	// stage13_is_fluid_boundary_node() gate is intentionally NOT used here.
+	real_t theta_eq;
+	int wdx = 0, wdy = 0, wdz = 0;
+	if (!stage15_find_wetting_wall_context(&theta_eq, &wdx, &wdy, &wdz)) {
+		DynamicCLRejectedReason = 2.0;          // legacy code: not a contact-line node
+		DynamicCLBlockedReason = 2.0;           // 15B: no adjacent wetting wall
+		return;
+	}
+	DynamicCLWallContextFound = 1.0;
+	DynamicCLWallDx = (real_t) wdx;
+	DynamicCLWallDy = (real_t) wdy;
+	DynamicCLWallDz = (real_t) wdz;
+
+	real_t h_dist;
+	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-12) { DynamicCLRejectedReason = 3.0; DynamicCLBlockedReason = 3.0; return; }
+	if (fabs(h_dist) > 2.0) { DynamicCLRejectedReason = 3.0; DynamicCLBlockedReason = 3.0; return; }
+	n_w.x /= nmag; n_w.y /= nmag; n_w.z /= nmag;
+	DynamicCLWallNormalX = n_w.x;
+	DynamicCLWallNormalY = n_w.y;
+	DynamicCLWallNormalZ = n_w.z;
+
+	real_t pf_scale = PhaseField_h - PhaseField_l;
+	if (fabs(pf_scale) < 1.0e-30) { DynamicCLRejectedReason = 4.0; DynamicCLBlockedReason = 4.0; return; }
+	real_t q = (C - PhaseField_l) / pf_scale;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+	// Contact-line band gate (Step D): exclude pure liquid / pure gas. This
+	// alone removes a large class of spurious activations on near-wall bulk
+	// nodes that happened to pass the old boundary-proximity gate.
+	if (q < DynamicCLEpsQ || q > 1.0 - DynamicCLEpsQ) { DynamicCLRejectedReason = 4.0; DynamicCLBlockedReason = 5.0; return; }
+
+	real_t gmag = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+	if (gmag < DynamicCLGradMin) { DynamicCLRejectedReason = 5.0; DynamicCLBlockedReason = 6.0; return; }
+
+	vector_t n_i;
+	n_i.x = gradPhi.x / gmag;
+	n_i.y = gradPhi.y / gmag;
+	n_i.z = gradPhi.z / gmag;
+
+	real_t dot_nw = n_i.x*n_w.x + n_i.y*n_w.y + n_i.z*n_w.z;
+	real_t cos_app = DynamicCLCosSign * dot_nw;
+	if (cos_app > 1.0) cos_app = 1.0;
+	if (cos_app < -1.0) cos_app = -1.0;
+	// Stage 15B fix: theta_eq comes from the adjacent wetting wall's zone-
+	// resolved LocalRadAngle (captured above), NOT from this fluid node's
+	// own zonal radAngle (which reads the global 90 deg default off the
+	// wetting-wall zone and produced the cos_eq=0 artifact).
+	real_t cos_eq = cos(theta_eq);
+	DynamicCLThetaEq = theta_eq;
+	real_t R_theta = cos_eq - cos_app;
+	DynamicCLCosApp = cos_app;
+	DynamicCLCosEq = cos_eq;
+	DynamicCLCosResidual = R_theta;
+	// theta_app in degrees for diagnostics
+	DynamicCLThetaApp = acos(cos_app) * 180.0 / 3.14159265358979323846;
+
+	if (fabs(R_theta) < DynamicCLCosTol) { DynamicCLRejectedReason = 6.0; DynamicCLBlockedReason = 7.0; return; }
+
+	// Wall-tangential direction of the interface normal projection:
+	// t_CL = n_i - (n_i . n_w) n_w, normalized.
+	vector_t t;
+	t.x = n_i.x - dot_nw*n_w.x;
+	t.y = n_i.y - dot_nw*n_w.y;
+	t.z = n_i.z - dot_nw*n_w.z;
+	real_t tmag = sqrt(t.x*t.x + t.y*t.y + t.z*t.z);
+	if (tmag < 1.0e-14) { DynamicCLRejectedReason = 5.0; return; }
+	t.x /= tmag; t.y /= tmag; t.z /= tmag;
+	DynamicCLTangentialX = t.x;
+	DynamicCLTangentialY = t.y;
+	DynamicCLTangentialZ = t.z;
+
+	real_t I_cl = 4.0 * q * (1.0 - q);
+	DynamicCLIndicator = I_cl;
+
+	// Candidate force magnitude (capped). NOT added to F_total in 15B.
+	real_t scale = sigma / IntWidth;
+	real_t mag = DynamicCLForceSign * DynamicCLCoeff * scale * R_theta * I_cl;
+	real_t cap = DynamicCLForceCap * scale;
+	if (mag >  cap) mag =  cap;
+	if (mag < -cap) mag = -cap;
+
+	*fx = mag * t.x;
+	*fy = mag * t.y;
+	*fz = mag * t.z;
+	DynamicCLForceCandidateX = *fx;
+	DynamicCLForceCandidateY = *fy;
+	DynamicCLForceCandidateZ = *fz;
+	DynamicCLForceCandidateMag = fabs(mag);
+	DynamicCLActive = 1.0;  // accepted: node is in contact-line band with usable R_theta
+}
+
+// ================================================================
+// Layer 1 (Wang 2025): boundary-fluid corrected gradient
+// ================================================================
+
+// Check if this node is a fluid node adjacent to a boundary/wall node.
+CudaDeviceFunction int stage13_is_fluid_boundary_node()
+{
+	if (IamWall || IamSolid) return 0;
+	// Check 6 face neighbours for IsBoundary
+	if (IsBoundary(1,0,0) > 0.5) return 1;
+	if (IsBoundary(-1,0,0) > 0.5) return 1;
+	if (IsBoundary(0,1,0) > 0.5) return 1;
+	if (IsBoundary(0,-1,0) > 0.5) return 1;
+	if (IsBoundary(0,0,1) > 0.5) return 1;
+	if (IsBoundary(0,0,-1) > 0.5) return 1;
+	return 0;
+}
+
+// ================================================================
+// Stage 15B fix: wetting-wall context lookup.
+//
+// Problem being fixed: calcDynamicCLShadow runs on FLUID nodes, but
+// `radAngle` is a zonal setting. The flat-wall case only sets the target
+// angle in the FlatLowerY wall zone (y=0); fluid nodes (y>=1) read the
+// global default (90 deg), so cos_eq = cos(radAngle) came out as 0 for the
+// t30 case. The compact-ghost path is correct because it runs on the wall
+// node itself and stores the zone-resolved angle into LocalRadAngle.
+//
+// This helper recovers the correct theta_eq for a fluid node by reading the
+// LocalRadAngle stored on an adjacent WETTING wall node (one that has
+// AnalyticFlag>0, i.e. close to the analytic solid surface). OuterDomain
+// walls have AnalyticFlag=0 (they are far from the analytic y=0 plane), so
+// they are correctly rejected here even though they are also boundary nodes.
+//
+// IMPLEMENTATION NOTE: TCLB's IsBoundary/AnalyticFlag/LocalRadAngle field
+// accesses expand to LatticeAccess<range_int<...>> template parameters and
+// therefore require COMPILE-TIME CONSTANT offsets. A runtime loop or a
+// helper function taking int (dx,dy,dz) parameters CANNOT be instantiated
+// (nvcc: "no instance of overloaded load_* matches the argument list /
+// expression must have a constant value"). So the 6 face offsets are written
+// out as literals here, and the three tests are inlined per offset rather
+// than factored into a variable-argument helper. This is sufficient for the
+// flat-wall contact line (reached through a face neighbour). Curved-surface
+// compact-stencil support, if ever needed, must enumerate any extra offsets
+// as literals too, not via a loop.
+//
+// Returns 1 if a usable wetting-wall neighbour was found, in which case
+// *out_theta receives its LocalRadAngle; *out_dx/dy/dz receive its offset.
+// Returns 0 otherwise (caller must block the node, NOT fall back to the
+// local zonal radAngle, which would silently reintroduce the 90 deg bug).
+// ================================================================
+#define STAGE15_CHECK_FACE(OX,OY,OZ) \
+	if (IsBoundary(OX,OY,OZ) > 0.5 && AnalyticFlag(OX,OY,OZ) > 0.5) { \
+		real_t theta_ = LocalRadAngle(OX,OY,OZ); \
+		if (theta_ > 1.0e-6 && theta_ < 3.14159265358979 - 1.0e-6) { \
+			*out_theta = theta_; *out_dx = OX; *out_dy = OY; *out_dz = OZ; return 1; \
+		} \
+	}
+
+CudaDeviceFunction int stage15_find_wetting_wall_context(
+	real_t *out_theta, int *out_dx, int *out_dy, int *out_dz)
+{
+	STAGE15_CHECK_FACE( 1, 0, 0)
+	STAGE15_CHECK_FACE(-1, 0, 0)
+	STAGE15_CHECK_FACE( 0, 1, 0)
+	STAGE15_CHECK_FACE( 0,-1, 0)
+	STAGE15_CHECK_FACE( 0, 0, 1)
+	STAGE15_CHECK_FACE( 0, 0,-1)
+	return 0;
+}
+#undef STAGE15_CHECK_FACE
+
+// Wang 2025 corrected gradient: replace the normal component of gradPhi
+// on boundary fluid nodes with the value required by the equilibrium
+// contact-angle relation, while preserving the tangential component.
+CudaDeviceFunction vector_t calcGradPhiBoundaryCorrected(vector_t g_bulk)
+{
+	vector_t g = g_bulk;
+	WallGradDeltaMag = 0.0;
+	WallGradThetaApp = 0.0;
+
+	if (WallGradMode < 0.5) return g;
+	if (!stage13_is_fluid_boundary_node()) return g;
+
+	// Obtain analytic wall normal and distance at this fluid node.
+	real_t h_dist;
+	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-12) return g;
+	// Only correct nodes close to the wall.
+	real_t d_abs = fabs(h_dist);
+	if (d_abs > 2.0) return g;
+
+	// Normalise wall normal.
+	n_w.x /= nmag; n_w.y /= nmag; n_w.z /= nmag;
+
+	// Normalised phase q in [0,1].
+	real_t pf = PhaseF(0,0,0);
+	real_t pf_scale = PhaseField_h - PhaseField_l;
+	if (fabs(pf_scale) < 1.0e-30) return g;
+	real_t q = (pf - PhaseField_l) / pf_scale;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+
+	// Skip pure-phase regions.
+	if (q < WallGradContactLineEps || q > 1.0 - WallGradContactLineEps) return g;
+
+	// Decompose bulk gradient into tangential and normal.
+	real_t dotgn = g.x*n_w.x + g.y*n_w.y + g.z*n_w.z;
+	vector_t g_t;
+	g_t.x = g.x - dotgn*n_w.x;
+	g_t.y = g.y - dotgn*n_w.y;
+	g_t.z = g.z - dotgn*n_w.z;
+
+	// Target normal gradient from equilibrium contact-angle relation.
+	// n_w . grad(q) = -(4/W) cos(theta) q(1-q)
+	real_t A_wet = 4.0 / IntWidth;
+	real_t gn_target_q = -WallGradContactSign * A_wet * cos(radAngle) * q * (1.0 - q);
+	real_t gn_target_pf = gn_target_q * pf_scale;
+
+	// Apparent contact angle for diagnostics.
+	real_t gmag = sqrt(g.x*g.x + g.y*g.y + g.z*g.z);
+	if (gmag > 1.0e-14) {
+		real_t cos_app = -(g.x*n_w.x + g.y*n_w.y + g.z*n_w.z) / gmag;
+		if (cos_app < -1.0) cos_app = -1.0;
+		if (cos_app > 1.0) cos_app = 1.0;
+		WallGradThetaApp = acos(cos_app) * 180.0 / 3.14159265358979323846;
+	}
+
+	// Assemble corrected gradient.
+	vector_t gc;
+	gc.x = g_t.x + gn_target_pf * n_w.x;
+	gc.y = g_t.y + gn_target_pf * n_w.y;
+	gc.z = g_t.z + gn_target_pf * n_w.z;
+
+	// Magnitude cap to prevent over-driving at low angles.
+	real_t magc = sqrt(gc.x*gc.x + gc.y*gc.y + gc.z*gc.z);
+	real_t ref_mag = gmag;
+	if (fabs(pf_scale/IntWidth) > ref_mag) ref_mag = fabs(pf_scale/IntWidth);
+	real_t cap = WallGradCapFactor * ref_mag;
+	if (magc > cap && magc > 1.0e-14) {
+		gc.x *= cap/magc; gc.y *= cap/magc; gc.z *= cap/magc;
+	}
+
+	// Record delta for diagnostics.
+	real_t dx = gc.x - g.x, dy = gc.y - g.y, dz = gc.z - g.z;
+	WallGradDeltaMag = sqrt(dx*dx + dy*dy + dz*dz);
+
+	return gc;
+}
+
+// ================================================================
+// Layer 2 (Ju 2024): wall free-energy chemical potential source
+// ================================================================
+
+// Compute mu_wall = -a_v * sqrt(2*kappa*beta) * cos(theta) * q*(1-q)
+// where sqrt(2*kappa*beta) = 6*sigma in the current TCLB convention.
+CudaDeviceFunction real_t calcWallMuSource(real_t C)
+{
+	if (WallMuMode < 0.5) return 0.0;
+	if (IamWall || IamSolid) return 0.0;
+	if (!stage13_is_fluid_boundary_node()) return 0.0;
+
+	real_t h_dist;
+	vector_t n_w = stage9_analytic_wall_normal_and_distance(&h_dist);
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag < 1.0e-12) return 0.0;
+	if (fabs(h_dist) > 2.0) return 0.0;
+
+	real_t pf_scale = PhaseField_h - PhaseField_l;
+	if (fabs(pf_scale) < 1.0e-30) return 0.0;
+	real_t q = (C - PhaseField_l) / pf_scale;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+	if (q < WallMuContactLineEps || q > 1.0 - WallMuContactLineEps) return 0.0;
+
+	// Effective surface area a_v: approximate with IsBoundary gradient magnitude.
+	real_t av = 0.0;
+	av += fabs(IsBoundary(1,0,0) - IsBoundary(-1,0,0));
+	av += fabs(IsBoundary(0,1,0) - IsBoundary(0,-1,0));
+	av += fabs(IsBoundary(0,0,1) - IsBoundary(0,0,-1));
+	av *= 0.5;  // first-order difference
+	real_t av_cap = 2.0 / IntWidth;
+	if (av > av_cap) av = av_cap;
+	if (av < 1.0e-14) return 0.0;
+
+	// mu_wall = -a_v * 6*sigma * cos(theta) * q*(1-q) / pf_scale
+	real_t mu_wall = -WallMuScale * av * 6.0 * sigma * cos(radAngle) * q * (1.0 - q);
+	mu_wall /= pf_scale;
+
+	return mu_wall;
+}
+
+<?R
+###################################################
+# Miscellaneous helper functions used in the code #
+###################################################
+?>
+/*
+	This function uses isotropic gradient stencils to return
+	the gradient of the phase field variable \phi.
+*/
+CudaDeviceFunction vector_t calcGradPhiRaw()
+{
+	vector_t gradPhi = {0.0,0.0,0.0};
+	#ifdef OPTIONS_OutFlow
+		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
+			gradPhi.x = 0.0;
+			gradPhi.y = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,1,0) - STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ 2.0*(STAGE13_PHASE_FOR_STENCIL(-1,1,1) - STAGE13_PHASE_FOR_STENCIL(-1,-1,1)
+						+ STAGE13_PHASE_FOR_STENCIL(-1,1,-1)- STAGE13_PHASE_FOR_STENCIL(-1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(-1,1,0) - STAGE13_PHASE_FOR_STENCIL(-1,-1,0))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) - STAGE13_PHASE_FOR_STENCIL(0,-1,1) + STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
+			gradPhi.z = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,0,1) - STAGE13_PHASE_FOR_STENCIL(0,0,-1))
+						+ 2.0*( STAGE13_PHASE_FOR_STENCIL(-1,1,1) + STAGE13_PHASE_FOR_STENCIL(-1,-1,1)
+						-  STAGE13_PHASE_FOR_STENCIL(-1,1,-1)- STAGE13_PHASE_FOR_STENCIL(-1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(-1,0,1) - STAGE13_PHASE_FOR_STENCIL(-1,0,-1))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) + STAGE13_PHASE_FOR_STENCIL(0,-1,1) - STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
+		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
+			gradPhi.x = 0.0;
+			gradPhi.y = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,1,0) - STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ 2.0*(STAGE13_PHASE_FOR_STENCIL(1,1,1) - STAGE13_PHASE_FOR_STENCIL(1,-1,1)
+						+ STAGE13_PHASE_FOR_STENCIL(1,1,-1)- STAGE13_PHASE_FOR_STENCIL(1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(1,1,0) - STAGE13_PHASE_FOR_STENCIL(1,-1,0))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) - STAGE13_PHASE_FOR_STENCIL(0,-1,1) + STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
+			gradPhi.z = 16.00 * (STAGE13_PHASE_FOR_STENCIL(0,0,1) - STAGE13_PHASE_FOR_STENCIL(0,0,-1))
+						+ 2.0*( STAGE13_PHASE_FOR_STENCIL(1,1,1) + STAGE13_PHASE_FOR_STENCIL(1,-1,1)
+						-  STAGE13_PHASE_FOR_STENCIL(1,1,-1)- STAGE13_PHASE_FOR_STENCIL(1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL(1,0,1) - STAGE13_PHASE_FOR_STENCIL(1,0,-1))
+							+  STAGE13_PHASE_FOR_STENCIL(0,1,1) + STAGE13_PHASE_FOR_STENCIL(0,-1,1) - STAGE13_PHASE_FOR_STENCIL(0,1,-1) - STAGE13_PHASE_FOR_STENCIL(0,-1,-1));
+		} else if ((NodeType & NODE_BOUNDARY)) {
+			gradPhi.x = 0.0;gradPhi.y = 0.0;gradPhi.z = 0.0;
+		} else {
+			<?R
+				IsotropicGrad('gradPhi', 'STAGE13_PHASE_FOR_STENCIL')
+			?>
+		}
+	#else
+		    <?R
+			IsotropicGrad('gradPhi', 'STAGE13_PHASE_FOR_STENCIL')
+		    ?>
+	#endif
+	return gradPhi;
+}
+
+// Layer 1 wrapper: apply Wang 2025 boundary-fluid corrected gradient.
+CudaDeviceFunction vector_t calcGradPhi()
+{
+	vector_t g = calcGradPhiRaw();
+	if (WallGradMode > 0.5) {
+		vector_t gc = calcGradPhiBoundaryCorrected(g);
+		// Stage 15B-pre safety cleanup: WallGradMode is now DIAGNOSTIC ONLY.
+		// calcGradPhiBoundaryCorrected still updates its diagnostic fields
+		// (WallGradDeltaMag, WallGradThetaApp) inside the helper, but the
+		// corrected gradient gc is NEVER returned to the dynamics. Returning gc
+		// (the old WallGradMode>=2 write path) replaces gradPhi with the static
+		// equilibrium contact-angle gradient and erases the non-equilibrium
+		// residual that drives contact-line motion; this was disproven by the
+		// decoupled direction tests. The compact ghost (consumed in
+		// stage13_select_phase_for_stencil) remains the sole wall-phase source.
+	}
+	return g;
+}
+
+/*
+	This function is run as the second stage of each action and fills
+	the iteration buffer with updated values of PhaseF.
+*/
+CudaDeviceFunction void calcPhaseF()
+{
+	updateBoundary();
+	// NOTE: On the wall we want to take the previous value of the phase field, because
+	// it might be needed for calculation of the gradient
+	ReplayPhaseFromH = 0.0;
+	if (!( IamWall || IamSolid )) {
+		real_t phase_from_h = <?R C(sum(h))?>;
+		PhaseF = phase_from_h;
+		ReplayPhaseFromH = phase_from_h;
+	} else {
+		PhaseF = PhaseF(0,0,0);
+	}
+}
+
+/*
+	Calculate the chemical potential, mu
+	Eqn. 5 in: Improved locality of the phase-field lattice-Boltzmann model
+	for immiscible fluids at high density ratios
+*/
+CudaDeviceFunction real_t calcMu(real_t C)
+{
+	real_t pfavg, lpPhi, mu;
+	pfavg = 0.5*(PhaseField_l+PhaseField_h);
+	#ifdef OPTIONS_OutFlow
+		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
+			lpPhi = 16.0 *( 2.0* STAGE13_PHASE_FOR_STENCIL(-1,0,0)
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,0)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,0,1)) + (STAGE13_PHASE_FOR_STENCIL(0,0,-1)))
+					+ 1.0 *(  2.0*(STAGE13_PHASE_FOR_STENCIL(-1,1,1)
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,-1,1))
+							+ (STAGE13_PHASE_FOR_STENCIL(-1,1,-1))
+							+ (STAGE13_PHASE_FOR_STENCIL(-1,-1,-1))))
+					+ 4.0 *(2.0*( (STAGE13_PHASE_FOR_STENCIL(-1,1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,0,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(-1,0,-1)))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,1)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,-1))+ (STAGE13_PHASE_FOR_STENCIL(0,-1,-1)))
+				- 152.0 * STAGE13_PHASE_FOR_STENCIL(0,0,0);
+		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
+			lpPhi = 16.0 *( 2.0* STAGE13_PHASE_FOR_STENCIL(1,0,0)
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,0)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,0,1)) + (STAGE13_PHASE_FOR_STENCIL(0,0,-1)))
+					+ 1.0 *(  2.0*(STAGE13_PHASE_FOR_STENCIL(1,1,1)
+						+ (STAGE13_PHASE_FOR_STENCIL(1,-1,1))
+							+ (STAGE13_PHASE_FOR_STENCIL(1,1,-1))
+							+ (STAGE13_PHASE_FOR_STENCIL(1,-1,-1))))
+					+ 4.0 *(2.0*( (STAGE13_PHASE_FOR_STENCIL(1,1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(1,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL(1,0,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(1,0,-1)))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,1)) + (STAGE13_PHASE_FOR_STENCIL(0,-1,1))
+						+ (STAGE13_PHASE_FOR_STENCIL(0,1,-1))+ (STAGE13_PHASE_FOR_STENCIL(0,-1,-1)))
+				- 152.0 * STAGE13_PHASE_FOR_STENCIL(0,0,0);
+		} else if ((NodeType & NODE_BOUNDARY)) {
+			// If single phase inlet/outlet, dont want periodic bounds
+			// to interfere - can cause waves/instabilities
+			lpPhi = 0.0;
+		} else {
+			<?R
+				myLaplace('lpPhi', 'STAGE13_PHASE_FOR_STENCIL')
+			?>
+		}
+	#else
+			<?R
+				myLaplace('lpPhi', 'STAGE13_PHASE_FOR_STENCIL')
+			?>
+	#endif
+	#ifdef OPTIONS_thermo
+		mu = 4.0*(12.0*SurfaceTension(0,0,0)/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+			- (1.5 *SurfaceTension(0,0,0)*IntWidth) * lpPhi;
+	#else
+		mu = 4.0*(12.0*sigma/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+			- (1.5 *sigma*IntWidth) * lpPhi;
+	#endif
+	// Layer 2 (Ju 2024): wall free-energy chemical potential source.
+	if (WallMuMode > 0.5) {
+		real_t mu_wall = calcWallMuSource(C);
+		WallMuCandidate = mu_wall;
+		if (WallMuMode > 1.5) mu += mu_wall;
+	} else {
+		WallMuCandidate = 0.0;
+	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayLapPhi = lpPhi;
+		ReplayMu = mu;
+	}
+	return mu;
+}
+
+/*
+	Eqn. 10 in: Improved locality of the phase-field lattice-Boltzmann model
+	for immiscible fluids at high density ratios
+*/
+CudaDeviceFunction real_t calcGamma(int i, real_t u, real_t v, real_t w, real_t u2mag)
+{
+	real_t gamma, tmp;
+	tmp = (d3q27_ex[i]*u+d3q27_ey[i]*v+d3q27_ez[i]*w);
+
+	gamma = wg[i] * (1 + 3.0*(tmp) + 4.5*(tmp*tmp) - 1.5*(u2mag)) ;
+	return gamma;
+}
+
+/*
+	Eqn. 7 in: Improved locality of the phase-field lattice-Boltzmann model
+	for immiscible fluids at high density ratios
+*/
+CudaDeviceFunction real_t calcF_phi(int i, real_t tmp1, real_t nx, real_t ny, real_t nz)
+{
+	real_t f_phi;
+	#ifdef OPTIONS_q27
+		f_phi = wg[i] * tmp1 * (d3q27_ex[i]*nx + d3q27_ey[i]*ny + d3q27_ez[i]*nz);
+	#else
+		f_phi = wh[i] * tmp1 * (d3q27_ex[i]*nx + d3q27_ey[i]*ny + d3q27_ez[i]*nz);
+	#endif
+	return f_phi;
+}
+
+CudaDeviceFunction real_t sphereTail_max(real_t a, real_t b)
+{
+	return (a > b) ? a : b;
+}
+
+CudaDeviceFunction real_t sphereTail_min(real_t a, real_t b)
+{
+	return (a < b) ? a : b;
+}
+
+CudaDeviceFunction real_t sphereTail_sphereBelowVolume(real_t radius, real_t z_join)
+{
+	return PI * (radius*radius*z_join - z_join*z_join*z_join/3.0 + 2.0*radius*radius*radius/3.0);
+}
+
+CudaDeviceFunction real_t sphereTail_compositeVolume(real_t body_radius, real_t tail_radius, real_t tail_length)
+{
+	if (tail_radius <= 0.0 || tail_length <= 0.0) {
+		return 4.0*PI*body_radius*body_radius*body_radius/3.0;
+	}
+	if (body_radius <= tail_radius) {
+		return 1.0e300;
+	}
+	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
+	return sphereTail_sphereBelowVolume(body_radius, z_join)
+	     + PI*tail_radius*tail_radius*tail_length;
+}
+
+CudaDeviceFunction real_t sphereTail_solveBodyRadius(real_t reference_radius, real_t tail_radius, real_t tail_length)
+{
+	if (tail_radius <= 0.0 || tail_length <= 0.0) return reference_radius;
+
+	real_t target = 4.0*PI*reference_radius*reference_radius*reference_radius/3.0;
+	real_t low = tail_radius * (1.0 + 1.0e-9);
+	if (low < 1.0e-12) low = 1.0e-12;
+	real_t high = reference_radius;
+	if (high <= low) high = low * 1.25;
+
+	for (int i = 0; i < 80 && sphereTail_compositeVolume(high, tail_radius, tail_length) < target; i++) {
+		high *= 1.05;
+	}
+	for (int i = 0; i < 80; i++) {
+		real_t mid = 0.5*(low + high);
+		if (sphereTail_compositeVolume(mid, tail_radius, tail_length) < target) {
+			low = mid;
+		} else {
+			high = mid;
+		}
+	}
+	return 0.5*(low + high);
+}
+
+CudaDeviceFunction real_t sphereTail_topCappedCylinderSignedDistance(real_t radial, real_t z_local, real_t tail_radius, real_t z_join, real_t tail_length)
+{
+	real_t z_top = z_join + tail_length;
+	real_t qx = radial - tail_radius;
+	real_t qz = z_local - z_top;
+	if (z_local <= z_top) {
+		return sphereTail_max(qx, qz);
+	}
+	real_t ox = sphereTail_max(qx, 0.0);
+	return sqrt(ox*ox + qz*qz);
+}
+
+CudaDeviceFunction real_t sphereTail_signedDistance(real_t body_radius, real_t tail_radius, real_t tail_length)
+{
+	real_t x_local = X - CenterX;
+	real_t y_local = Y - CenterY;
+	real_t z_local = Z - CenterZ;
+	real_t radial = sqrt(x_local*x_local + y_local*y_local);
+	real_t sphere_sdf = sqrt(x_local*x_local + y_local*y_local + z_local*z_local) - body_radius;
+
+	if (tail_radius <= 0.0 || tail_length <= 0.0 || body_radius <= tail_radius) return sphere_sdf;
+
+	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
+	real_t truncated_sphere_sdf = sphereTail_max(sphere_sdf, z_local - z_join);
+	real_t cylinder_sdf = 1.0e30;
+	if (z_local >= z_join) {
+		cylinder_sdf = sphereTail_topCappedCylinderSignedDistance(radial, z_local, tail_radius, z_join, tail_length);
+	}
+	return sphereTail_min(truncated_sphere_sdf, cylinder_sdf);
+}
+
+CudaDeviceFunction real_t sphereTail_tailVelocityWeight(real_t body_radius, real_t tail_radius, real_t tail_length, real_t velocity_mode)
+{
+	if (tail_radius <= 0.0 || tail_length <= 0.0 || body_radius <= tail_radius) return 0.0;
+
+	real_t x_local = X - CenterX;
+	real_t y_local = Y - CenterY;
+	real_t z_local = Z - CenterZ;
+	real_t radial = sqrt(x_local*x_local + y_local*y_local);
+	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
+	real_t axial = (z_local - z_join) / tail_length;
+	if (axial <= 0.0 || axial > 1.0) return 0.0;
+
+	real_t radial_weight = 0.5*(1.0 - tanh(2.0*(radial - tail_radius)/IntWidth));
+	real_t top_weight = 0.5*(1.0 - tanh(2.0*(z_local - (z_join + tail_length))/IntWidth));
+	real_t axial_weight = (velocity_mode > 1.5) ? axial : 1.0;
+	real_t weight = axial_weight * radial_weight * top_weight;
+	if (weight < 0.0) weight = 0.0;
+	if (weight > 1.0) weight = 1.0;
+	return weight;
+}
+
+/*	INITIALISATION:	*/
+CudaDeviceFunction void Init()
+{
+	PhaseF = PhaseField;
+	specialCases_Init();
+	if ( IamWall || IamSolid ) PhaseF = -999;
+
+	if (developedFlow > 0.1) {
+		U = 6.0 * Uavg * Y*(HEIGHT - Y)/(HEIGHT*HEIGHT);
+		V = 0.0;
+		W = 0.0;
+	} else if ( developedPipeFlow_X > 0.1 ){
+		U = 2.0 * Uavg * (1 - pow( (sqrt(pow((Y-pipeCentre_Y),2) + pow((Z-pipeCentre_Z),2)) / pipeRadius),2));
+		V = 0.0;
+		W = 0.0;
+	} else {
+		U = VelocityX;	V = VelocityY;	W = VelocityZ;
+	}
+
+	if (DropletOnlyVelocity > 0.5) {
+		real_t pf_mid = 0.5*(PhaseField_h + PhaseField_l);
+		real_t liquid_fraction = (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
+		if (liquid_fraction < 0.0) liquid_fraction = 0.0;
+		if (liquid_fraction > 1.0) liquid_fraction = 1.0;
+		real_t droplet_fraction = (BubbleType >= 0.0) ? liquid_fraction : (1.0 - liquid_fraction);
+		if (DropletOnlyVelocity > 1.5) {
+			U = droplet_fraction * DropletVelocityX;
+			V = droplet_fraction * DropletVelocityY;
+			W = droplet_fraction * DropletVelocityZ;
+		} else {
+			int in_droplet = (BubbleType >= 0.0 && PhaseF > pf_mid) ||
+			                 (BubbleType <  0.0 && PhaseF < pf_mid);
+			if (in_droplet) {
+				U = DropletVelocityX;
+				V = DropletVelocityY;
+				W = DropletVelocityZ;
+			} else {
+				U = 0.0;
+				V = 0.0;
+				W = 0.0;
+			}
+		}
+	}
+
+	if (CompositeDropletTailVelocityMode > 0.5 &&
+	    CompositeDropletTailRadius > 0.0 &&
+	    CompositeDropletTailLength > 0.0 &&
+	    (CompositeDropletTailVelocityX != 0.0 ||
+	     CompositeDropletTailVelocityY != 0.0 ||
+	     CompositeDropletTailVelocityZ != 0.0)) {
+		real_t body_radius = CompositeDropletBodyRadius;
+		if (body_radius <= 0.0) {
+			body_radius = sphereTail_solveBodyRadius(Radius, CompositeDropletTailRadius, CompositeDropletTailLength);
+		}
+		real_t tail_weight = sphereTail_tailVelocityWeight(body_radius, CompositeDropletTailRadius, CompositeDropletTailLength, CompositeDropletTailVelocityMode);
+		U += tail_weight * CompositeDropletTailVelocityX;
+		V += tail_weight * CompositeDropletTailVelocityY;
+		W += tail_weight * CompositeDropletTailVelocityZ;
+	}
+
+	pnorm = 0.0; // initialise as zero and fill in later stage
+}
+
+CudaDeviceFunction void InitFromFieldsStage()
+{
+	PhaseF = Init_PhaseField_External;
+	U = Init_UX_External;
+	V = Init_UY_External;
+	W = Init_UZ_External;
+	if ( IamWall || IamSolid ) PhaseF = -999;
+	pnorm = 0.0; // initialise as zero and fill in later stage
+}
+
+CudaDeviceFunction void specialCases_Init()
+{
+	#ifdef OPTIONS_thermo
+		Temp   = T_init;
+		if (fabs(dT) > 0){
+			Temp = T_init + dT*Y;
+		}
+		if (fabs(dTx) > 0){
+			Temp = T_init + dTx*X;
+		}
+		#ifdef OPTIONS_planarBenchmark
+			if ( (NodeType & NODE_ADDITIONALS) == NODE_BWall) { //bottom wall
+				real_t x, omega;
+				x = (X-0.5) - myL;
+				omega = 3.1415926535897 / myL;
+				Temp = T_h + T_0 * cos(omega * x);
+				printf("y,x=%.4lf,%.4lf\n", Y,x);
+			} else if ( (NodeType & NODE_ADDITIONALS) == NODE_TWall) {
+				Temp = T_c;
+				printf("y,x=%.4lf,%.4lf\n", Y, X);
+			}
+			PhaseF = 0.5 + PLUSMINUS * (0.5) * tanh( (Y - MIDPOINT)/(IntWidth/2) );
+		#endif
+		if (surfPower > 1) {
+			SurfaceTension = sigma + sigma_TT*pow((Temp(0,0,0) - T_ref),surfPower) * (1.0/surfPower);
+		} else {
+			SurfaceTension = sigma + sigma_T*(Temp(0,0,0) - T_ref);
+		}
+		Cond = interp(PhaseF, k_h, k_l);
+	#endif
+	// Pre-defined Initialisation patterns:
+	// Diffuse interface sphere
+	   // BubbleType = -1 refers to light fluid bubble.
+        if ( Radius > 0 ){
+                real_t Ri;
+		if (CompositeDropletTailRadius > 0.0 && CompositeDropletTailLength > 0.0) {
+			real_t body_radius = CompositeDropletBodyRadius;
+			if (body_radius <= 0.0) {
+				body_radius = sphereTail_solveBodyRadius(Radius, CompositeDropletTailRadius, CompositeDropletTailLength);
+			}
+			Ri = Radius + sphereTail_signedDistance(body_radius, CompositeDropletTailRadius, CompositeDropletTailLength);
+		} else {
+			Ri = sqrt( (X - CenterX)*(X - CenterX) + (Y - CenterY)*(Y - CenterY) + (Z - CenterZ)*(Z - CenterZ) );
+		}
+                PhaseF = 0.5*(PhaseField_h + PhaseField_l)
+                       - 0.5*(PhaseField_h - PhaseField_l) * BubbleType * tanh(2 * (Ri - Radius)/IntWidth);
+        }
+
+	// Stage12 static-contact initializers. These are deliberately default-off
+	// and only set the initial diffuse phase field. They do not change the
+	// wall wetting law, and solid/wall nodes are still reset to -999 by Init().
+	if (CapInit > 0.5 && CapInitRadius > 0.0) {
+		real_t Ri = sqrt((X - CapInitCenterX)*(X - CapInitCenterX) +
+		                 (Y - CapInitCenterY)*(Y - CapInitCenterY) +
+		                 (Z - CapInitCenterZ)*(Z - CapInitCenterZ));
+		PhaseF = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+		         (1.0 - tanh(2.0*(Ri - CapInitRadius)/IntWidth));
+	}
+
+	if (SphereCapInit > 0.5 && SphereCapInitParentRadius > 0.0 && SphereCapInitSolidRadius > 0.0) {
+		real_t Ri = sqrt((X - SphereCapInitCenterX)*(X - SphereCapInitCenterX) +
+		                 (Y - SphereCapInitCenterY)*(Y - SphereCapInitCenterY) +
+		                 (Z - SphereCapInitCenterZ)*(Z - SphereCapInitCenterZ));
+		real_t Rs = sqrt((X - SphereCapInitSolidCenterX)*(X - SphereCapInitSolidCenterX) +
+		                 (Y - SphereCapInitSolidCenterY)*(Y - SphereCapInitSolidCenterY) +
+		                 (Z - SphereCapInitSolidCenterZ)*(Z - SphereCapInitSolidCenterZ));
+		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+		                (1.0 - tanh(2.0*(Ri - SphereCapInitParentRadius)/IntWidth));
+		PhaseF = (Rs < SphereCapInitSolidRadius) ? PhaseField_l : cap_pf;
+	}
+
+	if (CylinderCapInit > 0.5 && CylinderCapInitParentRadius > 0.0 && CylinderCapInitSolidRadius > 0.0) {
+		real_t Ri = sqrt((X - CylinderCapInitCenterX)*(X - CylinderCapInitCenterX) +
+		                 (Y - CylinderCapInitCenterY)*(Y - CylinderCapInitCenterY) +
+		                 (Z - CylinderCapInitCenterZ)*(Z - CylinderCapInitCenterZ));
+		real_t dxs = X - CylinderCapInitSolidCenterX;
+		real_t dys = Y - CylinderCapInitSolidCenterY;
+		real_t dzs = Z - CylinderCapInitSolidCenterZ;
+		real_t radial;
+		if (CylinderCapInitSolidAxis < 0.5) {
+			radial = sqrt(dys*dys + dzs*dzs);
+		} else if (CylinderCapInitSolidAxis < 1.5) {
+			radial = sqrt(dxs*dxs + dzs*dzs);
+		} else {
+			radial = sqrt(dxs*dxs + dys*dys);
+		}
+		real_t cap_pf = PhaseField_l + 0.5*(PhaseField_h - PhaseField_l) *
+		                (1.0 - tanh(2.0*(Ri - CylinderCapInitParentRadius)/IntWidth));
+		PhaseF = (radial < CylinderCapInitSolidRadius) ? PhaseField_l : cap_pf;
+	}
+
+	// Rayleigh-Taylor Instability
+	    // Initialises with a sharp interface
+	if (RTI_Characteristic_Length > 0){
+		real_t d = RTI_Characteristic_Length;
+		real_t ycutoff;
+        if (pseudo2D > 0.5){
+			ycutoff = 2.0*d + 0.1*d*(cos(2.0*PI*X/d));
+        } else {
+			ycutoff = 2.0*d + 0.05*d*(cos(2.0*PI*X/d) + cos(2.0*PI*Z/d));
+		}
+		if (Y < ycutoff) {PhaseF = 0.0; }
+		else             {PhaseF = 1.0;	}
+	}
+    // Annular Taylor bubble set up
+	if ( DonutTime > 0){
+		real_t intLocation = Donut_D *
+					sqrt( pow(Donut_h,2)
+					    - pow( DonutTime - sqrt(pow(Y-CenterY,2) + pow(Z-CenterZ,2)), 2) );
+		real_t shifter = atan2( (Z-CenterZ), (Y-CenterY));
+		if (shifter < 0) shifter = shifter + 2*PI;
+		if (  (X < Donut_x0 + intLocation*sin(shifter/2)) && (X > Donut_x0 - intLocation) )
+		{
+			PhaseF = 0.0;
+		} else {
+			PhaseF = 1.0;
+		}
+	}
+    // Washburn Law test setup
+    if ((Washburn_start > 0) && (Washburn_end > 0) ) {
+		PhaseF = 1 - 0.5 *  ( tanh( 2.0 * ( X - Washburn_start ) / IntWidth ) -
+						   tanh( 2.0 * ( X - Washburn_end  )  / IntWidth ));
+	}
+}
+
+CudaDeviceFunction void Init_distributions()
+{
+	// Initialise phase variables:
+	int i;
+	real_t C0 = 0.5*(PhaseField_h - PhaseField_l);
+	PhaseF = PhaseF(0,0,0);
+	real_t d = Density_l + (Density_h-Density_l) * (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
+    pnorm = Pressure / (d*cs2);
+
+	// Gradients and phasefield normals:
+	real_t nx, ny, nz, magnPhi;
+	vector_t gradPhi = calcGradPhi();
+	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+
+	#ifdef OPTIONS_geometric
+		gradPhiVal_x = gradPhi.x;
+		gradPhiVal_y = gradPhi.y;
+		gradPhiVal_z = gradPhi.z;
+	#endif
+	if (magnPhi < minGradient){
+		nx=0.0; ny=0.0; nz=0.0;
+	} else {
+		nx = gradPhi.x/magnPhi;
+		ny = gradPhi.y/magnPhi;
+		nz = gradPhi.z/magnPhi;
+	}
+
+	U = U(0,0,0);
+	V = V(0,0,0);
+	W = W(0,0,0);
+
+	real_t mag = U*U + V*V + W*W;
+	real_t Gamma[27];
+	// ##### heq
+	real_t F_phi[hPops];
+	real_t tmp1 = (1.0 - 4.0*(PhaseF - C0)*(PhaseF - C0))/IntWidth;
+	for (i=0; i< 27; i++){
+		Gamma[i] = calcGamma(i, U, V, W, mag);
+		if (i < hPops) F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz);
+	}
+
+	<?R
+    if (Options$q27){
+	#	C(h, w_h * phase * gammah - 0.5 * Fphi)
+		C(h, phase * gammah )
+    } else {
+		C(h, w_h * phase * gammah )
+    }
+	?>
+
+	// ##### geq
+	<?R
+		w_g = PV(c(paste("wg[",1:27-1,"]",sep="")))
+		press = PV("pnorm")
+		C(g, press*w_g + (gammag-w_g) )
+	?>
+        pnorm  = <?R C(sum(g)) ?>;
+		PhaseF = <?R C(sum(h)) ?>;
+	#ifdef OPTIONS_thermo
+		Temp   = Temp(0,0,0);
+		Cond   = interp(PhaseF, k_h, k_l);
+	#endif
+	#ifdef OPTIONS_OutFlow
+			if ((NodeType & NODE_BOUNDARY) == NODE_EConvect){
+					<?R if (Options$OutFlow){
+							C(g_old, g)
+							C(h_old, h)     }       ?>
+			}
+	#endif
+}
+
+CudaDeviceFunction void UpdateGlobalMarkers()
+{
+	if (IsSpecialBoundaryPoint) {
+		AddToNumSpecialPoints(1);
+	}
+
+	if ( IamWall || IamSolid ) {
+		real_t a, h, pf_f;
+
+		h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
+
+        real_t am_i_surrounded = h < 0.001;
+
+        if (! am_i_surrounded) {
+          AddToNumWallBoundaryPoints(1);
+        }
+
+        AddToNumBoundaryPoints(1);
+    }
+
+    if (IamCOLLISION){
+      AddToNumFluidCells(1);
+    }
+}
+
+/*	ITERATION:	*/
+CudaDeviceFunction void Run()
+{
+	IsBoundary = IsBoundary(0,0,0); // propagate it into the next iteration
+	UpdateGlobalMarkers();
+	stage16_zero_replay_diagnostics();
+
+    if ((NodeType & NODE_ADDITIONALS) == NODE_Smoothing) {
+		// If desired, incorporate a smoothing stage, in this we simply let diffusion occur
+		Init_distributions();
+    } else {
+        updateBoundary();
+		#ifdef OPTIONS_BGK
+			if (NodeType & NODE_BGK) {
+				CollisionBGK();
+		}
+		#else
+			if (NodeType & NODE_MRT)
+			{
+				CollisionMRT();
+			}
+		#endif
+	}
+        pnorm  = <?R C(sum(g)) ?>;
+}
+
+CudaDeviceFunction real_t calcTau(real_t pf)
+{
+	real_t tau;
+	if ( pf < PhaseField_l){
+		tau = tau_l + 0.5;
+	} else if (pf > PhaseField_h) {
+		tau = tau_h + 0.5;
+	} else {
+	    if (tauUpdate == 1) { // Linear update:
+            tau = 0.5 + tau_l + (pf-PhaseField_l)*(tau_h - tau_l)/(PhaseField_h - PhaseField_l);
+        } else if (tauUpdate == 2){ // Inverse update:
+		    tau = (pf - PhaseField_l)/(PhaseField_h - PhaseField_l) * (1.0/tau_h - 1.0/tau_l) + 1.0/tau_l;
+		    tau = 1.0/tau + 0.5;
+			// NOTE: For some reason Viscosity_h and Viscosity_l are set to zero. Deduce it from tau here
+			// instead for tauUpdate 3 and tauUpdate 4
+        } else if (tauUpdate == 3){	// Viscosity update:
+		    real_t DynVisc = Density_l*tau_l / 3.0 + pf * (tau_h*Density_h/3.0 - Density_l*tau_l/3.0);
+            real_t rho = getRho();
+		    tau = 3.0 * DynVisc / rho + 0.5;
+        } else if (tauUpdate == 4) { // update from Zu-He 2013
+			real_t mu_l = Density_l * tau_l / 3.0;
+			real_t mu_h = Density_h * tau_h / 3.0;
+		    real_t DynVisc = mu_l * mu_h * (PhaseField_h - PhaseField_l) / ((pf - PhaseField_l)*mu_l  + (PhaseField_h - pf)*mu_h);
+            real_t rho = getRho();
+			tau = 3.0 * DynVisc / rho + 0.5;
+		} else { // default to linear...
+            tau = 0.5 + tau_l + (pf-PhaseField_l)*(tau_h - tau_l)/(PhaseField_h - PhaseField_l);
+        }
+	}
+	return tau;
+}
+
+CudaDeviceFunction void calc_Fp(real_t *fx, real_t *fy, real_t *fz, real_t pressure, vector_t gPhi){
+	*fx = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.x;
+	*fy = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.y;
+	*fz = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.z;
+}
+
+CudaDeviceFunction void calc_Fb(real_t *fx, real_t *fy, real_t *fz, real_t rho){
+    *fx = (Density_h-rho)*BuoyancyX + rho*GravitationX;
+	*fy = (Density_h-rho)*BuoyancyY + rho*GravitationY;
+	*fz = (Density_h-rho)*BuoyancyZ + rho*GravitationZ;
+}
+
+CudaDeviceFunction void calc_Fs(real_t *fx, real_t *fy, real_t *fz, real_t mu, vector_t gPhi){
+	#ifdef OPTIONS_thermo
+		Temp = Temp(0,0,0);
+		SurfaceTension = SurfaceTension(0,0,0);
+		Cond = Cond(0,0,0);
+		real_t tmpSig, delta_s, dotTMP, magnPhi, magnPhi2;
+		magnPhi = sqrt(gPhi.x*gPhi.x + gPhi.y*gPhi.y + gPhi.z*gPhi.z);
+		magnPhi2 = magnPhi*magnPhi;
+		vector_t gradT;
+		<?R
+			IsotropicGrad('gradT','Temp')
+		?>
+		dotTMP = dotProduct(gradT,gPhi);
+		if (surfPower < 2) {
+			delta_s = 1.5*IntWidth*sigma_T;
+			*fx = mu * gPhi.x + delta_s*( magnPhi2*gradT.x - dotTMP*gPhi.x );
+			*fy = mu * gPhi.y + delta_s*( magnPhi2*gradT.y - dotTMP*gPhi.y );
+			*fz = mu * gPhi.z + delta_s*( magnPhi2*gradT.z - dotTMP*gPhi.z );
+		} else {
+			vector_t gradSig;
+			<?R
+				IsotropicGrad('gradSig','SurfaceTension')
+			?>
+			delta_s = 1.5*IntWidth;
+			*fx = mu * gPhi.x + delta_s*gradSig.x*( magnPhi2*gradT.x - dotTMP*gPhi.x );
+			*fy = mu * gPhi.y + delta_s*gradSig.y*( magnPhi2*gradT.y - dotTMP*gPhi.y );
+			*fz = mu * gPhi.z + delta_s*gradSig.z*( magnPhi2*gradT.z - dotTMP*gPhi.z );
+		}
+	#else
+		*fx = mu * gPhi.x;
+		*fy = mu * gPhi.y;
+		*fz = mu * gPhi.z;
+	#endif
+}
+
+#ifndef OPTIONS_BGK
+CudaDeviceFunction void CollisionMRT()
+{
+	PhaseF = PhaseF(0,0,0);
+	int i, j;
+	real_t C  = PhaseF;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayPhaseConsumed = C;
+	}
+	ForceIterResidual = 0.0;
+	ForceIterCount = 0.0;
+	MassCorrectionApplied = 0.0;
+	PhaseStencilGhostUseCount = 0.0;
+	PhaseStencilFallbackCount = 0.0;
+	PhaseStencilMidpointFallbackCount = 0.0;
+    real_t mu = calcMu( C );
+	real_t tau, DynVisc, rho, p;			// Macroscopic Properties
+	vector_t n, gradPhi;					// Phase field gradients
+	real_t magnPhi;							// Normals
+	real_t F_pressure[3], F_body[3], F_mu[3], F_surf[3], F_total[3]; // Forces
+	real_t tmp1, stress[6]={0.0,0.0,0.0,0.0,0.0,0.0};     // Stress tensor calculation
+	real_t F_phi[hPops], heq[hPops];				// Phase field collision terms
+	real_t F_i[27];							// Momentum distribution forcing term
+	real_t m[27]; 							//MRT Details
+	real_t F_prev[3] = {0.0, 0.0, 0.0};
+	real_t F_mu_prev[3] = {0.0, 0.0, 0.0};
+	real_t F_mu_iter1[3] = {0.0, 0.0, 0.0};
+	real_t stress_prev[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t stress_iter1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t pressure_force_input = 0.0;
+	real_t force_rho_eff = 0.0;
+	real_t force_rho_inv = 0.0;
+
+	// Find Macroscopic Details
+	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+
+	updateMyGlobals( C );
+
+	real_t m0[27];
+	<?R
+		EQ = MRT_eq(U,PV(1),u,mat=t(M))
+		selR = EQ$order < 10
+		EQ$Req[1] = PV("p")
+		EQ$feq = solve(M) %*% EQ$Req
+		Omega = PV(rep(1,sum(selR)))
+		Omega[5:9] = PV("tau")^(-1)
+		Omega[1:4] = PV(1)
+		m0 = PV("m0[",1:27-1,"]")
+		C(m0[selR], (M %*% g)[selR])
+		F_total = PV("F_total[",1:3-1,"]")
+		rho = PV("rho")
+		rho.inv = rho ^ (-1)
+	?>
+	p = m0[0];
+	pressure_force_input = stage14_pressure_force_input(p, rho);
+	force_rho_eff = stage14_effective_force_rho(rho);
+	force_rho_inv = stage14_inv_force_rho(rho);
+
+	tau = calcTau( C );
+	stage17b_reset_near_wall_force_shadow();
+	if (stage16_replay_diagnostics_active()) {
+		ReplayRho = rho;
+		ReplayTau = tau;
+		ReplayPressureMoment = p;
+		ReplayUPreForceX = m0[1];
+		ReplayUPreForceY = m0[2];
+		ReplayUPreForceZ = m0[3];
+	}
+	if (stage14_momentum_closure_diagnostics_active()) {
+		ReplayM0X = m0[1];
+		ReplayM0Y = m0[2];
+		ReplayM0Z = m0[3];
+		ReplayPressureInput = pressure_force_input;
+		ReplayPressureForceScale = (-1.0/3.0) * (Density_h - Density_l);
+		ReplayPressurePhysicalInput = p * rho * cs2;
+		ReplayTauUsed = tau;
+		ReplayRhoForForce = force_rho_eff;
+		ReplayForceInjectionMode = MomentumClosureProbeMode;
+		ReplayPressureClosureMode = PressureClosureMode;
+		ReplayForceDensityClosureMode = ForceDensityClosureMode;
+		ReplayForceFixedPointMode = ForceFixedPointMode;
+		ReplayForceRhoRaw = rho;
+		ReplayForceRhoEffective = force_rho_eff;
+	}
+
+	// GRADIENTS AND NORMALS
+	gradPhi = calcGradPhi();
+	if (stage16_replay_diagnostics_active()) {
+		ReplayGradPhiX = gradPhi.x;
+		ReplayGradPhiY = gradPhi.y;
+		ReplayGradPhiZ = gradPhi.z;
+	}
+	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+
+	// Stage 15B: DynamicCL shadow. Compute the candidate residual contact-line
+	// force and write diagnostics. In 15B the candidate is NEVER added to
+	// F_total (DynamicCLMode<=1). The F_total += F_CL line is reserved for 15C
+	// and guarded by DynamicCLMode>=2 below, inside the force-iteration block.
+	real_t fcl_x = 0.0, fcl_y = 0.0, fcl_z = 0.0;
+	{
+		// Stage 15B/15C: compute the candidate residual contact-line force and
+		// write diagnostics on every call (Mode>=1). fcl_* is hoisted to
+		// function scope so the 15C write hook below can add it to F_total.
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+	}
+
+	if (magnPhi < minGradient){
+		n.x=0.0; n.y=0.0; n.z=0.0;
+	} else {
+		n.x = gradPhi.x/magnPhi;
+		n.y = gradPhi.y/magnPhi;
+		n.z = gradPhi.z/magnPhi;
+	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayNormalX = n.x;
+		ReplayNormalY = n.y;
+		ReplayNormalZ = n.z;
+	}
+	//magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z + 1e-2);
+	//n.x = gradPhi.x/magnPhi;
+	//n.y = gradPhi.y/magnPhi;
+	//n.z = gradPhi.z/magnPhi;
+
+	// CALCULATE FORCES:
+    calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], pressure_force_input, gradPhi);
+	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
+    calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+	if (stage14_momentum_closure_diagnostics_active()) {
+		real_t p_physical = p * rho * cs2;
+		ReplayFpressureNoThirdX = -1.0 * p * (Density_h - Density_l) * gradPhi.x;
+		ReplayFpressureNoThirdY = -1.0 * p * (Density_h - Density_l) * gradPhi.y;
+		ReplayFpressureNoThirdZ = -1.0 * p * (Density_h - Density_l) * gradPhi.z;
+		ReplayFpressurePhysicalX = (-1.0/3.0) * p_physical * (Density_h - Density_l) * gradPhi.x;
+		ReplayFpressurePhysicalY = (-1.0/3.0) * p_physical * (Density_h - Density_l) * gradPhi.y;
+		ReplayFpressurePhysicalZ = (-1.0/3.0) * p_physical * (Density_h - Density_l) * gradPhi.z;
+	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayFpressureX = F_pressure[0];
+		ReplayFpressureY = F_pressure[1];
+		ReplayFpressureZ = F_pressure[2];
+		ReplayFbodyX = F_body[0];
+		ReplayFbodyY = F_body[1];
+		ReplayFbodyZ = F_body[2];
+		ReplayFsurfX = F_surf[0];
+		ReplayFsurfY = F_surf[1];
+		ReplayFsurfZ = F_surf[2];
+	}
+	// Viscous force fixed-point iteration. ForceFixedTol<=0 preserves the
+	// legacy fixed-count loop controlled by force_fixed_iterator.
+	int force_iter_limit = stage14_force_iter_limit_from_mode();
+	j = 0;
+	bool force_iter_converged = false;
+	bool force_iter_guard_stop = false;
+	do {	// do while loop is guaranteeing the loop will execute at least once
+		j++;
+	<?R
+		C(m[selR], (m0 - EQ$Req)[selR] * Omega)
+
+		stress = PV("stress[",1:6-1,"]");
+		new_g = solve(M) %*% m
+		C(stress[1], sum( U[,1]*U[,1] * new_g )); # XX
+		C(stress[2], sum( U[,1]*U[,2] * new_g )); # XY
+		C(stress[3], sum( U[,1]*U[,3] * new_g )); # XZ
+		C(stress[4], sum( U[,2]*U[,2] * new_g )); # YY
+		C(stress[5], sum( U[,2]*U[,3] * new_g )); # YZ
+		C(stress[6], sum( U[,3]*U[,3] * new_g )); # ZZ
+	?>
+		F_mu[0] = (0.5-tau) * (Density_h-Density_l) * (stress[0]*gradPhi.x + stress[1]*gradPhi.y + stress[2]*gradPhi.z);
+		F_mu[1] = (0.5-tau) * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
+		F_mu[2] = (0.5-tau) * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
+		real_t F_mu_raw[3] = {F_mu[0], F_mu[1], F_mu[2]};
+		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+		// Stage 15C write hook: add the residual contact-line force to F_total.
+		// Shadow-only at Mode<=1 (no-op). calcDynamicCLShadow already applied
+		// ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl and the ForceCap; do NOT
+		// rescale here. Mode>1.5 is refused by the runner until 15C is cleared.
+		if (DynamicCLMode > 1.5) {
+			F_total[0] += fcl_x;
+			F_total[1] += fcl_y;
+			F_total[2] += fcl_z;
+		}
+		stage14_apply_momentum_force_mode(F_total, F_surf, F_pressure, F_body, F_mu);
+		if (j == 1) {
+			stage17b_write_near_wall_force_shadow(gradPhi, force_rho_eff, F_total);
+			F_mu_iter1[0] = F_mu[0];
+			F_mu_iter1[1] = F_mu[1];
+			F_mu_iter1[2] = F_mu[2];
+			stress_iter1[0] = stress[0];
+			stress_iter1[1] = stress[1];
+			stress_iter1[2] = stress[2];
+			stress_iter1[3] = stress[3];
+			stress_iter1[4] = stress[4];
+			stress_iter1[5] = stress[5];
+		}
+		if (stage16_replay_diagnostics_active()) {
+			ReplayFmuX = F_mu[0];
+			ReplayFmuY = F_mu[1];
+			ReplayFmuZ = F_mu[2];
+			ReplayFtotalX = F_total[0];
+			ReplayFtotalY = F_total[1];
+			ReplayFtotalZ = F_total[2];
+			ReplayStressXX = stress[0];
+			ReplayStressXY = stress[1];
+			ReplayStressXZ = stress[2];
+			ReplayStressYY = stress[3];
+			ReplayStressYZ = stress[4];
+			ReplayStressZZ = stress[5];
+			if (stage14_momentum_closure_diagnostics_active()) {
+				ReplayFmuRawX = F_mu_raw[0];
+				ReplayFmuRawY = F_mu_raw[1];
+				ReplayFmuRawZ = F_mu_raw[2];
+				ReplayStressPreForceShadowXX = stress[0];
+				ReplayStressPreForceShadowXY = stress[1];
+				ReplayStressPreForceShadowXZ = stress[2];
+				ReplayStressPreForceShadowYY = stress[3];
+				ReplayStressPreForceShadowYZ = stress[4];
+				ReplayStressPreForceShadowZZ = stress[5];
+				ReplayStressInputXX = stress[0];
+				ReplayStressInputXY = stress[1];
+				ReplayStressInputXZ = stress[2];
+				ReplayStressInputYY = stress[3];
+				ReplayStressInputYZ = stress[4];
+				ReplayStressInputZZ = stress[5];
+			}
+			if (j == 1) {
+				ReplayFmuIter1X = F_mu[0];
+				ReplayFmuIter1Y = F_mu[1];
+				ReplayFmuIter1Z = F_mu[2];
+				ReplayFtotalIter1X = F_total[0];
+				ReplayFtotalIter1Y = F_total[1];
+				ReplayFtotalIter1Z = F_total[2];
+				if (stage14_momentum_closure_diagnostics_active()) {
+					ReplayStressIter1XX = stress[0];
+					ReplayStressIter1XY = stress[1];
+					ReplayStressIter1XZ = stress[2];
+					ReplayStressIter1YY = stress[3];
+					ReplayStressIter1YZ = stress[4];
+					ReplayStressIter1ZZ = stress[5];
+				}
+			}
+		}
+		if (j > 1) {
+			real_t dFx = F_total[0] - F_prev[0];
+			real_t dFy = F_total[1] - F_prev[1];
+			real_t dFz = F_total[2] - F_prev[2];
+			real_t delta_norm = sqrt(dFx*dFx + dFy*dFy + dFz*dFz);
+			real_t prev_norm = sqrt(F_prev[0]*F_prev[0] + F_prev[1]*F_prev[1] + F_prev[2]*F_prev[2]);
+			ForceIterResidual = delta_norm / (prev_norm + 1.0e-30);
+			if (ForceFixedPointMode > 0.5 && ForceFixedPointMode < 1.5 &&
+				ForceFixedDivergenceGuardFactor > 0.0 &&
+				ForceIterResidual > ForceFixedDivergenceGuardFactor) {
+				F_total[0] = F_prev[0];
+				F_total[1] = F_prev[1];
+				F_total[2] = F_prev[2];
+				F_mu[0] = F_mu_prev[0];
+				F_mu[1] = F_mu_prev[1];
+				F_mu[2] = F_mu_prev[2];
+				stress[0] = stress_prev[0];
+				stress[1] = stress_prev[1];
+				stress[2] = stress_prev[2];
+				stress[3] = stress_prev[3];
+				stress[4] = stress_prev[4];
+				stress[5] = stress_prev[5];
+				force_iter_guard_stop = true;
+			}
+		}
+		if (force_iter_guard_stop && stage16_replay_diagnostics_active()) {
+			ReplayFmuX = F_mu[0];
+			ReplayFmuY = F_mu[1];
+			ReplayFmuZ = F_mu[2];
+			ReplayFtotalX = F_total[0];
+			ReplayFtotalY = F_total[1];
+			ReplayFtotalZ = F_total[2];
+			ReplayStressXX = stress[0];
+			ReplayStressXY = stress[1];
+			ReplayStressXZ = stress[2];
+			ReplayStressYY = stress[3];
+			ReplayStressYZ = stress[4];
+			ReplayStressZZ = stress[5];
+			if (stage14_momentum_closure_diagnostics_active()) {
+				ReplayStressPreForceShadowXX = stress[0];
+				ReplayStressPreForceShadowXY = stress[1];
+				ReplayStressPreForceShadowXZ = stress[2];
+				ReplayStressPreForceShadowYY = stress[3];
+				ReplayStressPreForceShadowYZ = stress[4];
+				ReplayStressPreForceShadowZZ = stress[5];
+				ReplayStressInputXX = stress[0];
+				ReplayStressInputXY = stress[1];
+				ReplayStressInputXZ = stress[2];
+				ReplayStressInputYY = stress[3];
+				ReplayStressInputYZ = stress[4];
+				ReplayStressInputZZ = stress[5];
+			}
+		}
+		F_prev[0] = F_total[0];
+		F_prev[1] = F_total[1];
+		F_prev[2] = F_total[2];
+		F_mu_prev[0] = F_mu[0];
+		F_mu_prev[1] = F_mu[1];
+		F_mu_prev[2] = F_mu[2];
+		stress_prev[0] = stress[0];
+		stress_prev[1] = stress[1];
+		stress_prev[2] = stress[2];
+		stress_prev[3] = stress[3];
+		stress_prev[4] = stress[4];
+		stress_prev[5] = stress[5];
+		ForceIterCount = j;
+
+	<?R 	C( u, m0[2:4] + 0.5 * F_total * PV("force_rho_inv")) ?>
+		if (stage16_replay_diagnostics_active()) {
+			ReplayUPostForceX = U;
+			ReplayUPostForceY = V;
+			ReplayUPostForceZ = W;
+			ReplayForceOverRhoX = F_total[0] * force_rho_inv;
+			ReplayForceOverRhoY = F_total[1] * force_rho_inv;
+			ReplayForceOverRhoZ = F_total[2] * force_rho_inv;
+			if (stage14_momentum_closure_diagnostics_active()) {
+				ReplayVelocityHalfForceX = U;
+				ReplayVelocityHalfForceY = V;
+				ReplayVelocityHalfForceZ = W;
+				ReplayMFx = F_total[0] * force_rho_inv;
+				ReplayMFy = F_total[1] * force_rho_inv;
+				ReplayMFz = F_total[2] * force_rho_inv;
+			}
+			if (j == 1) {
+				ReplayUPostIter1X = U;
+				ReplayUPostIter1Y = V;
+				ReplayUPostIter1Z = W;
+			}
+		}
+		if (stage14_momentum_closure_diagnostics_active()) {
+			real_t m_post_force_shadow[27] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			                                  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			real_t stress_post_force_shadow[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+			<?R
+				m_post_force_shadow = PV("m_post_force_shadow[",1:27-1,"]")
+				stress_post_force_shadow = PV("stress_post_force_shadow[",1:6-1,"]")
+				C(m_post_force_shadow[selR], (m0 - EQ$Req)[selR] * Omega)
+				new_g_post_force_shadow = solve(M) %*% m_post_force_shadow
+				C(stress_post_force_shadow[1], sum( U[,1]*U[,1] * new_g_post_force_shadow )); # XX
+				C(stress_post_force_shadow[2], sum( U[,1]*U[,2] * new_g_post_force_shadow )); # XY
+				C(stress_post_force_shadow[3], sum( U[,1]*U[,3] * new_g_post_force_shadow )); # XZ
+				C(stress_post_force_shadow[4], sum( U[,2]*U[,2] * new_g_post_force_shadow )); # YY
+				C(stress_post_force_shadow[5], sum( U[,2]*U[,3] * new_g_post_force_shadow )); # YZ
+				C(stress_post_force_shadow[6], sum( U[,3]*U[,3] * new_g_post_force_shadow )); # ZZ
+			?>
+			ReplayStressPostForceShadowXX = stress_post_force_shadow[0];
+			ReplayStressPostForceShadowXY = stress_post_force_shadow[1];
+			ReplayStressPostForceShadowXZ = stress_post_force_shadow[2];
+			ReplayStressPostForceShadowYY = stress_post_force_shadow[3];
+			ReplayStressPostForceShadowYZ = stress_post_force_shadow[4];
+			ReplayStressPostForceShadowZZ = stress_post_force_shadow[5];
+		}
+		if (force_iter_guard_stop) {
+			force_iter_converged = true;
+		}
+		if (ForceFixedTol > 0.0 && j > 1 && ForceIterResidual < ForceFixedTol) {
+			force_iter_converged = true;
+		}
+	} while (j < force_iter_limit && !force_iter_converged);
+	if (stage14_momentum_closure_diagnostics_active()) {
+		ReplayFmuDeltaX = F_mu[0] - F_mu_iter1[0];
+		ReplayFmuDeltaY = F_mu[1] - F_mu_iter1[1];
+		ReplayFmuDeltaZ = F_mu[2] - F_mu_iter1[2];
+	}
+	// PHASE FIELD POPULATION UPDATE:
+	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayTmp1 = tmp1;
+		real_t bounded_phase_shadow = C;
+		if (bounded_phase_shadow < PhaseField_l) bounded_phase_shadow = PhaseField_l;
+		if (bounded_phase_shadow > PhaseField_h) bounded_phase_shadow = PhaseField_h;
+		ReplayTmp1BoundedShadow = (1.0 - 4.0*(bounded_phase_shadow - 0.5)*(bounded_phase_shadow - 0.5))/IntWidth;
+		ReplayPhaseOutOfBoundsFlag = (C < PhaseField_l || C > PhaseField_h) ? 1.0 : 0.0;
+	}
+	real_t momentum_U = U;
+	real_t momentum_V = V;
+	real_t momentum_W = W;
+	real_t phase_adv_U = U;
+	real_t phase_adv_V = V;
+	real_t phase_adv_W = W;
+	if (PhaseAdvectionVelocityMode > 0.5) {
+		phase_adv_U = m0[1];
+		phase_adv_V = m0[2];
+		phase_adv_W = m0[3];
+	}
+	if (stage16_replay_diagnostics_active()) {
+		ReplayPhaseAdvVelocityX = phase_adv_U;
+		ReplayPhaseAdvVelocityY = phase_adv_V;
+		ReplayPhaseAdvVelocityZ = phase_adv_W;
+	}
+	U = phase_adv_U;
+	V = phase_adv_V;
+	W = phase_adv_W;
+	<?R
+		n = PV("n",c(".x",".y",".z"))
+		EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),u)
+		C(heq, EQ_h$feq * PV("C"))
+		EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),PV(c(0,0,0)))
+		if (Options$q27){
+			wh = EQ_h$feq
+		    EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),u)
+		} else {
+			wh = c(rep(16/72,1),rep(8/72,6),rep(1/72,8))
+		}
+		C(Fphi, wh * PV("tmp1") * (U[1:PF_velocities,] %*% n))
+	?>
+	if (stage16_replay_diagnostics_active()) {
+		ReplayHPreSum = <?R C(sum(h)) ?>;
+		ReplayHeqSum = <?R C(sum(heq)) ?>;
+		real_t h_pre_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_pre_max_diag = stage14_max_abs2(h_pre_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		real_t heq_max_diag = 0.0;
+		for (int stage14_hi=0; stage14_hi<hPops; stage14_hi++) {
+			heq_max_diag = stage14_max_abs2(heq_max_diag, heq[stage14_hi]);
+		}
+		ReplayHPreMaxAbs = h_pre_max_diag;
+		ReplayHeqMaxAbs = heq_max_diag;
+	}
+	<?R
+	C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)
+	?>
+	U = momentum_U;
+	V = momentum_V;
+	W = momentum_W;
+	if (MomentumClosureProbeMode > 1.5 && MomentumClosureProbeMode < 2.5) {
+		U = m0[1];
+		V = m0[2];
+		W = m0[3];
+	}
+	real_t momentum_force_injection_scale = 1.0;
+	if (MomentumClosureProbeMode > 2.5 && MomentumClosureProbeMode < 3.5) {
+		momentum_force_injection_scale = 0.0;
+	} else if (MomentumClosureProbeMode > 3.5 && MomentumClosureProbeMode < 4.5) {
+		momentum_force_injection_scale = 0.5;
+	}
+	<?R
+		mF = PV(rep(0,27))
+		mF[2:4] = PV("momentum_force_injection_scale") * F_total * PV("force_rho_inv")
+
+		C(m, m0 - (m0 - EQ$Req + mF*0.5)[selR] * Omega + mF)
+		C(g, invM %*% m)
+	?>
+	U = momentum_U;
+	V = momentum_V;
+	W = momentum_W;
+	if (stage16_replay_diagnostics_active()) {
+		real_t fphi_sum_diag = 0.0;
+		real_t fphi_max_diag = 0.0;
+		for (i=0; i<hPops; i++) {
+			real_t abs_fphi = fabs(F_phi[i]);
+			fphi_sum_diag += F_phi[i];
+			if (abs_fphi > fphi_max_diag) fphi_max_diag = abs_fphi;
+		}
+		ReplayHPostSum = <?R C(sum(h)) ?>;
+		real_t h_post_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_post_max_diag = stage14_max_abs2(h_post_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		ReplayHPostMaxAbs = h_post_max_diag;
+		ReplayFphiSum = fphi_sum_diag;
+		ReplayFphiMaxAbs = fphi_max_diag;
+	}
+	if (stage14_momentum_closure_diagnostics_active()) {
+		real_t momentum_after_g[3] = {0.0, 0.0, 0.0};
+		<?R
+			momentum_after_g = PV("momentum_after_g[",1:3-1,"]")
+			C(momentum_after_g[1], sum(U[,1] * g))
+			C(momentum_after_g[2], sum(U[,2] * g))
+			C(momentum_after_g[3], sum(U[,3] * g))
+		?>
+		ReplayMomentumAfterGX = momentum_after_g[0];
+		ReplayMomentumAfterGY = momentum_after_g[1];
+		ReplayMomentumAfterGZ = momentum_after_g[2];
+		ReplayMomentumDeltaGX = momentum_after_g[0] - m0[1];
+		ReplayMomentumDeltaGY = momentum_after_g[1] - m0[2];
+		ReplayMomentumDeltaGZ = momentum_after_g[2] - m0[3];
+	}
+
+    updateTrackers( C );
+}
+#endif
+
+//######BOUNDARY CONDITIONS######//
+<?RT models/multiphase/d3q27_pf_velocity/Boundary.c.Rt ?>
+//############//
+
+//######UPDATE FUNCTIONS#######//
+CudaDeviceFunction void updateBoundary(){
+    switch (NodeType & NODE_BOUNDARY) {
+		case NODE_Solid:
+		case NODE_Wall:
+			BounceBack();
+			break;
+        <?R
+        for (ii in 1:6){
+        ?>
+        case NODE_<?R C(my_velocity_boundaries[ii])?>:
+			<?R C(my_velocity_boundaries[ii])?>();
+			break;
+		case NODE_<?R C(my_pressure_boundaries[ii])?>:
+			<?R C(my_pressure_boundaries[ii])?>();
+			break;
+		<?R
+        }
+        ?>
+		case NODE_MovingWall_N:
+			MovingNWall();
+			break;
+		case NODE_MovingWall_S:
+			MovingSWall();
+			break;
+		#ifdef OPTIONS_OutFlow
+			case NODE_EConvect:
+				EConvect();
+				break;
+			case NODE_WConvect:
+				WConvect();
+				break;
+			case NODE_ENeumann:
+				ENeumann();
+				break;
+			case NODE_WNeumann:
+				WNeumann();
+				break;
+		#endif
+	}
+}
+
+CudaDeviceFunction void updateMyGlobals(real_t pf){
+	real_t tmpPF = 1 - pf;
+	real_t rho = Density_l + ((pf) - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+	real_t u2mag = (U*U+V*V+W*W);
+	AddToTotalDensity( rho ); // Add globals of post-stream, pre-collide macroscopic globals.
+	AddToKineticEnergy( rho * u2mag );
+
+	if ( (pf) < 0.5 )
+	{
+	    AddToGasTotalVelocity( tmpPF*sqrt(u2mag));
+	    AddToGasTotalVelocityX( tmpPF*U );
+	    AddToGasTotalVelocityY( tmpPF*V );
+	    AddToGasTotalVelocityZ( tmpPF*W );
+	    AddToGasTotalPhase( tmpPF );
+	    AddToXLocation( tmpPF*X );
+	} else {
+	    AddToLiqTotalVelocity( pf*sqrt(u2mag));
+	    AddToLiqTotalVelocityX( U*pf );
+	    AddToLiqTotalVelocityY( V*pf );
+	    AddToLiqTotalVelocityZ( W*pf );
+	    AddToLiqTotalPhase( pf );
+	}
+
+	if ((NodeType & NODE_ADDITIONALS) == NODE_flux_nodes) {
+		AddToFluxNodeCount( 1 );
+		AddToFluxX( U );
+		AddToFluxY( V );
+		AddToFluxZ( W );
+	}
+}
+
+CudaDeviceFunction void updateTrackers(real_t C){
+	real_t location;
+
+	// track top of the interface in Y direction, only on actual nodes
+	if ((NodeType & NODE_BGK) || (NodeType & NODE_MRT)) {
+		if ( C < 0.5 && PhaseF(0, -1, 0) > 0.5) {
+			location = Y - (C-0.5)/(C-PhaseF(0,-1,0));
+			AddToInterfaceYTop(location);
+		}
+	}
+
+	switch (NodeType & NODE_ADDITIONALS) {
+		case NODE_Centerline:
+		    if ( fabs(xyzTrack-1) < 1e-3 )
+		    {  // track along X
+                if (C < 0.5 && PhaseF(1,0,0) > 0.5)
+                {
+                    location = X + (C-0.5)/(C-PhaseF(1,0,0));
+                    AddToInterfacePosition(location);
+                    AddToVback(U);
+                }
+                if (C >0.5 && PhaseF(-1,0,0) < 0.5)
+                {
+                    AddToVfront(U);
+                }
+		    } else if ( fabs(xyzTrack-2) < 1e-3)
+		    { // track along Y
+                if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+                {
+                    location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+                    AddToInterfacePosition(location);
+                    AddToVback(V);
+                }
+                if (C >0.5 && PhaseF(0,-1,0) < 0.5)
+                {
+                    AddToVfront(V);
+                }
+		    } else if ( fabs(xyzTrack-3) < 1e-3)
+		    { // track along Z
+			if (C < 0.5 && PhaseF(0,0,1) > 0.5)
+                {
+                    location = Z + (C-0.5)/(C-PhaseF(0,0,1));
+                    AddToInterfacePosition(location);
+                    AddToVback(W);
+                }
+                if (C >0.5 && PhaseF(0,0,-1) < 0.5)
+                {
+                    AddToVfront(W);
+                }
+		    } else if ( fabs(xyzTrack-4) < 1e-3 )
+		    {  // track reverse along X
+                if (C < 0.5 && PhaseF(-1,0,0) > 0.5)
+                {
+                    location = X - (C-0.5)/(C-PhaseF(-1,0,0));
+                    AddToInterfacePosition(location);
+				    AddToVback(U);
+			    }
+            } else if ( fabs(xyzTrack-5) < 1e-3 )
+		    {  // track reverse along Y (e.g. tracking north pole of the droplet
+			   // as it is falling)
+                if (C < 0.5 && PhaseF(0,-1,0) > 0.5)
+                {
+                    location = Y - (C-0.5)/(C-PhaseF(0,-1,0));
+                    AddToInterfacePosition(location);
+			    }
+            }
+
+		case NODE_Spiketrack:
+			if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+			{
+				location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+				AddToRTISpike(location);
+			}
+		case NODE_Saddletrack:
+			if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+			{
+				location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+				AddToRTISaddle(location);
+			}
+		case NODE_Bubbletrack:
+			if (C < 0.5 && PhaseF(0,1,0) > 0.5)
+			{
+				location = Y + (C-0.5)/(C-PhaseF(0,1,0));
+				AddToRTIBubble(location);
+			}
+	}
+}
+//#############//
+//######THERMOCAPILLARY UPDATE######//
+#ifdef OPTIONS_thermo
+	<?RT models/multiphase/d3q27_pf_velocity/thermo.c.Rt ?>
+#endif
+//#############//
+
+
+#ifdef OPTIONS_BGK
+CudaDeviceFunction void CollisionBGK()
+{
+    PhaseF = PhaseF(0,0,0);
+	int i, j;
+	real_t C  = PhaseF;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayPhaseConsumed = C;
+	}
+	ForceIterResidual = 0.0;
+	ForceIterCount = 0.0;
+	MassCorrectionApplied = 0.0;
+	PhaseStencilGhostUseCount = 0.0;
+	PhaseStencilFallbackCount = 0.0;
+	PhaseStencilMidpointFallbackCount = 0.0;
+    real_t mu = calcMu( C );
+	real_t tau, DynVisc, rho, p;			// Macroscopic Properties
+	vector_t gradPhi;				// Phase field gradients
+	real_t nx, ny, nz, magnPhi;			// Normals
+	real_t Gamma[27], geq[27], mag;			// equilibrium, pressure equilibrium, velocity magnitude
+	real_t F_surf[3], F_pressure[3], F_body[3], F_mu[3], F_total[3]; // Forces
+	real_t tmp1, stress[6]={0.0,0.0,0.0,0.0,0.0,0.0};     // Stress tensor calculation
+	real_t F_phi[hPops], heq[hPops];			// Phase field collision terms
+	real_t F_i[27];					// Momentum distribution forcing term
+
+	// Find Macroscopic Details
+	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+	p = <?R C(sum(g)) ?>;
+	tau = calcTau( C );
+	stage17b_reset_near_wall_force_shadow();
+
+	updateMyGlobals( C );
+
+	// GRADIENTS AND NORMALS
+	gradPhi = calcGradPhi();
+	if (stage16_replay_diagnostics_active()) {
+		ReplayGradPhiX = gradPhi.x;
+		ReplayGradPhiY = gradPhi.y;
+		ReplayGradPhiZ = gradPhi.z;
+	}
+	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z + 1e-32);
+	nx = gradPhi.x/magnPhi;
+	ny = gradPhi.y/magnPhi;
+	nz = gradPhi.z/magnPhi;
+	// Stage 15B: DynamicCL shadow (BGK path). Diagnostics only; never added to
+	// F_total in 15B. See the MRT path above and calcDynamicCLShadow for the
+	// 15C write hook (reserved; runner refuses DynamicCLMode>=2).
+	real_t fcl_x = 0.0, fcl_y = 0.0, fcl_z = 0.0;
+	{
+		// Stage 15B/15C: diagnostics on every call; fcl_* hoisted for the 15C
+		// write hook below (BGK path, symmetric with MRT).
+		calcDynamicCLShadow(gradPhi, C, &fcl_x, &fcl_y, &fcl_z);
+	}
+
+	// CALCULATE FORCES:
+    calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
+	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
+    calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+	if (stage16_replay_diagnostics_active()) {
+		ReplayFpressureX = F_pressure[0];
+		ReplayFpressureY = F_pressure[1];
+		ReplayFpressureZ = F_pressure[2];
+		ReplayFbodyX = F_body[0];
+		ReplayFbodyY = F_body[1];
+		ReplayFbodyZ = F_body[2];
+		ReplayFsurfX = F_surf[0];
+		ReplayFsurfY = F_surf[1];
+		ReplayFsurfZ = F_surf[2];
+	}
+    // VISCOUS FORCE:
+    for (j=0;j<2;j++) {
+		ForceIterCount = j + 1;
+    // GAMMA AND EQUILIBRIUM
+        mag = U*U + V*V + W*W;
+        for (i=0; i< 27; i++){
+            Gamma[i] = calcGamma(i, U, V, W, mag);
+            geq[i] = wg[i]*p + Gamma[i] - wg[i];
+        }
+
+    <?R
+        geq_bgk <- PV(paste0("geq[",1:27-1,"]"))
+        C( geq_bgk, g - geq_bgk )
+    ?>
+            // Stress/strain Tensor
+        for (i=0; i< 6 ; i++)
+        {
+            stress[i] = 0.0;
+        }
+        for (i=0; i< 27; i++){
+            stress[0] += geq[i]*d3q27_ex[i]*d3q27_ex[i];
+            stress[1] += geq[i]*d3q27_ex[i]*d3q27_ey[i];
+            stress[2] += geq[i]*d3q27_ex[i]*d3q27_ez[i];
+            stress[3] += geq[i]*d3q27_ey[i]*d3q27_ey[i];
+            stress[4] += geq[i]*d3q27_ey[i]*d3q27_ez[i];
+            stress[5] += geq[i]*d3q27_ez[i]*d3q27_ez[i];
+        }
+
+        F_mu[0] = (0.5-tau)/tau * (Density_h-Density_l) * (stress[0]*gradPhi.x + stress[1]*gradPhi.y + stress[2]*gradPhi.z);
+        F_mu[1] = (0.5-tau)/tau * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
+        F_mu[2] = (0.5-tau)/tau * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
+        F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+        F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+        F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+        // Stage 15C write hook: add residual contact-line force to F_total.
+        // Shadow-only at Mode<=1 (no-op). calcDynamicCLShadow already applied
+        // ForceSign*Coeff*(sigma/IntWidth)*R_theta*I_cl and the ForceCap.
+        if (DynamicCLMode > 1.5) {
+            F_total[0] += fcl_x;
+            F_total[1] += fcl_y;
+            F_total[2] += fcl_z;
+        }
+        stage14_apply_momentum_force_mode(F_total, F_surf, F_pressure, F_body, F_mu);
+		if (j == 0) {
+			stage17b_write_near_wall_force_shadow(gradPhi, rho, F_total);
+		}
+        if (stage16_replay_diagnostics_active()) {
+            ReplayFmuX = F_mu[0];
+            ReplayFmuY = F_mu[1];
+            ReplayFmuZ = F_mu[2];
+            ReplayFtotalX = F_total[0];
+            ReplayFtotalY = F_total[1];
+            ReplayFtotalZ = F_total[2];
+        }
+
+    <?R C( u, g %*% U) ?>
+        U = U + (0.5*F_total[0])/rho;
+        V = V + (0.5*F_total[1])/rho;
+        W = W + (0.5*F_total[2])/rho;
+    }
+
+	// PHASE FIELD POPULATION UPDATE:
+	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	if (stage16_replay_diagnostics_active()) {
+		ReplayTmp1 = tmp1;
+		real_t bounded_phase_shadow = C;
+		if (bounded_phase_shadow < PhaseField_l) bounded_phase_shadow = PhaseField_l;
+		if (bounded_phase_shadow > PhaseField_h) bounded_phase_shadow = PhaseField_h;
+		ReplayTmp1BoundedShadow = (1.0 - 4.0*(bounded_phase_shadow - 0.5)*(bounded_phase_shadow - 0.5))/IntWidth;
+		ReplayPhaseOutOfBoundsFlag = (C < PhaseField_l || C > PhaseField_h) ? 1.0 : 0.0;
+	}
+	for (i=0; i< hPops; i++){
+		F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz); 		// Forcing Terms
+		heq[i] = C * Gamma[i];      	// heq
+	}
+
+	if (stage16_replay_diagnostics_active()) {
+		ReplayHPreSum = <?R C(sum(h)) ?>;
+		ReplayHeqSum = <?R C(sum(heq)) ?>;
+		real_t h_pre_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_pre_max_diag = stage14_max_abs2(h_pre_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		real_t heq_max_diag = 0.0;
+		for (int stage14_hi=0; stage14_hi<hPops; stage14_hi++) {
+			heq_max_diag = stage14_max_abs2(heq_max_diag, heq[stage14_hi]);
+		}
+		ReplayHPreMaxAbs = h_pre_max_diag;
+		ReplayHeqMaxAbs = heq_max_diag;
+	}
+	<?R	C(h, h - omega * ( h - w_h*heq + 0.5*Fphi) + Fphi) ?>
+	if (stage16_replay_diagnostics_active()) {
+		real_t fphi_sum_diag = 0.0;
+		real_t fphi_max_diag = 0.0;
+		for (i=0; i<hPops; i++) {
+			real_t abs_fphi = fabs(F_phi[i]);
+			fphi_sum_diag += F_phi[i];
+			if (abs_fphi > fphi_max_diag) fphi_max_diag = abs_fphi;
+		}
+		ReplayHPostSum = <?R C(sum(h)) ?>;
+		real_t h_post_max_diag = 0.0;
+		<?R for (stage14_h_name in paste0("h", 0:(if (Options$q27) 26 else 14))) { ?>
+		h_post_max_diag = stage14_max_abs2(h_post_max_diag, <?R cat(stage14_h_name) ?>);
+		<?R } ?>
+		ReplayHPostMaxAbs = h_post_max_diag;
+		ReplayFphiSum = fphi_sum_diag;
+		ReplayFphiMaxAbs = fphi_max_diag;
+	}
+
+	// PRESSURE EVOLUTION UPDATE:
+	for (i=0; i< 27; i++) {
+		F_i[i] = 3.0*wg[i] * (F_total[0]*d3q27_ex[i] + F_total[1]*d3q27_ey[i] + F_total[2]*d3q27_ez[i])/rho;
+	}
+	real_t omega_g = 1.0/tau;
+	<?R
+		om= PV("omega_g")
+		C(g, g - (geq_bgk+0.5*Fi)*om + Fi)
+	?>
+    updateTrackers( C );
+}
+#endif
+
+CudaDeviceFunction vector_t getA(){
+	vector_t ret;
+	return ret;
+}
+CudaDeviceFunction float2 Color() {
+        float2 ret;
+        vector_t u = getU();
+        ret.x = PhaseF(0,0);
+        if (NodeType == NODE_Solid){
+                ret.y = 0;
+        } else {
+                ret.y = 1;
+        }
+        return ret;
+}
+
+/* MRT Matrix Check:
+<?R
+	options(width=200)
+	print(M)
+
+	printf <- function(...) cat(sprintf(...))
+
+	myWeighting = c(8./27.,
+					2./27., 2./27., 2./27., 2./27., 2./27., 2./27.,
+					1./216., 1./216., 1./216., 1./216.,
+					1./216., 1./216., 1./216., 1./216.,
+					1./54.,  1./54.,  1./54.,  1./54.,
+					1./54.,  1./54.,  1./54.,  1./54.,
+					1./54.,  1./54.,  1./54.,  1./54.)
+	printf("Orthogonality Check \n")
+	for (i in 1:27) {
+		printf("Moment %d: ", i-1)
+		for (j in i:27) {
+			tmp <- myWeighting %*% ( M[i,] * M[j,] )
+			printf(" %.2f,", tmp)
+		}
+		printf("\n")
+	}
+?>
+*/
