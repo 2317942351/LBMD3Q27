@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<CLBConfig output="output/" permissive="true">
+  <Geometry nx="80" ny="80" nz="120">
+    <MRT><Box/></MRT>
+    <Wall mask="ALL" name="OuterDomain"><Box nx="1"/><Box dx="-1"/><Box ny="1"/><Box dy="-1"/><Box nz="1"/><Box dz="-1"/></Wall>
+    <Wall mask="ALL" name="AnalyticSphere"><Sphere dx="20" nx="40" dy="20" ny="40" dz="28" nz="40"/></Wall>
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.005"/>
+    <Param name="Viscosity_h" value="0.1"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="1"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.6"/>
+    <Param name="IntWidth" value="3"/>
+    <Param name="Radius" value="0"/>
+    <Param name="CenterX" value="40.0"/>
+    <Param name="CenterY" value="40.0"/>
+    <Param name="CenterZ" value="72.0"/>
+    <Param name="SphereCapInit" value="1"/>
+    <Param name="SphereCapInitParentRadius" value="18.47147913178317"/>
+    <Param name="SphereCapInitCenterX" value="40.0"/>
+    <Param name="SphereCapInitCenterY" value="40.0"/>
+    <Param name="SphereCapInitCenterZ" value="67.28123332881582"/>
+    <Param name="SphereCapInitSolidCenterX" value="40.0"/>
+    <Param name="SphereCapInitSolidCenterY" value="40.0"/>
+    <Param name="SphereCapInitSolidCenterZ" value="48.0"/>
+    <Param name="SphereCapInitSolidRadius" value="20.0"/>
+    <Param name="BubbleType" value="1.0"/>
+    <Param name="VelocityX" value="0"/>
+    <Param name="VelocityY" value="0"/>
+    <Param name="VelocityZ" value="0"/>
+    <Param name="GravitationX" value="0"/>
+    <Param name="GravitationY" value="0"/>
+    <Param name="GravitationZ" value="0"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <Param name="radAngle" value="90d" zone="AnalyticSphere"/>
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="AnalyticSolidType" value="3"/>
+    <Param name="AnalyticSolidCenterX" value="40.0"/>
+    <Param name="AnalyticSolidCenterY" value="40.0"/>
+    <Param name="AnalyticSolidCenterZ" value="48.0"/>
+    <Param name="AnalyticSolidRadius" value="20.0"/>
+    <Param name="WettingBCMode" value="0"/>
+    <Param name="WallCompactStencilMode" value="0"/>
+    <Param name="WallCompactStencilWriteAllowedFlag" value="0"/>
+    <Param name="Stage17BDiffuseSolidMode" value="1"/>
+    <Param name="Stage17BWriteMode" value="0"/>
+    <Param name="Stage17BShadowThetaDeg" value="60"/>
+    <Param name="Stage17BPsiEps" value="1.25"/>
+    <Param name="Stage17BWriteBand" value="1.8"/>
+    <Param name="Stage17BGradPsiMin" value="1e-4"/>
+    <Param name="ReplayDiagnosticsMode" value="0"/>
+    <Param name="MomentumClosureDiagnosticsMode" value="0"/>
+    <Param name="DynamicCLMode" value="0"/>
+    <Param name="ForceFixedTol" value="0"/>
+    <Param name="ForceFixedMaxIter" value="2"/>
+    <Param name="minGradient" value="1e-8"/>
+  </Model>
+  <VTK what="PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallH,AnalyticFlag,LocalRadAngle,PsiSolid,PsiGradMag,PsiNormal,PsiWallGhost,PsiThetaImplied,PsiJaggedness,PsiWriteAllowedFlag,PsiNormalAmbiguityFlag,NearWallForceMag,NearWallGradPhiMag,NearWallForceOverRhoShadow"/>
+  <Log Iterations="100"/><Failcheck Iterations="100"/>
+  <Solve Iterations="2000"><VTK Iterations="500" what="PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallH,AnalyticFlag,LocalRadAngle,PsiSolid,PsiGradMag,PsiNormal,PsiWallGhost,PsiThetaImplied,PsiJaggedness,PsiWriteAllowedFlag,PsiNormalAmbiguityFlag,NearWallForceMag,NearWallGradPhiMag,NearWallForceOverRhoShadow"/><Log Iterations="100"/><Failcheck Iterations="100"/></Solve>
+</CLBConfig>
