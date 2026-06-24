@@ -1,0 +1,143 @@
+{
+  "cases": [
+    {
+      "case": "cylinder_init090_to060_b3morph",
+      "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+      "expected_response": "spread",
+      "geometry": "cylinder",
+      "init_theta_deg": 90.0,
+      "metrics": {
+        "angle_acute_delta_deg": 0.3851911889215671,
+        "angle_obtuse_delta_deg": -0.3851911889215671,
+        "area_delta_cells": -24,
+        "centroid_y_delta": 0.0008244165667292691,
+        "footprint_delta_cells": -2,
+        "height_delta_cells": 1,
+        "phase_max_final": 1.0002648828475182,
+        "phase_min_final": -8.503508258587031e-05,
+        "phase_nonfinite_final": 0
+      },
+      "signals": [
+        "footprint_contracts_opposite"
+      ],
+      "target_theta_deg": 60.0,
+      "verdict": "direction_opposite_or_not_coupled"
+    },
+    {
+      "case": "cylinder_init090_to090_b3morph",
+      "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+      "expected_response": "control",
+      "geometry": "cylinder",
+      "init_theta_deg": 90.0,
+      "metrics": {
+        "angle_acute_delta_deg": 0.4599306007174562,
+        "angle_obtuse_delta_deg": -0.4599306007174562,
+        "area_delta_cells": -8,
+        "centroid_y_delta": 0.01919949610626759,
+        "footprint_delta_cells": 0,
+        "height_delta_cells": -2,
+        "phase_max_final": 1.0001193827083072,
+        "phase_min_final": -8.452921726348623e-05,
+        "phase_nonfinite_final": 0
+      },
+      "signals": [
+        "control_drift"
+      ],
+      "target_theta_deg": 90.0,
+      "verdict": "control_drift"
+    },
+    {
+      "case": "cylinder_init090_to120_b3morph",
+      "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+      "expected_response": "retract",
+      "geometry": "cylinder",
+      "init_theta_deg": 90.0,
+      "metrics": {
+        "angle_acute_delta_deg": 0.9783577549518441,
+        "angle_obtuse_delta_deg": -0.9783577549518441,
+        "area_delta_cells": -2,
+        "centroid_y_delta": 0.07368034771880616,
+        "footprint_delta_cells": 0,
+        "height_delta_cells": -3,
+        "phase_max_final": 1.0000883223614574,
+        "phase_min_final": -8.677659632154177e-05,
+        "phase_nonfinite_final": 0
+      },
+      "signals": [
+        "height_flattens_opposite"
+      ],
+      "target_theta_deg": 120.0,
+      "verdict": "direction_opposite_or_not_coupled"
+    },
+    {
+      "case": "sphere_init090_to060_b3morph",
+      "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+      "expected_response": "spread",
+      "geometry": "sphere",
+      "init_theta_deg": 90.0,
+      "metrics": {
+        "angle_acute_delta_deg": -1.270575878001523,
+        "angle_obtuse_delta_deg": 1.270575878001523,
+        "area_delta_cells": -8,
+        "centroid_y_delta": -0.15791850373983607,
+        "footprint_delta_cells": -2,
+        "height_delta_cells": 1,
+        "phase_max_final": 1.0001009312941824,
+        "phase_min_final": -5.469772330540165e-05,
+        "phase_nonfinite_final": 0
+      },
+      "signals": [
+        "footprint_contracts_opposite"
+      ],
+      "target_theta_deg": 60.0,
+      "verdict": "direction_opposite_or_not_coupled"
+    },
+    {
+      "case": "sphere_init090_to090_b3morph",
+      "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+      "expected_response": "control",
+      "geometry": "sphere",
+      "init_theta_deg": 90.0,
+      "metrics": {
+        "angle_acute_delta_deg": -0.5401553851210537,
+        "angle_obtuse_delta_deg": 0.5401553851210537,
+        "area_delta_cells": -2,
+        "centroid_y_delta": 0.036573056573047324,
+        "footprint_delta_cells": 0,
+        "height_delta_cells": 0,
+        "phase_max_final": 1.0001363838002124,
+        "phase_min_final": -6.950567570071716e-05,
+        "phase_nonfinite_final": 0
+      },
+      "signals": [
+        "near_stationary"
+      ],
+      "target_theta_deg": 90.0,
+      "verdict": "control_stable"
+    },
+    {
+      "case": "sphere_init090_to120_b3morph",
+      "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+      "expected_response": "retract",
+      "geometry": "sphere",
+      "init_theta_deg": 90.0,
+      "metrics": {
+        "angle_acute_delta_deg": -2.601983783868434,
+        "angle_obtuse_delta_deg": 2.601983783868434,
+        "area_delta_cells": -2,
+        "centroid_y_delta": 0.21943019943019237,
+        "footprint_delta_cells": 0,
+        "height_delta_cells": -1,
+        "phase_max_final": 1.000117106024023,
+        "phase_min_final": -7.582718201207829e-05,
+        "phase_nonfinite_final": 0
+      },
+      "signals": [],
+      "target_theta_deg": 120.0,
+      "verdict": "weak_or_mixed_response"
+    }
+  ],
+  "claim_limit": "short-run morphology response assessment only; not contact-angle validation",
+  "source_csv": "artifacts\\stage17B_B4_morphology_20260624\\post\\morphology\\stage17B_B4_morphology_frames.csv",
+  "status": "B4_RESPONSE_NOT_VALIDATED"
+}
