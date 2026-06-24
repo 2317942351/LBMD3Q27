@@ -8,6 +8,7 @@ BIN="${BIN:-/home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_g
 GPU="${GPU:-1}"
 TIMEOUT="${TIMEOUT:-1800}"
 FREE_THRESHOLD_KB="${FREE_THRESHOLD_KB:-52428800}"
+EXPECTED_FINAL_STEP="${EXPECTED_FINAL_STEP:-1000}"
 
 export CUDA_VISIBLE_DEVICES="${GPU}"
 export OMPI_MCA_plm_rsh_agent=/usr/bin/ssh
@@ -28,6 +29,7 @@ fi
   echo "BIN=${BIN}"
   echo "GPU=${GPU}"
   echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
+  echo "EXPECTED_FINAL_STEP=${EXPECTED_FINAL_STEP}"
   echo "claim_limit=shadow diagnostics only; not contact-angle validation"
 } | tee "${ROOT}/run_manifest.txt"
 
@@ -67,6 +69,7 @@ if [[ -f "${ANALYZE}" ]]; then
   python3 "${ANALYZE}" "${ROOT}" \
     --out-json "${ROOT}/stage17B_shadow_analysis.json" \
     --out-csv "${ROOT}/stage17B_shadow_frames.csv" \
+    --expected-final-step "${EXPECTED_FINAL_STEP}" \
     > "${ROOT}/stage17B_shadow_analysis_stdout.json" || overall_rc=1
 else
   echo "missing analyzer: ${ANALYZE}" | tee "${ROOT}/analysis_missing.txt"
