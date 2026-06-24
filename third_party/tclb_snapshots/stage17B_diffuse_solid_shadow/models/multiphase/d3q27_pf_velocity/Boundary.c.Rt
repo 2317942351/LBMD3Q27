@@ -1876,11 +1876,18 @@ CudaDeviceFunction void calcWallPhase(){
 					stage17b_compute_diffuse_shadow(
 						n_w_a, sd_a, h_a, pf_f, grad_f_shadow, radAngle);
 					if (stage17b_controlled_write_requested() && PsiWriteAllowedFlag > 0.5) {
-						WallGhost = PsiWallGhost;
-						WallGhostRaw = PsiWallGhostRaw;
-						WallGhostClamped = PsiWallGhost;
-						WallGhostClampHit = PsiWallGhostClampHit;
-						WettingPathId = 170.0;
+						if (Stage17BWriteSourceMode > 0.5 && Stage17BWriteSourceMode < 1.5) {
+							WallGhost = stage13_compute_analytic_wall_ghost(
+								n_w_a, h_a, pf_f, grad_f_shadow, radAngle,
+								&WallGhostRaw, &WallGhostClamped, &WallGhostClampHit, &WettingPathId);
+							WettingPathId = 171.0;
+						} else {
+							WallGhost = PsiWallGhost;
+							WallGhostRaw = PsiWallGhostRaw;
+							WallGhostClamped = PsiWallGhost;
+							WallGhostClampHit = PsiWallGhostClampHit;
+							WettingPathId = 170.0;
+						}
 						PsiWriteAppliedFlag = 1.0;
 						PhaseF = pf_f;
 						return;

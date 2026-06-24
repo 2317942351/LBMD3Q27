@@ -726,6 +726,7 @@ if (Options$thermo){
 	AddSetting(name="WallCompactStencilWriteAllowedFlag", default=0, comment='Stage13 hard gate: compact-stencil writes are blocked unless explicitly enabled')
 	AddSetting(name="Stage17BDiffuseSolidMode", default=0, comment='Stage17B: 0 off, 1 diffuse-solid curved-wall shadow diagnostics')
 	AddSetting(name="Stage17BWriteMode", default=0, comment='Stage17B: 0 shadow-only, 1 armed readiness diagnostics, 2 controlled WallGhost write on curved analytic geometry')
+	AddSetting(name="Stage17BWriteSourceMode", default=0, comment='Stage17B-B8 diagnostic: 0 controlled diffuse-solid PsiWallGhost, 1 legacy analytic WallGhost through the same controlled curved write gate')
 	AddSetting(name="Stage17BPsiEps", default=1.25, comment='Stage17B diffuse solid interface half-width in lattice units')
 	AddSetting(name="Stage17BWriteBand", default=1.8, comment='Stage17B shadow allowed near-wall band in lattice units')
 	AddSetting(name="Stage17BGradPsiMin", default=1e-4, comment='Stage17B minimum |grad psi_s| for a non-ambiguous normal')

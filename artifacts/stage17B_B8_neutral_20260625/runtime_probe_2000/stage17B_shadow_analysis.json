@@ -1,0 +1,5724 @@
+{
+  "cases": [
+    {
+      "case": "cylinder_init090_neutral_A_legacy_baseline",
+      "case_dir": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_A_legacy_baseline",
+      "claim_limit": "diagnostic-field health only; not contact-angle validation",
+      "expected_final_step": 2000,
+      "failures": [
+        "no_write_allowed_shadow_cells_step_0",
+        "no_write_allowed_shadow_cells_step_1000",
+        "no_write_allowed_shadow_cells_step_1500",
+        "no_write_allowed_shadow_cells_step_2000",
+        "no_write_allowed_shadow_cells_step_500"
+      ],
+      "frames": [
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 0,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.018285680700231483,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.27088101674857257,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.1491257604158011,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 20.0,
+              "mean": -0.6680998625578703,
+              "min": -20.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 0,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_A_legacy_baseline/output/case_VTK_P00_00000000.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 0,
+          "write_allowed_fraction_near_band": 0.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 0,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001113168471623,
+              "max_abs": 1.0001113168471623,
+              "mean": 0.2705758484583056,
+              "min": -0.00010428253951912019,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001107602629264,
+              "max_abs": 1.0001107602629264,
+              "mean": 0.14912502272151898,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.6693428201965314e-05,
+              "max_abs": 5.6693428201965314e-05,
+              "mean": 4.517551165134046e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292331,
+              "max_abs": 1.0000970223292331,
+              "mean": 0.12474415533540846,
+              "min": -5.424566088038797e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05238285771122685,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292331,
+              "max_abs": 1.0000970223292331,
+              "mean": 0.12474415533540846,
+              "min": -5.424566088038797e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292331,
+              "max_abs": 1.0000970223292331,
+              "mean": 0.12474292340526869,
+              "min": -0.00010428253951912019,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_A_legacy_baseline/output/case_VTK_P00_00000500.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 0,
+          "write_allowed_fraction_near_band": 0.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 0,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001155006746076,
+              "max_abs": 1.0001155006746076,
+              "mean": 0.27059440655372646,
+              "min": -0.00011319533679975898,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001149231712345,
+              "max_abs": 1.0001149231712345,
+              "mean": 0.14912083330680695,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.377070898022645e-05,
+              "max_abs": 6.377070898022645e-05,
+              "mean": 6.508537607129856e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.00009963371116,
+              "max_abs": 1.00009963371116,
+              "mean": 0.12476692389787633,
+              "min": -7.291937535493001e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05303389937789352,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.00009963371116,
+              "max_abs": 1.00009963371116,
+              "mean": 0.12476692389787633,
+              "min": -7.291937535493001e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001006571054432,
+              "max_abs": 1.0001006571054432,
+              "mean": 0.1247653641559591,
+              "min": -0.00011319533679975898,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_A_legacy_baseline/output/case_VTK_P00_00001000.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 0,
+          "write_allowed_fraction_near_band": 0.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 0,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000111341132241,
+              "max_abs": 1.000111341132241,
+              "mean": 0.27060934899522154,
+              "min": -0.0001066821886173724,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001107844265797,
+              "max_abs": 1.0001107844265797,
+              "mean": 0.14911767840803467,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.778731048216937e-05,
+              "max_abs": 6.778731048216937e-05,
+              "mean": 7.76799844934118e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927754665367,
+              "max_abs": 1.0000927754665367,
+              "mean": 0.12478503709190647,
+              "min": -8.093942477482335e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05339106807002315,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927754665367,
+              "max_abs": 1.0000927754665367,
+              "mean": 0.12478503709190647,
+              "min": -8.093942477482335e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000992825707065,
+              "max_abs": 1.0000992825707065,
+              "mean": 0.12478319751348678,
+              "min": -0.0001066821886173724,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_A_legacy_baseline/output/case_VTK_P00_00001500.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 0,
+          "write_allowed_fraction_near_band": 0.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 0,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001247051474558,
+              "max_abs": 1.0001247051474558,
+              "mean": 0.2706229123267584,
+              "min": -0.0001141889468387327,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001240816217185,
+              "max_abs": 1.0001240816217185,
+              "mean": 0.14911489044424503,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 7.043322538033105e-05,
+              "max_abs": 7.043322538033105e-05,
+              "mean": 8.58850203673972e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000093688339944,
+              "max_abs": 1.000093688339944,
+              "mean": 0.12480140239710108,
+              "min": -8.395372323227348e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.053437409577546294,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000093688339944,
+              "max_abs": 1.000093688339944,
+              "mean": 0.12480140239710108,
+              "min": -8.395372323227348e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000098636798028,
+              "max_abs": 1.000098636798028,
+              "mean": 0.1247992720098534,
+              "min": -0.0001141889468387327,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 2000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_A_legacy_baseline/output/case_VTK_P00_00002000.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 0,
+          "write_allowed_fraction_near_band": 0.0,
+          "write_applied_cells": 0
+        }
+      ],
+      "n_vti": 5,
+      "run_status": "START cylinder_init090_neutral_A_legacy_baseline 2026-06-25T02:15:46+08:00\nRC=0\nEND cylinder_init090_neutral_A_legacy_baseline 2026-06-25T02:19:05+08:00",
+      "runtime_log_has_nan": false,
+      "status": "FAIL",
+      "steps": [
+        0,
+        500,
+        1000,
+        1500,
+        2000
+      ]
+    },
+    {
+      "case": "cylinder_init090_neutral_B_shadow_only",
+      "case_dir": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_B_shadow_only",
+      "claim_limit": "diagnostic-field health only; not contact-angle validation",
+      "expected_final_step": 2000,
+      "failures": [],
+      "frames": [
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 12428,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.018285680700231483,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.27088101674857257,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.2827152323622989,
+              "max_abs": 0.2827152323622989,
+              "mean": 0.0035822069432436304,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.0390270819652751e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8094273176888296,
+              "max_abs": 0.8094273176888296,
+              "mean": 0.008874770637576603,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 1.264241536458333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.9999999999986269,
+              "max_abs": 0.9999999999986269,
+              "mean": 0.0032354449800115065,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.9999999999986269,
+              "max_abs": 0.9999999999986269,
+              "mean": 0.0032354449800115065,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 8.0,
+              "max_abs": 8.0,
+              "mean": 0.11237702546296297,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.1491257604158011,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 20.0,
+              "mean": -0.6680998625578703,
+              "min": -20.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 0,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_B_shadow_only/output/case_VTK_P00_00000000.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 12428,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.3046612050223684e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.255571123496768e-06,
+              "max_abs": 5.255571123496768e-06,
+              "mean": 3.217754004322156e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.3046612050223684e-05,
+              "max_abs": 2.3046612050223684e-05,
+              "mean": 1.885966824345613e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.3424932495981993,
+              "max_abs": 0.3424932495981993,
+              "mean": 0.0005082229410595133,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001113168471627,
+              "max_abs": 1.0001113168471627,
+              "mean": 0.2705758484583044,
+              "min": -0.00010428253951897006,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004852466818226995,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.015308521412037037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.0048524129544530665,
+              "min": -5.4245660826454165e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 8.0,
+              "max_abs": 8.0,
+              "mean": 0.18019386574074073,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000110760262927,
+              "max_abs": 1.000110760262927,
+              "mean": 0.14912502272151865,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.669342820180955e-05,
+              "max_abs": 5.669342820180955e-05,
+              "mean": 4.517551165133913e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.12474415533540738,
+              "min": -5.4245660826454165e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05238285771122685,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.12474415533540738,
+              "min": -5.4245660826454165e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.12474292340526782,
+              "min": -0.00010428253951897006,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_B_shadow_only/output/case_VTK_P00_00000500.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.4596164979261202e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.088199547834431e-06,
+              "max_abs": 5.088199547834431e-06,
+              "mean": 3.730390162775101e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.4596164979261202e-05,
+              "max_abs": 2.4596164979261202e-05,
+              "mean": 1.880928683395678e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34373892134253237,
+              "max_abs": 0.34373892134253237,
+              "mean": 0.0005666473037197306,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001155006777505,
+              "max_abs": 1.0001155006777505,
+              "mean": 0.2705944065526372,
+              "min": -0.00011319533585905987,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004844453481848761,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01664112232349537,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000996337086054,
+              "max_abs": 1.0000996337086054,
+              "mean": 0.00484430488448357,
+              "min": -7.291935967669241e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 8.0,
+              "max_abs": 8.0,
+              "mean": 0.18019386574074073,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001149231743616,
+              "max_abs": 1.0001149231743616,
+              "mean": 0.14912083330615392,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.377070902575612e-05,
+              "max_abs": 6.377070902575612e-05,
+              "mean": 6.50853760642052e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000996337086054,
+              "max_abs": 1.0000996337086054,
+              "mean": 0.12476692389744322,
+              "min": -7.291935967669241e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05303389937789352,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000996337086054,
+              "max_abs": 1.0000996337086054,
+              "mean": 0.12476692389744322,
+              "min": -7.291935967669241e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001006571069029,
+              "max_abs": 1.0001006571069029,
+              "mean": 0.12476536415562584,
+              "min": -0.00011319533585905987,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_B_shadow_only/output/case_VTK_P00_00001000.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.548878309142725e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 4.96584786261821e-06,
+              "max_abs": 4.96584786261821e-06,
+              "mean": 3.395102873380972e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.548878309142725e-05,
+              "max_abs": 2.548878309142725e-05,
+              "mean": 1.728160982563428e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34417084404763004,
+              "max_abs": 0.34417084404763004,
+              "mean": 0.0005250188889539398,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001113411424554,
+              "max_abs": 1.0001113411424554,
+              "mean": 0.2706093494119654,
+              "min": -0.0001066822462901274,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004840552178701268,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.017295554832175927,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927750621738,
+              "max_abs": 1.0000927750621738,
+              "mean": 0.004840317058496625,
+              "min": -8.054580661123604e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 8.0,
+              "max_abs": 8.0,
+              "mean": 0.18019386574074073,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000110784436743,
+              "max_abs": 1.000110784436743,
+              "mean": 0.1491176785871953,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.778731243844142e-05,
+              "max_abs": 6.778731243844142e-05,
+              "mean": 7.767998374086735e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927750621738,
+              "max_abs": 1.0000927750621738,
+              "mean": 0.12478503732858932,
+              "min": -8.054580661123604e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05339106807002315,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927750621738,
+              "max_abs": 1.0000927750621738,
+              "mean": 0.12478503732858932,
+              "min": -8.054580661123604e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000992825741315,
+              "max_abs": 1.0000992825741315,
+              "mean": 0.12478319825252407,
+              "min": -0.0001066822462901274,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_B_shadow_only/output/case_VTK_P00_00001500.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 0
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.6084298261053252e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 4.900867294462318e-06,
+              "max_abs": 4.900867294462318e-06,
+              "mean": 3.4799996161315992e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.6084298261053252e-05,
+              "max_abs": 2.6084298261053252e-05,
+              "mean": 1.87735291210156e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34429081537486345,
+              "max_abs": 0.34429081537486345,
+              "mean": 0.0005283194611809018,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001246915925956,
+              "max_abs": 1.0001246915925956,
+              "mean": 0.2706229128513099,
+              "min": -0.00011420908929056593,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.00483868107912051,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.017323811848958332,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000936883740823,
+              "max_abs": 1.0000936883740823,
+              "mean": 0.004838360110039202,
+              "min": -8.39652472526958e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 8.0,
+              "max_abs": 8.0,
+              "mean": 0.18019386574074073,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001240681346326,
+              "max_abs": 1.0001240681346326,
+              "mean": 0.14911489048651225,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 7.043315209292356e-05,
+              "max_abs": 7.043315209292356e-05,
+              "mean": 8.588503484173029e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000936883740823,
+              "max_abs": 1.0000936883740823,
+              "mean": 0.12480140287917305,
+              "min": -8.396524725269583e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.053437409577546294,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000936883740823,
+              "max_abs": 1.0000936883740823,
+              "mean": 0.12480140287917305,
+              "min": -8.396524725269583e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000986366713942,
+              "max_abs": 1.0000986366713942,
+              "mean": 0.1247992723419976,
+              "min": -0.00011420908929056593,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 11.0,
+              "max_abs": 11.0,
+              "mean": -0.4900806568287037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 2000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_B_shadow_only/output/case_VTK_P00_00002000.vti",
+          "wallghost_psi_max_abs_diff_applied": null,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": null,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": null,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": null,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 0
+        }
+      ],
+      "n_vti": 5,
+      "run_status": "START cylinder_init090_neutral_B_shadow_only 2026-06-25T02:19:05+08:00\nRC=0\nEND cylinder_init090_neutral_B_shadow_only 2026-06-25T02:22:28+08:00",
+      "runtime_log_has_nan": false,
+      "status": "PASS_SHADOW_DIAGNOSTICS",
+      "steps": [
+        0,
+        500,
+        1000,
+        1500,
+        2000
+      ]
+    },
+    {
+      "case": "cylinder_init090_neutral_C_controlled_psi",
+      "case_dir": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_C_controlled_psi",
+      "claim_limit": "diagnostic-field health only; not contact-angle validation",
+      "expected_final_step": 2000,
+      "failures": [],
+      "frames": [
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 12428,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.018285680700231483,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.27088101674857257,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.2827152323622989,
+              "max_abs": 0.2827152323622989,
+              "mean": 0.0035822069432436304,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.0390270819652751e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8094273176888296,
+              "max_abs": 0.8094273176888296,
+              "mean": 0.008874770637576603,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 1.264241536458333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.9999999999986269,
+              "max_abs": 0.9999999999986269,
+              "mean": 0.0032354449800115065,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.9999999999986269,
+              "max_abs": 0.9999999999986269,
+              "mean": 0.0032354449800115065,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.1491257604158011,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 170.0,
+              "max_abs": 170.0,
+              "mean": 1.7058648003472223,
+              "min": -20.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 0,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_C_controlled_psi/output/case_VTK_P00_00000000.vti",
+          "wallghost_psi_max_abs_diff_applied": 0.0,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": 0.0,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 0.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": 0.0,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 12428,
+          "write_allowed_cells": 12428,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 12428
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.304635196316975e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.255769910771431e-06,
+              "max_abs": 5.255769910771431e-06,
+              "mean": 3.63248495019335e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.304635196316975e-05,
+              "max_abs": 2.304635196316975e-05,
+              "mean": 1.887710134852938e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34249379090702214,
+              "max_abs": 0.34249379090702214,
+              "mean": 0.0005452002745724885,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001280051439358,
+              "max_abs": 1.0001280051439358,
+              "mean": 0.2705758837890383,
+              "min": -0.00010347764524766578,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004852507413416466,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.015301739728009259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001280051439358,
+              "max_abs": 1.0001280051439358,
+              "mean": 0.004852444081763516,
+              "min": -7.080185878457835e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000127365118216,
+              "max_abs": 1.000127365118216,
+              "mean": 0.14912502333036445,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.669201026316053e-05,
+              "max_abs": 5.669201026316053e-05,
+              "mean": 4.517573038561162e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12474425338588872,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.06767329463252315,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12474425338588872,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001280051439358,
+              "max_abs": 1.0001280051439358,
+              "mean": 0.12474296126192107,
+              "min": -0.00010347764524766578,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 170.0,
+              "max_abs": 170.0,
+              "mean": 3.3165147569444446,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_C_controlled_psi/output/case_VTK_P00_00000500.vti",
+          "wallghost_psi_max_abs_diff_applied": 0.0,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": 0.0,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 0.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": 0.0,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 19928,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.4596789542731714e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.088517223476078e-06,
+              "max_abs": 5.088517223476078e-06,
+              "mean": 3.6399037624380404e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.4596789542731714e-05,
+              "max_abs": 2.4596789542731714e-05,
+              "mean": 1.9551695683819956e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.3437390029517026,
+              "max_abs": 0.3437390029517026,
+              "mean": 0.0005689930196312298,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001348624664836,
+              "max_abs": 1.0001348624664836,
+              "mean": 0.2705944123966884,
+              "min": -0.00011338328929242936,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.0048444898474244635,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.016658076533564815,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001348624664836,
+              "max_abs": 1.0001348624664836,
+              "mean": 0.004844297112623876,
+              "min": -9.063464721165673e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001341881541512,
+              "max_abs": 1.0001341881541512,
+              "mean": 0.14912084680830276,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.376691509283126e-05,
+              "max_abs": 6.376691509283126e-05,
+              "mean": 6.5085745964431825e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12476710890629635,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.06968745478877315,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12476710890629635,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001348624664836,
+              "max_abs": 1.0001348624664836,
+              "mean": 0.12476536340481996,
+              "min": -0.00011338328929242936,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 170.0,
+              "max_abs": 170.0,
+              "mean": 3.3165147569444446,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_C_controlled_psi/output/case_VTK_P00_00001000.vti",
+          "wallghost_psi_max_abs_diff_applied": 0.0,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": 0.0,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 0.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": 0.0,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 19928,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.5488724606211317e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 4.9666090912448e-06,
+              "max_abs": 4.9666090912448e-06,
+              "mean": 3.333308052248361e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.5488724606211317e-05,
+              "max_abs": 2.5488724606211317e-05,
+              "mean": 1.7362895648470102e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.3441718309171614,
+              "max_abs": 0.3441718309171614,
+              "mean": 0.0004959358457775534,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001327559178634,
+              "max_abs": 1.0001327559178634,
+              "mean": 0.2706093159993658,
+              "min": -0.00011153025800276291,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.00484056619761362,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01732268156828704,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001316255830806,
+              "max_abs": 1.0001316255830806,
+              "mean": 0.00484025842623468,
+              "min": -0.00010459881303909296,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001320921382741,
+              "max_abs": 1.0001320921382741,
+              "mean": 0.14911770646064149,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.777849871069221e-05,
+              "max_abs": 6.777849871069221e-05,
+              "mean": 7.768099608875877e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12478528367385502,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.07072166160300926,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12478528367385502,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001316255830806,
+              "max_abs": 1.0001316255830806,
+              "mean": 0.1247831504977068,
+              "min": -0.00011153025800276291,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 170.0,
+              "max_abs": 170.0,
+              "mean": 3.3165147569444446,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_C_controlled_psi/output/case_VTK_P00_00001500.vti",
+          "wallghost_psi_max_abs_diff_applied": 0.0,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": 0.0,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 0.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": 0.0,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 19928,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 0,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.608188767130308e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 4.900825232909567e-06,
+              "max_abs": 4.900825232909567e-06,
+              "mean": 3.596113417611245e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.608188767130308e-05,
+              "max_abs": 2.608188767130308e-05,
+              "mean": 1.8486984127117163e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34429284738740823,
+              "max_abs": 0.34429284738740823,
+              "mean": 0.0005523246710976739,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.00013003366776,
+              "max_abs": 1.00013003366776,
+              "mean": 0.27062287844362237,
+              "min": -0.00011634474311774,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004838696446854713,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.017367892795138888,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000121927571404,
+              "max_abs": 1.000121927571404,
+              "mean": 0.004838286215646785,
+              "min": -0.00010396650649261212,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001293834994212,
+              "max_abs": 1.0001293834994212,
+              "mean": 0.1491149302908669,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 7.042584831766811e-05,
+              "max_abs": 7.042584831766811e-05,
+              "mean": 8.588635282361008e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12480173869831693,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.07080643265335648,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12480173869831693,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000121927571404,
+              "max_abs": 1.000121927571404,
+              "mean": 0.12479921535887249,
+              "min": -0.00011634474311774,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 170.0,
+              "max_abs": 170.0,
+              "mean": 3.3165147569444446,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 2000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_C_controlled_psi/output/case_VTK_P00_00002000.vti",
+          "wallghost_psi_max_abs_diff_applied": 0.0,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": 0.0,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 0.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": 0.0,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 19928,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        }
+      ],
+      "n_vti": 5,
+      "run_status": "START cylinder_init090_neutral_C_controlled_psi 2026-06-25T02:22:28+08:00\nRC=0\nEND cylinder_init090_neutral_C_controlled_psi 2026-06-25T02:25:54+08:00",
+      "runtime_log_has_nan": false,
+      "status": "PASS_SHADOW_DIAGNOSTICS",
+      "steps": [
+        0,
+        500,
+        1000,
+        1500,
+        2000
+      ]
+    },
+    {
+      "case": "cylinder_init090_neutral_D_controlled_legacy",
+      "case_dir": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_D_controlled_legacy",
+      "claim_limit": "diagnostic-field health only; not contact-angle validation",
+      "expected_final_step": 2000,
+      "failures": [],
+      "frames": [
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 12428,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 12428,
+          "near_wall_force_over_rho_max_abs": 0.0,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.018285680700231483,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.27088101674857257,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.2827152323622989,
+              "max_abs": 0.2827152323622989,
+              "mean": 0.0035822069432436304,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.0390270819652751e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8094273176888296,
+              "max_abs": 0.8094273176888296,
+              "mean": 0.008874770637576603,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 1.264241536458333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.9999999999986269,
+              "max_abs": 0.9999999999986269,
+              "mean": 0.0032354449800115065,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.9999999999986269,
+              "max_abs": 0.9999999999986269,
+              "mean": 0.0032354449800115065,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01404712818287037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.1491257604158011,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.12504858222438664,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 171.0,
+              "max_abs": 171.0,
+              "mean": 1.7199119285300926,
+              "min": -20.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 0,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_D_controlled_legacy/output/case_VTK_P00_00000000.vti",
+          "wallghost_psi_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghost_psi_mismatch_cells_applied": 0,
+          "wallghostclamped_psi_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghostclamped_psi_mismatch_cells_applied": 0,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 0.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 0,
+          "wallghostraw_psiraw_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 12428,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 12428
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 19928,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.3046612050223684e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.255571123496768e-06,
+              "max_abs": 5.255571123496768e-06,
+              "mean": 3.2239006271676435e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.3046612050223684e-05,
+              "max_abs": 2.3046612050223684e-05,
+              "mean": 1.8511952029211118e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.3424932495981993,
+              "max_abs": 0.3424932495981993,
+              "mean": 0.0004945469658039841,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001113168471627,
+              "max_abs": 1.0001113168471627,
+              "mean": 0.2705758484583044,
+              "min": -0.00010428253951897006,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004852466818226995,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.015308521412037037,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.0048524129544530665,
+              "min": -5.4245660826454165e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000110760262927,
+              "max_abs": 1.000110760262927,
+              "mean": 0.14912502272151865,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.669342820180955e-05,
+              "max_abs": 5.669342820180955e-05,
+              "mean": 4.517551165133913e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.12474415533540738,
+              "min": -5.4245660826454165e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05238285771122685,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.12474415533540738,
+              "min": -5.4245660826454165e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000970223292083,
+              "max_abs": 1.0000970223292083,
+              "mean": 0.12474292340526782,
+              "min": -0.00010428253951897006,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 171.0,
+              "max_abs": 171.0,
+              "mean": 3.339038990162037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_D_controlled_legacy/output/case_VTK_P00_00000500.vti",
+          "wallghost_psi_max_abs_diff_applied": 9.702232920827392e-05,
+          "wallghost_psi_mismatch_cells_applied": 13544,
+          "wallghostclamped_psi_max_abs_diff_applied": 9.702232920827392e-05,
+          "wallghostclamped_psi_mismatch_cells_applied": 13544,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 1.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 13544,
+          "wallghostraw_psiraw_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 19928,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.4596164979261202e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 5.088199547834431e-06,
+              "max_abs": 5.088199547834431e-06,
+              "mean": 3.1908457943299097e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.4596164979261202e-05,
+              "max_abs": 2.4596164979261202e-05,
+              "mean": 1.7142376323669483e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34373892134253237,
+              "max_abs": 0.34373892134253237,
+              "mean": 0.00048501799980475436,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001155006777505,
+              "max_abs": 1.0001155006777505,
+              "mean": 0.2705944065526372,
+              "min": -0.00011319533585905987,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004844453481848761,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.01664112232349537,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000996337086054,
+              "max_abs": 1.0000996337086054,
+              "mean": 0.00484430488448357,
+              "min": -7.291935967669241e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001149231743616,
+              "max_abs": 1.0001149231743616,
+              "mean": 0.14912083330615392,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.377070902575612e-05,
+              "max_abs": 6.377070902575612e-05,
+              "mean": 6.50853760642052e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000996337086054,
+              "max_abs": 1.0000996337086054,
+              "mean": 0.12476692389744322,
+              "min": -7.291935967669241e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05303389937789352,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000996337086054,
+              "max_abs": 1.0000996337086054,
+              "mean": 0.12476692389744322,
+              "min": -7.291935967669241e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001006571069029,
+              "max_abs": 1.0001006571069029,
+              "mean": 0.12476536415562584,
+              "min": -0.00011319533585905987,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 171.0,
+              "max_abs": 171.0,
+              "mean": 3.339038990162037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_D_controlled_legacy/output/case_VTK_P00_00001000.vti",
+          "wallghost_psi_max_abs_diff_applied": 9.963370860543996e-05,
+          "wallghost_psi_mismatch_cells_applied": 14723,
+          "wallghostclamped_psi_max_abs_diff_applied": 9.963370860543996e-05,
+          "wallghostclamped_psi_mismatch_cells_applied": 14723,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 1.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 14723,
+          "wallghostraw_psiraw_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 19928,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.5488783093234606e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 4.9658478628275335e-06,
+              "max_abs": 4.9658478628275335e-06,
+              "mean": 3.1655131607168825e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.5488783093234606e-05,
+              "max_abs": 2.5488783093234606e-05,
+              "mean": 1.689374686406133e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.34417084404819076,
+              "max_abs": 0.34417084404819076,
+              "mean": 0.0004781306794006632,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001113411424583,
+              "max_abs": 1.0001113411424583,
+              "mean": 0.27060934941237486,
+              "min": -0.00010668224629054242,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004840552178861412,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.017295554832175927,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927750621682,
+              "max_abs": 1.0000927750621682,
+              "mean": 0.004840317058950931,
+              "min": -8.05458054111067e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001107844367458,
+              "max_abs": 1.0001107844367458,
+              "mean": 0.14911767858711217,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 6.778731243815142e-05,
+              "max_abs": 6.778731243815142e-05,
+              "mean": 7.76799837409522e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927750621682,
+              "max_abs": 1.0000927750621682,
+              "mean": 0.12478503732908226,
+              "min": -8.05458054111067e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.05339106807002315,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000927750621682,
+              "max_abs": 1.0000927750621682,
+              "mean": 0.12478503732908226,
+              "min": -8.05458054111067e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000992825741317,
+              "max_abs": 1.0000992825741317,
+              "mean": 0.12478319825287577,
+              "min": -0.00010668224629054242,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 171.0,
+              "max_abs": 171.0,
+              "mean": 3.339038990162037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 1500,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_D_controlled_legacy/output/case_VTK_P00_00001500.vti",
+          "wallghost_psi_max_abs_diff_applied": 9.277506216820441e-05,
+          "wallghost_psi_mismatch_cells_applied": 15302,
+          "wallghostclamped_psi_max_abs_diff_applied": 9.277506216820441e-05,
+          "wallghostclamped_psi_mismatch_cells_applied": 15302,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 1.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 15302,
+          "wallghostraw_psiraw_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        },
+        {
+          "ambiguity_fraction_near_band": 0.0,
+          "applied_without_path170_cells": 19928,
+          "dims": [
+            96,
+            96,
+            96
+          ],
+          "missing_fields": [],
+          "near_band_cells": 19928,
+          "near_wall_force_over_rho_max_abs": 2.6084298220544023e-05,
+          "path170_without_applied_cells": 0,
+          "psi_wall_ghost_above_1_cells": 0,
+          "psi_wall_ghost_below_0_cells": 0,
+          "stats": {
+            "AnalyticFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "LocalRadAngle": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.5707963267948966,
+              "max_abs": 1.5707963267948966,
+              "mean": 0.30709443161921723,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 4.900867294564692e-06,
+              "max_abs": 4.900867294564692e-06,
+              "mean": 3.2338063795191715e-09,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallForceOverRhoShadow": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.6084298220544023e-05,
+              "max_abs": 2.6084298220544023e-05,
+              "mean": 1.7782944063161695e-08,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "NearWallGradPhiMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.3442908148037493,
+              "max_abs": 0.3442908148037493,
+              "mean": 0.00049568271175583,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PhaseField": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001246915919362,
+              "max_abs": 1.0001246915919362,
+              "mean": 0.27062291285138435,
+              "min": -0.00011420908828136875,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiGradMag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.28282857964173325,
+              "max_abs": 0.28282857964173325,
+              "mean": 0.005096867653267061,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiJaggedness": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 2.220446049250313e-16,
+              "max_abs": 2.220446049250313e-16,
+              "mean": 1.6273071496287062e-18,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormal": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiNormalAmbiguityFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiSolid": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.8441469839421997,
+              "max_abs": 0.8441469839421997,
+              "mean": 0.015495210130367545,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiThetaImplied": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 89.99999999999999,
+              "max_abs": 89.99999999999999,
+              "mean": 2.027180989583333,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.004838681079544233,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.017323811848958332,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000093688376382,
+              "max_abs": 1.000093688376382,
+              "mean": 0.004838360109807597,
+              "min": -8.39652488206069e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAllowedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteAppliedFlag": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.02252423321759259,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "PsiWriteRejectedReason": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 0.0,
+              "max_abs": 0.0,
+              "mean": 0.0,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "Rho": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0001240681339765,
+              "max_abs": 1.0001240681339765,
+              "mean": 0.14911489048673943,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "U": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 7.043315208056115e-05,
+              "max_abs": 7.043315208056115e-05,
+              "mean": 8.588503488723217e-06,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhost": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000093688376382,
+              "max_abs": 1.000093688376382,
+              "mean": 0.12480140287901909,
+              "min": -8.396524882060693e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClampHit": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0,
+              "max_abs": 1.0,
+              "mean": 0.053437409577546294,
+              "min": 0.0,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostClamped": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.000093688376382,
+              "max_abs": 1.000093688376382,
+              "mean": 0.12480140287901909,
+              "min": -8.396524882060693e-05,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WallGhostRaw": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 1.0000986366715208,
+              "max_abs": 1.0000986366715208,
+              "mean": 0.12479927234464154,
+              "min": -0.00011420908828136875,
+              "nonfinite": 0,
+              "present": true
+            },
+            "WettingPathId": {
+              "count": 884736,
+              "finite": 884736,
+              "max": 171.0,
+              "max_abs": 171.0,
+              "mean": 3.339038990162037,
+              "min": -10.0,
+              "nonfinite": 0,
+              "present": true
+            }
+          },
+          "step": 2000,
+          "vti": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000/cylinder_init090_neutral_D_controlled_legacy/output/case_VTK_P00_00002000.vti",
+          "wallghost_psi_max_abs_diff_applied": 9.368837638201732e-05,
+          "wallghost_psi_mismatch_cells_applied": 15327,
+          "wallghostclamped_psi_max_abs_diff_applied": 9.368837638201732e-05,
+          "wallghostclamped_psi_mismatch_cells_applied": 15327,
+          "wallghostclamphit_psiclamphit_max_abs_diff_applied": 1.0,
+          "wallghostclamphit_psiclamphit_mismatch_cells_applied": 15327,
+          "wallghostraw_psiraw_max_abs_diff_applied": 2.7755575615628914e-16,
+          "wallghostraw_psiraw_mismatch_cells_applied": 0,
+          "wetting_path_170_cells": 0,
+          "write_allowed_cells": 19928,
+          "write_allowed_fraction_near_band": 1.0,
+          "write_applied_cells": 19928
+        }
+      ],
+      "n_vti": 5,
+      "run_status": "START cylinder_init090_neutral_D_controlled_legacy 2026-06-25T02:25:54+08:00\nRC=0\nEND cylinder_init090_neutral_D_controlled_legacy 2026-06-25T02:29:26+08:00",
+      "runtime_log_has_nan": false,
+      "status": "PASS_SHADOW_DIAGNOSTICS",
+      "steps": [
+        0,
+        500,
+        1000,
+        1500,
+        2000
+      ]
+    }
+  ],
+  "claim_limit": "B2 shadow diagnostics only; no contact-angle validation",
+  "failures": {
+    "cylinder_init090_neutral_A_legacy_baseline": [
+      "no_write_allowed_shadow_cells_step_0",
+      "no_write_allowed_shadow_cells_step_1000",
+      "no_write_allowed_shadow_cells_step_1500",
+      "no_write_allowed_shadow_cells_step_2000",
+      "no_write_allowed_shadow_cells_step_500"
+    ]
+  },
+  "no_write_regression": false,
+  "root": "/mnt/usb1t/RUNS/runs/stage17B_B8_neutral_20260625_2000",
+  "status": "FAIL",
+  "write_audit": false
+}

@@ -59,12 +59,22 @@ def stage17b_block_has_no_solver_write(block: str) -> bool:
 
 
 def stage17b_controlled_write_block(boundary: str) -> str:
-    pattern = (
-        r"if\s*\(\s*stage17b_controlled_write_requested\s*\(\s*\)\s*&&\s*"
-        r"PsiWriteAllowedFlag\s*>\s*0\.5\s*\)\s*\{(?P<body>.*?)\n\s*\}"
-    )
-    match = re.search(pattern, boundary, flags=re.MULTILINE | re.DOTALL)
-    return match.group("body") if match else ""
+    marker = "if (stage17b_controlled_write_requested() && PsiWriteAllowedFlag > 0.5)"
+    start = boundary.find(marker)
+    if start < 0:
+        return ""
+    open_brace = boundary.find("{", start)
+    if open_brace < 0:
+        return ""
+    depth = 0
+    for idx in range(open_brace, len(boundary)):
+        if boundary[idx] == "{":
+            depth += 1
+        elif boundary[idx] == "}":
+            depth -= 1
+            if depth == 0:
+                return boundary[open_brace + 1 : idx]
+    return ""
 
 
 def audit(root: Path) -> dict[str, Any]:
@@ -135,6 +145,7 @@ def audit(root: Path) -> dict[str, Any]:
             for token in [
                 'AddSetting(name="Stage17BDiffuseSolidMode", default=0',
                 'AddSetting(name="Stage17BWriteMode", default=0',
+                'AddSetting(name="Stage17BWriteSourceMode", default=0',
                 'AddSetting(name="Stage17BPsiEps", default=1.25',
                 'AddSetting(name="Stage17BWriteBand", default=1.8',
                 'AddSetting(name="Stage17BGradPsiMin", default=1e-4',
@@ -263,6 +274,14 @@ def audit(root: Path) -> dict[str, Any]:
             and "WallGhostRaw = PsiWallGhostRaw" in controlled_write_body
             and "WallGhostClampHit = PsiWallGhostClampHit" in controlled_write_body
             and "PsiWriteAppliedFlag = 1.0" in controlled_write_body
+        ),
+        "stage17b_b8_legacy_write_source_default_off": (
+            "Stage17BWriteSourceMode > 0.5 && Stage17BWriteSourceMode < 1.5"
+            in controlled_write_body
+            and "stage13_compute_analytic_wall_ghost(" in controlled_write_body
+            and "WettingPathId = 171.0" in controlled_write_body
+            and "WettingPathId = 170.0" in controlled_write_body
+            and 'AddSetting(name="Stage17BWriteSourceMode", default=0' in dynamics_r
         ),
         "stage17b_controlled_write_no_compact_gate": (
             "WallCompactStencilWriteAllowedFlag" not in controlled_write
