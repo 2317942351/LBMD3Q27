@@ -1,0 +1,38 @@
+{
+  "checks": {
+    "b5_consumption_fields_registered": true,
+    "b5_getters_present": true,
+    "b5_writer_default_off_and_output_only": true,
+    "b5_writer_uses_tclb_safe_neighbor_access": true,
+    "claim_limit_comment_present": true,
+    "near_wall_bgk_reset_and_write": true,
+    "near_wall_fields_registered": true,
+    "near_wall_getters_present": true,
+    "near_wall_mrt_reset_and_write": true,
+    "near_wall_writer_has_no_solver_write": true,
+    "old_curved_compact_write_still_flat_only": true,
+    "psi_fields_registered": true,
+    "psi_getters_present": true,
+    "psi_quantities_registered": true,
+    "stage17b_compute_shadow_has_no_solver_write": true,
+    "stage17b_compute_shadow_present": true,
+    "stage17b_controlled_write_block_curved_only": true,
+    "stage17b_controlled_write_gate_present": true,
+    "stage17b_controlled_write_no_compact_gate": true,
+    "stage17b_controlled_write_no_phase_override": true,
+    "stage17b_reset_keep_only_shadow_fields": true,
+    "stage17b_settings_default_shadow_only": true,
+    "stage17b_shadow_called_before_legacy_analytic_wallghost": true,
+    "stage17b_snapshot_exists": true
+  },
+  "claim_limit": "source wiring guardrail only; runtime gates still must prove Psi* fields and controlled writes are finite and coherent on P100 curved cases",
+  "failures": [],
+  "files": {
+    "Boundary.c.Rt": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity\\Boundary.c.Rt",
+    "Dynamics.R": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity\\Dynamics.R",
+    "Dynamics.c.Rt": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity\\Dynamics.c.Rt"
+  },
+  "root": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo",
+  "snapshot": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity",
+  "status": "PASS_STAGE17B_SHADOW_SOURCE_GUARDRAILS"
+}

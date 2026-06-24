@@ -83,6 +83,7 @@ def audit(root: Path) -> dict[str, Any]:
     controlled_write = function_block(boundary, "stage17b_controlled_write_requested")
     controlled_write_body = stage17b_controlled_write_block(boundary)
     near_wall_write = function_block(dynamics_c, "stage17b_write_near_wall_force_shadow")
+    b5_write = function_block(dynamics_c, "stage17b_write_consumption_diagnostics")
     bgk = cuda_function_block(dynamics_c, "CollisionBGK")
     mrt = cuda_function_block(dynamics_c, "CollisionMRT")
 
@@ -107,6 +108,23 @@ def audit(root: Path) -> dict[str, Any]:
         "NearWallGradPhiMag",
         "NearWallForceOverRhoShadow",
     ]
+    b5_fields = [
+        "B5SignedDistance",
+        "B5NearWallBandFlag",
+        "B5ContactLineBandFlag",
+        "B5WallGhostConsumedFlag",
+        "B5GhostUseCount",
+        "B5WallGhostMinusCenter",
+        "B5WallGhostMinusFluidProbe",
+        "B5WallGhostClampHitNeighbor",
+        "B5GradPhiNormal",
+        "B5GradPhiTangentialMag",
+        "B5FphiSum",
+        "B5FphiNormalProxy",
+        "B5PhaseFromHDelta",
+        "B5ExpectedResponseSign",
+        "B5SignalSignOK",
+    ]
 
     checks: dict[str, bool] = {
         "stage17b_snapshot_exists": all(
@@ -121,6 +139,7 @@ def audit(root: Path) -> dict[str, Any]:
                 'AddSetting(name="Stage17BWriteBand", default=1.8',
                 'AddSetting(name="Stage17BGradPsiMin", default=1e-4',
                 'AddSetting(name="Stage17BShadowThetaDeg", default=-1.0',
+                'AddSetting(name="Stage17BConsumptionDiagnosticsMode", default=0',
             ]
         ),
         "psi_fields_registered": all(
@@ -147,6 +166,10 @@ def audit(root: Path) -> dict[str, Any]:
             f'AddField("{field}"' in dynamics_r and f'AddQuantity(name="{field}"' in dynamics_r
             for field in near_wall_fields
         ),
+        "b5_consumption_fields_registered": all(
+            f'AddField("{field}"' in dynamics_r and f'AddQuantity(name="{field}"' in dynamics_r
+            for field in b5_fields
+        ),
         "psi_getters_present": all(
             f"get{field}" in boundary
             for field in [
@@ -161,6 +184,24 @@ def audit(root: Path) -> dict[str, Any]:
         )
         and "getPsiNormal" in boundary,
         "near_wall_getters_present": all(f"get{field}" in dynamics_c for field in near_wall_fields),
+        "b5_getters_present": all(f"get{field}" in dynamics_c for field in b5_fields),
+        "b5_writer_default_off_and_output_only": (
+            "stage17b_write_consumption_diagnostics" in dynamics_c
+            and "Stage17BConsumptionDiagnosticsMode > 0.5" in dynamics_c
+            and "stage17b_write_consumption_diagnostics(C, gradPhi, tmp1" in dynamics_c
+            and stage17b_block_has_no_solver_write(
+                b5_write
+            )
+        ),
+        "b5_writer_uses_tclb_safe_neighbor_access": (
+            "STAGE17B_STATIC_NEIGHBOR(WallGhost, probe_dx, probe_dy, probe_dz)" in b5_write
+            and "STAGE17B_STATIC_NEIGHBOR(WallGhostClampHit, probe_dx, probe_dy, probe_dz)"
+            in b5_write
+            and "PhaseF_dyn(-probe_dx, -probe_dy, -probe_dz)" in b5_write
+            and "WallGhost(probe_dx" not in b5_write
+            and "WallGhostClampHit(probe_dx" not in b5_write
+            and "PhaseF(-probe_dx" not in b5_write
+        ),
         "stage17b_compute_shadow_present": all(
             token in compute_shadow
             for token in [

@@ -1,0 +1,28 @@
+{
+  "case": "cylinder_init090_to090_b5consume",
+  "claim_limit": "consumption diagnostics only; not contact-angle validation",
+  "expected_diagnostic": "WallGhost written by B3 should be consumed on the next BaseIter through STAGE13_PHASE_FOR_STENCIL",
+  "expected_response": "target<init should spread; target>init should retract/stand taller; target=init is a stability/control case",
+  "geometry": "cylinder",
+  "init_theta_deg": 90,
+  "iterations": 600,
+  "legacy_rad_angle_deg": 90,
+  "liquid_axis": "+y",
+  "log_period": 100,
+  "purpose": "Stage17B-B5 WallGhost consumption producer-consumer probe",
+  "replay_diagnostics_mode": 1,
+  "slice_axis": "z",
+  "slice_index": 48,
+  "solid_center": [
+    48.0,
+    48.0,
+    48.0
+  ],
+  "solid_radius": 20.0,
+  "stage17b_consumption_diagnostics_mode": 1,
+  "stage17b_diffuse_solid_mode": 1,
+  "stage17b_write_mode": 2,
+  "target_theta_deg": 90,
+  "vtk_period": 200,
+  "wall_compact_stencil_mode": 0
+}

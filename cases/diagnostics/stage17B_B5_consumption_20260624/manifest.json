@@ -1,0 +1,96 @@
+{
+  "cases": [
+    {
+      "case": "cylinder_init090_to060_b5consume",
+      "case_xml": "cases\\diagnostics\\stage17B_B5_consumption_20260624\\cylinder_init090_to060_b5consume\\case.xml",
+      "claim_limit": "morphology response smoke only; not contact-angle validation",
+      "expected_response": "target<init should spread; target>init should retract/stand taller; target=init is a stability/control case",
+      "geometry": "cylinder",
+      "init_theta_deg": 90,
+      "iterations": 600,
+      "legacy_rad_angle_deg": 90,
+      "liquid_axis": "+y",
+      "log_period": 100,
+      "purpose": "Stage17B-B5 WallGhost consumption producer-consumer probe",
+      "slice_axis": "z",
+      "slice_index": 48,
+      "solid_center": [
+        48.0,
+        48.0,
+        48.0
+      ],
+      "solid_radius": 20.0,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_write_mode": 2,
+      "target_theta_deg": 60,
+      "vtk_period": 200,
+      "wall_compact_stencil_mode": 0
+    },
+    {
+      "case": "cylinder_init090_to090_b5consume",
+      "case_xml": "cases\\diagnostics\\stage17B_B5_consumption_20260624\\cylinder_init090_to090_b5consume\\case.xml",
+      "claim_limit": "morphology response smoke only; not contact-angle validation",
+      "expected_response": "target<init should spread; target>init should retract/stand taller; target=init is a stability/control case",
+      "geometry": "cylinder",
+      "init_theta_deg": 90,
+      "iterations": 600,
+      "legacy_rad_angle_deg": 90,
+      "liquid_axis": "+y",
+      "log_period": 100,
+      "purpose": "Stage17B-B5 WallGhost consumption producer-consumer probe",
+      "slice_axis": "z",
+      "slice_index": 48,
+      "solid_center": [
+        48.0,
+        48.0,
+        48.0
+      ],
+      "solid_radius": 20.0,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_write_mode": 2,
+      "target_theta_deg": 90,
+      "vtk_period": 200,
+      "wall_compact_stencil_mode": 0
+    },
+    {
+      "case": "cylinder_init090_to120_b5consume",
+      "case_xml": "cases\\diagnostics\\stage17B_B5_consumption_20260624\\cylinder_init090_to120_b5consume\\case.xml",
+      "claim_limit": "morphology response smoke only; not contact-angle validation",
+      "expected_response": "target<init should spread; target>init should retract/stand taller; target=init is a stability/control case",
+      "geometry": "cylinder",
+      "init_theta_deg": 90,
+      "iterations": 600,
+      "legacy_rad_angle_deg": 90,
+      "liquid_axis": "+y",
+      "log_period": 100,
+      "purpose": "Stage17B-B5 WallGhost consumption producer-consumer probe",
+      "slice_axis": "z",
+      "slice_index": 48,
+      "solid_center": [
+        48.0,
+        48.0,
+        48.0
+      ],
+      "solid_radius": 20.0,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_write_mode": 2,
+      "target_theta_deg": 120,
+      "vtk_period": 200,
+      "wall_compact_stencil_mode": 0
+    }
+  ],
+  "claim_limit": "short-run consumption diagnostics only; not contact-angle validation",
+  "init_theta_deg": 90,
+  "iterations": 600,
+  "log_period": 100,
+  "purpose": "Stage17B-B5 WallGhost consumption producer-consumer probe",
+  "replay_diagnostics_mode": 1,
+  "stage17b_consumption_diagnostics_mode": 1,
+  "stage17b_write_mode": 2,
+  "target_thetas": [
+    60,
+    90,
+    120
+  ],
+  "vtk_period": 200
+}

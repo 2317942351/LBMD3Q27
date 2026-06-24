@@ -302,6 +302,21 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayForceFixedPointMode = 0.0;
 	ReplayForceRhoRaw = 0.0;
 	ReplayForceRhoEffective = 0.0;
+	B5SignedDistance = 0.0;
+	B5NearWallBandFlag = 0.0;
+	B5ContactLineBandFlag = 0.0;
+	B5WallGhostConsumedFlag = 0.0;
+	B5GhostUseCount = 0.0;
+	B5WallGhostMinusCenter = 0.0;
+	B5WallGhostMinusFluidProbe = 0.0;
+	B5WallGhostClampHitNeighbor = 0.0;
+	B5GradPhiNormal = 0.0;
+	B5GradPhiTangentialMag = 0.0;
+	B5FphiSum = 0.0;
+	B5FphiNormalProxy = 0.0;
+	B5PhaseFromHDelta = 0.0;
+	B5ExpectedResponseSign = 0.0;
+	B5SignalSignOK = 0.0;
 }
 
 CudaDeviceFunction real_t stage16_replay_scalar(real_t value){
@@ -556,6 +571,152 @@ CudaDeviceFunction void stage17b_write_near_wall_force_shadow(vector_t gradPhi, 
 	NearWallForceOverRhoShadow = fmag / (rho_for_force + 1.0e-30);
 }
 
+CudaDeviceFunction vector_t stage17b_dyn_wall_normal_current()
+{
+	vector_t n = {0.0, 0.0, 0.0};
+	if (AnalyticWetting < 0.5 || AnalyticSolidType < 1.5) return n;
+	if (AnalyticSolidType < 2.5) {
+		real_t dx = X - AnalyticSolidCenterX;
+		real_t dy = Y - AnalyticSolidCenterY;
+		real_t dz = Z - AnalyticSolidCenterZ;
+		real_t a = 0.0;
+		real_t b = 0.0;
+		if (AnalyticSolidAxis < 0.5)        { a = dy; b = dz; }
+		else if (AnalyticSolidAxis < 1.5)   { a = dx; b = dz; }
+		else                                { a = dx; b = dy; }
+		real_t r = sqrt(a*a + b*b);
+		if (r <= 1.0e-30) return n;
+		real_t inv = 1.0 / r;
+		if (AnalyticSolidAxis < 0.5)        { n.y = a*inv; n.z = b*inv; }
+		else if (AnalyticSolidAxis < 1.5)   { n.x = a*inv; n.z = b*inv; }
+		else                                { n.x = a*inv; n.y = b*inv; }
+		return n;
+	}
+	real_t dx = X - AnalyticSolidCenterX;
+	real_t dy = Y - AnalyticSolidCenterY;
+	real_t dz = Z - AnalyticSolidCenterZ;
+	real_t r = sqrt(dx*dx + dy*dy + dz*dz);
+	if (r <= 1.0e-30) return n;
+	real_t inv = 1.0 / r;
+	n.x = dx*inv;
+	n.y = dy*inv;
+	n.z = dz*inv;
+	return n;
+}
+
+CudaDeviceFunction int stage17b_dyn_probe_component(real_t n)
+{
+	if (n >  0.5) return  1;
+	if (n < -0.5) return -1;
+	return 0;
+}
+
+#define STAGE17B_STATIC_NEIGHBOR(field, dx, dy, dz) \
+	(((dx) < 0) ? \
+		(((dy) < 0) ? \
+			(((dz) < 0) ? field(-1,-1,-1) : (((dz) > 0) ? field(-1,-1, 1) : field(-1,-1,0))) : \
+		 (((dy) > 0) ? \
+			(((dz) < 0) ? field(-1, 1,-1) : (((dz) > 0) ? field(-1, 1, 1) : field(-1, 1,0))) : \
+			(((dz) < 0) ? field(-1, 0,-1) : (((dz) > 0) ? field(-1, 0, 1) : field(-1, 0,0))))) : \
+	(((dx) > 0) ? \
+		(((dy) < 0) ? \
+			(((dz) < 0) ? field( 1,-1,-1) : (((dz) > 0) ? field( 1,-1, 1) : field( 1,-1,0))) : \
+		 (((dy) > 0) ? \
+			(((dz) < 0) ? field( 1, 1,-1) : (((dz) > 0) ? field( 1, 1, 1) : field( 1, 1,0))) : \
+			(((dz) < 0) ? field( 1, 0,-1) : (((dz) > 0) ? field( 1, 0, 1) : field( 1, 0,0))))) : \
+		(((dy) < 0) ? \
+			(((dz) < 0) ? field( 0,-1,-1) : (((dz) > 0) ? field( 0,-1, 1) : field( 0,-1,0))) : \
+		 (((dy) > 0) ? \
+			(((dz) < 0) ? field( 0, 1,-1) : (((dz) > 0) ? field( 0, 1, 1) : field( 0, 1,0))) : \
+			(((dz) < 0) ? field( 0, 0,-1) : (((dz) > 0) ? field( 0, 0, 1) : field( 0, 0,0)))))))
+
+CudaDeviceFunction void stage17b_write_consumption_diagnostics(
+	real_t C, vector_t gradPhi, real_t tmp1, real_t fphi_sum,
+	real_t phase_from_h_after)
+{
+	if (!(ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5)) return;
+	if (IamWall || IamSolid) return;
+	if (Stage17BDiffuseSolidMode < 0.5 || AnalyticWetting < 0.5 || AnalyticSolidType < 1.5) return;
+
+	real_t sd = stage17b_dyn_signed_distance_current();
+	vector_t n_w = stage17b_dyn_wall_normal_current();
+	real_t nmag = sqrt(n_w.x*n_w.x + n_w.y*n_w.y + n_w.z*n_w.z);
+	if (nmag <= 0.5) return;
+	n_w.x /= nmag;
+	n_w.y /= nmag;
+	n_w.z /= nmag;
+
+	real_t near_band = Stage17BWriteBand + 1.0;
+	if (near_band < 2.0) near_band = 2.0;
+	int near_wall = (sd >= 0.0 && sd <= near_band);
+	if (!near_wall) return;
+
+	B5SignedDistance = sd;
+	B5NearWallBandFlag = 1.0;
+	real_t lo = PhaseField_l;
+	real_t hi = PhaseField_h;
+	if (lo > hi) {
+		real_t tmp = lo;
+		lo = hi;
+		hi = tmp;
+	}
+	real_t q = (hi > lo) ? ((C - lo) / (hi - lo)) : C;
+	int contact_line = (q > 0.05 && q < 0.95);
+	B5ContactLineBandFlag = contact_line ? 1.0 : 0.0;
+	B5GhostUseCount = PhaseStencilGhostUseCount(0,0,0);
+	B5WallGhostConsumedFlag = (B5GhostUseCount > 0.5) ? 1.0 : 0.0;
+
+	int probe_dx = -stage17b_dyn_probe_component(n_w.x);
+	int probe_dy = -stage17b_dyn_probe_component(n_w.y);
+	int probe_dz = -stage17b_dyn_probe_component(n_w.z);
+	if (probe_dx == 0 && probe_dy == 0 && probe_dz == 0) {
+		probe_dx = -stage17b_dyn_probe_component(gradPhi.x);
+		probe_dy = -stage17b_dyn_probe_component(gradPhi.y);
+		probe_dz = -stage17b_dyn_probe_component(gradPhi.z);
+	}
+	real_t ghost_neighbor = STAGE17B_STATIC_NEIGHBOR(WallGhost, probe_dx, probe_dy, probe_dz);
+	real_t clamp_neighbor = STAGE17B_STATIC_NEIGHBOR(WallGhostClampHit, probe_dx, probe_dy, probe_dz);
+	real_t center_phase = PhaseF(0,0,0);
+	B5WallGhostClampHitNeighbor = clamp_neighbor;
+	if (stage13_phase_is_valid(ghost_neighbor)) {
+		B5WallGhostMinusCenter = ghost_neighbor - center_phase;
+		real_t fluid_probe = PhaseF_dyn(-probe_dx, -probe_dy, -probe_dz);
+		if (stage13_phase_is_valid(fluid_probe)) {
+			B5WallGhostMinusFluidProbe = ghost_neighbor - fluid_probe;
+		} else {
+			B5WallGhostMinusFluidProbe = 0.0;
+		}
+	} else {
+		B5WallGhostMinusCenter = 0.0;
+		B5WallGhostMinusFluidProbe = 0.0;
+	}
+
+	real_t grad_normal = gradPhi.x*n_w.x + gradPhi.y*n_w.y + gradPhi.z*n_w.z;
+	real_t grad_mag2 = gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z;
+	real_t tangential2 = grad_mag2 - grad_normal*grad_normal;
+	if (tangential2 < 0.0) tangential2 = 0.0;
+	B5GradPhiNormal = grad_normal;
+	B5GradPhiTangentialMag = sqrt(tangential2);
+	B5FphiSum = fphi_sum;
+	B5FphiNormalProxy = tmp1 * grad_normal / (sqrt(grad_mag2) + 1.0e-30);
+	B5PhaseFromHDelta = phase_from_h_after - C;
+
+	real_t theta_deg = Stage17BShadowThetaDeg;
+	real_t expected = 0.0;
+	if (theta_deg >= 0.0) {
+		if (theta_deg < 89.0) expected = 1.0;
+		else if (theta_deg > 91.0) expected = -1.0;
+	}
+	B5ExpectedResponseSign = expected;
+	real_t observed = 0.0;
+	if (fabs(B5WallGhostMinusCenter) > 1.0e-12) observed = (B5WallGhostMinusCenter > 0.0) ? 1.0 : -1.0;
+	if (expected == 0.0 || observed == 0.0) {
+		B5SignalSignOK = 0.0;
+	} else {
+		B5SignalSignOK = (expected * observed > 0.0) ? 1.0 : -1.0;
+	}
+}
+
 CudaDeviceFunction real_t getNearWallForceMag(){
 	return NearWallForceMag(0,0,0);
 }
@@ -566,6 +727,81 @@ CudaDeviceFunction real_t getNearWallGradPhiMag(){
 
 CudaDeviceFunction real_t getNearWallForceOverRhoShadow(){
 	return NearWallForceOverRhoShadow(0,0,0);
+}
+
+CudaDeviceFunction real_t getB5SignedDistance(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5SignedDistance(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5NearWallBandFlag(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5NearWallBandFlag(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5ContactLineBandFlag(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5ContactLineBandFlag(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5WallGhostConsumedFlag(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5WallGhostConsumedFlag(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5GhostUseCount(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5GhostUseCount(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5WallGhostMinusCenter(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5WallGhostMinusCenter(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5WallGhostMinusFluidProbe(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5WallGhostMinusFluidProbe(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5WallGhostClampHitNeighbor(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5WallGhostClampHitNeighbor(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5GradPhiNormal(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5GradPhiNormal(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5GradPhiTangentialMag(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5GradPhiTangentialMag(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5FphiSum(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5FphiSum(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5FphiNormalProxy(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5FphiNormalProxy(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5PhaseFromHDelta(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5PhaseFromHDelta(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5ExpectedResponseSign(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5ExpectedResponseSign(0,0,0);
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB5SignalSignOK(){
+	if (ReplayDiagnosticsMode > 0.5 && Stage17BConsumptionDiagnosticsMode > 0.5) return B5SignalSignOK(0,0,0);
+	return 0.0;
 }
 
 CudaDeviceFunction real_t stage14_max_abs2(real_t a, real_t b) {
@@ -2423,6 +2659,7 @@ CudaDeviceFunction void CollisionMRT()
 		ReplayHPostMaxAbs = h_post_max_diag;
 		ReplayFphiSum = fphi_sum_diag;
 		ReplayFphiMaxAbs = fphi_max_diag;
+		stage17b_write_consumption_diagnostics(C, gradPhi, tmp1, fphi_sum_diag, ReplayHPostSum);
 	}
 	if (stage14_momentum_closure_diagnostics_active()) {
 		real_t momentum_after_g[3] = {0.0, 0.0, 0.0};
@@ -2792,6 +3029,7 @@ CudaDeviceFunction void CollisionBGK()
 		ReplayHPostMaxAbs = h_post_max_diag;
 		ReplayFphiSum = fphi_sum_diag;
 		ReplayFphiMaxAbs = fphi_max_diag;
+		stage17b_write_consumption_diagnostics(C, gradPhi, tmp1, fphi_sum_diag, ReplayHPostSum);
 	}
 
 	// PRESSURE EVOLUTION UPDATE:
