@@ -21,16 +21,24 @@ FIELDS = [
     "Rho",
     "U",
     "WallGhost",
+    "WallGhostRaw",
+    "WallGhostClamped",
+    "WallGhostClampHit",
+    "WettingPathId",
     "AnalyticFlag",
     "LocalRadAngle",
     "PsiSolid",
     "PsiGradMag",
     "PsiNormal",
+    "PsiWallGhostRaw",
     "PsiWallGhost",
+    "PsiWallGhostClampHit",
     "PsiThetaImplied",
     "PsiJaggedness",
     "PsiWriteAllowedFlag",
     "PsiNormalAmbiguityFlag",
+    "PsiWriteAppliedFlag",
+    "PsiWriteRejectedReason",
     "NearWallForceMag",
     "NearWallGradPhiMag",
     "NearWallForceOverRhoShadow",
@@ -42,12 +50,29 @@ REQUIRED_FIELDS = [
     "PsiSolid",
     "PsiGradMag",
     "PsiNormal",
+    "PsiWallGhostRaw",
     "PsiWallGhost",
+    "PsiWallGhostClampHit",
     "PsiWriteAllowedFlag",
     "PsiNormalAmbiguityFlag",
+    "PsiWriteAppliedFlag",
+    "PsiWriteRejectedReason",
     "NearWallForceMag",
     "NearWallGradPhiMag",
     "NearWallForceOverRhoShadow",
+]
+
+
+WRITE_AUDIT_REQUIRED_FIELDS = [
+    "WallGhost",
+    "WallGhostRaw",
+    "WallGhostClamped",
+    "WallGhostClampHit",
+    "WettingPathId",
+    "PsiWallGhostRaw",
+    "PsiWallGhost",
+    "PsiWallGhostClampHit",
+    "PsiWriteAppliedFlag",
 ]
 
 
@@ -128,6 +153,14 @@ def analyze_frame(path: Path) -> dict[str, Any]:
     psi_grad = scalar_array(arrays, "PsiGradMag")
     near_force_rho = scalar_array(arrays, "NearWallForceOverRhoShadow")
     psi_wall_ghost = scalar_array(arrays, "PsiWallGhost")
+    psi_wall_ghost_raw = scalar_array(arrays, "PsiWallGhostRaw")
+    psi_wall_ghost_clamp_hit = scalar_array(arrays, "PsiWallGhostClampHit")
+    write_applied = scalar_array(arrays, "PsiWriteAppliedFlag")
+    wall_ghost = scalar_array(arrays, "WallGhost")
+    wall_ghost_raw = scalar_array(arrays, "WallGhostRaw")
+    wall_ghost_clamped = scalar_array(arrays, "WallGhostClamped")
+    wall_ghost_clamp_hit = scalar_array(arrays, "WallGhostClampHit")
+    wetting_path = scalar_array(arrays, "WettingPathId")
 
     near_mask = np.zeros(0, dtype=bool)
     if psi_grad is not None:
@@ -159,6 +192,50 @@ def analyze_frame(path: Path) -> dict[str, Any]:
         frame["near_wall_force_over_rho_max_abs"] = (
             float(np.max(np.abs(finite))) if finite.size else None
         )
+    if write_applied is not None:
+        applied_mask = np.isfinite(write_applied) & (write_applied > 0.5)
+        frame["write_applied_cells"] = int(np.count_nonzero(applied_mask))
+        if wetting_path is not None:
+            path170 = np.isfinite(wetting_path) & (np.abs(wetting_path - 170.0) < 1.0e-9)
+            frame["wetting_path_170_cells"] = int(np.count_nonzero(path170))
+            frame["applied_without_path170_cells"] = int(np.count_nonzero(applied_mask & ~path170))
+            frame["path170_without_applied_cells"] = int(np.count_nonzero(path170 & ~applied_mask))
+        if wall_ghost is not None and psi_wall_ghost is not None:
+            diff = np.abs(wall_ghost - psi_wall_ghost)
+            finite_pair = applied_mask & np.isfinite(diff)
+            frame["wallghost_psi_max_abs_diff_applied"] = (
+                float(np.max(diff[finite_pair])) if np.count_nonzero(finite_pair) else None
+            )
+            frame["wallghost_psi_mismatch_cells_applied"] = int(
+                np.count_nonzero(finite_pair & (diff > 1.0e-12))
+            )
+        if wall_ghost_raw is not None and psi_wall_ghost_raw is not None:
+            diff = np.abs(wall_ghost_raw - psi_wall_ghost_raw)
+            finite_pair = applied_mask & np.isfinite(diff)
+            frame["wallghostraw_psiraw_max_abs_diff_applied"] = (
+                float(np.max(diff[finite_pair])) if np.count_nonzero(finite_pair) else None
+            )
+            frame["wallghostraw_psiraw_mismatch_cells_applied"] = int(
+                np.count_nonzero(finite_pair & (diff > 1.0e-12))
+            )
+        if wall_ghost_clamped is not None and psi_wall_ghost is not None:
+            diff = np.abs(wall_ghost_clamped - psi_wall_ghost)
+            finite_pair = applied_mask & np.isfinite(diff)
+            frame["wallghostclamped_psi_max_abs_diff_applied"] = (
+                float(np.max(diff[finite_pair])) if np.count_nonzero(finite_pair) else None
+            )
+            frame["wallghostclamped_psi_mismatch_cells_applied"] = int(
+                np.count_nonzero(finite_pair & (diff > 1.0e-12))
+            )
+        if wall_ghost_clamp_hit is not None and psi_wall_ghost_clamp_hit is not None:
+            diff = np.abs(wall_ghost_clamp_hit - psi_wall_ghost_clamp_hit)
+            finite_pair = applied_mask & np.isfinite(diff)
+            frame["wallghostclamphit_psiclamphit_max_abs_diff_applied"] = (
+                float(np.max(diff[finite_pair])) if np.count_nonzero(finite_pair) else None
+            )
+            frame["wallghostclamphit_psiclamphit_mismatch_cells_applied"] = int(
+                np.count_nonzero(finite_pair & (diff > 1.0e-12))
+            )
     if psi_wall_ghost is not None:
         finite = psi_wall_ghost[np.isfinite(psi_wall_ghost)]
         if finite.size:
@@ -167,7 +244,12 @@ def analyze_frame(path: Path) -> dict[str, Any]:
     return frame
 
 
-def analyze_case(case_dir: Path, force_over_rho_limit: float, expected_final_step: int) -> dict[str, Any]:
+def analyze_case(
+    case_dir: Path,
+    force_over_rho_limit: float,
+    expected_final_step: int,
+    write_audit: bool,
+) -> dict[str, Any]:
     vtis = sorted((case_dir / "output").glob("case_VTK_P00_*.vti"), key=step_of)
     frames = [analyze_frame(path) for path in vtis]
     failures: list[str] = []
@@ -184,7 +266,8 @@ def analyze_case(case_dir: Path, force_over_rho_limit: float, expected_final_ste
     if expected_final_step >= 0 and expected_final_step not in [frame["step"] for frame in frames]:
         failures.append(f"missing_expected_final_step_{expected_final_step}")
     for frame in frames:
-        for field in REQUIRED_FIELDS:
+        required_fields = REQUIRED_FIELDS + (WRITE_AUDIT_REQUIRED_FIELDS if write_audit else [])
+        for field in required_fields:
             stats = frame["stats"].get(field, {})
             if not stats.get("present"):
                 failures.append(f"missing_{field}_step_{frame['step']}")
@@ -199,6 +282,21 @@ def analyze_case(case_dir: Path, force_over_rho_limit: float, expected_final_ste
         force_shadow = frame.get("near_wall_force_over_rho_max_abs")
         if force_shadow is not None and force_shadow > force_over_rho_limit:
             failures.append(f"near_wall_force_over_rho_spike_step_{frame['step']}")
+        if write_audit:
+            if frame.get("write_applied_cells", 0) <= 0:
+                failures.append(f"no_write_applied_cells_step_{frame['step']}")
+            if frame.get("wetting_path_170_cells", 0) <= 0:
+                failures.append(f"no_wetting_path_170_cells_step_{frame['step']}")
+            for key in [
+                "applied_without_path170_cells",
+                "path170_without_applied_cells",
+                "wallghost_psi_mismatch_cells_applied",
+                "wallghostraw_psiraw_mismatch_cells_applied",
+                "wallghostclamped_psi_mismatch_cells_applied",
+                "wallghostclamphit_psiclamphit_mismatch_cells_applied",
+            ]:
+                if frame.get(key, 0) > 0:
+                    failures.append(f"{key}_step_{frame['step']}")
 
     return {
         "case": case_dir.name,
@@ -210,8 +308,16 @@ def analyze_case(case_dir: Path, force_over_rho_limit: float, expected_final_ste
         "runtime_log_has_nan": ("NaN" in log_text or "Nan value" in log_text),
         "run_status": status_text.strip(),
         "expected_final_step": expected_final_step,
-        "status": "PASS_SHADOW_DIAGNOSTICS" if not failures else "FAIL",
-        "claim_limit": "diagnostic-field health only; not contact-angle validation",
+        "status": (
+            "PASS_WRITE_AUDIT" if write_audit and not failures
+            else "PASS_SHADOW_DIAGNOSTICS" if not failures
+            else "FAIL"
+        ),
+        "claim_limit": (
+            "controlled WallGhost write audit only; not contact-angle validation"
+            if write_audit
+            else "diagnostic-field health only; not contact-angle validation"
+        ),
     }
 
 
@@ -229,8 +335,20 @@ def flatten_frames(summary: dict[str, Any]) -> list[dict[str, Any]]:
                 "near_wall_force_over_rho_max_abs": frame.get("near_wall_force_over_rho_max_abs"),
                 "psi_wall_ghost_below_0_cells": frame.get("psi_wall_ghost_below_0_cells"),
                 "psi_wall_ghost_above_1_cells": frame.get("psi_wall_ghost_above_1_cells"),
+                "write_applied_cells": frame.get("write_applied_cells"),
+                "wetting_path_170_cells": frame.get("wetting_path_170_cells"),
+                "applied_without_path170_cells": frame.get("applied_without_path170_cells"),
+                "path170_without_applied_cells": frame.get("path170_without_applied_cells"),
+                "wallghost_psi_max_abs_diff_applied": frame.get("wallghost_psi_max_abs_diff_applied"),
+                "wallghost_psi_mismatch_cells_applied": frame.get("wallghost_psi_mismatch_cells_applied"),
+                "wallghostraw_psiraw_max_abs_diff_applied": frame.get("wallghostraw_psiraw_max_abs_diff_applied"),
+                "wallghostraw_psiraw_mismatch_cells_applied": frame.get("wallghostraw_psiraw_mismatch_cells_applied"),
+                "wallghostclamped_psi_max_abs_diff_applied": frame.get("wallghostclamped_psi_max_abs_diff_applied"),
+                "wallghostclamped_psi_mismatch_cells_applied": frame.get("wallghostclamped_psi_mismatch_cells_applied"),
+                "wallghostclamphit_psiclamphit_max_abs_diff_applied": frame.get("wallghostclamphit_psiclamphit_max_abs_diff_applied"),
+                "wallghostclamphit_psiclamphit_mismatch_cells_applied": frame.get("wallghostclamphit_psiclamphit_mismatch_cells_applied"),
             }
-            for field in REQUIRED_FIELDS:
+            for field in REQUIRED_FIELDS + WRITE_AUDIT_REQUIRED_FIELDS:
                 stats = frame["stats"].get(field, {})
                 row[f"{field}_present"] = stats.get("present")
                 row[f"{field}_nonfinite"] = stats.get("nonfinite")
@@ -257,6 +375,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-csv", type=Path)
     parser.add_argument("--force-over-rho-limit", type=float, default=1.0e3)
     parser.add_argument("--expected-final-step", type=int, default=1000)
+    parser.add_argument(
+        "--write-audit",
+        action="store_true",
+        help="Require Stage17B B3 controlled WallGhost write invariants.",
+    )
     return parser.parse_args()
 
 
@@ -266,16 +389,27 @@ def main() -> int:
         path for path in args.root.iterdir() if path.is_dir() and (path / "case.xml").exists()
     )
     cases = [
-        analyze_case(path, args.force_over_rho_limit, args.expected_final_step)
+        analyze_case(path, args.force_over_rho_limit, args.expected_final_step, args.write_audit)
         for path in case_dirs
     ]
     failures = {case["case"]: case["failures"] for case in cases if case["failures"]}
     summary = {
         "root": str(args.root),
         "cases": cases,
-        "status": "PASS_STAGE17B_B2_SHADOW_DIAGNOSTICS" if not failures else "FAIL",
+        "status": (
+            "PASS_STAGE17B_B3_WRITE_AUDIT"
+            if args.write_audit and not failures
+            else "PASS_STAGE17B_B2_SHADOW_DIAGNOSTICS"
+            if not failures
+            else "FAIL"
+        ),
         "failures": failures,
-        "claim_limit": "B2 shadow diagnostics only; no contact-angle validation",
+        "write_audit": bool(args.write_audit),
+        "claim_limit": (
+            "B3 controlled WallGhost write audit only; no contact-angle validation"
+            if args.write_audit
+            else "B2 shadow diagnostics only; no contact-angle validation"
+        ),
     }
     text = json.dumps(summary, indent=2, sort_keys=True)
     if args.out_json:

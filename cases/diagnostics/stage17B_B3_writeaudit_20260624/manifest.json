@@ -1,0 +1,22 @@
+{
+  "case_suffix": "writeaudit",
+  "cases": [
+    {
+      "case": "sphere_theta090_writeaudit",
+      "case_xml": "cases\\diagnostics\\stage17B_B3_writeaudit_20260624\\sphere_theta090_writeaudit\\case.xml",
+      "claim_limit": "controlled WallGhost write audit; not contact-angle validation",
+      "legacy_rad_angle_deg": 90,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_shadow_theta_deg": 90,
+      "stage17b_write_mode": 2,
+      "theta_deg": 90,
+      "wall_compact_stencil_mode": 0
+    }
+  ],
+  "iterations": 100,
+  "log_period": 50,
+  "purpose": "Stage17B B3 sphere controlled WallGhost write audit",
+  "stage17b_write_mode": 2,
+  "vtk_fields": "PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallGhostRaw,WallGhostClamped,WallGhostClampHit,WettingPathId,WallH,AnalyticFlag,LocalRadAngle,PsiSolid,PsiGradMag,PsiNormal,PsiWallGhostRaw,PsiWallGhost,PsiWallGhostClampHit,PsiThetaImplied,PsiJaggedness,PsiWriteAllowedFlag,PsiNormalAmbiguityFlag,PsiWriteAppliedFlag,PsiWriteRejectedReason,NearWallForceMag,NearWallGradPhiMag,NearWallForceOverRhoShadow",
+  "vtk_period": 100
+}

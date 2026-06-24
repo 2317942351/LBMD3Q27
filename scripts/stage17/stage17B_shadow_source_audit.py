@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Static source audit for Stage17B diffuse-solid shadow-only wiring.
+"""Static source audit for Stage17B diffuse-solid shadow/B3 wiring.
 
 This gate proves only source-level guardrails:
 
 * Stage17B lives in an independent TCLB snapshot.
 * The new diffuse-solid path exports Psi*/NearWall* diagnostics.
-* Stage17B B2 remains shadow-only and does not assign WallGhost or PhaseF.
+* Stage17B defaults remain shadow-only.
+* Stage17B B3 controlled write is explicitly gated and does not write PhaseF.
 * The historical compact-stencil direct write remains flat-wall only.
 
 It does not validate contact angle, stability, or runtime geometry fields.
@@ -57,6 +58,15 @@ def stage17b_block_has_no_solver_write(block: str) -> bool:
     return no_phase_write and no_wallghost_write
 
 
+def stage17b_controlled_write_block(boundary: str) -> str:
+    pattern = (
+        r"if\s*\(\s*stage17b_controlled_write_requested\s*\(\s*\)\s*&&\s*"
+        r"PsiWriteAllowedFlag\s*>\s*0\.5\s*\)\s*\{(?P<body>.*?)\n\s*\}"
+    )
+    match = re.search(pattern, boundary, flags=re.MULTILINE | re.DOTALL)
+    return match.group("body") if match else ""
+
+
 def audit(root: Path) -> dict[str, Any]:
     model_dir = root / SNAPSHOT
     boundary_path = model_dir / "Boundary.c.Rt"
@@ -70,6 +80,8 @@ def audit(root: Path) -> dict[str, Any]:
     compute_shadow = function_block(boundary, "stage17b_compute_diffuse_shadow")
     reset_shadow = function_block(boundary, "stage17b_reset_diffuse_shadow")
     keep_shadow = function_block(boundary, "stage17b_keep_diffuse_shadow")
+    controlled_write = function_block(boundary, "stage17b_controlled_write_requested")
+    controlled_write_body = stage17b_controlled_write_block(boundary)
     near_wall_write = function_block(dynamics_c, "stage17b_write_near_wall_force_shadow")
     bgk = cuda_function_block(dynamics_c, "CollisionBGK")
     mrt = cuda_function_block(dynamics_c, "CollisionMRT")
@@ -80,11 +92,15 @@ def audit(root: Path) -> dict[str, Any]:
         "PsiNormalX",
         "PsiNormalY",
         "PsiNormalZ",
+        "PsiWallGhostRaw",
         "PsiWallGhost",
+        "PsiWallGhostClampHit",
         "PsiThetaImplied",
         "PsiJaggedness",
         "PsiWriteAllowedFlag",
         "PsiNormalAmbiguityFlag",
+        "PsiWriteAppliedFlag",
+        "PsiWriteRejectedReason",
     ]
     near_wall_fields = [
         "NearWallForceMag",
@@ -115,11 +131,15 @@ def audit(root: Path) -> dict[str, Any]:
             for field in [
                 "PsiSolid",
                 "PsiGradMag",
+                "PsiWallGhostRaw",
                 "PsiWallGhost",
+                "PsiWallGhostClampHit",
                 "PsiThetaImplied",
                 "PsiJaggedness",
                 "PsiWriteAllowedFlag",
                 "PsiNormalAmbiguityFlag",
+                "PsiWriteAppliedFlag",
+                "PsiWriteRejectedReason",
             ]
         )
         and 'AddQuantity(name="PsiNormal", unit=1, vector=T)' in dynamics_r,
@@ -148,9 +168,11 @@ def audit(root: Path) -> dict[str, Any]:
                 "stage17b_diffuse_solid_grad_analytic",
                 "stage13_compute_geometric_tangent_raw",
                 "Stage17BShadowThetaDeg",
+                "PsiWallGhostRaw = raw",
                 "PsiWallGhost = stage13_clamp_phase_value",
+                "PsiWallGhostClampHit = clamp_hit",
                 "PsiWriteAllowedFlag = shadow_ready ? 1.0 : 0.0",
-                "Stage17BWriteMode > 0.5",
+                "PsiWriteRejectedReason",
             ]
         ),
         "stage17b_compute_shadow_has_no_solver_write": stage17b_block_has_no_solver_write(
@@ -183,14 +205,35 @@ def audit(root: Path) -> dict[str, Any]:
             "stage17b_reset_near_wall_force_shadow();" in bgk
             and "stage17b_write_near_wall_force_shadow(gradPhi, rho, F_total);" in bgk
         ),
-        "stage17b_write_mode_disables_readiness": contains(
-            compute_shadow,
-            r"if\s*\(\s*Stage17BWriteMode\s*>\s*0\.5\s*\)\s*\{[^}]*"
-            r"PsiWriteAllowedFlag\s*=\s*0\.0\s*;",
+        "stage17b_controlled_write_gate_present": all(
+            token in controlled_write
+            for token in [
+                "Stage17BDiffuseSolidMode > 0.5",
+                "Stage17BWriteMode > 1.5",
+                "AnalyticWetting > 0.5",
+                "AnalyticSolidType >= 1.5",
+            ]
+        ),
+        "stage17b_controlled_write_block_curved_only": (
+            "stage17b_controlled_write_requested()" in boundary
+            and "PsiWriteAllowedFlag > 0.5" in boundary
+            and "WettingPathId = 170.0" in controlled_write_body
+            and "WallGhost = PsiWallGhost" in controlled_write_body
+            and "WallGhostRaw = PsiWallGhostRaw" in controlled_write_body
+            and "WallGhostClampHit = PsiWallGhostClampHit" in controlled_write_body
+            and "PsiWriteAppliedFlag = 1.0" in controlled_write_body
+        ),
+        "stage17b_controlled_write_no_compact_gate": (
+            "WallCompactStencilWriteAllowedFlag" not in controlled_write
+            and "WallCompactStencilWriteAllowedFlag" not in controlled_write_body
+        ),
+        "stage17b_controlled_write_no_phase_override": contains(
+            controlled_write_body,
+            r"PhaseF\s*=\s*pf_f\s*;"
         ),
         "claim_limit_comment_present": (
             "output-only in B2" in dynamics_r
-            and "Never write WallGhost or PhaseF" in boundary
+            and "controlled WallGhost write" in dynamics_r
         ),
     }
     failures = [name for name, ok in checks.items() if not ok]
@@ -206,8 +249,8 @@ def audit(root: Path) -> dict[str, Any]:
         "checks": checks,
         "failures": failures,
         "claim_limit": (
-            "source wiring guardrail only; B2 runtime still must prove Psi* fields "
-            "are finite and coherent on P100 curved shadow cases"
+            "source wiring guardrail only; runtime gates still must prove Psi* "
+            "fields and controlled writes are finite and coherent on P100 curved cases"
         ),
     }
 

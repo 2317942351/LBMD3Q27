@@ -23,17 +23,25 @@ VTK_FIELDS = ",".join(
         "BOUNDARY",
         "IsItBoundary",
         "WallGhost",
+        "WallGhostRaw",
+        "WallGhostClamped",
+        "WallGhostClampHit",
+        "WettingPathId",
         "WallH",
         "AnalyticFlag",
         "LocalRadAngle",
         "PsiSolid",
         "PsiGradMag",
         "PsiNormal",
+        "PsiWallGhostRaw",
         "PsiWallGhost",
+        "PsiWallGhostClampHit",
         "PsiThetaImplied",
         "PsiJaggedness",
         "PsiWriteAllowedFlag",
         "PsiNormalAmbiguityFlag",
+        "PsiWriteAppliedFlag",
+        "PsiWriteRejectedReason",
         "NearWallForceMag",
         "NearWallGradPhiMag",
         "NearWallForceOverRhoShadow",
@@ -71,7 +79,13 @@ def sphere_cap_parent(solid_r: float, vol_r: float, theta_deg: float) -> tuple[f
     return radius, center_delta
 
 
-def case_xml(theta_deg: int, iterations: int, vtk_period: int, log_period: int) -> str:
+def case_xml(
+    theta_deg: int,
+    iterations: int,
+    vtk_period: int,
+    log_period: int,
+    write_mode: int,
+) -> str:
     solid_center = (48.0, 48.0, 48.0)
     solid_radius = 20.0
     volume_radius = 16.0
@@ -123,7 +137,7 @@ def case_xml(theta_deg: int, iterations: int, vtk_period: int, log_period: int) 
         param("WallCompactStencilMode", 0),
         param("WallCompactStencilWriteAllowedFlag", 0),
         param("Stage17BDiffuseSolidMode", 1),
-        param("Stage17BWriteMode", 0),
+        param("Stage17BWriteMode", write_mode),
         param("Stage17BShadowThetaDeg", theta_deg),
         param("Stage17BPsiEps", 1.25),
         param("Stage17BWriteBand", 1.8),
@@ -153,14 +167,22 @@ def case_xml(theta_deg: int, iterations: int, vtk_period: int, log_period: int) 
 """
 
 
-def write_cases(root: Path, thetas: Iterable[int], iterations: int, vtk_period: int, log_period: int) -> list[dict[str, object]]:
+def write_cases(
+    root: Path,
+    thetas: Iterable[int],
+    iterations: int,
+    vtk_period: int,
+    log_period: int,
+    write_mode: int,
+    case_suffix: str,
+) -> list[dict[str, object]]:
     root.mkdir(parents=True, exist_ok=True)
     cases: list[dict[str, object]] = []
     for theta in thetas:
-        name = f"cylinder_theta{theta:03d}_shadow"
+        name = f"cylinder_theta{theta:03d}_{case_suffix}"
         case_dir = root / name
         case_dir.mkdir(parents=True, exist_ok=True)
-        xml = case_xml(theta, iterations, vtk_period, log_period)
+        xml = case_xml(theta, iterations, vtk_period, log_period, write_mode)
         (case_dir / "case.xml").write_text(xml, encoding="utf-8")
         cases.append(
             {
@@ -168,18 +190,28 @@ def write_cases(root: Path, thetas: Iterable[int], iterations: int, vtk_period: 
                 "theta_deg": theta,
                 "case_xml": str(case_dir / "case.xml"),
                 "stage17b_diffuse_solid_mode": 1,
-                "stage17b_write_mode": 0,
+                "stage17b_write_mode": write_mode,
                 "legacy_rad_angle_deg": 90,
                 "stage17b_shadow_theta_deg": theta,
                 "wall_compact_stencil_mode": 0,
-                "claim_limit": "shadow-only geometry/near-wall diagnostics; not contact-angle validation",
+                "claim_limit": (
+                    "controlled WallGhost write audit; not contact-angle validation"
+                    if write_mode >= 2
+                    else "shadow-only geometry/near-wall diagnostics; not contact-angle validation"
+                ),
             }
         )
     manifest = {
-        "purpose": "Stage17B B2 cylinder diffuse-solid shadow-only gate",
+        "purpose": (
+            "Stage17B B3 cylinder controlled WallGhost write audit"
+            if write_mode >= 2
+            else "Stage17B B2 cylinder diffuse-solid shadow-only gate"
+        ),
         "iterations": iterations,
         "vtk_period": vtk_period,
         "log_period": log_period,
+        "stage17b_write_mode": write_mode,
+        "case_suffix": case_suffix,
         "vtk_fields": VTK_FIELDS,
         "cases": cases,
     }
@@ -198,12 +230,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--vtk-period", type=int, default=500)
     parser.add_argument("--log-period", type=int, default=100)
     parser.add_argument("--thetas", type=int, nargs="+", default=[60, 90, 120])
+    parser.add_argument("--write-mode", type=int, default=0)
+    parser.add_argument("--case-suffix", default="shadow")
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
-    cases = write_cases(args.root, args.thetas, args.iterations, args.vtk_period, args.log_period)
+    cases = write_cases(
+        args.root,
+        args.thetas,
+        args.iterations,
+        args.vtk_period,
+        args.log_period,
+        args.write_mode,
+        args.case_suffix,
+    )
     for case in cases:
         print(case["case_xml"])
     return 0

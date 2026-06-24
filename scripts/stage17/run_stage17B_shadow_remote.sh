@@ -11,6 +11,7 @@ FREE_THRESHOLD_KB="${FREE_THRESHOLD_KB:-52428800}"
 EXPECTED_FINAL_STEP="${EXPECTED_FINAL_STEP:-1000}"
 PURPOSE="${PURPOSE:-stage17B_diffuse_solid_shadow_only}"
 CASE_NAMES="${CASE_NAMES:-cylinder_theta060_shadow cylinder_theta090_shadow cylinder_theta120_shadow}"
+ANALYZE_EXTRA_ARGS="${ANALYZE_EXTRA_ARGS:-}"
 
 export CUDA_VISIBLE_DEVICES="${GPU}"
 export OMPI_MCA_plm_rsh_agent=/usr/bin/ssh
@@ -32,7 +33,8 @@ fi
   echo "GPU=${GPU}"
   echo "CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES}"
   echo "EXPECTED_FINAL_STEP=${EXPECTED_FINAL_STEP}"
-  echo "claim_limit=shadow diagnostics only; not contact-angle validation"
+  echo "ANALYZE_EXTRA_ARGS=${ANALYZE_EXTRA_ARGS}"
+  echo "claim_limit=diagnostic/write-audit evidence only; not contact-angle validation"
 } | tee "${ROOT}/run_manifest.txt"
 
 nvidia-smi -L | tee "${ROOT}/nvidia_smi_L.txt"
@@ -64,10 +66,13 @@ for case_name in ${CASE_NAMES}; do
 done
 
 if [[ -f "${ANALYZE}" ]]; then
+  # shellcheck disable=SC2206
+  analyze_extra_args=( ${ANALYZE_EXTRA_ARGS} )
   python3 "${ANALYZE}" "${ROOT}" \
     --out-json "${ROOT}/stage17B_shadow_analysis.json" \
     --out-csv "${ROOT}/stage17B_shadow_frames.csv" \
     --expected-final-step "${EXPECTED_FINAL_STEP}" \
+    "${analyze_extra_args[@]}" \
     > "${ROOT}/stage17B_shadow_analysis_stdout.json" || overall_rc=1
 else
   echo "missing analyzer: ${ANALYZE}" | tee "${ROOT}/analysis_missing.txt"

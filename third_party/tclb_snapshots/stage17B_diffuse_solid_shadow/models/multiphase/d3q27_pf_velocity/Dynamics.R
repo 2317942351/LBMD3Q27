@@ -137,11 +137,15 @@ AddField("PsiGradMag", stencil3d=1, group="solid_boundary")
 AddField("PsiNormalX", stencil3d=1, group="solid_boundary")
 AddField("PsiNormalY", stencil3d=1, group="solid_boundary")
 AddField("PsiNormalZ", stencil3d=1, group="solid_boundary")
+AddField("PsiWallGhostRaw", stencil3d=1, group="solid_boundary")
 AddField("PsiWallGhost", stencil3d=1, group="solid_boundary")
+AddField("PsiWallGhostClampHit", stencil3d=1, group="solid_boundary")
 AddField("PsiThetaImplied", stencil3d=1, group="solid_boundary")
 AddField("PsiJaggedness", stencil3d=1, group="solid_boundary")
 AddField("PsiWriteAllowedFlag", stencil3d=1, group="solid_boundary")
 AddField("PsiNormalAmbiguityFlag", stencil3d=1, group="solid_boundary")
+AddField("PsiWriteAppliedFlag", stencil3d=1, group="solid_boundary")
+AddField("PsiWriteRejectedReason", stencil3d=1, group="solid_boundary")
 AddField("NearWallForceMag", stencil3d=1, group="runtime_diagnostics")
 AddField("NearWallGradPhiMag", stencil3d=1, group="runtime_diagnostics")
 AddField("NearWallForceOverRhoShadow", stencil3d=1, group="runtime_diagnostics")
@@ -200,8 +204,10 @@ stage13_wall_diag_fields = c(
     "WallCSQRejectedSolidVertexCount", "WallCSQRejectedSentinelCount",
     "WallCSQStrictWriteReady",
     "PsiSolid", "PsiGradMag", "PsiNormalX", "PsiNormalY", "PsiNormalZ",
-    "PsiWallGhost", "PsiThetaImplied", "PsiJaggedness",
-    "PsiWriteAllowedFlag", "PsiNormalAmbiguityFlag"
+    "PsiWallGhostRaw", "PsiWallGhost", "PsiWallGhostClampHit",
+    "PsiThetaImplied", "PsiJaggedness",
+    "PsiWriteAllowedFlag", "PsiNormalAmbiguityFlag",
+    "PsiWriteAppliedFlag", "PsiWriteRejectedReason"
 )
 stage13_wall_phase_save_fields = c("PhaseF", stage13_wall_diag_fields)
 
@@ -595,11 +601,15 @@ if (Options$thermo){
 	AddQuantity(name="PsiSolid", unit=1)
 	AddQuantity(name="PsiGradMag", unit=1)
 	AddQuantity(name="PsiNormal", unit=1, vector=T)
+	AddQuantity(name="PsiWallGhostRaw", unit=1)
 	AddQuantity(name="PsiWallGhost", unit=1)
+	AddQuantity(name="PsiWallGhostClampHit", unit=1)
 	AddQuantity(name="PsiThetaImplied", unit=1)
 	AddQuantity(name="PsiJaggedness", unit=1)
 	AddQuantity(name="PsiWriteAllowedFlag", unit=1)
 	AddQuantity(name="PsiNormalAmbiguityFlag", unit=1)
+	AddQuantity(name="PsiWriteAppliedFlag", unit=1)
+	AddQuantity(name="PsiWriteRejectedReason", unit=1)
 	AddQuantity(name="NearWallForceMag", unit=1)
 	AddQuantity(name="NearWallGradPhiMag", unit=1)
 	AddQuantity(name="NearWallForceOverRhoShadow", unit=1)
@@ -685,7 +695,7 @@ if (Options$thermo){
 	AddSetting(name="WallCompactStencilAppliedResidualTol", default=1e-8, comment='Stage13 compact-stencil write gate: max residual after applying bounded q_s')
 	AddSetting(name="WallCompactStencilWriteAllowedFlag", default=0, comment='Stage13 hard gate: compact-stencil writes are blocked unless explicitly enabled')
 	AddSetting(name="Stage17BDiffuseSolidMode", default=0, comment='Stage17B: 0 off, 1 diffuse-solid curved-wall shadow diagnostics')
-	AddSetting(name="Stage17BWriteMode", default=0, comment='Stage17B B2 must remain 0 shadow-only; later controlled write requires a separate gate')
+	AddSetting(name="Stage17BWriteMode", default=0, comment='Stage17B: 0 shadow-only, 1 armed readiness diagnostics, 2 controlled WallGhost write on curved analytic geometry')
 	AddSetting(name="Stage17BPsiEps", default=1.25, comment='Stage17B diffuse solid interface half-width in lattice units')
 	AddSetting(name="Stage17BWriteBand", default=1.8, comment='Stage17B shadow allowed near-wall band in lattice units')
 	AddSetting(name="Stage17BGradPsiMin", default=1e-4, comment='Stage17B minimum |grad psi_s| for a non-ambiguous normal')

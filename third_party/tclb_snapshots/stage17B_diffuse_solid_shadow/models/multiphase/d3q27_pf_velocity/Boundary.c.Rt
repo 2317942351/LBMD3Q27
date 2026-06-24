@@ -1058,11 +1058,15 @@ CudaDeviceFunction void stage17b_reset_diffuse_shadow()
 	PsiNormalX = 0.0;
 	PsiNormalY = 0.0;
 	PsiNormalZ = 0.0;
+	PsiWallGhostRaw = 0.0;
 	PsiWallGhost = 0.0;
+	PsiWallGhostClampHit = 0.0;
 	PsiThetaImplied = 0.0;
 	PsiJaggedness = 0.0;
 	PsiWriteAllowedFlag = 0.0;
 	PsiNormalAmbiguityFlag = 0.0;
+	PsiWriteAppliedFlag = 0.0;
+	PsiWriteRejectedReason = 0.0;
 }
 
 CudaDeviceFunction void stage13_keep_wall_csq()
@@ -1114,11 +1118,23 @@ CudaDeviceFunction void stage17b_keep_diffuse_shadow()
 	PsiNormalX = PsiNormalX(0,0,0);
 	PsiNormalY = PsiNormalY(0,0,0);
 	PsiNormalZ = PsiNormalZ(0,0,0);
+	PsiWallGhostRaw = PsiWallGhostRaw(0,0,0);
 	PsiWallGhost = PsiWallGhost(0,0,0);
+	PsiWallGhostClampHit = PsiWallGhostClampHit(0,0,0);
 	PsiThetaImplied = PsiThetaImplied(0,0,0);
 	PsiJaggedness = PsiJaggedness(0,0,0);
 	PsiWriteAllowedFlag = PsiWriteAllowedFlag(0,0,0);
 	PsiNormalAmbiguityFlag = PsiNormalAmbiguityFlag(0,0,0);
+	PsiWriteAppliedFlag = PsiWriteAppliedFlag(0,0,0);
+	PsiWriteRejectedReason = PsiWriteRejectedReason(0,0,0);
+}
+
+CudaDeviceFunction int stage17b_controlled_write_requested()
+{
+	return (Stage17BDiffuseSolidMode > 0.5 &&
+	        Stage17BWriteMode > 1.5 &&
+	        AnalyticWetting > 0.5 &&
+	        AnalyticSolidType >= 1.5);
 }
 
 CudaDeviceFunction void stage17b_compute_diffuse_shadow(
@@ -1126,14 +1142,21 @@ CudaDeviceFunction void stage17b_compute_diffuse_shadow(
 	vector_t grad_phi, real_t theta)
 {
 	stage17b_reset_diffuse_shadow();
-	if (Stage17BDiffuseSolidMode < 0.5) return;
-	if (AnalyticWetting < 0.5 || AnalyticSolidType < 1.5) return;
+	if (Stage17BDiffuseSolidMode < 0.5) {
+		PsiWriteRejectedReason = 1.0;
+		return;
+	}
+	if (AnalyticWetting < 0.5 || AnalyticSolidType < 1.5) {
+		PsiWriteRejectedReason = 2.0;
+		return;
+	}
 	PsiSolid = stage17b_diffuse_solid_indicator(signed_distance);
 	vector_t grad_psi = stage17b_diffuse_solid_grad_analytic(n_out, signed_distance);
 	real_t gmag = sqrt(grad_psi.x*grad_psi.x + grad_psi.y*grad_psi.y + grad_psi.z*grad_psi.z);
 	PsiGradMag = gmag;
 	if (gmag <= Stage17BGradPsiMin) {
 		PsiNormalAmbiguityFlag = 1.0;
+		PsiWriteRejectedReason = 4.0;
 		return;
 	}
 	// psi_s is one in solid and zero in fluid; grad(psi_s) points inward.
@@ -1153,7 +1176,9 @@ CudaDeviceFunction void stage17b_compute_diffuse_shadow(
 		theta_shadow = Stage17BShadowThetaDeg * PI / 180.0;
 	}
 	real_t raw = stage13_compute_geometric_tangent_raw(n_s, h0, phi_f, grad_phi, theta_shadow);
+	PsiWallGhostRaw = raw;
 	PsiWallGhost = stage13_clamp_phase_value(raw, &clamp_hit);
+	PsiWallGhostClampHit = clamp_hit;
 	PsiThetaImplied = theta_shadow * 180.0 / PI;
 	real_t dist = fabs(signed_distance);
 	int shadow_ready = (dist <= Stage17BWriteBand &&
@@ -1161,9 +1186,18 @@ CudaDeviceFunction void stage17b_compute_diffuse_shadow(
 	                    PsiJaggedness < 1.0e-3 &&
 	                    stage13_boundary_phase_is_valid(phi_f));
 	PsiWriteAllowedFlag = shadow_ready ? 1.0 : 0.0;
-	// Stage17B-B2 guardrail: shadow only. Never write WallGhost or PhaseF here.
-	if (Stage17BWriteMode > 0.5) {
-		PsiWriteAllowedFlag = 0.0;
+	if (dist > Stage17BWriteBand) {
+		PsiWriteRejectedReason = 3.0;
+	} else if (PsiJaggedness >= 1.0e-3) {
+		PsiWriteRejectedReason = 5.0;
+	} else if (!stage13_boundary_phase_is_valid(phi_f)) {
+		PsiWriteRejectedReason = 6.0;
+	} else if (PsiWallGhost < PhaseField_l || PsiWallGhost > PhaseField_h) {
+		PsiWriteRejectedReason = 7.0;
+	} else if (Stage17BWriteMode < 1.5) {
+		PsiWriteRejectedReason = 8.0;
+	} else {
+		PsiWriteRejectedReason = 0.0;
 	}
 }
 
@@ -1306,10 +1340,14 @@ CudaDeviceFunction vector_t getPsiNormal() {
 	return out;
 }
 CudaDeviceFunction real_t getPsiWallGhost() { return PsiWallGhost(0,0,0); }
+CudaDeviceFunction real_t getPsiWallGhostRaw() { return PsiWallGhostRaw(0,0,0); }
+CudaDeviceFunction real_t getPsiWallGhostClampHit() { return PsiWallGhostClampHit(0,0,0); }
 CudaDeviceFunction real_t getPsiThetaImplied() { return PsiThetaImplied(0,0,0); }
 CudaDeviceFunction real_t getPsiJaggedness() { return PsiJaggedness(0,0,0); }
 CudaDeviceFunction real_t getPsiWriteAllowedFlag() { return PsiWriteAllowedFlag(0,0,0); }
 CudaDeviceFunction real_t getPsiNormalAmbiguityFlag() { return PsiNormalAmbiguityFlag(0,0,0); }
+CudaDeviceFunction real_t getPsiWriteAppliedFlag() { return PsiWriteAppliedFlag(0,0,0); }
+CudaDeviceFunction real_t getPsiWriteRejectedReason() { return PsiWriteRejectedReason(0,0,0); }
 
 #ifdef OPTIONS_staircaseimp
 
@@ -1837,6 +1875,16 @@ CudaDeviceFunction void calcWallPhase(){
 #endif
 					stage17b_compute_diffuse_shadow(
 						n_w_a, sd_a, h_a, pf_f, grad_f_shadow, radAngle);
+					if (stage17b_controlled_write_requested() && PsiWriteAllowedFlag > 0.5) {
+						WallGhost = PsiWallGhost;
+						WallGhostRaw = PsiWallGhostRaw;
+						WallGhostClamped = PsiWallGhost;
+						WallGhostClampHit = PsiWallGhostClampHit;
+						WettingPathId = 170.0;
+						PsiWriteAppliedFlag = 1.0;
+						PhaseF = pf_f;
+						return;
+					}
 					if (compact_write) {
 						stage13_compute_compact_stencil_solution(n_w_a, d_to_surface_a, pf_f, radAngle);
 						if (stage13_compact_solution_can_write()) {
