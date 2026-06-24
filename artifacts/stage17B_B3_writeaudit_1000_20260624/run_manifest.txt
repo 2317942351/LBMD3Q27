@@ -1,0 +1,10 @@
+date=2026-06-24T18:02:40+08:00
+purpose=stage17B_B3_controlled_wallghost_write_audit_1000
+ROOT=/mnt/usb1t/RUNS/runs/stage17B_B3_writeaudit_1000_20260624
+CASE_SRC=/home/yuan/stage17B_B3_writeaudit_1000_cases
+BIN=/home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
+GPU=1
+CUDA_VISIBLE_DEVICES=1
+EXPECTED_FINAL_STEP=1000
+ANALYZE_EXTRA_ARGS=--write-audit
+claim_limit=diagnostic/write-audit evidence only; not contact-angle validation

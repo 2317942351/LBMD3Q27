@@ -249,6 +249,7 @@ def analyze_case(
     force_over_rho_limit: float,
     expected_final_step: int,
     write_audit: bool,
+    no_write_regression: bool,
 ) -> dict[str, Any]:
     vtis = sorted((case_dir / "output").glob("case_VTK_P00_*.vti"), key=step_of)
     frames = [analyze_frame(path) for path in vtis]
@@ -266,14 +267,16 @@ def analyze_case(
     if expected_final_step >= 0 and expected_final_step not in [frame["step"] for frame in frames]:
         failures.append(f"missing_expected_final_step_{expected_final_step}")
     for frame in frames:
-        required_fields = REQUIRED_FIELDS + (WRITE_AUDIT_REQUIRED_FIELDS if write_audit else [])
+        required_fields = REQUIRED_FIELDS + (
+            WRITE_AUDIT_REQUIRED_FIELDS if (write_audit or no_write_regression) else []
+        )
         for field in required_fields:
             stats = frame["stats"].get(field, {})
             if not stats.get("present"):
                 failures.append(f"missing_{field}_step_{frame['step']}")
             elif stats.get("nonfinite", 0) > 0:
                 failures.append(f"nonfinite_{field}_step_{frame['step']}")
-        if frame.get("write_allowed_cells", 0) <= 0:
+        if not no_write_regression and frame.get("write_allowed_cells", 0) <= 0:
             failures.append(f"no_write_allowed_shadow_cells_step_{frame['step']}")
         if frame.get("psi_wall_ghost_below_0_cells", 0) > 0:
             failures.append(f"psi_wall_ghost_below_zero_step_{frame['step']}")
@@ -297,6 +300,13 @@ def analyze_case(
             ]:
                 if frame.get(key, 0) > 0:
                     failures.append(f"{key}_step_{frame['step']}")
+        if no_write_regression:
+            if frame.get("write_applied_cells", 0) > 0:
+                failures.append(f"unexpected_write_applied_cells_step_{frame['step']}")
+            if frame.get("wetting_path_170_cells", 0) > 0:
+                failures.append(f"unexpected_wetting_path_170_cells_step_{frame['step']}")
+            if frame.get("path170_without_applied_cells", 0) > 0:
+                failures.append(f"path170_without_applied_cells_step_{frame['step']}")
 
     return {
         "case": case_dir.name,
@@ -310,12 +320,15 @@ def analyze_case(
         "expected_final_step": expected_final_step,
         "status": (
             "PASS_WRITE_AUDIT" if write_audit and not failures
+            else "PASS_NO_WRITE_REGRESSION" if no_write_regression and not failures
             else "PASS_SHADOW_DIAGNOSTICS" if not failures
             else "FAIL"
         ),
         "claim_limit": (
             "controlled WallGhost write audit only; not contact-angle validation"
             if write_audit
+            else "flat-wall no-write regression only; not contact-angle validation"
+            if no_write_regression
             else "diagnostic-field health only; not contact-angle validation"
         ),
     }
@@ -380,16 +393,29 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Require Stage17B B3 controlled WallGhost write invariants.",
     )
+    parser.add_argument(
+        "--no-write-regression",
+        action="store_true",
+        help="Require zero Stage17B B3 writes, used for flat-wall regression.",
+    )
     return parser.parse_args()
 
 
 def main() -> int:
     args = parse_args()
+    if args.write_audit and args.no_write_regression:
+        raise SystemExit("--write-audit and --no-write-regression are mutually exclusive")
     case_dirs = sorted(
         path for path in args.root.iterdir() if path.is_dir() and (path / "case.xml").exists()
     )
     cases = [
-        analyze_case(path, args.force_over_rho_limit, args.expected_final_step, args.write_audit)
+        analyze_case(
+            path,
+            args.force_over_rho_limit,
+            args.expected_final_step,
+            args.write_audit,
+            args.no_write_regression,
+        )
         for path in case_dirs
     ]
     failures = {case["case"]: case["failures"] for case in cases if case["failures"]}
@@ -399,15 +425,20 @@ def main() -> int:
         "status": (
             "PASS_STAGE17B_B3_WRITE_AUDIT"
             if args.write_audit and not failures
+            else "PASS_STAGE17B_B3_NO_WRITE_REGRESSION"
+            if args.no_write_regression and not failures
             else "PASS_STAGE17B_B2_SHADOW_DIAGNOSTICS"
             if not failures
             else "FAIL"
         ),
         "failures": failures,
         "write_audit": bool(args.write_audit),
+        "no_write_regression": bool(args.no_write_regression),
         "claim_limit": (
             "B3 controlled WallGhost write audit only; no contact-angle validation"
             if args.write_audit
+            else "B3 flat-wall no-write regression only; no contact-angle validation"
+            if args.no_write_regression
             else "B2 shadow diagnostics only; no contact-angle validation"
         ),
     }
