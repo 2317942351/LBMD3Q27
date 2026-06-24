@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Analyze Stage17B B2 cylinder shadow-only VTI outputs.
+"""Analyze Stage17B B2 curved shadow-only VTI outputs.
 
 This script checks diagnostic-field health only. It does not measure or validate
 contact angle.

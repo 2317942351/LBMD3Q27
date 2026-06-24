@@ -207,7 +207,7 @@ def audit(root: Path) -> dict[str, Any]:
         "failures": failures,
         "claim_limit": (
             "source wiring guardrail only; B2 runtime still must prove Psi* fields "
-            "are finite and coherent on P100 cylinder shadow cases"
+            "are finite and coherent on P100 curved shadow cases"
         ),
     }
 

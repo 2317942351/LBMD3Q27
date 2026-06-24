@@ -9,6 +9,8 @@ GPU="${GPU:-1}"
 TIMEOUT="${TIMEOUT:-1800}"
 FREE_THRESHOLD_KB="${FREE_THRESHOLD_KB:-52428800}"
 EXPECTED_FINAL_STEP="${EXPECTED_FINAL_STEP:-1000}"
+PURPOSE="${PURPOSE:-stage17B_diffuse_solid_shadow_only}"
+CASE_NAMES="${CASE_NAMES:-cylinder_theta060_shadow cylinder_theta090_shadow cylinder_theta120_shadow}"
 
 export CUDA_VISIBLE_DEVICES="${GPU}"
 export OMPI_MCA_plm_rsh_agent=/usr/bin/ssh
@@ -23,7 +25,7 @@ fi
 
 {
   echo "date=$(date -Is)"
-  echo "purpose=stage17B_cylinder_diffuse_solid_shadow_only"
+  echo "purpose=${PURPOSE}"
   echo "ROOT=${ROOT}"
   echo "CASE_SRC=${CASE_SRC}"
   echo "BIN=${BIN}"
@@ -55,11 +57,7 @@ run_one() {
 }
 
 overall_rc=0
-for case_name in \
-  cylinder_theta060_shadow \
-  cylinder_theta090_shadow \
-  cylinder_theta120_shadow
-do
+for case_name in ${CASE_NAMES}; do
   if ! run_one "${case_name}"; then
     overall_rc=1
   fi
