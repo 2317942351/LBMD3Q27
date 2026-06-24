@@ -1,0 +1,42 @@
+{
+  "cases": [
+    {
+      "case": "cylinder_theta060_shadow",
+      "case_xml": "cases\\diagnostics\\stage17B_cylinder_shadow_20260624_12000\\cylinder_theta060_shadow\\case.xml",
+      "claim_limit": "shadow-only geometry/near-wall diagnostics; not contact-angle validation",
+      "legacy_rad_angle_deg": 90,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_shadow_theta_deg": 60,
+      "stage17b_write_mode": 0,
+      "theta_deg": 60,
+      "wall_compact_stencil_mode": 0
+    },
+    {
+      "case": "cylinder_theta090_shadow",
+      "case_xml": "cases\\diagnostics\\stage17B_cylinder_shadow_20260624_12000\\cylinder_theta090_shadow\\case.xml",
+      "claim_limit": "shadow-only geometry/near-wall diagnostics; not contact-angle validation",
+      "legacy_rad_angle_deg": 90,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_shadow_theta_deg": 90,
+      "stage17b_write_mode": 0,
+      "theta_deg": 90,
+      "wall_compact_stencil_mode": 0
+    },
+    {
+      "case": "cylinder_theta120_shadow",
+      "case_xml": "cases\\diagnostics\\stage17B_cylinder_shadow_20260624_12000\\cylinder_theta120_shadow\\case.xml",
+      "claim_limit": "shadow-only geometry/near-wall diagnostics; not contact-angle validation",
+      "legacy_rad_angle_deg": 90,
+      "stage17b_diffuse_solid_mode": 1,
+      "stage17b_shadow_theta_deg": 120,
+      "stage17b_write_mode": 0,
+      "theta_deg": 120,
+      "wall_compact_stencil_mode": 0
+    }
+  ],
+  "iterations": 12000,
+  "log_period": 500,
+  "purpose": "Stage17B B2 cylinder diffuse-solid shadow-only gate",
+  "vtk_fields": "PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallH,AnalyticFlag,LocalRadAngle,PsiSolid,PsiGradMag,PsiNormal,PsiWallGhost,PsiThetaImplied,PsiJaggedness,PsiWriteAllowedFlag,PsiNormalAmbiguityFlag,NearWallForceMag,NearWallGradPhiMag,NearWallForceOverRhoShadow",
+  "vtk_period": 3000
+}

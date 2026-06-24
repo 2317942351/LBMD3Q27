@@ -1,0 +1,9 @@
+date=2026-06-24T08:21:27+08:00
+purpose=stage17B_cylinder_diffuse_solid_shadow_only
+ROOT=/mnt/usb1t/RUNS/runs/stage17B_shadowtheta_cylinder_12000_20260624
+CASE_SRC=/home/yuan/stage17B_cylinder_shadow_cases_12000
+BIN=/home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
+GPU=1
+CUDA_VISIBLE_DEVICES=1
+EXPECTED_FINAL_STEP=12000
+claim_limit=shadow diagnostics only; not contact-angle validation
