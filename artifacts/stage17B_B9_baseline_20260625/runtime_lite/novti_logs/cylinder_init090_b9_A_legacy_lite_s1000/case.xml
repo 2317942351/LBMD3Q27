@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<CLBConfig output="output/" permissive="true">
+  <Geometry nx="96" ny="96" nz="96">
+    <MRT><Box/></MRT>
+    <Wall mask="ALL" name="OuterDomain"><Box nx="1"/><Box dx="-1"/><Box ny="1"/><Box dy="-1"/><Box nz="1"/><Box dz="-1"/></Wall>
+    <Wall mask="ALL" name="AnalyticCylinder"><Cylinder dx="28" nx="40" dy="28" ny="40" dz="0" nz="96"/></Wall>
+  </Geometry>
+  <Model>
+    <Param name="Density_h" value="1"/>
+    <Param name="Density_l" value="0.005"/>
+    <Param name="Viscosity_h" value="0.1"/>
+    <Param name="Viscosity_l" value="0.1"/>
+    <Param name="tauUpdate" value="1"/>
+    <Param name="sigma" value="5e-05"/>
+    <Param name="M" value="0.6"/>
+    <Param name="IntWidth" value="3"/>
+    <Param name="Radius" value="0"/>
+    <Param name="CenterX" value="48.0"/>
+    <Param name="CenterY" value="72.0"/>
+    <Param name="CenterZ" value="48.0"/>
+    <Param name="CylinderCapInit" value="1"/>
+    <Param name="CylinderCapInitParentRadius" value="37.650746195492204"/>
+    <Param name="CylinderCapInitCenterX" value="48.0"/>
+    <Param name="CylinderCapInitCenterY" value="85.65074619549219"/>
+    <Param name="CylinderCapInitCenterZ" value="48.0"/>
+    <Param name="CylinderCapInitSolidCenterX" value="48.0"/>
+    <Param name="CylinderCapInitSolidCenterY" value="48.0"/>
+    <Param name="CylinderCapInitSolidCenterZ" value="48.0"/>
+    <Param name="CylinderCapInitSolidRadius" value="20.0"/>
+    <Param name="CylinderCapInitSolidAxis" value="2"/>
+    <Param name="BubbleType" value="1.0"/>
+    <Param name="VelocityX" value="0"/>
+    <Param name="VelocityY" value="0"/>
+    <Param name="VelocityZ" value="0"/>
+    <Param name="GravitationX" value="0"/>
+    <Param name="GravitationY" value="0"/>
+    <Param name="GravitationZ" value="0"/>
+    <Param name="radAngle" value="90d"/>
+    <Param name="radAngle" value="90d" zone="OuterDomain"/>
+    <Param name="radAngle" value="90d" zone="AnalyticCylinder"/>
+    <Param name="AnalyticWetting" value="1"/>
+    <Param name="AnalyticSolidType" value="2"/>
+    <Param name="AnalyticSolidAxis" value="2"/>
+    <Param name="AnalyticSolidCenterX" value="48.0"/>
+    <Param name="AnalyticSolidCenterY" value="48.0"/>
+    <Param name="AnalyticSolidCenterZ" value="48.0"/>
+    <Param name="AnalyticSolidRadius" value="20.0"/>
+    <Param name="WettingBCMode" value="0"/>
+    <Param name="WallCompactStencilMode" value="0"/>
+    <Param name="WallCompactStencilWriteAllowedFlag" value="0"/>
+    <Param name="Stage17BDiffuseSolidMode" value="0"/>
+    <Param name="Stage17BWriteMode" value="0"/>
+    <Param name="Stage17BShadowThetaDeg" value="90"/>
+    <Param name="Stage17BPsiEps" value="1.25"/>
+    <Param name="Stage17BWriteBand" value="1.8"/>
+    <Param name="Stage17BGradPsiMin" value="1e-4"/>
+    <Param name="ReplayDiagnosticsMode" value="1"/>
+    <Param name="MomentumClosureDiagnosticsMode" value="0"/>
+    <Param name="Stage17BConsumptionDiagnosticsMode" value="1"/>
+    <Param name="Stage17BWriteSourceMode" value="0"/>
+    <Param name="MomentumClosureProbeMode" value="0"/>
+    <Param name="MomentumForceMode" value="0"/>
+    <Param name="PressureClosureMode" value="0"/>
+    <Param name="ForceDensityClosureMode" value="0"/>
+    <Param name="ForceFixedPointMode" value="0"/>
+    <Param name="PhaseAdvectionVelocityMode" value="0"/>
+    <Param name="DynamicCLMode" value="0"/>
+    <Param name="ForceFixedTol" value="0"/>
+    <Param name="ForceFixedMaxIter" value="2"/>
+    <Param name="minGradient" value="1e-8"/>
+  </Model>
+  <VTK what="PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallGhostRaw,WallGhostClamped,WallGhostClampHit,WettingPathId,WallH,AnalyticFlag,LocalRadAngle,PsiSolid,PsiGradMag,PsiNormal,PsiWallGhostRaw,PsiWallGhost,PsiWallGhostClampHit,PsiThetaImplied,PsiJaggedness,PsiWriteAllowedFlag,PsiNormalAmbiguityFlag,PsiWriteAppliedFlag,PsiWriteRejectedReason,NearWallForceMag,NearWallGradPhiMag,NearWallForceOverRhoShadow,PhaseStencilGhostUseCount,PhaseStencilFallbackCount,PhaseStencilMidpointFallbackCount,ReplayPhaseConsumed,ReplayPhaseFromH,ReplayLapPhi,ReplayMu,ReplayGradPhi,ReplayPhaseAdvVelocity,ReplayNormal,ReplayHPreSum,ReplayHPostSum,ReplayHeqSum,ReplayHPreMaxAbs,ReplayHPostMaxAbs,ReplayHeqMaxAbs,ReplayFphiSum,ReplayFphiMaxAbs,ReplayTmp1,ReplayTmp1BoundedShadow,ReplayPhaseOutOfBoundsFlag,B5SignedDistance,B5NearWallBandFlag,B5ContactLineBandFlag,B5WallGhostConsumedFlag,B5GhostUseCount,B5WallGhostMinusCenter,B5WallGhostMinusFluidProbe,B5WallGhostClampHitNeighbor,B5GradPhiNormal,B5GradPhiTangentialMag,B5FphiSum,B5FphiNormalProxy,B5PhaseFromHDelta,B5ExpectedResponseSign,B5SignalSignOK"/>
+  <Log Iterations="100"/><Failcheck Iterations="100"/>
+  <Solve Iterations="1000"><VTK Iterations="1000" what="PhaseField,Rho,U,P,BOUNDARY,IsItBoundary,WallGhost,WallGhostRaw,WallGhostClamped,WallGhostClampHit,WettingPathId,WallH,AnalyticFlag,LocalRadAngle,PsiSolid,PsiGradMag,PsiNormal,PsiWallGhostRaw,PsiWallGhost,PsiWallGhostClampHit,PsiThetaImplied,PsiJaggedness,PsiWriteAllowedFlag,PsiNormalAmbiguityFlag,PsiWriteAppliedFlag,PsiWriteRejectedReason,NearWallForceMag,NearWallGradPhiMag,NearWallForceOverRhoShadow,PhaseStencilGhostUseCount,PhaseStencilFallbackCount,PhaseStencilMidpointFallbackCount,ReplayPhaseConsumed,ReplayPhaseFromH,ReplayLapPhi,ReplayMu,ReplayGradPhi,ReplayPhaseAdvVelocity,ReplayNormal,ReplayHPreSum,ReplayHPostSum,ReplayHeqSum,ReplayHPreMaxAbs,ReplayHPostMaxAbs,ReplayHeqMaxAbs,ReplayFphiSum,ReplayFphiMaxAbs,ReplayTmp1,ReplayTmp1BoundedShadow,ReplayPhaseOutOfBoundsFlag,B5SignedDistance,B5NearWallBandFlag,B5ContactLineBandFlag,B5WallGhostConsumedFlag,B5GhostUseCount,B5WallGhostMinusCenter,B5WallGhostMinusFluidProbe,B5WallGhostClampHitNeighbor,B5GradPhiNormal,B5GradPhiTangentialMag,B5FphiSum,B5FphiNormalProxy,B5PhaseFromHDelta,B5ExpectedResponseSign,B5SignalSignOK"/><Log Iterations="100"/><Failcheck Iterations="100"/></Solve>
+</CLBConfig>

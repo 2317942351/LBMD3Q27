@@ -1,0 +1,31 @@
+{
+  "claim_limit": "B9 baseline closure diagnostic only; not contact-angle validation",
+  "classification": {
+    "available_candidate_fields": {
+      "fmu_stress": false,
+      "force_over_rho": false,
+      "phase_update": true,
+      "pressure_force": false
+    },
+    "claim_limit": "B9 root-cause triage only; not contact-angle validation",
+    "final_nearwall_candidate_scales": {
+      "fmu_stress": null,
+      "force_over_rho": null,
+      "phase_update": 1.0001237564670555,
+      "pressure_force": null
+    },
+    "first_contact_half_width_drift_step": 50,
+    "first_contact_ymin_motion_step": 10,
+    "first_liquid_volume_delta_step": 2,
+    "first_phase_out_of_bounds_step": 5,
+    "momentum_diagnostic_limit": "Momentum fields are absent in the lite tier; pressure/F_mu/force-over-rho cannot be cleared by this run.",
+    "primary_suspect": "phase_boundedness_or_initialization_release",
+    "status": "classified",
+    "tier": "lite"
+  },
+  "failures": [],
+  "frames_csv": "/mnt/usb1t/RUNS/runs/stage17B_B9_lite_20260625/stage17B_B9_baseline_frames.csv",
+  "root": "/mnt/usb1t/RUNS/runs/stage17B_B9_lite_20260625",
+  "status": "PASS_STAGE17B_B9_BASELINE_TRIAGE",
+  "timeseries_png": "/mnt/usb1t/RUNS/runs/stage17B_B9_lite_20260625/stage17B_B9_baseline_timeseries.png"
+}
