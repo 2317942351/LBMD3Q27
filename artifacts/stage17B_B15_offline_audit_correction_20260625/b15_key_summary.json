@@ -1,0 +1,21 @@
+{
+  "status": "b15_offline_audit_correction_complete",
+  "claim_limit": "offline comparison correction only; not contact-angle validation",
+  "primary_result": "b10_b11_error_removed_by_tclb_fluid_mask_and_tclb_phase_reference",
+  "key_metrics": {
+    "b10_near_interface_current_vs_tclb_periodic_mu_max_abs": 0.00034687500000000007,
+    "b11_tclb_fluid_current_vs_tclb_periodic_mu_max_abs": 6.335806445462167e-19,
+    "b10_near_interface_current_vs_tclb_periodic_lap_max_abs": 1.5416666666666667,
+    "b11_tclb_fluid_current_vs_tclb_periodic_lap_max_abs": 2.456368441983159e-15,
+    "offline_phase_vs_tclb_phase_mu_near_interface_tclb_fluid_max_abs": 0.0003530223573332822,
+    "offline_fluid_tclb_boundary_cells": 51624,
+    "cylinder_overlap_boundary_cells": 800,
+    "outer_boundary_cells": 50824
+  },
+  "interpretation": [
+    "TCLB InitialReplayMu/LapPhi matches a periodic D3Q27 stencil applied to TCLB PhaseField on TCLB fluid nodes.",
+    "The old B10-style offline-fluid mask included TCLB boundary nodes, which created apparent large errors.",
+    "Remaining offline-vs-TCLB differences should be audited as reconstruction/mask issues before any solver physics change."
+  ],
+  "next_gate": "Patch B10/B11 reports or add a corrected comparison mode so future gates default to TCLB-fluid masks and TCLB PhaseField reference."
+}
