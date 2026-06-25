@@ -1,0 +1,80 @@
+{
+  "argmax_record_count": 4620,
+  "claim_limit": "diagnostic-only; not contact-angle validation and not a solver fix",
+  "first_fmu_raw_onset": {
+    "case": "wall_60to30_10",
+    "field": "FmuRawNorm",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_fmu_raw_large",
+    "value": 100723.54770482262
+  },
+  "first_force_over_rho_onset": {
+    "case": "wall_60to30_10",
+    "field": "ForceOverRhoNorm",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1000.0,
+    "trigger": "threshold_force_over_rho_large",
+    "value": 2092.3768331758492
+  },
+  "first_hpost_onset": {
+    "case": "wall_60to30_10",
+    "field": "ReplayHPostMaxAbs",
+    "mask": "low_rho",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_hpost_large",
+    "value": 2.233706063315237
+  },
+  "first_phase_from_h_onset": {
+    "case": "wall_60to30_10",
+    "field": "ReplayPhaseFromH",
+    "mask": "low_rho",
+    "step": 13,
+    "threshold": 1.001,
+    "trigger": "threshold_phase_from_h_out_of_bounds",
+    "value": 2.791219556608537
+  },
+  "first_pressure_input_onset": {
+    "case": "wall_60to30_10",
+    "field": "ReplayPressureInput",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_pressure_input_large",
+    "value": 677906.1332551276
+  },
+  "first_stress_input_onset": {
+    "case": "wall_60to30_10",
+    "field": "StressInputNorm",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_stress_input_large",
+    "value": 1646657.248966757
+  },
+  "first_stress_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "StressPostForceNorm",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1000.0,
+    "trigger": "threshold_stress_post_large",
+    "value": 1275366.1940701567
+  },
+  "frame_count": 21,
+  "notes": [
+    "Use mask-specific argmax records before changing solver physics.",
+    "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
+    "If stress_post exceeds stress_pre at the same argmax before phase loss, stress time-level is implicated.",
+    "If phase/h fields lead force diagnostics, return to h update and phase-advection timeline."
+  ],
+  "primary_branch": "stress_timelevel_or_fixed_point_feedback",
+  "primary_branch_reason": "Post-force stress grows no later than F/rho and before or with phase loss.",
+  "pvti_only_cases_skipped": [],
+  "root": "/mnt/usb1t/RUNS/runs/stage14_B17_onset_mask_argmax_20260625/probe_wall_60to30_R200_step20",
+  "stat_row_count": 4620,
+  "status": "B17_DIAGNOSTIC_COMPLETE"
+}
