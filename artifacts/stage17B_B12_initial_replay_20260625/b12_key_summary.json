@@ -1,0 +1,23 @@
+{
+  "status": "b11_replay_compare_complete",
+  "primary_result": "initial_replay_mu_differs_from_offline_reconstruction",
+  "claim_limit": "TCLB replay comparison only; not contact-angle validation",
+  "binary_sha256": "5329438f60131855611961fc368e70bd850c87624f3d9de6e9369f23f0bba406",
+  "run_root_remote": "/mnt/usb1t/RUNS/runs/stage17B_B12_initial_replay_20260625",
+  "case": "cylinder_init090_b12_initial_replay_s0001",
+  "step0": {
+    "phase_near_interface_tclb_fluid_max_abs_diff": 3.3306690738754696e-16,
+    "phase_contact_core_tclb_fluid_max_abs_diff": 2.220446049250313e-16,
+    "initial_mu_near_interface_max_abs_diff_vs_offline_periodic": 0.0003530223573332822,
+    "initial_lap_near_interface_max_abs_diff_vs_offline_periodic": 1.5689882548145873,
+    "initial_wallghost_used_near_interface_max_abs": 38.0
+  },
+  "interpretation": [
+    "TCLB step-0 PhaseField still matches the offline CylinderCapInit in near-interface/contact-core masks to machine precision.",
+    "InitialReplayMu/InitialReplayLapPhi are now populated before the first update, so B11 zero-field ambiguity is closed.",
+    "InitialReplayMu is nonzero in near-wall interface/contact-core regions, supporting a pre-first-update discrete non-equilibrium release path.",
+    "InitialReplayMu/LapPhi differ from the B10 offline periodic-stencil reconstruction because TCLB consumes wall ghost/stencil substitution in the same region.",
+    "InitialReplayWallGhostUsed max=38 and fallback count=0 in near-interface/contact-core masks: this is a wall-ghost consumption path, not sentinel fallback."
+  ],
+  "next_gate": "B13 should split initial/replay stencil with ghost-disabled or periodic-shadow comparison before changing wetting physics."
+}

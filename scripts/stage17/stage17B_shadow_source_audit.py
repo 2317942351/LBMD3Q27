@@ -135,6 +135,16 @@ def audit(root: Path) -> dict[str, Any]:
         "B5ExpectedResponseSign",
         "B5SignalSignOK",
     ]
+    initial_replay_fields = [
+        "InitialReplayLapPhi",
+        "InitialReplayMu",
+        "InitialReplayGradPhiX",
+        "InitialReplayGradPhiY",
+        "InitialReplayGradPhiZ",
+        "InitialReplayWallGhostUsed",
+        "InitialReplayPhaseStencilFallbackCount",
+    ]
+    init_distributions = cuda_function_block(dynamics_c, "Init_distributions")
 
     checks: dict[str, bool] = {
         "stage17b_snapshot_exists": all(
@@ -180,6 +190,47 @@ def audit(root: Path) -> dict[str, Any]:
         "b5_consumption_fields_registered": all(
             f'AddField("{field}"' in dynamics_r and f'AddQuantity(name="{field}"' in dynamics_r
             for field in b5_fields
+        ),
+        "b12_initial_replay_fields_registered": all(
+            f'AddField("{field}", stencil3d=1, group="initial_replay")' in dynamics_r
+            for field in initial_replay_fields
+        )
+        and all(
+            token in dynamics_r
+            for token in [
+                'AddQuantity(name="InitialReplayLapPhi", unit=1)',
+                'AddQuantity(name="InitialReplayMu", unit=1)',
+                'AddQuantity(name="InitialReplayGradPhi", unit=1, vector=T)',
+                'AddQuantity(name="InitialReplayWallGhostUsed", unit=1)',
+                'AddQuantity(name="InitialReplayPhaseStencilFallbackCount", unit=1)',
+            ]
+        ),
+        "b12_initial_replay_saved_in_base_init": (
+            'save_initial    = c("g","h","PF","initial_replay")' in dynamics_r
+        ),
+        "b12_initial_replay_written_in_init_distributions": all(
+            token in init_distributions
+            for token in [
+                "PhaseStencilGhostUseCount = 0.0",
+                "vector_t gradPhi = calcGradPhi()",
+                "InitialReplayGradPhiX = gradPhi.x",
+                "InitialReplayMu = calcMu(PhaseF)",
+                "InitialReplayLapPhi = ReplayLapPhi",
+                "InitialReplayWallGhostUsed = PhaseStencilGhostUseCount",
+                "InitialReplayPhaseStencilFallbackCount = PhaseStencilFallbackCount",
+            ]
+        )
+        and init_distributions.find("PhaseStencilGhostUseCount = 0.0")
+        < init_distributions.find("vector_t gradPhi = calcGradPhi()"),
+        "b12_initial_replay_getters_present": all(
+            token in dynamics_c
+            for token in [
+                "getInitialReplayLapPhi",
+                "getInitialReplayMu",
+                "getInitialReplayGradPhi",
+                "getInitialReplayWallGhostUsed",
+                "getInitialReplayPhaseStencilFallbackCount",
+            ]
         ),
         "psi_getters_present": all(
             f"get{field}" in boundary

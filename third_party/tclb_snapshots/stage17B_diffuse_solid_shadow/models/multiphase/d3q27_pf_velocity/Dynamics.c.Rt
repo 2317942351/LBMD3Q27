@@ -354,6 +354,30 @@ CudaDeviceFunction vector_t getReplayGradPhi(){
 	return out;
 }
 
+CudaDeviceFunction real_t getInitialReplayLapPhi(){
+	return stage16_replay_scalar(InitialReplayLapPhi(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialReplayMu(){
+	return stage16_replay_scalar(InitialReplayMu(0,0,0));
+}
+
+CudaDeviceFunction vector_t getInitialReplayGradPhi(){
+	vector_t out;
+	out.x = stage16_replay_scalar(InitialReplayGradPhiX(0,0,0));
+	out.y = stage16_replay_scalar(InitialReplayGradPhiY(0,0,0));
+	out.z = stage16_replay_scalar(InitialReplayGradPhiZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getInitialReplayWallGhostUsed(){
+	return stage16_replay_scalar(InitialReplayWallGhostUsed(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialReplayPhaseStencilFallbackCount(){
+	return stage16_replay_scalar(InitialReplayPhaseStencilFallbackCount(0,0,0));
+}
+
 CudaDeviceFunction vector_t getReplayFsurf(){
 	vector_t out;
 	out.x = stage16_replay_scalar(ReplayFsurfX(0,0,0));
@@ -2002,6 +2026,11 @@ CudaDeviceFunction void Init_distributions()
 
 	// Gradients and phasefield normals:
 	real_t nx, ny, nz, magnPhi;
+	if (stage16_replay_diagnostics_active()) {
+		PhaseStencilGhostUseCount = 0.0;
+		PhaseStencilFallbackCount = 0.0;
+		PhaseStencilMidpointFallbackCount = 0.0;
+	}
 	vector_t gradPhi = calcGradPhi();
 	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
 
@@ -2010,6 +2039,15 @@ CudaDeviceFunction void Init_distributions()
 		gradPhiVal_y = gradPhi.y;
 		gradPhiVal_z = gradPhi.z;
 	#endif
+	if (stage16_replay_diagnostics_active()) {
+		InitialReplayGradPhiX = gradPhi.x;
+		InitialReplayGradPhiY = gradPhi.y;
+		InitialReplayGradPhiZ = gradPhi.z;
+		InitialReplayMu = calcMu(PhaseF);
+		InitialReplayLapPhi = ReplayLapPhi;
+		InitialReplayWallGhostUsed = PhaseStencilGhostUseCount;
+		InitialReplayPhaseStencilFallbackCount = PhaseStencilFallbackCount;
+	}
 	if (magnPhi < minGradient){
 		nx=0.0; ny=0.0; nz=0.0;
 	} else {

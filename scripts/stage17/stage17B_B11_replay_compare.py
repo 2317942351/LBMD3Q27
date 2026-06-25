@@ -8,9 +8,11 @@ ReplayLapPhi, and ReplayMu against offline D3Q27 stencil values.
 from __future__ import annotations
 
 import argparse
+import base64
 import csv
 import json
 import sys
+import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
@@ -29,9 +31,84 @@ from stage17B_B10_initial_cap_equilibrium import (  # noqa: E402
 )
 
 
+VTI_ARRAYS_TO_READ = {
+    "PhaseField",
+    "ReplayLapPhi",
+    "ReplayMu",
+    "InitialReplayLapPhi",
+    "InitialReplayMu",
+    "InitialReplayGradPhi",
+    "InitialReplayWallGhostUsed",
+    "InitialReplayPhaseStencilFallbackCount",
+    "IsItBoundary",
+    "BOUNDARY",
+}
+
+
+def decode_vti_binary_payload(text: str, dtype: np.dtype, header_type: str, components: int) -> np.ndarray:
+    clean = "".join(text.split())
+    header_nbytes = 8 if header_type == "UInt64" else 4
+    header_chars = 12 if header_type == "UInt64" else 8
+    if len(clean) < header_chars:
+        raise ValueError("short VTI binary payload")
+    header_raw = base64.b64decode(clean[:header_chars])
+    nbytes = int.from_bytes(header_raw[:header_nbytes], byteorder="little", signed=False)
+    data = base64.b64decode(clean[header_chars:])[:nbytes]
+    if len(data) != nbytes or (nbytes % dtype.itemsize) != 0:
+        raise ValueError(f"decoded VTI payload has {len(data)} bytes, expected {nbytes}")
+    arr = np.frombuffer(data, dtype=dtype).copy()
+    if components > 1:
+        arr = arr.reshape((-1, components))
+    return arr
+
+
+def load_vti_xml_binary(path: Path) -> tuple[tuple[int, int, int], dict[str, np.ndarray]]:
+    dtype_map = {
+        "UInt8": np.dtype("u1"),
+        "Int8": np.dtype("i1"),
+        "UInt16": np.dtype("<u2"),
+        "Int16": np.dtype("<i2"),
+        "UInt32": np.dtype("<u4"),
+        "Int32": np.dtype("<i4"),
+        "UInt64": np.dtype("<u8"),
+        "Int64": np.dtype("<i8"),
+        "Float32": np.dtype("<f4"),
+        "Float64": np.dtype("<f8"),
+    }
+    dims: tuple[int, int, int] | None = None
+    arrays: dict[str, np.ndarray] = {}
+    header_type = "UInt32"
+    for event, elem in ET.iterparse(path, events=("start", "end")):
+        if event == "start" and elem.tag == "VTKFile":
+            header_type = elem.attrib.get("header_type", header_type)
+        elif event == "start" and elem.tag == "ImageData":
+            extent = [int(v) for v in elem.attrib["WholeExtent"].split()]
+            dims = (
+                extent[1] - extent[0],
+                extent[3] - extent[2],
+                extent[5] - extent[4],
+            )
+        elif event == "end" and elem.tag == "DataArray":
+            name = elem.attrib.get("Name")
+            if name in VTI_ARRAYS_TO_READ:
+                dtype = dtype_map[elem.attrib["type"]]
+                components = int(elem.attrib.get("NumberOfComponents", "1"))
+                fmt = elem.attrib.get("format", "")
+                if fmt != "binary" or elem.attrib.get("encoding", "base64") != "base64":
+                    raise ValueError(f"unsupported VTI DataArray encoding for {name}: format={fmt}")
+                arrays[name] = decode_vti_binary_payload(elem.text or "", dtype, header_type, components)
+            elem.clear()
+    if dims is None:
+        raise ValueError(f"could not find ImageData WholeExtent in {path}")
+    return dims, arrays
+
+
 def load_vti(path: Path) -> tuple[tuple[int, int, int], dict[str, np.ndarray]]:
-    import vtk  # type: ignore
-    from vtk.util.numpy_support import vtk_to_numpy  # type: ignore
+    try:
+        import vtk  # type: ignore
+        from vtk.util.numpy_support import vtk_to_numpy  # type: ignore
+    except ModuleNotFoundError:
+        return load_vti_xml_binary(path)
 
     reader = vtk.vtkXMLImageDataReader()
     reader.SetFileName(str(path))
@@ -141,6 +218,11 @@ def analyze_frame(
     tclb_phase = reshape_scalar(arrays, "PhaseField", dims)
     tclb_lap = reshape_scalar(arrays, "ReplayLapPhi", dims)
     tclb_mu = reshape_scalar(arrays, "ReplayMu", dims)
+    initial_lap = reshape_scalar(arrays, "InitialReplayLapPhi", dims)
+    initial_mu = reshape_scalar(arrays, "InitialReplayMu", dims)
+    initial_grad = reshape_scalar(arrays, "InitialReplayGradPhi", dims)
+    initial_wallghost_used = reshape_scalar(arrays, "InitialReplayWallGhostUsed", dims)
+    initial_fallback = reshape_scalar(arrays, "InitialReplayPhaseStencilFallbackCount", dims)
     boundary_source = arrays.get("IsItBoundary", arrays.get("BOUNDARY"))
     boundary = None if boundary_source is None else np.asarray(boundary_source, dtype=float).reshape((dims[2], dims[1], dims[0]))
     frame_masks = dict(masks)
@@ -168,6 +250,11 @@ def analyze_frame(
         compare_field("PhaseField", offline_phase, tclb_phase, frame_masks),
         compare_field("ReplayLapPhi", offline_lap, tclb_lap, frame_masks),
         compare_field("ReplayMu", offline_mu, tclb_mu, frame_masks),
+        compare_field("InitialReplayLapPhi", offline_lap, initial_lap, frame_masks),
+        compare_field("InitialReplayMu", offline_mu, initial_mu, frame_masks),
+        compare_field("InitialReplayGradPhi", np.zeros_like(offline_phase), initial_grad, frame_masks),
+        compare_field("InitialReplayWallGhostUsed", np.zeros_like(offline_phase), initial_wallghost_used, frame_masks),
+        compare_field("InitialReplayPhaseStencilFallbackCount", np.zeros_like(offline_phase), initial_fallback, frame_masks),
     ]
     return {
         "step": step,
@@ -200,6 +287,13 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
     phase_diff_near = field_diff(step0, "PhaseField", "near_interface_tclb_fluid")
     lap_diff = field_diff(step0, "ReplayLapPhi", "near_interface_tclb_fluid")
     mu_diff = field_diff(step0, "ReplayMu", "near_interface_tclb_fluid")
+    init_lap_diff = field_diff(step0, "InitialReplayLapPhi", "near_interface_tclb_fluid")
+    init_mu_diff = field_diff(step0, "InitialReplayMu", "near_interface_tclb_fluid")
+    init_wallghost_used = None
+    for field in step0["fields"]:
+        if field["field"] == "InitialReplayWallGhostUsed" and field.get("present"):
+            init_wallghost_used = field["tclb"]["near_interface_tclb_fluid"].get("max_abs")
+            break
     out.update(
         {
             "step0_phase_fluid_max_abs_diff": phase_diff,
@@ -207,10 +301,17 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
             "step0_phase_contact_core_tclb_fluid_max_abs_diff": phase_diff_core,
             "step0_lap_near_interface_max_abs_diff": lap_diff,
             "step0_mu_near_interface_max_abs_diff": mu_diff,
+            "step0_initial_lap_near_interface_max_abs_diff": init_lap_diff,
+            "step0_initial_mu_near_interface_max_abs_diff": init_mu_diff,
+            "step0_initial_wallghost_used_near_interface_max_abs": init_wallghost_used,
             "step0_boundary_summary": step0.get("boundary_summary", {}),
         }
     )
-    if phase_diff_near is not None and phase_diff_near <= 1.0e-10 and phase_diff_core is not None and phase_diff_core <= 1.0e-10:
+    if init_mu_diff is not None and init_mu_diff <= 1.0e-10:
+        out["primary_result"] = "initial_replay_mu_matches_offline_reconstruction"
+    elif init_mu_diff is not None:
+        out["primary_result"] = "initial_replay_mu_differs_from_offline_reconstruction"
+    elif phase_diff_near is not None and phase_diff_near <= 1.0e-10 and phase_diff_core is not None and phase_diff_core <= 1.0e-10:
         out["primary_result"] = "step0_phase_matches_offline_cap_in_nearwall_interface_and_contact_core"
         out["replay_field_note"] = (
             "ReplayLapPhi/ReplayMu at step0 are zero-valued diagnostics in the initial VTI; "
