@@ -1,0 +1,31 @@
+{
+  "status": "b13_initial_stencil_split_complete",
+  "primary_result": "b13_no_significant_wallghost_delta_detected",
+  "claim_limit": "TCLB initial stencil split only; not contact-angle validation; not a physical fix",
+  "binary_sha256": "66cb03cd52ddc819ec7cebfbd7ed9c976827912db290bcc563a407466544f946",
+  "run_root_remote": "/mnt/usb1t/RUNS/runs/stage17B_B13_initial_stencil_split_20260625",
+  "case": "cylinder_init090_b13_initial_stencil_split_s0001",
+  "step0": {
+    "phase_near_interface_tclb_fluid_max_abs_diff": 3.3306690738754696e-16,
+    "phase_contact_core_tclb_fluid_max_abs_diff": 2.220446049250313e-16,
+    "current_initial_mu_near_interface_max_abs_diff_vs_offline_periodic": 0.0003530223573332822,
+    "current_initial_lap_near_interface_max_abs_diff_vs_offline_periodic": 1.5689882548145873,
+    "no_ghost_initial_mu_near_interface_max_abs_diff_vs_offline_periodic": 0.0003530223573332822,
+    "no_ghost_initial_lap_near_interface_max_abs_diff_vs_offline_periodic": 1.5689882548145873,
+    "ghost_delta_mu_near_interface_max_abs": 1.810532924756067e-19,
+    "ghost_delta_lap_near_interface_max_abs": 8.049116928532385e-16,
+    "ghost_delta_mu_contact_core_max_abs": 1.7787691892340307e-19,
+    "current_initial_wallghost_used_near_interface_max_abs": 38.0,
+    "no_ghost_neighbor_count_near_interface_max_abs": 38.0,
+    "no_ghost_fallback_near_interface_max_abs": 0.0,
+    "no_ghost_mu_improvement_vs_current": 0.0,
+    "no_ghost_lap_improvement_vs_current": 0.0
+  },
+  "interpretation": [
+    "B13 confirms the new no-ghost shadow fields are present and the run completed on P100 with RC=0.",
+    "The current WallGhost-consuming initial replay and the no-ghost shadow replay are numerically indistinguishable in the near-interface/contact-core masks for mu/lapPhi.",
+    "InitialGhostNeighborCount reaches 38, so the stencil touches boundary-neighbor slots, but InitialGhostDeltaMu and InitialGhostDeltaLapPhi are roundoff-level.",
+    "Therefore B12 current-vs-offline discrepancy is not explained by WallGhost value substitution itself; it points instead to offline/TCLB geometry-mask/operator mismatch or to boundary/solid cell classification in the comparison."
+  ],
+  "next_gate": "B14 should inspect TCLB-vs-offline solid/fluid mask and coordinate/operator equivalence before changing wetting physics."
+}

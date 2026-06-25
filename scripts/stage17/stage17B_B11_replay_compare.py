@@ -40,6 +40,15 @@ VTI_ARRAYS_TO_READ = {
     "InitialReplayGradPhi",
     "InitialReplayWallGhostUsed",
     "InitialReplayPhaseStencilFallbackCount",
+    "InitialNoGhostReplayLapPhi",
+    "InitialNoGhostReplayMu",
+    "InitialNoGhostReplayGradPhi",
+    "InitialGhostDeltaLapPhi",
+    "InitialGhostDeltaMu",
+    "InitialGhostDeltaGradPhi",
+    "InitialGhostStencilTouched",
+    "InitialGhostNeighborCount",
+    "InitialNoGhostPhaseStencilFallbackCount",
     "IsItBoundary",
     "BOUNDARY",
 }
@@ -223,6 +232,15 @@ def analyze_frame(
     initial_grad = reshape_scalar(arrays, "InitialReplayGradPhi", dims)
     initial_wallghost_used = reshape_scalar(arrays, "InitialReplayWallGhostUsed", dims)
     initial_fallback = reshape_scalar(arrays, "InitialReplayPhaseStencilFallbackCount", dims)
+    no_ghost_lap = reshape_scalar(arrays, "InitialNoGhostReplayLapPhi", dims)
+    no_ghost_mu = reshape_scalar(arrays, "InitialNoGhostReplayMu", dims)
+    no_ghost_grad = reshape_scalar(arrays, "InitialNoGhostReplayGradPhi", dims)
+    ghost_delta_lap = reshape_scalar(arrays, "InitialGhostDeltaLapPhi", dims)
+    ghost_delta_mu = reshape_scalar(arrays, "InitialGhostDeltaMu", dims)
+    ghost_delta_grad = reshape_scalar(arrays, "InitialGhostDeltaGradPhi", dims)
+    ghost_stencil_touched = reshape_scalar(arrays, "InitialGhostStencilTouched", dims)
+    ghost_neighbor_count = reshape_scalar(arrays, "InitialGhostNeighborCount", dims)
+    no_ghost_fallback = reshape_scalar(arrays, "InitialNoGhostPhaseStencilFallbackCount", dims)
     boundary_source = arrays.get("IsItBoundary", arrays.get("BOUNDARY"))
     boundary = None if boundary_source is None else np.asarray(boundary_source, dtype=float).reshape((dims[2], dims[1], dims[0]))
     frame_masks = dict(masks)
@@ -255,6 +273,15 @@ def analyze_frame(
         compare_field("InitialReplayGradPhi", np.zeros_like(offline_phase), initial_grad, frame_masks),
         compare_field("InitialReplayWallGhostUsed", np.zeros_like(offline_phase), initial_wallghost_used, frame_masks),
         compare_field("InitialReplayPhaseStencilFallbackCount", np.zeros_like(offline_phase), initial_fallback, frame_masks),
+        compare_field("InitialNoGhostReplayLapPhi", offline_lap, no_ghost_lap, frame_masks),
+        compare_field("InitialNoGhostReplayMu", offline_mu, no_ghost_mu, frame_masks),
+        compare_field("InitialNoGhostReplayGradPhi", np.zeros_like(offline_phase), no_ghost_grad, frame_masks),
+        compare_field("InitialGhostDeltaLapPhi", np.zeros_like(offline_phase), ghost_delta_lap, frame_masks),
+        compare_field("InitialGhostDeltaMu", np.zeros_like(offline_phase), ghost_delta_mu, frame_masks),
+        compare_field("InitialGhostDeltaGradPhi", np.zeros_like(offline_phase), ghost_delta_grad, frame_masks),
+        compare_field("InitialGhostStencilTouched", np.zeros_like(offline_phase), ghost_stencil_touched, frame_masks),
+        compare_field("InitialGhostNeighborCount", np.zeros_like(offline_phase), ghost_neighbor_count, frame_masks),
+        compare_field("InitialNoGhostPhaseStencilFallbackCount", np.zeros_like(offline_phase), no_ghost_fallback, frame_masks),
     ]
     return {
         "step": step,
@@ -289,11 +316,31 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
     mu_diff = field_diff(step0, "ReplayMu", "near_interface_tclb_fluid")
     init_lap_diff = field_diff(step0, "InitialReplayLapPhi", "near_interface_tclb_fluid")
     init_mu_diff = field_diff(step0, "InitialReplayMu", "near_interface_tclb_fluid")
+    no_ghost_lap_diff = field_diff(step0, "InitialNoGhostReplayLapPhi", "near_interface_tclb_fluid")
+    no_ghost_mu_diff = field_diff(step0, "InitialNoGhostReplayMu", "near_interface_tclb_fluid")
+    ghost_delta_lap = field_diff(step0, "InitialGhostDeltaLapPhi", "near_interface_tclb_fluid")
+    ghost_delta_mu = field_diff(step0, "InitialGhostDeltaMu", "near_interface_tclb_fluid")
+    ghost_delta_mu_core = field_diff(step0, "InitialGhostDeltaMu", "contact_core_tclb_fluid")
+    ghost_neighbor_count = None
+    ghost_touched = None
+    no_ghost_fallback = None
     init_wallghost_used = None
     for field in step0["fields"]:
         if field["field"] == "InitialReplayWallGhostUsed" and field.get("present"):
             init_wallghost_used = field["tclb"]["near_interface_tclb_fluid"].get("max_abs")
-            break
+        elif field["field"] == "InitialGhostNeighborCount" and field.get("present"):
+            ghost_neighbor_count = field["tclb"]["near_interface_tclb_fluid"].get("max_abs")
+        elif field["field"] == "InitialGhostStencilTouched" and field.get("present"):
+            ghost_touched = field["tclb"]["near_interface_tclb_fluid"].get("max_abs")
+        elif field["field"] == "InitialNoGhostPhaseStencilFallbackCount" and field.get("present"):
+            no_ghost_fallback = field["tclb"]["near_interface_tclb_fluid"].get("max_abs")
+    b13_present = no_ghost_mu_diff is not None and ghost_delta_mu is not None
+    no_ghost_mu_improvement = None
+    no_ghost_lap_improvement = None
+    if b13_present and init_mu_diff is not None and no_ghost_mu_diff is not None:
+        no_ghost_mu_improvement = float(init_mu_diff) - float(no_ghost_mu_diff)
+    if b13_present and init_lap_diff is not None and no_ghost_lap_diff is not None:
+        no_ghost_lap_improvement = float(init_lap_diff) - float(no_ghost_lap_diff)
     out.update(
         {
             "step0_phase_fluid_max_abs_diff": phase_diff,
@@ -304,10 +351,33 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
             "step0_initial_lap_near_interface_max_abs_diff": init_lap_diff,
             "step0_initial_mu_near_interface_max_abs_diff": init_mu_diff,
             "step0_initial_wallghost_used_near_interface_max_abs": init_wallghost_used,
+            "b13_present": b13_present,
+            "step0_no_ghost_lap_near_interface_max_abs_diff": no_ghost_lap_diff,
+            "step0_no_ghost_mu_near_interface_max_abs_diff": no_ghost_mu_diff,
+            "step0_ghost_delta_lap_near_interface_max_abs": ghost_delta_lap,
+            "step0_ghost_delta_mu_near_interface_max_abs": ghost_delta_mu,
+            "step0_ghost_delta_mu_contact_core_max_abs": ghost_delta_mu_core,
+            "step0_initial_ghost_neighbor_count_near_interface_max_abs": ghost_neighbor_count,
+            "step0_initial_ghost_stencil_touched_near_interface_max_abs": ghost_touched,
+            "step0_no_ghost_fallback_near_interface_max_abs": no_ghost_fallback,
+            "step0_no_ghost_mu_improvement_vs_current": no_ghost_mu_improvement,
+            "step0_no_ghost_lap_improvement_vs_current": no_ghost_lap_improvement,
             "step0_boundary_summary": step0.get("boundary_summary", {}),
         }
     )
-    if init_mu_diff is not None and init_mu_diff <= 1.0e-10:
+    if b13_present:
+        if (
+            no_ghost_mu_improvement is not None
+            and no_ghost_lap_improvement is not None
+            and no_ghost_mu_improvement > 1.0e-10
+            and no_ghost_lap_improvement > 1.0e-10
+        ):
+            out["primary_result"] = "b13_no_ghost_shadow_reduces_initial_replay_error"
+        elif ghost_delta_mu is not None and ghost_delta_mu > 1.0e-12:
+            out["primary_result"] = "b13_wallghost_delta_present_but_no_ghost_does_not_match_offline"
+        else:
+            out["primary_result"] = "b13_no_significant_wallghost_delta_detected"
+    elif init_mu_diff is not None and init_mu_diff <= 1.0e-10:
         out["primary_result"] = "initial_replay_mu_matches_offline_reconstruction"
     elif init_mu_diff is not None:
         out["primary_result"] = "initial_replay_mu_differs_from_offline_reconstruction"

@@ -142,6 +142,22 @@ CudaDeviceFunction real_t stage13_select_phase_for_stencil(real_t pf, real_t is_
 #define STAGE13_PHASE_FOR_STENCIL(dx,dy,dz) \
 	stage13_select_phase_for_stencil(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), WallGhost(dx,dy,dz), PhaseF(0,0,0))
 
+CudaDeviceFunction real_t stage13_select_phase_for_stencil_no_ghost_shadow(real_t pf, real_t is_boundary, real_t center) {
+	if (ReplayDiagnosticsMode > 0.5 && !(IamWall || IamSolid) && is_boundary > 0.5) {
+		InitialGhostNeighborCount = InitialGhostNeighborCount + 1.0;
+	}
+	if (stage13_phase_is_valid(pf)) return pf;
+	if (stage13_phase_is_valid(center)) {
+		if (ReplayDiagnosticsMode > 0.5 && !(IamWall || IamSolid)) InitialNoGhostPhaseStencilFallbackCount = InitialNoGhostPhaseStencilFallbackCount + 1.0;
+		return center;
+	}
+	if (ReplayDiagnosticsMode > 0.5 && !(IamWall || IamSolid)) InitialNoGhostPhaseStencilFallbackCount = InitialNoGhostPhaseStencilFallbackCount + 1.0;
+	return 0.5*(PhaseField_l + PhaseField_h);
+}
+
+#define STAGE13_PHASE_FOR_STENCIL_NO_GHOST(dx,dy,dz) \
+	stage13_select_phase_for_stencil_no_ghost_shadow(PhaseF(dx,dy,dz), IsBoundary(dx,dy,dz), PhaseF(0,0,0))
+
 CudaDeviceFunction real_t getForceIterResidual(){
 	return ForceIterResidual(0,0,0);
 }
@@ -376,6 +392,50 @@ CudaDeviceFunction real_t getInitialReplayWallGhostUsed(){
 
 CudaDeviceFunction real_t getInitialReplayPhaseStencilFallbackCount(){
 	return stage16_replay_scalar(InitialReplayPhaseStencilFallbackCount(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialNoGhostReplayLapPhi(){
+	return stage16_replay_scalar(InitialNoGhostReplayLapPhi(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialNoGhostReplayMu(){
+	return stage16_replay_scalar(InitialNoGhostReplayMu(0,0,0));
+}
+
+CudaDeviceFunction vector_t getInitialNoGhostReplayGradPhi(){
+	vector_t out;
+	out.x = stage16_replay_scalar(InitialNoGhostReplayGradPhiX(0,0,0));
+	out.y = stage16_replay_scalar(InitialNoGhostReplayGradPhiY(0,0,0));
+	out.z = stage16_replay_scalar(InitialNoGhostReplayGradPhiZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getInitialGhostDeltaLapPhi(){
+	return stage16_replay_scalar(InitialGhostDeltaLapPhi(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialGhostDeltaMu(){
+	return stage16_replay_scalar(InitialGhostDeltaMu(0,0,0));
+}
+
+CudaDeviceFunction vector_t getInitialGhostDeltaGradPhi(){
+	vector_t out;
+	out.x = stage16_replay_scalar(InitialGhostDeltaGradPhiX(0,0,0));
+	out.y = stage16_replay_scalar(InitialGhostDeltaGradPhiY(0,0,0));
+	out.z = stage16_replay_scalar(InitialGhostDeltaGradPhiZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getInitialGhostStencilTouched(){
+	return stage16_replay_scalar(InitialGhostStencilTouched(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialGhostNeighborCount(){
+	return stage16_replay_scalar(InitialGhostNeighborCount(0,0,0));
+}
+
+CudaDeviceFunction real_t getInitialNoGhostPhaseStencilFallbackCount(){
+	return stage16_replay_scalar(InitialNoGhostPhaseStencilFallbackCount(0,0,0));
 }
 
 CudaDeviceFunction vector_t getReplayFsurf(){
@@ -1590,6 +1650,49 @@ CudaDeviceFunction vector_t calcGradPhi()
 	return g;
 }
 
+CudaDeviceFunction vector_t calcGradPhiRawNoGhostShadow()
+{
+	vector_t gradPhi = {0.0,0.0,0.0};
+	#ifdef OPTIONS_OutFlow
+		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
+			gradPhi.x = 0.0;
+			gradPhi.y = 16.00 * (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,0) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,0))
+						+ 2.0*(STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,1)
+						+ STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,-1)- STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,0) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,0))
+							+  STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,1) + STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,-1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,-1));
+			gradPhi.z = 16.00 * (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,-1))
+						+ 2.0*( STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,1) + STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,1)
+						-  STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,-1)- STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,0,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,0,-1))
+							+  STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,1) + STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,-1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,-1));
+		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
+			gradPhi.x = 0.0;
+			gradPhi.y = 16.00 * (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,0) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,0))
+						+ 2.0*(STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,1)
+						+ STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,-1)- STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,0) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,0))
+							+  STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,1) + STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,-1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,-1));
+			gradPhi.z = 16.00 * (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,-1))
+						+ 2.0*( STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,1) + STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,1)
+						-  STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,-1)- STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,-1))
+						+  4.00 * (2.0*( STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,0,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,0,-1))
+							+  STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,1) + STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,-1) - STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,-1));
+		} else if ((NodeType & NODE_BOUNDARY)) {
+			gradPhi.x = 0.0;gradPhi.y = 0.0;gradPhi.z = 0.0;
+		} else {
+			<?R
+				IsotropicGrad('gradPhi', 'STAGE13_PHASE_FOR_STENCIL_NO_GHOST')
+			?>
+		}
+	#else
+		    <?R
+			IsotropicGrad('gradPhi', 'STAGE13_PHASE_FOR_STENCIL_NO_GHOST')
+		    ?>
+	#endif
+	return gradPhi;
+}
+
 /*
 	This function is run as the second stage of each action and fills
 	the iteration buffer with updated values of PhaseF.
@@ -1682,6 +1785,65 @@ CudaDeviceFunction real_t calcMu(real_t C)
 		ReplayLapPhi = lpPhi;
 		ReplayMu = mu;
 	}
+	return mu;
+}
+
+CudaDeviceFunction real_t calcMuNoGhostShadow(real_t C, real_t *lpPhiOut)
+{
+	real_t pfavg, lpPhi, mu;
+	pfavg = 0.5*(PhaseField_l+PhaseField_h);
+	#ifdef OPTIONS_OutFlow
+		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
+			lpPhi = 16.0 *( 2.0* STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,0,0)
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,0)) + (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,1)) + (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,-1)))
+					+ 1.0 *(  2.0*(STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,1)
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,1))
+							+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,-1))
+							+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,-1))))
+					+ 4.0 *(2.0*( (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,0,1))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(-1,0,-1)))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,1)) + (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,1))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,-1))+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,-1)))
+				- 152.0 * STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,0);
+		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
+			lpPhi = 16.0 *( 2.0* STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,0,0)
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,0)) + (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,1)) + (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,-1)))
+					+ 1.0 *(  2.0*(STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,1)
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,1))
+							+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,-1))
+							+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,-1))))
+					+ 4.0 *(2.0*( (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,-1,0))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,0,1))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(1,0,-1)))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,1)) + (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,1))
+						+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,1,-1))+ (STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,-1,-1)))
+				- 152.0 * STAGE13_PHASE_FOR_STENCIL_NO_GHOST(0,0,0);
+		} else if ((NodeType & NODE_BOUNDARY)) {
+			lpPhi = 0.0;
+		} else {
+			<?R
+				myLaplace('lpPhi', 'STAGE13_PHASE_FOR_STENCIL_NO_GHOST')
+			?>
+		}
+	#else
+			<?R
+				myLaplace('lpPhi', 'STAGE13_PHASE_FOR_STENCIL_NO_GHOST')
+			?>
+	#endif
+	#ifdef OPTIONS_thermo
+		mu = 4.0*(12.0*SurfaceTension(0,0,0)/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+			- (1.5 *SurfaceTension(0,0,0)*IntWidth) * lpPhi;
+	#else
+		mu = 4.0*(12.0*sigma/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+			- (1.5 *sigma*IntWidth) * lpPhi;
+	#endif
+	if (WallMuMode > 1.5) mu += calcWallMuSource(C);
+	if (lpPhiOut != NULL) *lpPhiOut = lpPhi;
 	return mu;
 }
 
@@ -2047,6 +2209,22 @@ CudaDeviceFunction void Init_distributions()
 		InitialReplayLapPhi = ReplayLapPhi;
 		InitialReplayWallGhostUsed = PhaseStencilGhostUseCount;
 		InitialReplayPhaseStencilFallbackCount = PhaseStencilFallbackCount;
+		InitialGhostNeighborCount = 0.0;
+		InitialNoGhostPhaseStencilFallbackCount = 0.0;
+		vector_t gradPhiNoGhost = calcGradPhiRawNoGhostShadow();
+		real_t lpPhiNoGhost = 0.0;
+		real_t muNoGhost = calcMuNoGhostShadow(PhaseF, &lpPhiNoGhost);
+		InitialNoGhostReplayGradPhiX = gradPhiNoGhost.x;
+		InitialNoGhostReplayGradPhiY = gradPhiNoGhost.y;
+		InitialNoGhostReplayGradPhiZ = gradPhiNoGhost.z;
+		InitialNoGhostReplayMu = muNoGhost;
+		InitialNoGhostReplayLapPhi = lpPhiNoGhost;
+		InitialGhostDeltaGradPhiX = gradPhi.x - gradPhiNoGhost.x;
+		InitialGhostDeltaGradPhiY = gradPhi.y - gradPhiNoGhost.y;
+		InitialGhostDeltaGradPhiZ = gradPhi.z - gradPhiNoGhost.z;
+		InitialGhostDeltaMu = InitialReplayMu - muNoGhost;
+		InitialGhostDeltaLapPhi = InitialReplayLapPhi - lpPhiNoGhost;
+		InitialGhostStencilTouched = (InitialGhostNeighborCount > 0.5) ? 1.0 : 0.0;
 	}
 	if (magnPhi < minGradient){
 		nx=0.0; ny=0.0; nz=0.0;

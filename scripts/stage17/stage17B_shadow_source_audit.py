@@ -58,6 +58,19 @@ def stage17b_block_has_no_solver_write(block: str) -> bool:
     return no_phase_write and no_wallghost_write
 
 
+def block_has_no_core_population_write(block: str) -> bool:
+    return all(
+        re.search(pattern, block) is None
+        for pattern in [
+            r"(?<![A-Za-z0-9_])PhaseF\s*=",
+            r"(?<![A-Za-z0-9_])WallGhost\s*=",
+            r"(?<![A-Za-z0-9_])h\s*\[",
+            r"(?<![A-Za-z0-9_])g\s*\[",
+            r"(?<![A-Za-z0-9_])pnorm\s*=",
+        ]
+    )
+
+
 def stage17b_controlled_write_block(boundary: str) -> str:
     marker = "if (stage17b_controlled_write_requested() && PsiWriteAllowedFlag > 0.5)"
     start = boundary.find(marker)
@@ -144,7 +157,25 @@ def audit(root: Path) -> dict[str, Any]:
         "InitialReplayWallGhostUsed",
         "InitialReplayPhaseStencilFallbackCount",
     ]
+    b13_initial_replay_fields = [
+        "InitialNoGhostReplayLapPhi",
+        "InitialNoGhostReplayMu",
+        "InitialNoGhostReplayGradPhiX",
+        "InitialNoGhostReplayGradPhiY",
+        "InitialNoGhostReplayGradPhiZ",
+        "InitialGhostDeltaLapPhi",
+        "InitialGhostDeltaMu",
+        "InitialGhostDeltaGradPhiX",
+        "InitialGhostDeltaGradPhiY",
+        "InitialGhostDeltaGradPhiZ",
+        "InitialGhostStencilTouched",
+        "InitialGhostNeighborCount",
+        "InitialNoGhostPhaseStencilFallbackCount",
+    ]
     init_distributions = cuda_function_block(dynamics_c, "Init_distributions")
+    no_ghost_selector = function_block(dynamics_c, "stage13_select_phase_for_stencil_no_ghost_shadow")
+    no_ghost_grad = function_block(dynamics_c, "calcGradPhiRawNoGhostShadow")
+    no_ghost_mu = function_block(dynamics_c, "calcMuNoGhostShadow")
 
     checks: dict[str, bool] = {
         "stage17b_snapshot_exists": all(
@@ -230,6 +261,78 @@ def audit(root: Path) -> dict[str, Any]:
                 "getInitialReplayGradPhi",
                 "getInitialReplayWallGhostUsed",
                 "getInitialReplayPhaseStencilFallbackCount",
+            ]
+        ),
+        "b13_initial_stencil_split_fields_registered": all(
+            f'AddField("{field}", stencil3d=1, group="initial_replay")' in dynamics_r
+            for field in b13_initial_replay_fields
+        )
+        and all(
+            token in dynamics_r
+            for token in [
+                'AddQuantity(name="InitialNoGhostReplayLapPhi", unit=1)',
+                'AddQuantity(name="InitialNoGhostReplayMu", unit=1)',
+                'AddQuantity(name="InitialNoGhostReplayGradPhi", unit=1, vector=T)',
+                'AddQuantity(name="InitialGhostDeltaLapPhi", unit=1)',
+                'AddQuantity(name="InitialGhostDeltaMu", unit=1)',
+                'AddQuantity(name="InitialGhostDeltaGradPhi", unit=1, vector=T)',
+                'AddQuantity(name="InitialGhostStencilTouched", unit=1)',
+                'AddQuantity(name="InitialGhostNeighborCount", unit=1)',
+                'AddQuantity(name="InitialNoGhostPhaseStencilFallbackCount", unit=1)',
+            ]
+        ),
+        "b13_initial_stencil_split_getters_present": all(
+            token in dynamics_c
+            for token in [
+                "getInitialNoGhostReplayLapPhi",
+                "getInitialNoGhostReplayMu",
+                "getInitialNoGhostReplayGradPhi",
+                "getInitialGhostDeltaLapPhi",
+                "getInitialGhostDeltaMu",
+                "getInitialGhostDeltaGradPhi",
+                "getInitialGhostStencilTouched",
+                "getInitialGhostNeighborCount",
+                "getInitialNoGhostPhaseStencilFallbackCount",
+            ]
+        ),
+        "b13_no_ghost_selector_ignores_wallghost": (
+            "stage13_select_phase_for_stencil_no_ghost_shadow" in dynamics_c
+            and "WallGhost" not in no_ghost_selector
+            and "stage13_phase_is_valid(pf)" in no_ghost_selector
+            and "stage13_phase_is_valid(center)" in no_ghost_selector
+        ),
+        "b13_no_ghost_shadow_functions_present": (
+            "calcGradPhiRawNoGhostShadow" in dynamics_c
+            and "calcMuNoGhostShadow" in dynamics_c
+            and "STAGE13_PHASE_FOR_STENCIL_NO_GHOST" in no_ghost_grad
+            and "STAGE13_PHASE_FOR_STENCIL_NO_GHOST" in no_ghost_mu
+            and "ReplayLapPhi" not in no_ghost_mu
+            and "ReplayMu" not in no_ghost_mu
+        ),
+        "b13_initial_stencil_split_written_in_init_only": all(
+            token in init_distributions
+            for token in [
+                "vector_t gradPhiNoGhost = calcGradPhiRawNoGhostShadow()",
+                "real_t muNoGhost = calcMuNoGhostShadow(PhaseF, &lpPhiNoGhost)",
+                "InitialNoGhostReplayGradPhiX = gradPhiNoGhost.x",
+                "InitialGhostDeltaMu = InitialReplayMu - muNoGhost",
+                "InitialGhostDeltaLapPhi = InitialReplayLapPhi - lpPhiNoGhost",
+                "InitialGhostStencilTouched = (InitialGhostNeighborCount > 0.5) ? 1.0 : 0.0",
+            ]
+        )
+        and dynamics_c.count("calcGradPhiRawNoGhostShadow()") == 2
+        and dynamics_c.count("calcMuNoGhostShadow(") == 2,
+        "b13_initial_stencil_split_output_only": (
+            block_has_no_core_population_write(no_ghost_selector)
+            and block_has_no_core_population_write(no_ghost_grad)
+            and block_has_no_core_population_write(no_ghost_mu)
+            and "PhaseF = PhaseF(0,0,0)" not in init_distributions[
+                init_distributions.find("InitialGhostNeighborCount = 0.0") :
+                init_distributions.find("InitialGhostStencilTouched")
+            ]
+            and "WallGhost =" not in init_distributions[
+                init_distributions.find("InitialGhostNeighborCount = 0.0") :
+                init_distributions.find("InitialGhostStencilTouched")
             ]
         ),
         "psi_getters_present": all(
