@@ -4,6 +4,10 @@
 This script is diagnostic-only.  It reads TCLB VTI files, reconstructs the
 initial CylinderCapInit field using the B10 helper, and compares PhaseField,
 ReplayLapPhi, and ReplayMu against offline D3Q27 stencil values.
+
+B15 showed that the legacy offline-fluid comparison can include TCLB boundary
+cells.  This script therefore also emits corrected replay comparisons against
+a periodic D3Q27 stencil applied to TCLB's own PhaseField on TCLB-fluid masks.
 """
 from __future__ import annotations
 
@@ -216,9 +220,11 @@ def write_summary_csv(frames: list[dict[str, Any]], out_csv: Path) -> None:
 def analyze_frame(
     vti: Path,
     step: int,
+    params: Any,
     offline_phase: np.ndarray,
     offline_lap: np.ndarray,
     offline_mu: np.ndarray,
+    signed_distance: np.ndarray,
     masks: dict[str, np.ndarray],
 ) -> dict[str, Any]:
     dims, arrays = load_vti(vti)
@@ -245,16 +251,38 @@ def analyze_frame(
     boundary = None if boundary_source is None else np.asarray(boundary_source, dtype=float).reshape((dims[2], dims[1], dims[0]))
     frame_masks = dict(masks)
     boundary_summary: dict[str, Any] = {"present": boundary is not None}
+    tclb_lap_periodic = None
+    tclb_mu_periodic = None
+    if tclb_phase is not None:
+        tclb_lap_periodic = laplace_d3q27_periodic(tclb_phase)
+        tclb_mu_periodic = chemical_potential(params, tclb_phase, tclb_lap_periodic)
+
     if boundary is not None:
         tclb_fluid = boundary <= 0.5
         offline_fluid = masks["fluid"]
+        tclb_interface = (
+            np.zeros_like(tclb_fluid, dtype=bool)
+            if tclb_phase is None
+            else ((tclb_phase > 0.05) & (tclb_phase < 0.95))
+        )
+        near_wall_sdf = (signed_distance >= 0.0) & (signed_distance <= 3.0)
+        contact_band_tclb_phase = (
+            near_wall_sdf
+            & (signed_distance <= 1.5)
+            & tclb_interface
+            & (np.zeros_like(tclb_fluid, dtype=bool) if tclb_phase is None else ((tclb_phase > 0.2) & (tclb_phase < 0.8)))
+        )
         frame_masks.update(
             {
                 "fluid_tclb_fluid": masks["fluid"] & tclb_fluid,
                 "near_wall_tclb_fluid": masks["near_wall"] & tclb_fluid,
                 "near_interface_tclb_fluid": masks["near_interface"] & tclb_fluid,
                 "contact_core_tclb_fluid": masks["contact_core"] & tclb_fluid,
+                "corrected_near_interface_tclb_phase_fluid": tclb_fluid & near_wall_sdf & tclb_interface,
+                "corrected_contact_core_tclb_phase_fluid": tclb_fluid & contact_band_tclb_phase,
                 "offline_fluid_tclb_boundary": offline_fluid & (~tclb_fluid),
+                "cylinder_overlap_boundary": offline_fluid & (~tclb_fluid) & (signed_distance <= 3.0),
+                "outer_boundary": (~tclb_fluid) & (signed_distance > 3.0),
             }
         )
         boundary_summary.update(
@@ -283,11 +311,28 @@ def analyze_frame(
         compare_field("InitialGhostNeighborCount", np.zeros_like(offline_phase), ghost_neighbor_count, frame_masks),
         compare_field("InitialNoGhostPhaseStencilFallbackCount", np.zeros_like(offline_phase), no_ghost_fallback, frame_masks),
     ]
+    if tclb_lap_periodic is not None and tclb_mu_periodic is not None:
+        fields.extend(
+            [
+                compare_field("CorrectedReplayLapPhiOnTclbPhase", tclb_lap_periodic, tclb_lap, frame_masks),
+                compare_field("CorrectedReplayMuOnTclbPhase", tclb_mu_periodic, tclb_mu, frame_masks),
+                compare_field("CorrectedInitialReplayLapPhiOnTclbPhase", tclb_lap_periodic, initial_lap, frame_masks),
+                compare_field("CorrectedInitialReplayMuOnTclbPhase", tclb_mu_periodic, initial_mu, frame_masks),
+                compare_field("CorrectedInitialNoGhostReplayLapPhiOnTclbPhase", tclb_lap_periodic, no_ghost_lap, frame_masks),
+                compare_field("CorrectedInitialNoGhostReplayMuOnTclbPhase", tclb_mu_periodic, no_ghost_mu, frame_masks),
+            ]
+        )
     return {
         "step": step,
         "vti": str(vti),
         "available_arrays": sorted(arrays.keys()),
         "boundary_summary": boundary_summary,
+        "corrected_reference": {
+            "enabled": tclb_lap_periodic is not None and tclb_mu_periodic is not None,
+            "reference_phase": "TCLB PhaseField",
+            "reference_operator": "periodic D3Q27 stencil",
+            "mask_rule": "prefer corrected_*_tclb_phase_fluid regions for solver replay audits",
+        },
         "fields": fields,
     }
 
@@ -305,7 +350,10 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
     def field_diff(frame: dict[str, Any], field_name: str, region: str) -> float | None:
         for field in frame["fields"]:
             if field["field"] == field_name and field.get("present"):
-                value = field["diff"][region].get("max_abs")
+                region_payload = field["diff"].get(region)
+                if region_payload is None:
+                    return None
+                value = region_payload.get("max_abs")
                 return None if value is None else float(value)
         return None
 
@@ -318,6 +366,26 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
     init_mu_diff = field_diff(step0, "InitialReplayMu", "near_interface_tclb_fluid")
     no_ghost_lap_diff = field_diff(step0, "InitialNoGhostReplayLapPhi", "near_interface_tclb_fluid")
     no_ghost_mu_diff = field_diff(step0, "InitialNoGhostReplayMu", "near_interface_tclb_fluid")
+    corrected_init_lap_diff = field_diff(
+        step0,
+        "CorrectedInitialReplayLapPhiOnTclbPhase",
+        "corrected_near_interface_tclb_phase_fluid",
+    )
+    corrected_init_mu_diff = field_diff(
+        step0,
+        "CorrectedInitialReplayMuOnTclbPhase",
+        "corrected_near_interface_tclb_phase_fluid",
+    )
+    corrected_no_ghost_lap_diff = field_diff(
+        step0,
+        "CorrectedInitialNoGhostReplayLapPhiOnTclbPhase",
+        "corrected_near_interface_tclb_phase_fluid",
+    )
+    corrected_no_ghost_mu_diff = field_diff(
+        step0,
+        "CorrectedInitialNoGhostReplayMuOnTclbPhase",
+        "corrected_near_interface_tclb_phase_fluid",
+    )
     ghost_delta_lap = field_diff(step0, "InitialGhostDeltaLapPhi", "near_interface_tclb_fluid")
     ghost_delta_mu = field_diff(step0, "InitialGhostDeltaMu", "near_interface_tclb_fluid")
     ghost_delta_mu_core = field_diff(step0, "InitialGhostDeltaMu", "contact_core_tclb_fluid")
@@ -354,6 +422,10 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
             "b13_present": b13_present,
             "step0_no_ghost_lap_near_interface_max_abs_diff": no_ghost_lap_diff,
             "step0_no_ghost_mu_near_interface_max_abs_diff": no_ghost_mu_diff,
+            "step0_corrected_initial_lap_near_interface_max_abs_diff": corrected_init_lap_diff,
+            "step0_corrected_initial_mu_near_interface_max_abs_diff": corrected_init_mu_diff,
+            "step0_corrected_no_ghost_lap_near_interface_max_abs_diff": corrected_no_ghost_lap_diff,
+            "step0_corrected_no_ghost_mu_near_interface_max_abs_diff": corrected_no_ghost_mu_diff,
             "step0_ghost_delta_lap_near_interface_max_abs": ghost_delta_lap,
             "step0_ghost_delta_mu_near_interface_max_abs": ghost_delta_mu,
             "step0_ghost_delta_mu_contact_core_max_abs": ghost_delta_mu_core,
@@ -363,9 +435,21 @@ def classify(frames: list[dict[str, Any]]) -> dict[str, Any]:
             "step0_no_ghost_mu_improvement_vs_current": no_ghost_mu_improvement,
             "step0_no_ghost_lap_improvement_vs_current": no_ghost_lap_improvement,
             "step0_boundary_summary": step0.get("boundary_summary", {}),
+            "corrected_reference_note": (
+                "Corrected* fields compare TCLB replay fields against a periodic D3Q27 stencil "
+                "applied to TCLB PhaseField on TCLB-fluid masks. Prefer these over legacy "
+                "offline-fluid-mask errors when judging solver replay correctness."
+            ),
         }
     )
-    if b13_present:
+    if corrected_init_mu_diff is not None and corrected_init_lap_diff is not None:
+        if corrected_init_mu_diff <= 1.0e-12 and corrected_init_lap_diff <= 1.0e-12:
+            out["primary_result"] = "corrected_initial_replay_matches_tclb_phase_periodic_stencil"
+            out["legacy_offline_diff_status"] = "retired_as_solver_bug_evidence"
+        else:
+            out["primary_result"] = "corrected_initial_replay_has_nonroundoff_residual"
+            out["legacy_offline_diff_status"] = "do_not_use_legacy_diff_until_corrected_residual_is_explained"
+    elif b13_present:
         if (
             no_ghost_mu_improvement is not None
             and no_ghost_lap_improvement is not None
@@ -428,7 +512,7 @@ def main() -> int:
     frame_specs = [(0, args.vti0)]
     if args.vti1 is not None:
         frame_specs.append((1, args.vti1))
-    frames = [analyze_frame(vti, step, phase, lap, mu, masks) for step, vti in frame_specs]
+    frames = [analyze_frame(vti, step, params, phase, lap, mu, signed_distance, masks) for step, vti in frame_specs]
     result = {
         "case_xml": str(args.case),
         "coord_mode": args.coord_mode,
