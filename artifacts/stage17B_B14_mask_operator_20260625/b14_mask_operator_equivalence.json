@@ -1,0 +1,4495 @@
+{
+  "case_xml": "/mnt/usb1t/RUNS/runs/stage17B_B13_initial_stencil_split_20260625/cylinder_init090_b13_initial_stencil_split_s0001/case.xml",
+  "vti0": "/mnt/usb1t/RUNS/runs/stage17B_B13_initial_stencil_split_20260625/cylinder_init090_b13_initial_stencil_split_s0001/output/case_VTK_P00_00000000.vti",
+  "coord_mode": "cell_center",
+  "claim_limit": "offline mask/operator equivalence audit only; not contact-angle validation",
+  "mask_summary": {
+    "total_cells": 884736,
+    "tclb_boundary_cells": 172968,
+    "offline_solid_cells": 121344,
+    "offline_fluid_tclb_boundary_cells": 51624,
+    "offline_solid_tclb_fluid_cells": 0,
+    "outer_boundary_cells": 50824,
+    "cylinder_overlap_boundary_cells": 800,
+    "near_interface_tclb_fluid_cells": 2540,
+    "contact_core_tclb_fluid_cells": 556
+  },
+  "operator_summary": {
+    "current_vs_periodic_mu_near_interface_tclb_fluid_max_abs": 6.335806445462167e-19,
+    "current_vs_center_boundary_mu_near_interface_tclb_fluid_max_abs": 7.00733326707288e-05,
+    "current_vs_midpoint_boundary_mu_near_interface_tclb_fluid_max_abs": 0.00016848132700001677,
+    "current_vs_periodic_lap_near_interface_tclb_fluid_max_abs": 2.456368441983159e-15,
+    "current_vs_center_boundary_lap_near_interface_tclb_fluid_max_abs": 0.311437034092128,
+    "b13_ghost_delta_mu_near_interface_tclb_fluid_max_abs": 1.810532924756067e-19,
+    "b13_ghost_delta_lap_near_interface_tclb_fluid_max_abs": 8.049116928532385e-16,
+    "wallghost_used_near_interface_tclb_fluid_max_abs": 38.0,
+    "ghost_neighbor_count_near_interface_tclb_fluid_max_abs": 38.0,
+    "periodic_boundary_slots_near_interface_tclb_fluid_max_abs": 0.0,
+    "center_boundary_slots_near_interface_tclb_fluid_max_abs": 12.0
+  },
+  "boundary_distance_hist": [
+    {
+      "signed_distance_lo": -10.0,
+      "signed_distance_hi": -3.0,
+      "tclb_boundary_cells": 57216,
+      "phase_mean": 1.0,
+      "phase_min": 1.0,
+      "phase_max": 1.0
+    },
+    {
+      "signed_distance_lo": -3.0,
+      "signed_distance_hi": -1.0,
+      "tclb_boundary_cells": 20352,
+      "phase_mean": 0.7645272913910119,
+      "phase_min": 0.0,
+      "phase_max": 1.0
+    },
+    {
+      "signed_distance_lo": -1.0,
+      "signed_distance_hi": 0.0,
+      "tclb_boundary_cells": 13440,
+      "phase_mean": 0.23452857614405767,
+      "phase_min": 0.0,
+      "phase_max": 0.9999999999986269
+    },
+    {
+      "signed_distance_lo": 0.0,
+      "signed_distance_hi": 0.5,
+      "tclb_boundary_cells": 80,
+      "phase_mean": 0.5,
+      "phase_min": 0.5,
+      "phase_max": 0.5
+    },
+    {
+      "signed_distance_lo": 0.5,
+      "signed_distance_hi": 1.0,
+      "tclb_boundary_cells": 184,
+      "phase_mean": 0.4510869565292953,
+      "phase_min": 0.0,
+      "phase_max": 0.5
+    },
+    {
+      "signed_distance_lo": 1.0,
+      "signed_distance_hi": 1.5,
+      "tclb_boundary_cells": 80,
+      "phase_mean": 0.43750000002938894,
+      "phase_min": 0.0,
+      "phase_max": 0.5
+    },
+    {
+      "signed_distance_lo": 1.5,
+      "signed_distance_hi": 2.0,
+      "tclb_boundary_cells": 184,
+      "phase_mean": 2.3080649630655026e-08,
+      "phase_min": 0.0,
+      "phase_max": 1.9786717647685137e-07
+    },
+    {
+      "signed_distance_lo": 2.0,
+      "signed_distance_hi": 3.0,
+      "tclb_boundary_cells": 272,
+      "phase_mean": 2.7008717733717164e-08,
+      "phase_min": 0.0,
+      "phase_max": 3.027405522382231e-07
+    },
+    {
+      "signed_distance_lo": 3.0,
+      "signed_distance_hi": 6.0,
+      "tclb_boundary_cells": 928,
+      "phase_mean": 5.6020158982196673e-08,
+      "phase_min": 0.0,
+      "phase_max": 9.335831297474506e-07
+    },
+    {
+      "signed_distance_lo": 6.0,
+      "signed_distance_hi": 1000.0,
+      "tclb_boundary_cells": 49896,
+      "phase_mean": 0.0844408145247181,
+      "phase_min": 0.0,
+      "phase_max": 1.0
+    }
+  ],
+  "diagnostic_fields": [
+    {
+      "field": "InitialGhostDeltaMu",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": -3.5575383784680614e-19,
+          "max": 3.559655960836197e-19,
+          "mean": -2.4526362919420884e-22,
+          "std": 8.850675952906118e-21,
+          "max_abs": 3.559655960836197e-19,
+          "p95_abs": 0.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": -3.5575383784680614e-19,
+          "max": 3.559655960836197e-19,
+          "mean": -2.8424919600777526e-22,
+          "std": 9.527588256114012e-21,
+          "max_abs": 3.559655960836197e-19,
+          "p95_abs": 0.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": -3.5575383784680614e-19,
+          "max": 3.559655960836197e-19,
+          "mean": -3.048655773212164e-22,
+          "std": 9.86673659441845e-21,
+          "max_abs": 3.559655960836197e-19,
+          "p95_abs": 0.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": -3.5575383784680614e-19,
+          "max": 3.559655960836197e-19,
+          "mean": -8.469982080540976e-22,
+          "std": 1.3250973738085255e-20,
+          "max_abs": 3.559655960836197e-19,
+          "p95_abs": 0.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": -3.5575383784680614e-19,
+          "max": 3.559655960836197e-19,
+          "mean": -8.775483515096824e-22,
+          "std": 1.3486835865175032e-20,
+          "max_abs": 3.559655960836197e-19,
+          "p95_abs": 0.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": -1.810532924756067e-19,
+          "max": 1.7618285302889447e-19,
+          "mean": -8.096638466401401e-22,
+          "std": 1.2029170209825994e-20,
+          "max_abs": 1.810532924756067e-19,
+          "p95_abs": 0.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": -1.810532924756067e-19,
+          "max": 1.7618285302889447e-19,
+          "mean": -9.103936795292284e-22,
+          "std": 1.2751917338865531e-20,
+          "max_abs": 1.810532924756067e-19,
+          "p95_abs": 0.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": -1.7787691892340307e-19,
+          "max": 1.7618285302889447e-19,
+          "mean": -7.305902012083035e-22,
+          "std": 1.297188500866483e-20,
+          "max_abs": 1.7787691892340307e-19,
+          "p95_abs": 0.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": -1.7787691892340307e-19,
+          "max": 1.7618285302889447e-19,
+          "mean": -1.1458177256360443e-21,
+          "std": 1.6230507692692425e-20,
+          "max_abs": 1.7787691892340307e-19,
+          "p95_abs": 0.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "InitialGhostDeltaLapPhi",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": -1.582067810090848e-15,
+          "max": 1.582067810090848e-15,
+          "mean": 1.0900922119979748e-18,
+          "std": 3.933572661171013e-17,
+          "max_abs": 1.582067810090848e-15,
+          "p95_abs": 0.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": -1.582067810090848e-15,
+          "max": 1.582067810090848e-15,
+          "mean": 1.2633664267823611e-18,
+          "std": 4.2344178779906217e-17,
+          "max_abs": 1.582067810090848e-15,
+          "p95_abs": 0.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": -1.582067810090848e-15,
+          "max": 1.582067810090848e-15,
+          "mean": 1.354997447587191e-18,
+          "std": 4.385148118236206e-17,
+          "max_abs": 1.582067810090848e-15,
+          "p95_abs": 0.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": -1.582067810090848e-15,
+          "max": 1.582067810090848e-15,
+          "mean": 3.7651513970865764e-18,
+          "std": 5.88827991842848e-17,
+          "max_abs": 1.582067810090848e-15,
+          "p95_abs": 0.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": -1.582067810090848e-15,
+          "max": 1.582067810090848e-15,
+          "mean": 3.900955598582176e-18,
+          "std": 5.993088663736944e-17,
+          "max_abs": 1.582067810090848e-15,
+          "p95_abs": 0.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": -7.91033905045424e-16,
+          "max": 8.049116928532385e-16,
+          "mean": 3.60519999707995e-18,
+          "std": 5.352162645741931e-17,
+          "max_abs": 8.049116928532385e-16,
+          "p95_abs": 0.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": -7.91033905045424e-16,
+          "max": 8.049116928532385e-16,
+          "mean": 4.053720941598559e-18,
+          "std": 5.673733524131097e-17,
+          "max_abs": 8.049116928532385e-16,
+          "p95_abs": 0.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": -7.91033905045424e-16,
+          "max": 7.91033905045424e-16,
+          "mean": 3.2307235378283654e-18,
+          "std": 5.778467119330234e-17,
+          "max_abs": 7.91033905045424e-16,
+          "p95_abs": 0.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": -7.91033905045424e-16,
+          "max": 7.91033905045424e-16,
+          "mean": 5.06689015285312e-18,
+          "std": 7.230151023085042e-17,
+          "max_abs": 7.91033905045424e-16,
+          "p95_abs": 0.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "InitialReplayWallGhostUsed",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 61.0,
+          "mean": 2.097294560185185,
+          "std": 7.668492851346409,
+          "max_abs": 61.0,
+          "p95_abs": 30.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 61.0,
+          "mean": 2.430667337357478,
+          "std": 8.206269696477248,
+          "max_abs": 61.0,
+          "p95_abs": 30.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 61.0,
+          "mean": 2.6069618190196806,
+          "std": 8.471575810959477,
+          "max_abs": 61.0,
+          "p95_abs": 30.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 1.4428880420228654,
+          "std": 6.270005218189319,
+          "max_abs": 38.0,
+          "p95_abs": 11.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 1.4949311706328032,
+          "std": 6.37598094319659,
+          "max_abs": 38.0,
+          "p95_abs": 11.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 8.738095238095237,
+          "std": 12.651658354420583,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 9.8251968503937,
+          "std": 13.011418174588265,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 14.192660550458715,
+          "std": 13.78769366468504,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 22.258992805755394,
+          "std": 10.890123655412001,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "InitialGhostNeighborCount",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 61.0,
+          "mean": 2.097294560185185,
+          "std": 7.668492851346409,
+          "max_abs": 61.0,
+          "p95_abs": 30.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 61.0,
+          "mean": 2.430667337357478,
+          "std": 8.206269696477248,
+          "max_abs": 61.0,
+          "p95_abs": 30.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 61.0,
+          "mean": 2.6069618190196806,
+          "std": 8.471575810959477,
+          "max_abs": 61.0,
+          "p95_abs": 30.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 1.4428880420228654,
+          "std": 6.270005218189319,
+          "max_abs": 38.0,
+          "p95_abs": 11.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 1.4949311706328032,
+          "std": 6.37598094319659,
+          "max_abs": 38.0,
+          "p95_abs": 11.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 8.738095238095237,
+          "std": 12.651658354420583,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 9.8251968503937,
+          "std": 13.011418174588265,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 14.192660550458715,
+          "std": 13.78769366468504,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 38.0,
+          "mean": 22.258992805755394,
+          "std": 10.890123655412001,
+          "max_abs": 38.0,
+          "p95_abs": 38.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "InitialNoGhostPhaseStencilFallbackCount",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "periodic_boundary_slots",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "center_boundary_slots",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 26.0,
+          "mean": 5.083062065972222,
+          "std": 9.208840499414647,
+          "max_abs": 26.0,
+          "p95_abs": 26.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 25.0,
+          "mean": 1.9015656438631792,
+          "std": 4.831396476688336,
+          "max_abs": 25.0,
+          "p95_abs": 17.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 19.0,
+          "mean": 0.7862899146913039,
+          "std": 2.5607861494438593,
+          "max_abs": 19.0,
+          "p95_abs": 9.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 1.0482026985271398,
+          "std": 3.6733366460566996,
+          "max_abs": 21.0,
+          "p95_abs": 9.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 0.45363355031480096,
+          "std": 1.944447884973591,
+          "max_abs": 12.0,
+          "p95_abs": 3.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 4.822128851540616,
+          "std": 6.399668492393097,
+          "max_abs": 21.0,
+          "p95_abs": 20.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 3.0236220472440944,
+          "std": 4.080806942991865,
+          "max_abs": 12.0,
+          "p95_abs": 12.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 11.34862385321101,
+          "std": 6.637917417948525,
+          "max_abs": 21.0,
+          "p95_abs": 21.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 6.841726618705036,
+          "std": 3.507974456659002,
+          "max_abs": 12.0,
+          "p95_abs": 12.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 25.0,
+          "mean": 17.278475127847514,
+          "std": 1.0789808280711544,
+          "max_abs": 25.0,
+          "p95_abs": 20.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 21.0,
+          "mean": 17.97,
+          "std": 1.3450278807519196,
+          "max_abs": 21.0,
+          "p95_abs": 21.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 25.0,
+          "mean": 17.267590114906344,
+          "std": 1.070701999194037,
+          "max_abs": 25.0,
+          "p95_abs": 20.0
+        }
+      }
+    },
+    {
+      "field": "center_boundary_fallback",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "max_abs": 0.0,
+          "p95_abs": 0.0
+        }
+      }
+    },
+    {
+      "field": "midpoint_boundary_slots",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 26.0,
+          "mean": 5.083062065972222,
+          "std": 9.208840499414647,
+          "max_abs": 26.0,
+          "p95_abs": 26.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 25.0,
+          "mean": 1.9015656438631792,
+          "std": 4.831396476688336,
+          "max_abs": 25.0,
+          "p95_abs": 17.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 19.0,
+          "mean": 0.7862899146913039,
+          "std": 2.5607861494438593,
+          "max_abs": 19.0,
+          "p95_abs": 9.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 1.0482026985271398,
+          "std": 3.6733366460566996,
+          "max_abs": 21.0,
+          "p95_abs": 9.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 0.45363355031480096,
+          "std": 1.944447884973591,
+          "max_abs": 12.0,
+          "p95_abs": 3.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 4.822128851540616,
+          "std": 6.399668492393097,
+          "max_abs": 21.0,
+          "p95_abs": 20.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 3.0236220472440944,
+          "std": 4.080806942991865,
+          "max_abs": 12.0,
+          "p95_abs": 12.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 11.34862385321101,
+          "std": 6.637917417948525,
+          "max_abs": 21.0,
+          "p95_abs": 21.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 6.841726618705036,
+          "std": 3.507974456659002,
+          "max_abs": 12.0,
+          "p95_abs": 12.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 25.0,
+          "mean": 17.278475127847514,
+          "std": 1.0789808280711544,
+          "max_abs": 25.0,
+          "p95_abs": 20.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 21.0,
+          "mean": 17.97,
+          "std": 1.3450278807519196,
+          "max_abs": 21.0,
+          "p95_abs": 21.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 25.0,
+          "mean": 17.267590114906344,
+          "std": 1.070701999194037,
+          "max_abs": 25.0,
+          "p95_abs": 20.0
+        }
+      }
+    },
+    {
+      "field": "midpoint_boundary_fallback",
+      "present": true,
+      "regions": {
+        "all": {
+          "count": 884736,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 26.0,
+          "mean": 5.083062065972222,
+          "std": 9.208840499414647,
+          "max_abs": 26.0,
+          "p95_abs": 26.0
+        },
+        "offline_fluid": {
+          "count": 763392,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 25.0,
+          "mean": 1.9015656438631792,
+          "std": 4.831396476688336,
+          "max_abs": 25.0,
+          "p95_abs": 17.0
+        },
+        "tclb_fluid": {
+          "count": 711768,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 19.0,
+          "mean": 0.7862899146913039,
+          "std": 2.5607861494438593,
+          "max_abs": 19.0,
+          "p95_abs": 9.0
+        },
+        "interface_offline_fluid": {
+          "count": 38836,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 1.0482026985271398,
+          "std": 3.6733366460566996,
+          "max_abs": 21.0,
+          "p95_abs": 9.0
+        },
+        "interface_tclb_fluid": {
+          "count": 37484,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 0.45363355031480096,
+          "std": 1.944447884973591,
+          "max_abs": 12.0,
+          "p95_abs": 3.0
+        },
+        "near_interface": {
+          "count": 2856,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 4.822128851540616,
+          "std": 6.399668492393097,
+          "max_abs": 21.0,
+          "p95_abs": 20.0
+        },
+        "near_interface_tclb_fluid": {
+          "count": 2540,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 3.0236220472440944,
+          "std": 4.080806942991865,
+          "max_abs": 12.0,
+          "p95_abs": 12.0
+        },
+        "contact_core": {
+          "count": 872,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 21.0,
+          "mean": 11.34862385321101,
+          "std": 6.637917417948525,
+          "max_abs": 21.0,
+          "p95_abs": 21.0
+        },
+        "contact_core_tclb_fluid": {
+          "count": 556,
+          "nonfinite": 0,
+          "min": 0.0,
+          "max": 12.0,
+          "mean": 6.841726618705036,
+          "std": 3.507974456659002,
+          "max_abs": 12.0,
+          "p95_abs": 12.0
+        },
+        "offline_fluid_tclb_boundary": {
+          "count": 51624,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 25.0,
+          "mean": 17.278475127847514,
+          "std": 1.0789808280711544,
+          "max_abs": 25.0,
+          "p95_abs": 20.0
+        },
+        "cylinder_overlap_boundary": {
+          "count": 800,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 21.0,
+          "mean": 17.97,
+          "std": 1.3450278807519196,
+          "max_abs": 21.0,
+          "p95_abs": 21.0
+        },
+        "outer_boundary": {
+          "count": 50824,
+          "nonfinite": 0,
+          "min": 17.0,
+          "max": 25.0,
+          "mean": 17.267590114906344,
+          "std": 1.070701999194037,
+          "max_abs": 25.0,
+          "p95_abs": 20.0
+        }
+      }
+    }
+  ],
+  "operator_comparisons": [
+    {
+      "field": "current_lap_vs_periodic",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00016552871187484468,
+            "std": 0.026614950805524545,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.04329854042019107
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -1.6666666666666667,
+            "max": 2.0277777777777777,
+            "mean": 4.11193712824132e-18,
+            "std": 0.19162752550016243,
+            "max_abs": 2.0277777777777777,
+            "p95_abs": 0.1337890381613448
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -2.0277777777777777,
+            "max": 1.6666666666666667,
+            "mean": 0.00016552871187484056,
+            "std": 0.18977011915321645,
+            "max_abs": 2.0277777777777777,
+            "p95_abs": 1.257891778655429e-07
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00019184011678050416,
+            "std": 0.028652160811496255,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.05949226074517583
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -1.5416666666666667,
+            "max": 1.0,
+            "mean": -7.125663668551947e-06,
+            "std": 0.10925495628136989,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 0.08916613565925588
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -1.0,
+            "max": 1.5416666666666667,
+            "mean": 0.00019896578044905613,
+            "std": 0.10543065405108273,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.7763568394002505e-15
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00020575413678235426,
+            "std": 0.029672985660811686,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.06699126516830184
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296807,
+            "mean": 0.00020575413678236055,
+            "std": 0.029672985660811682,
+            "max_abs": 0.5000001734296807,
+            "p95_abs": 0.06699126516830188
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -3.626728547107768e-15,
+            "max": 3.750086662426628e-15,
+            "mean": -6.358257113288705e-18,
+            "std": 3.854482340012252e-16,
+            "max_abs": 3.750086662426628e-15,
+            "p95_abs": 9.806970050855538e-16
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.003161057205331177,
+            "std": 0.11524888847731148,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.1599351746872898
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -1.5416666666666667,
+            "max": 0.33920894506987503,
+            "mean": -0.02356639413102442,
+            "std": 0.17449929983107515,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 0.1607213111804592
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.01090601349823121,
+            "max": 1.5416666666666667,
+            "mean": 0.020405336925693247,
+            "std": 0.1315169351106999,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.6375789613221059e-15
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.003275072500966855,
+            "std": 0.11730732589603551,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.15998630581748993
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.33920894506987503,
+            "mean": -0.0032750725009668418,
+            "std": 0.11730732589603549,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.15998630581748993
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -3.191891195797325e-15,
+            "max": 3.524958103184872e-15,
+            "mean": -1.3081842761088811e-17,
+            "std": 5.531277092824616e-16,
+            "max_abs": 3.524958103184872e-15,
+            "p95_abs": 1.2212453270876722e-15
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.0036868916497445874,
+            "std": 0.12247371750510788,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2201319627348083
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -1.5416666666666667,
+            "max": 0.33920894506987503,
+            "mean": -0.10277652451219355,
+            "std": 0.316563326323722,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 0.9166666666666303
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -2.456368441983159e-15,
+            "max": 1.5416666666666667,
+            "mean": 0.09908963286244893,
+            "std": 0.2931606958198387,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 0.9166666666666303
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.004145575807744311,
+            "std": 0.12986157340848273,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.22285072871159162
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.33920894506987503,
+            "mean": -0.00414557580774429,
+            "std": 0.1298615734084827,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.22285072871159134
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -2.456368441983159e-15,
+            "max": 2.1649348980190553e-15,
+            "mean": -1.786485325905979e-17,
+            "std": 5.456742437087405e-16,
+            "max_abs": 2.456368441983159e-15,
+            "p95_abs": 1.2351231148954867e-15
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.00653203231674452,
+            "std": 0.12310731603181306,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2592578890827144
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -1.5416666666666667,
+            "max": 0.33920894506987503,
+            "mean": -0.3310733069212792,
+            "std": 0.46822098478744023,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.1944444444442965
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -1.6583956430338276e-15,
+            "max": 1.5416666666666667,
+            "mean": 0.3245412746045347,
+            "std": 0.45641571787399277,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.1944444444442965
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.010244482338491406,
+            "std": 0.1540483244023952,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.27119058551889796
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.33920894506987503,
+            "mean": -0.010244482338491413,
+            "std": 0.15404832440239521,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2711905855188983
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -1.6583956430338276e-15,
+            "max": 1.6306400674181987e-15,
+            "mean": 7.330649688893448e-18,
+            "std": 4.805222004513323e-16,
+            "max_abs": 1.6583956430338276e-15,
+            "p95_abs": 9.992007221626409e-16
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -1.5416666666666667,
+            "max": 1.0,
+            "mean": -0.0029422145720705566,
+            "std": 0.40541910820755017,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.0000000009585872
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -1.0,
+            "max": 1.5416666666666667,
+            "mean": 0.0029422145720705566,
+            "std": 0.40541910820755017,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.0000000009585872
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -1.5416666666666667,
+            "max": 0.75,
+            "mean": -0.189861102037084,
+            "std": 0.6231099511878028,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.1944444444444444
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.75,
+            "max": 1.5416666666666667,
+            "mean": 0.189861102037084,
+            "std": 0.6231099511878028,
+            "max_abs": 1.5416666666666667,
+            "p95_abs": 1.1944444444444444
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -1.0142869661070408,
+            "max": 1.0,
+            "mean": -6.766297708732562e-11,
+            "std": 0.40035197091715957,
+            "max_abs": 1.0142869661070408,
+            "p95_abs": 1.0000000005894103
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -1.0,
+            "max": 1.0142869661070408,
+            "mean": 6.766297708732562e-11,
+            "std": 0.40035197091715957,
+            "max_abs": 1.0142869661070408,
+            "p95_abs": 1.0000000005894103
+          }
+        }
+      }
+    },
+    {
+      "field": "current_lap_vs_center_boundary",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00016552871187484468,
+            "std": 0.026614950805524545,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.04329854042019107
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 0.2825153152906792,
+            "mean": -0.00016552871187484064,
+            "std": 0.026477236407410818,
+            "max_abs": 0.5,
+            "p95_abs": 0.04350301894079629
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.500000028334087,
+            "mean": 0.00033105742374968546,
+            "std": 0.012267752280917837,
+            "max_abs": 0.500000028334087,
+            "p95_abs": 3.5673993080563736e-11
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00019184011678050416,
+            "std": 0.028652160811496255,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.05949226074517583
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 0.2107414174328093,
+            "mean": -0.00017771559487395237,
+            "std": 0.028315604765403946,
+            "max_abs": 0.5,
+            "p95_abs": 0.05821219953344863
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.500000028334087,
+            "mean": 0.00036955571165445654,
+            "std": 0.012794767057412497,
+            "max_abs": 0.500000028334087,
+            "p95_abs": 8.90805022339216e-12
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00020575413678235426,
+            "std": 0.029672985660811686,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.06699126516830184
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.24141684313359202,
+            "max": 0.2107414174328093,
+            "mean": 5.525029490116533e-18,
+            "std": 0.027868143287029364,
+            "max_abs": 0.24141684313359202,
+            "p95_abs": 0.06445060233127113
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.500000028334087,
+            "mean": 0.00020575413678234855,
+            "std": 0.009610292311790834,
+            "max_abs": 0.500000028334087,
+            "p95_abs": 2.035407720867759e-15
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.003161057205331177,
+            "std": 0.11524888847731148,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.1599351746872898
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 0.2107414174328093,
+            "mean": -0.006414791474263449,
+            "std": 0.12019789908482809,
+            "max_abs": 0.5,
+            "p95_abs": 0.15995189189918507
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.5,
+            "mean": 0.0032537342689322726,
+            "std": 0.04068241885932366,
+            "max_abs": 0.5,
+            "p95_abs": 0.018355498549836355
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.003275072500966855,
+            "std": 0.11730732589603551,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.15998630581748993
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.24141684313359202,
+            "max": 0.2107414174328093,
+            "mean": -0.0030174586212561535,
+            "std": 0.11584850411238817,
+            "max_abs": 0.24141684313359202,
+            "p95_abs": 0.15957812101341393
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.1724213109847472,
+            "mean": -0.0002576138797107019,
+            "std": 0.012015218441951908,
+            "max_abs": 0.311437034092128,
+            "p95_abs": 0.003546938071177169
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.0036868916497445874,
+            "std": 0.12247371750510788,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2201319627348083
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 0.2107414174328093,
+            "mean": -0.047931297836108104,
+            "std": 0.1738317303316929,
+            "max_abs": 0.5,
+            "p95_abs": 0.4305555555069927
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.5,
+            "mean": 0.04424440618636353,
+            "std": 0.14298985208804255,
+            "max_abs": 0.5,
+            "p95_abs": 0.4305555555069927
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.004145575807744311,
+            "std": 0.12986157340848273,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.22285072871159162
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.24141684313359202,
+            "max": 0.2107414174328093,
+            "mean": -0.000482332090136382,
+            "std": 0.11559473213824831,
+            "max_abs": 0.24141684313359202,
+            "p95_abs": 0.16696323583374323
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.1724213109847472,
+            "mean": -0.0036632437176079267,
+            "std": 0.044495058839650325,
+            "max_abs": 0.311437034092128,
+            "p95_abs": 0.1013472864793393
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.00653203231674452,
+            "std": 0.12310731603181306,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2592578890827144
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 0.2107414174328093,
+            "mean": -0.15667657354604073,
+            "std": 0.22906188763293386,
+            "max_abs": 0.5,
+            "p95_abs": 0.4861111111111111
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.5,
+            "mean": 0.15014454122929616,
+            "std": 0.22052873481651883,
+            "max_abs": 0.5,
+            "p95_abs": 0.4861111111111111
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.010244482338491406,
+            "std": 0.1540483244023952,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.27119058551889796
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.24141684313359202,
+            "max": 0.2107414174328093,
+            "mean": -0.0017181816927502628,
+            "std": 0.1217012797691001,
+            "max_abs": 0.24141684313359202,
+            "p95_abs": 0.21166237119722256
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.311437034092128,
+            "max": 0.1724213109847472,
+            "mean": -0.008526300645741136,
+            "std": 0.07470871689788296,
+            "max_abs": 0.311437034092128,
+            "p95_abs": 0.1722273939495113
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 0.022858615591062108,
+            "mean": -0.0026279765884476246,
+            "std": 0.033792808191814426,
+            "max_abs": 0.5,
+            "p95_abs": 0.0005352673184807386
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.022858615591062108,
+            "max": 0.5,
+            "mean": 0.0026279765884476246,
+            "std": 0.033792808191814426,
+            "max_abs": 0.5,
+            "p95_abs": 0.0005352673184807386
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 5.993971821969167e-09,
+            "mean": -0.16958332853608746,
+            "std": 0.21188222128973658,
+            "max_abs": 0.5,
+            "p95_abs": 0.4861111111111111
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -5.993971821969167e-09,
+            "max": 0.5,
+            "mean": 0.16958332853608746,
+            "std": 0.21188222128973658,
+            "max_abs": 0.5,
+            "p95_abs": 0.4861111111111111
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.024622597250528407,
+            "max": 0.022858615591062108,
+            "mean": -1.1277156557258452e-11,
+            "std": 0.0027583401958417952,
+            "max_abs": 0.024622597250528407,
+            "p95_abs": 0.00025482401004374466
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.022858615591062108,
+            "max": 0.024622597250528407,
+            "mean": 1.1277156557258452e-11,
+            "std": 0.0027583401958417952,
+            "max_abs": 0.024622597250528407,
+            "p95_abs": 0.00025482401004374466
+          }
+        }
+      }
+    },
+    {
+      "field": "current_lap_vs_midpoint_boundary",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00016552871187484468,
+            "std": 0.026614950805524545,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.04329854042019107
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -2.111111111111111,
+            "max": 2.111111111111111,
+            "mean": -0.11525564095821306,
+            "std": 0.8581190604097689,
+            "max_abs": 2.111111111111111,
+            "p95_abs": 2.111111111111111
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -2.111111111111111,
+            "max": 2.111111111111111,
+            "mean": 0.1154211696700879,
+            "std": 0.8574775279137969,
+            "max_abs": 2.111111111111111,
+            "p95_abs": 2.111111111111111
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00019184011678050416,
+            "std": 0.028652160811496255,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.05949226074517583
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -1.6111111111111112,
+            "max": 2.0972222222222223,
+            "mean": 0.12341748501776377,
+            "std": 0.4277955412145513,
+            "max_abs": 2.0972222222222223,
+            "p95_abs": 1.6111111105265037
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -2.0972222222222223,
+            "max": 1.6111111111111112,
+            "mean": -0.12322564490098323,
+            "std": 0.42640947107873334,
+            "max_abs": 2.0972222222222223,
+            "p95_abs": 1.6111111105265037
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.5000001734296805,
+            "mean": 0.00020575413678235426,
+            "std": 0.029672985660811686,
+            "max_abs": 0.5000001734296805,
+            "p95_abs": 0.06699126516830184
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.8333333333113245,
+            "max": 1.2638888888888888,
+            "mean": 0.03456335295282743,
+            "std": 0.15310457321122808,
+            "max_abs": 1.2638888888888888,
+            "p95_abs": 0.5
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -1.2638888888888888,
+            "max": 0.8333333333216794,
+            "mean": -0.03435759881604507,
+            "std": 0.14877695197951238,
+            "max_abs": 1.2638888888888888,
+            "p95_abs": 0.49999999999986033
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.003161057205331177,
+            "std": 0.11524888847731148,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.1599351746872898
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -1.46110812442343,
+            "max": 1.4419191016341018,
+            "mean": -0.004797293211682881,
+            "std": 0.2239710247782125,
+            "max_abs": 1.46110812442343,
+            "p95_abs": 0.4253889301968159
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -1.4419191016341018,
+            "max": 1.46110812442343,
+            "mean": 0.001636236006351703,
+            "std": 0.18443746358693205,
+            "max_abs": 1.46110812442343,
+            "p95_abs": 0.32279345738566945
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.003275072500966855,
+            "std": 0.11730732589603551,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.15998630581748993
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.7898468532398021,
+            "max": 0.8163069450558278,
+            "mean": -0.0022267869108366953,
+            "std": 0.14776800456689534,
+            "max_abs": 0.8163069450558278,
+            "p95_abs": 0.16094912387170496
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.7488058977778523,
+            "max": 0.7356549214812532,
+            "mean": -0.0010482855901301602,
+            "std": 0.07134403068656264,
+            "max_abs": 0.7488058977778523,
+            "p95_abs": 0.0381461457164203
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.0036868916497445874,
+            "std": 0.12247371750510788,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2201319627348083
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.7898468532398021,
+            "max": 0.8163069450558278,
+            "mean": -0.04115944431276243,
+            "std": 0.29376946431950907,
+            "max_abs": 0.8163069450558278,
+            "p95_abs": 0.6207054767451163
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.7488058977778523,
+            "max": 0.7356549214812532,
+            "mean": 0.037472552663017834,
+            "std": 0.23428604379414647,
+            "max_abs": 0.7488058977778523,
+            "p95_abs": 0.5011866408244515
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.004145575807744311,
+            "std": 0.12986157340848273,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.22285072871159162
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.7898468532398021,
+            "max": 0.8163069450558278,
+            "mean": 0.007132003997531051,
+            "std": 0.27512438762964847,
+            "max_abs": 0.8163069450558278,
+            "p95_abs": 0.6498819216042226
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.7488058977778523,
+            "max": 0.7356549214812532,
+            "mean": -0.011277579805275358,
+            "std": 0.19993203506194052,
+            "max_abs": 0.7488058977778523,
+            "p95_abs": 0.5411312052996669
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.00653203231674452,
+            "std": 0.12310731603181306,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.2592578890827144
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.53792022839067,
+            "max": 0.6589000089117977,
+            "mean": -0.1541298776230474,
+            "std": 0.305235619404726,
+            "max_abs": 0.6589000089117977,
+            "p95_abs": 0.5
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.577932981990539,
+            "max": 0.5411312052996677,
+            "mean": 0.14759784530630288,
+            "std": 0.2619671982180446,
+            "max_abs": 0.577932981990539,
+            "p95_abs": 0.4861111111111111
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.38930917932063475,
+            "max": 0.3392089450698752,
+            "mean": -0.010244482338491406,
+            "std": 0.1540483244023952,
+            "max_abs": 0.38930917932063475,
+            "p95_abs": 0.27119058551889796
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.53792022839067,
+            "max": 0.6589000089117977,
+            "mean": 0.0022759169490665847,
+            "std": 0.2782055908222409,
+            "max_abs": 0.6589000089117977,
+            "p95_abs": 0.5078540363236687
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.577932981990539,
+            "max": 0.5411312052996677,
+            "mean": -0.01252039928755799,
+            "std": 0.1888529621320584,
+            "max_abs": 0.577932981990539,
+            "p95_abs": 0.4152973132910216
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -1.6111111111111112,
+            "max": 2.0972222222222223,
+            "mean": 1.3484974453384597,
+            "std": 0.8794232164561142,
+            "max_abs": 2.0972222222222223,
+            "p95_abs": 1.6944444444444442
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -2.0972222222222223,
+            "max": 1.6111111111111112,
+            "mean": -1.3484974453384597,
+            "std": 0.8794232164561142,
+            "max_abs": 2.0972222222222223,
+            "p95_abs": 1.6944444444444442
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.5,
+            "max": 1.7361111111111112,
+            "mean": 0.8073610691978945,
+            "std": 0.9997947953479619,
+            "max_abs": 1.7361111111111112,
+            "p95_abs": 1.6111111111111112
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -1.7361111111111112,
+            "max": 0.5,
+            "mean": -0.8073610691978945,
+            "std": 0.9997947953479619,
+            "max_abs": 1.7361111111111112,
+            "p95_abs": 1.6111111111111112
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -1.6111111111111112,
+            "max": 2.0972222222222223,
+            "mean": 1.3570152538720748,
+            "std": 0.8747243863494626,
+            "max_abs": 2.0972222222222223,
+            "p95_abs": 1.6944444444444442
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -2.0972222222222223,
+            "max": 1.6111111111111112,
+            "mean": -1.3570152538720748,
+            "std": 0.8747243863494626,
+            "max_abs": 2.0972222222222223,
+            "p95_abs": 1.6944444444444442
+          }
+        }
+      }
+    },
+    {
+      "field": "current_mu_vs_periodic",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.003550441505904e-08,
+            "std": 2.236774017740033e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 6.529521531512629e-07
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00045625,
+            "max": 0.00037500000000000006,
+            "mean": 9.98265045678198e-08,
+            "std": 4.2613306325402706e-05,
+            "max_abs": 0.00045625,
+            "p95_abs": 5.829334266773694e-06
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00037500000000000006,
+            "max": 0.00045625,
+            "mean": -3.979100015276074e-08,
+            "std": 4.255461779550724e-05,
+            "max_abs": 0.00045625,
+            "p95_abs": 2.0888325586616854e-10
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.957837131403221e-08,
+            "std": 2.407854775074425e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.04070142340329e-06
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00022500000000000002,
+            "max": 0.00034687500000000007,
+            "mean": 1.1620099984728806e-07,
+            "std": 2.369450138702025e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 1.7604200970354384e-06
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 0.00022500000000000002,
+            "mean": -4.6622628533255806e-08,
+            "std": 2.3571977414183473e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 4.671624932123857e-19
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 7.46248384784954e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.2245434298948877e-06
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280152,
+            "max": 5.5454892261692416e-05,
+            "mean": 7.462483847849053e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280152,
+            "p95_abs": 1.2245434298946466e-06
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -9.325873346955038e-19,
+            "max": 9.284239854326629e-19,
+            "mean": 4.8708057232325936e-21,
+            "std": 1.0099822977991709e-19,
+            "max_abs": 9.325873346955038e-19,
+            "p95_abs": 2.5811880467527073e-19
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.0860099627850453e-06,
+            "std": 5.523057880986672e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.12359261972203e-06
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 0.00034687500000000007,
+            "mean": 6.698827591349256e-06,
+            "std": 2.798255714580305e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 1.6567025283060126e-05
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 8.040460251811446e-19,
+            "mean": -4.61281762856421e-06,
+            "std": 2.778064259733376e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 3.866176008623847e-19
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.1612496775883053e-06,
+            "std": 5.607299076707865e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.145651228597608e-06
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 5.5454892261692416e-05,
+            "mean": 2.161249677588302e-06,
+            "std": 5.607299076707866e-06,
+            "max_abs": 5.6689668932132666e-05,
+            "p95_abs": 9.145651228597549e-06
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -7.917640474459572e-19,
+            "max": 8.040460251811446e-19,
+            "mean": 3.8160282881467275e-21,
+            "std": 1.27422385611065e-19,
+            "max_abs": 8.040460251811446e-19,
+            "p95_abs": 2.854431549075537e-19
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.3145044845589056e-06,
+            "std": 1.3744667668896501e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.600661668063665e-05
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 0.00034687500000000007,
+            "mean": 2.460967187860992e-05,
+            "std": 6.66076987603944e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00020624999999999184
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 6.335806445462167e-19,
+            "mean": -2.2295167394051016e-05,
+            "std": 6.59611565594637e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00020624999999999184
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.6024507117717462e-06,
+            "std": 1.4548864049434439e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.6812402393536636e-05
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 5.5454892261692416e-05,
+            "mean": 2.6024507117717416e-06,
+            "std": 1.4548864049434446e-05,
+            "max_abs": 5.6689668932132666e-05,
+            "p95_abs": 3.6812402393536595e-05
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -4.973671587158845e-19,
+            "max": 6.335806445462167e-19,
+            "mean": 4.3157725099798185e-21,
+            "std": 1.2576822905958323e-19,
+            "max_abs": 6.335806445462167e-19,
+            "p95_abs": 2.829090043829363e-19
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.241288461541577e-06,
+            "std": 2.1033357278785936e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.545431613045384e-05
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 0.00034687500000000007,
+            "mean": 7.526307524756189e-05,
+            "std": 0.00010325230644111964,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026874999999996677
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 3.7269449679189215e-19,
+            "mean": -7.30217867860203e-05,
+            "std": 0.00010269353652164839,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026874999999996677
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 3.5151142778134096e-06,
+            "std": 2.6255697482989908e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.966538862778906e-05
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 5.5454892261692416e-05,
+            "mean": 3.5151142778134142e-06,
+            "std": 2.6255697482989915e-05,
+            "max_abs": 5.6689668932132666e-05,
+            "p95_abs": 4.9665388627789034e-05
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -3.2526065174565133e-19,
+            "max": 3.7269449679189215e-19,
+            "mean": -5.009262967069328e-21,
+            "std": 1.033059228379608e-19,
+            "max_abs": 3.7269449679189215e-19,
+            "p95_abs": 2.176874674443552e-19
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00022500000000000002,
+            "max": 0.00034687500000000007,
+            "mean": 6.894340159860274e-07,
+            "std": 9.064258444306694e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.0002249999998092153
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 0.00022500000000000002,
+            "mean": -6.894340159860274e-07,
+            "std": 9.064258444306694e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.0002249999998092153
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00016875,
+            "max": 0.00034687500000000007,
+            "mean": 4.271875375681647e-05,
+            "std": 0.00014019973547175335,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026875
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 0.00016875,
+            "mean": -4.271875375681647e-05,
+            "std": 0.00014019973547175335,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026875
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.00022500000000000002,
+            "max": 0.00022500000000000013,
+            "mean": 2.7867516051658584e-08,
+            "std": 8.948611409081712e-05,
+            "max_abs": 0.00022500000000000013,
+            "p95_abs": 0.00022499999978432372
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.00022500000000000013,
+            "max": 0.00022500000000000002,
+            "mean": -2.7867516051658584e-08,
+            "std": 8.948611409081712e-05,
+            "max_abs": 0.00022500000000000013,
+            "p95_abs": 0.00022499999978432372
+          }
+        }
+      }
+    },
+    {
+      "field": "current_mu_vs_center_boundary",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.003550441505904e-08,
+            "std": 2.236774017740033e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 6.529521531512629e-07
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -6.425126811249952e-05,
+            "max": 0.00011250000000000001,
+            "mean": 1.3707046473965997e-07,
+            "std": 2.6456172963576188e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 9.010916920339513e-07
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250000637516958,
+            "max": 7.00733326707288e-05,
+            "mean": -7.703496032460088e-08,
+            "std": 3.0606486677338037e-06,
+            "max_abs": 0.00011250000637516958,
+            "p95_abs": 7.69628583086057e-14
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.957837131403221e-08,
+            "std": 2.407854775074425e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.04070142340329e-06
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 1.545837343685032e-07,
+            "std": 2.534689939961894e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 1.1151689991807943e-06
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250000637516958,
+            "max": 7.00733326707288e-05,
+            "mean": -8.500536305447097e-08,
+            "std": 3.0283910607791685e-06,
+            "max_abs": 0.00011250000637516958,
+            "p95_abs": 5.907554653794591e-15
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 7.46248384784954e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.2245434298948877e-06
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 1.2091951925452035e-07,
+            "std": 1.3173115008975558e-06,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 1.1392076939915295e-06
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250000637516958,
+            "max": 7.00733326707288e-05,
+            "mean": -4.6294680776024987e-08,
+            "std": 2.162315770152938e-06,
+            "max_abs": 0.00011250000637516958,
+            "p95_abs": 5.283712115633533e-19
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.0860099627850453e-06,
+            "std": 5.523057880986672e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.12359261972203e-06
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 2.8397169935780367e-06,
+            "std": 1.0803829725704974e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 1.5128247327820904e-05
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 7.00733326707288e-05,
+            "mean": -7.537070307929909e-07,
+            "std": 1.0003455993363385e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 5.075387643645432e-06
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.1612496775883053e-06,
+            "std": 5.607299076707865e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.145651228597608e-06
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 2.1032865546533965e-06,
+            "std": 5.282860326266592e-06,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 9.121845109272218e-06
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -3.879479497156812e-05,
+            "max": 7.00733326707288e-05,
+            "mean": 5.796312293490882e-08,
+            "std": 2.7034241494391794e-06,
+            "max_abs": 7.00733326707288e-05,
+            "p95_abs": 7.980610660148609e-07
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.3145044845589056e-06,
+            "std": 1.3744667668896501e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.600661668063665e-05
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 1.2269495876490698e-05,
+            "std": 3.193467489068334e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 9.687499998907337e-05
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 7.00733326707288e-05,
+            "mean": -9.954991391931791e-06,
+            "std": 3.2172716719809576e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 9.687499998907337e-05
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.6024507117717462e-06,
+            "std": 1.4548864049434439e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.6812402393536636e-05
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 1.7782208753099624e-06,
+            "std": 1.1765396449827041e-05,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 2.9460636700190566e-05
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -3.879479497156812e-05,
+            "max": 7.00733326707288e-05,
+            "mean": 8.242298364617842e-07,
+            "std": 1.0011388238921324e-05,
+            "max_abs": 7.00733326707288e-05,
+            "p95_abs": 2.2803139457851332e-05
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.241288461541577e-06,
+            "std": 2.1033357278785936e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.545431613045384e-05
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 3.602381023813322e-05,
+            "std": 4.904965119241735e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 7.00733326707288e-05,
+            "mean": -3.378252177659165e-05,
+            "std": 4.9618965333716736e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 3.5151142778134096e-06,
+            "std": 2.6255697482989908e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.966538862778906e-05
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 1.5966966325216551e-06,
+            "std": 2.0999208552878993e-05,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 4.146636829049604e-05
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -3.879479497156812e-05,
+            "max": 7.00733326707288e-05,
+            "mean": 1.9184176452917525e-06,
+            "std": 1.6809461302023667e-05,
+            "max_abs": 7.00733326707288e-05,
+            "p95_abs": 3.875116363864005e-05
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -3.30082450984612e-05,
+            "max": 0.00011250000000000001,
+            "mean": 6.187304696708683e-07,
+            "std": 8.417131937054576e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 5.526645560891473e-07
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 3.30082450984612e-05,
+            "mean": -6.187304696708683e-07,
+            "std": 8.417131937054576e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 5.526645560891473e-07
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -3.8163916471489766e-21,
+            "max": 0.00011250000000000001,
+            "mean": 3.8156254719092246e-05,
+            "std": 4.7673495149294595e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 3.8163916471489766e-21,
+            "mean": -3.8156254719092246e-05,
+            "std": 4.7673495149294595e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -3.30082450984612e-05,
+            "max": 3.344144152117299e-05,
+            "mean": 2.7867503364849316e-08,
+            "std": 3.695946579805586e-06,
+            "max_abs": 3.344144152117299e-05,
+            "p95_abs": 2.621252071980738e-07
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -3.344144152117299e-05,
+            "max": 3.30082450984612e-05,
+            "mean": -2.7867503364849316e-08,
+            "std": 3.695946579805586e-06,
+            "max_abs": 3.344144152117299e-05,
+            "p95_abs": 2.621252071980738e-07
+          }
+        }
+      }
+    },
+    {
+      "field": "current_mu_vs_midpoint_boundary",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.003550441505904e-08,
+            "std": 2.236774017740033e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 6.529521531512629e-07
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00047500000000000005,
+            "max": 0.00047500000000000005,
+            "mean": 2.603234572016575e-05,
+            "std": 0.0001928407680406719,
+            "max_abs": 0.00047500000000000005,
+            "p95_abs": 0.00047500000000000005
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00047500000000000005,
+            "max": 0.00047500000000000005,
+            "mean": -2.5972310215750716e-05,
+            "std": 0.00019281803051944866,
+            "max_abs": 0.00047500000000000005,
+            "p95_abs": 0.00047500000000000005
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.957837131403221e-08,
+            "std": 2.407854775074425e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.04070142340329e-06
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00047187500000000007,
+            "max": 0.00036250000000000003,
+            "mean": -2.7654336403474985e-05,
+            "std": 9.592208159888511e-05,
+            "max_abs": 0.00047187500000000007,
+            "p95_abs": 0.00036249999979338574
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00036250000000000003,
+            "max": 0.00047187500000000007,
+            "mean": 2.7723914774789015e-05,
+            "std": 9.583011756266275e-05,
+            "max_abs": 0.00047187500000000007,
+            "p95_abs": 0.00036249999979338574
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 7.46248384784954e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.2245434298948877e-06
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.000284375,
+            "max": 0.00018749999999075783,
+            "mean": -7.655834895131647e-06,
+            "std": 3.371189851267691e-05,
+            "max_abs": 0.000284375,
+            "p95_abs": 0.00011249999999999464
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00018749999999737783,
+            "max": 0.000284375,
+            "mean": 7.730459733610143e-06,
+            "std": 3.3474814195390286e-05,
+            "max_abs": 0.000284375,
+            "p95_abs": 0.00011249999999996857
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.0860099627850453e-06,
+            "std": 5.523057880986672e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.12359261972203e-06
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.00030546265097415126,
+            "max": 0.00031148415223078343,
+            "mean": 2.4757798844974086e-06,
+            "std": 3.76129194846825e-05,
+            "max_abs": 0.00031148415223078343,
+            "p95_abs": 6.881820434687216e-05
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.00031148415223078343,
+            "max": 0.00030546265097415126,
+            "mean": -3.8976992171236276e-07,
+            "std": 3.766843587683022e-05,
+            "max_abs": 0.00031148415223078343,
+            "p95_abs": 7.144805526692973e-05
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.1612496775883053e-06,
+            "std": 5.607299076707865e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.145651228597608e-06
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.00016244204701826323,
+            "max": 0.0001589851473137935,
+            "mean": 1.9253854198090185e-06,
+            "std": 1.5996604824789387e-05,
+            "max_abs": 0.00016244204701826323,
+            "p95_abs": 9.420275198991889e-06
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -0.00016552235733328192,
+            "max": 0.00016848132700001677,
+            "mean": 2.3586425777928702e-07,
+            "std": 1.6052406904476596e-05,
+            "max_abs": 0.00016848132700001677,
+            "p95_abs": 8.58288278619453e-06
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.3145044845589056e-06,
+            "std": 1.3744667668896501e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.600661668063665e-05
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.00016244204701826323,
+            "max": 0.0001589851473137935,
+            "mean": 1.0745828833737918e-05,
+            "std": 5.1054277814118745e-05,
+            "max_abs": 0.00016244204701826323,
+            "p95_abs": 0.000109375
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.00016552235733328192,
+            "max": 0.00016848132700001677,
+            "mean": -8.431324349179011e-06,
+            "std": 5.2714359853682955e-05,
+            "max_abs": 0.00016848132700001677,
+            "p95_abs": 0.0001127669941855016
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.6024507117717462e-06,
+            "std": 1.4548864049434439e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.6812402393536636e-05
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.00016244204701826323,
+            "max": 0.0001589851473137935,
+            "mean": 6.49952555847898e-08,
+            "std": 4.343121249133749e-05,
+            "max_abs": 0.00016244204701826323,
+            "p95_abs": 0.0001097928220384143
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -0.00016552235733328192,
+            "max": 0.00016848132700001677,
+            "mean": 2.5374554561869563e-06,
+            "std": 4.498470788893662e-05,
+            "max_abs": 0.00016848132700001677,
+            "p95_abs": 0.00012175452119242506
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.241288461541577e-06,
+            "std": 2.1033357278785936e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.545431613045384e-05
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.0001097928220384143,
+            "max": 0.00011250000000000001,
+            "mean": 3.545080365545973e-05,
+            "std": 5.610443312336399e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.00012175452119242526,
+            "max": 0.0001300349209478713,
+            "mean": -3.3209515193918146e-05,
+            "std": 5.8942619599060046e-05,
+            "max_abs": 0.0001300349209478713,
+            "p95_abs": 0.000109375
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 3.5151142778134096e-06,
+            "std": 2.6255697482989908e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.966538862778906e-05
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.0001097928220384143,
+            "max": 8.265121716725065e-05,
+            "mean": 6.980244381128652e-07,
+            "std": 3.927157560534303e-05,
+            "max_abs": 0.0001097928220384143,
+            "p95_abs": 7.600774339118886e-05
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -0.00012175452119242526,
+            "max": 0.0001300349209478713,
+            "mean": 2.8170898397005447e-06,
+            "std": 4.249191647971314e-05,
+            "max_abs": 0.0001300349209478713,
+            "p95_abs": 9.344189549047987e-05
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00047187500000000007,
+            "max": 0.00036250000000000003,
+            "mean": -0.0003033844894638833,
+            "std": 0.00019710428679989755,
+            "max_abs": 0.00047187500000000007,
+            "p95_abs": 0.00038124999999999997
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00036250000000000003,
+            "max": 0.00047187500000000007,
+            "mean": 0.0003033844894638833,
+            "std": 0.00019710428679989755,
+            "max_abs": 0.00047187500000000007,
+            "p95_abs": 0.00038124999999999997
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.000390625,
+            "max": 0.00011250000000000001,
+            "mean": -0.00018165623477105368,
+            "std": 0.00022495382429171376,
+            "max_abs": 0.000390625,
+            "p95_abs": 0.00036250000000000003
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 0.000390625,
+            "mean": 0.00018165623477105368,
+            "std": 0.00022495382429171376,
+            "max_abs": 0.000390625,
+            "p95_abs": 0.00036250000000000003
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.00047187500000000007,
+            "max": 0.00036250000000000003,
+            "mean": -0.0003053005646203894,
+            "std": 0.0001960310464023555,
+            "max_abs": 0.00047187500000000007,
+            "p95_abs": 0.00038124999999999997
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.00036250000000000003,
+            "max": 0.00047187500000000007,
+            "mean": 0.0003053005646203894,
+            "std": 0.0001960310464023555,
+            "max_abs": 0.00047187500000000007,
+            "p95_abs": 0.00038124999999999997
+          }
+        }
+      }
+    },
+    {
+      "field": "no_ghost_mu_vs_periodic",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.003550441505924e-08,
+            "std": 2.236774017740033e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 6.529521531512629e-07
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00045625,
+            "max": 0.00037500000000000006,
+            "mean": 9.98265045678198e-08,
+            "std": 4.2613306325402706e-05,
+            "max_abs": 0.00045625,
+            "p95_abs": 5.829334266773694e-06
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00037500000000000006,
+            "max": 0.00045625,
+            "mean": -3.97910001527605e-08,
+            "std": 4.255461779550724e-05,
+            "max_abs": 0.00045625,
+            "p95_abs": 2.0888325586616854e-10
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.957837131403249e-08,
+            "std": 2.407854775074425e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.04070142340329e-06
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00022500000000000002,
+            "max": 0.00034687500000000007,
+            "mean": 1.1620099984728806e-07,
+            "std": 2.369450138702025e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 1.7604200970354384e-06
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 0.00022500000000000002,
+            "mean": -4.6622628533255515e-08,
+            "std": 2.3571977414183473e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 4.681101113221215e-19
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 7.462483847849565e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.2245434298948877e-06
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280152,
+            "max": 5.5454892261692416e-05,
+            "mean": 7.462483847849053e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280152,
+            "p95_abs": 1.2245434298946466e-06
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -9.325873346955038e-19,
+            "max": 9.284239854326629e-19,
+            "mean": 5.17567130055381e-21,
+            "std": 1.0116748529401285e-19,
+            "max_abs": 9.325873346955038e-19,
+            "p95_abs": 2.5812685306589045e-19
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.0860099627850466e-06,
+            "std": 5.523057880986671e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.12359261972203e-06
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 0.00034687500000000007,
+            "mean": 6.698827591349256e-06,
+            "std": 2.798255714580305e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 1.6567025283060126e-05
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 8.040460251811446e-19,
+            "mean": -4.612817628564209e-06,
+            "std": 2.778064259733376e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 3.8884106234892725e-19
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.161249677588306e-06,
+            "std": 5.607299076707864e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.145651228597608e-06
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 5.5454892261692416e-05,
+            "mean": 2.161249677588302e-06,
+            "std": 5.607299076707866e-06,
+            "max_abs": 5.6689668932132666e-05,
+            "p95_abs": 9.145651228597549e-06
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -7.917640474459572e-19,
+            "max": 8.040460251811446e-19,
+            "mean": 4.69357663965641e-21,
+            "std": 1.276669283597048e-19,
+            "max_abs": 8.040460251811446e-19,
+            "p95_abs": 2.865088944087671e-19
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.314504484558907e-06,
+            "std": 1.37446676688965e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.600661668063665e-05
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 0.00034687500000000007,
+            "mean": 2.460967187860992e-05,
+            "std": 6.66076987603944e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00020624999999999184
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 6.335806445462167e-19,
+            "mean": -2.2295167394051016e-05,
+            "std": 6.596115655946372e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00020624999999999184
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.602450711771747e-06,
+            "std": 1.454886404943444e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.6812402393536636e-05
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 5.5454892261692416e-05,
+            "mean": 2.6024507117717416e-06,
+            "std": 1.4548864049434446e-05,
+            "max_abs": 5.6689668932132666e-05,
+            "p95_abs": 3.6812402393536595e-05
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -4.973671587158845e-19,
+            "max": 6.335806445462167e-19,
+            "mean": 5.2261661895090475e-21,
+            "std": 1.2646998205548083e-19,
+            "max_abs": 6.335806445462167e-19,
+            "p95_abs": 2.846030702774449e-19
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.241288461541579e-06,
+            "std": 2.1033357278785936e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.545431613045384e-05
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 0.00034687500000000007,
+            "mean": 7.526307524756189e-05,
+            "std": 0.00010325230644111964,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026874999999996677
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 3.7269449679189215e-19,
+            "mean": -7.30217867860203e-05,
+            "std": 0.00010269353652164839,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026874999999996677
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 3.5151142778134113e-06,
+            "std": 2.6255697482989908e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.966538862778906e-05
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.6689668932132666e-05,
+            "max": 5.5454892261692416e-05,
+            "mean": 3.5151142778134142e-06,
+            "std": 2.6255697482989915e-05,
+            "max_abs": 5.6689668932132666e-05,
+            "p95_abs": 4.9665388627789034e-05
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -3.2526065174565133e-19,
+            "max": 3.7269449679189215e-19,
+            "mean": -3.8634452414332836e-21,
+            "std": 1.0381050639370362e-19,
+            "max_abs": 3.7269449679189215e-19,
+            "p95_abs": 2.1789922568116876e-19
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00022500000000000002,
+            "max": 0.00034687500000000007,
+            "mean": 6.894340159860274e-07,
+            "std": 9.064258444306694e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.0002249999998092153
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 0.00022500000000000002,
+            "mean": -6.894340159860274e-07,
+            "std": 9.064258444306694e-05,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.0002249999998092153
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00016875,
+            "max": 0.00034687500000000007,
+            "mean": 4.271875375681647e-05,
+            "std": 0.00014019973547175335,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026875
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00034687500000000007,
+            "max": 0.00016875,
+            "mean": -4.271875375681647e-05,
+            "std": 0.00014019973547175335,
+            "max_abs": 0.00034687500000000007,
+            "p95_abs": 0.00026875
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.00022500000000000002,
+            "max": 0.00022500000000000013,
+            "mean": 2.7867516051658584e-08,
+            "std": 8.948611409081712e-05,
+            "max_abs": 0.00022500000000000013,
+            "p95_abs": 0.00022499999978432372
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -0.00022500000000000013,
+            "max": 0.00022500000000000002,
+            "mean": -2.7867516051658584e-08,
+            "std": 8.948611409081712e-05,
+            "max_abs": 0.00022500000000000013,
+            "p95_abs": 0.00022499999978432372
+          }
+        }
+      }
+    },
+    {
+      "field": "no_ghost_mu_vs_center_boundary",
+      "regions": {
+        "all": {
+          "candidate": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.003550441505924e-08,
+            "std": 2.236774017740033e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 6.529521531512629e-07
+          },
+          "reference": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -6.425126811249952e-05,
+            "max": 0.00011250000000000001,
+            "mean": 1.3707046473965997e-07,
+            "std": 2.6456172963576188e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 9.010916920339513e-07
+          },
+          "diff": {
+            "count": 884736,
+            "nonfinite": 0,
+            "min": -0.00011250000637516958,
+            "max": 7.00733326707288e-05,
+            "mean": -7.703496032460063e-08,
+            "std": 3.0606486677338037e-06,
+            "max_abs": 0.00011250000637516958,
+            "p95_abs": 7.69628583086057e-14
+          }
+        },
+        "offline_fluid": {
+          "candidate": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 6.957837131403249e-08,
+            "std": 2.407854775074425e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.04070142340329e-06
+          },
+          "reference": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 1.545837343685032e-07,
+            "std": 2.534689939961894e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 1.1151689991807943e-06
+          },
+          "diff": {
+            "count": 763392,
+            "nonfinite": 0,
+            "min": -0.00011250000637516958,
+            "max": 7.00733326707288e-05,
+            "mean": -8.500536305447068e-08,
+            "std": 3.0283910607791685e-06,
+            "max_abs": 0.00011250000637516958,
+            "p95_abs": 5.907554653794591e-15
+          }
+        },
+        "tclb_fluid": {
+          "candidate": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250001492280146,
+            "max": 5.5454892261692396e-05,
+            "mean": 7.462483847849565e-08,
+            "std": 2.4935708435621414e-06,
+            "max_abs": 0.00011250001492280146,
+            "p95_abs": 1.2245434298948877e-06
+          },
+          "reference": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 1.2091951925452035e-07,
+            "std": 1.3173115008975558e-06,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 1.1392076939915295e-06
+          },
+          "diff": {
+            "count": 711768,
+            "nonfinite": 0,
+            "min": -0.00011250000637516958,
+            "max": 7.00733326707288e-05,
+            "mean": -4.629468077602471e-08,
+            "std": 2.162315770152938e-06,
+            "max_abs": 0.00011250000637516958,
+            "p95_abs": 5.283712115633533e-19
+          }
+        },
+        "interface_offline_fluid": {
+          "candidate": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.0860099627850466e-06,
+            "std": 5.523057880986671e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.12359261972203e-06
+          },
+          "reference": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 2.8397169935780367e-06,
+            "std": 1.0803829725704974e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 1.5128247327820904e-05
+          },
+          "diff": {
+            "count": 38836,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 7.00733326707288e-05,
+            "mean": -7.537070307929902e-07,
+            "std": 1.0003455993363385e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 5.075387643645432e-06
+          }
+        },
+        "interface_tclb_fluid": {
+          "candidate": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.161249677588306e-06,
+            "std": 5.607299076707864e-06,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 9.145651228597608e-06
+          },
+          "reference": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 2.1032865546533965e-06,
+            "std": 5.282860326266592e-06,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 9.121845109272218e-06
+          },
+          "diff": {
+            "count": 37484,
+            "nonfinite": 0,
+            "min": -3.879479497156812e-05,
+            "max": 7.00733326707288e-05,
+            "mean": 5.796312293490971e-08,
+            "std": 2.7034241494391794e-06,
+            "max_abs": 7.00733326707288e-05,
+            "p95_abs": 7.980610660148609e-07
+          }
+        },
+        "near_interface": {
+          "candidate": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.314504484558907e-06,
+            "std": 1.37446676688965e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.600661668063665e-05
+          },
+          "reference": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 1.2269495876490698e-05,
+            "std": 3.193467489068334e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 9.687499998907337e-05
+          },
+          "diff": {
+            "count": 2856,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 7.00733326707288e-05,
+            "mean": -9.954991391931791e-06,
+            "std": 3.2172716719809576e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 9.687499998907337e-05
+          }
+        },
+        "near_interface_tclb_fluid": {
+          "candidate": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.602450711771747e-06,
+            "std": 1.454886404943444e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 3.6812402393536636e-05
+          },
+          "reference": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 1.7782208753099624e-06,
+            "std": 1.1765396449827041e-05,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 2.9460636700190566e-05
+          },
+          "diff": {
+            "count": 2540,
+            "nonfinite": 0,
+            "min": -3.879479497156812e-05,
+            "max": 7.00733326707288e-05,
+            "mean": 8.24229836461785e-07,
+            "std": 1.0011388238921324e-05,
+            "max_abs": 7.00733326707288e-05,
+            "p95_abs": 2.2803139457851332e-05
+          }
+        },
+        "contact_core": {
+          "candidate": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 2.241288461541579e-06,
+            "std": 2.1033357278785936e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.545431613045384e-05
+          },
+          "reference": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 0.00011250000000000001,
+            "mean": 3.602381023813322e-05,
+            "std": 4.904965119241735e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          },
+          "diff": {
+            "count": 872,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 7.00733326707288e-05,
+            "mean": -3.378252177659164e-05,
+            "std": 4.9618965333716736e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          }
+        },
+        "contact_core_tclb_fluid": {
+          "candidate": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -5.668966893213265e-05,
+            "max": 5.5454892261692396e-05,
+            "mean": 3.5151142778134113e-06,
+            "std": 2.6255697482989908e-05,
+            "max_abs": 5.668966893213265e-05,
+            "p95_abs": 4.966538862778906e-05
+          },
+          "reference": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -3.88251913311428e-05,
+            "max": 4.47691348158671e-05,
+            "mean": 1.5966966325216551e-06,
+            "std": 2.0999208552878993e-05,
+            "max_abs": 4.47691348158671e-05,
+            "p95_abs": 4.146636829049604e-05
+          },
+          "diff": {
+            "count": 556,
+            "nonfinite": 0,
+            "min": -3.879479497156812e-05,
+            "max": 7.00733326707288e-05,
+            "mean": 1.9184176452917542e-06,
+            "std": 1.6809461302023664e-05,
+            "max_abs": 7.00733326707288e-05,
+            "p95_abs": 3.875116363864005e-05
+          }
+        },
+        "offline_fluid_tclb_boundary": {
+          "candidate": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -3.30082450984612e-05,
+            "max": 0.00011250000000000001,
+            "mean": 6.187304696708683e-07,
+            "std": 8.417131937054576e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 5.526645560891473e-07
+          },
+          "diff": {
+            "count": 51624,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 3.30082450984612e-05,
+            "mean": -6.187304696708683e-07,
+            "std": 8.417131937054576e-06,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 5.526645560891473e-07
+          }
+        },
+        "cylinder_overlap_boundary": {
+          "candidate": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -3.8163916471489766e-21,
+            "max": 0.00011250000000000001,
+            "mean": 3.8156254719092246e-05,
+            "std": 4.7673495149294595e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          },
+          "diff": {
+            "count": 800,
+            "nonfinite": 0,
+            "min": -0.00011250000000000001,
+            "max": 3.8163916471489766e-21,
+            "mean": -3.8156254719092246e-05,
+            "std": 4.7673495149294595e-05,
+            "max_abs": 0.00011250000000000001,
+            "p95_abs": 0.000109375
+          }
+        },
+        "outer_boundary": {
+          "candidate": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": 0.0,
+            "max": 0.0,
+            "mean": 0.0,
+            "std": 0.0,
+            "max_abs": 0.0,
+            "p95_abs": 0.0
+          },
+          "reference": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -3.30082450984612e-05,
+            "max": 3.344144152117299e-05,
+            "mean": 2.7867503364849316e-08,
+            "std": 3.695946579805586e-06,
+            "max_abs": 3.344144152117299e-05,
+            "p95_abs": 2.621252071980738e-07
+          },
+          "diff": {
+            "count": 50824,
+            "nonfinite": 0,
+            "min": -3.344144152117299e-05,
+            "max": 3.30082450984612e-05,
+            "mean": -2.7867503364849316e-08,
+            "std": 3.695946579805586e-06,
+            "max_abs": 3.344144152117299e-05,
+            "p95_abs": 2.621252071980738e-07
+          }
+        }
+      }
+    }
+  ],
+  "classification": {
+    "status": "b14_mask_operator_equivalence_complete",
+    "primary_result": "tclb_replay_matches_periodic_stencil_on_tclb_phase",
+    "claim_limit": "offline mask/operator audit only; not contact-angle validation",
+    "mask_note": "offline mask does not include TCLB outer/domain walls; boundary mismatch is dominated by non-cylinder walls",
+    "next_gate": "If B14 shows offline operator mismatch, update B10/B11 offline reconstruction to TCLB-compatible stencil/mask before changing solver physics."
+  }
+}

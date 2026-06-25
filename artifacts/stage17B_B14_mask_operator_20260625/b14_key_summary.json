@@ -1,0 +1,31 @@
+{
+  "status": "b14_mask_operator_equivalence_complete",
+  "primary_result": "tclb_replay_matches_periodic_stencil_on_tclb_phase",
+  "claim_limit": "offline mask/operator audit only; not contact-angle validation",
+  "mask_summary": {
+    "total_cells": 884736,
+    "tclb_boundary_cells": 172968,
+    "offline_solid_cells": 121344,
+    "offline_fluid_tclb_boundary_cells": 51624,
+    "offline_solid_tclb_fluid_cells": 0,
+    "outer_boundary_cells": 50824,
+    "cylinder_overlap_boundary_cells": 800,
+    "near_interface_tclb_fluid_cells": 2540,
+    "contact_core_tclb_fluid_cells": 556
+  },
+  "operator_summary": {
+    "current_vs_periodic_mu_near_interface_tclb_fluid_max_abs": 6.335806445462167e-19,
+    "current_vs_center_boundary_mu_near_interface_tclb_fluid_max_abs": 7.00733326707288e-05,
+    "current_vs_midpoint_boundary_mu_near_interface_tclb_fluid_max_abs": 0.00016848132700001677,
+    "current_vs_periodic_lap_near_interface_tclb_fluid_max_abs": 2.456368441983159e-15,
+    "current_vs_center_boundary_lap_near_interface_tclb_fluid_max_abs": 0.311437034092128,
+    "b13_ghost_delta_mu_near_interface_tclb_fluid_max_abs": 1.810532924756067e-19,
+    "b13_ghost_delta_lap_near_interface_tclb_fluid_max_abs": 8.049116928532385e-16,
+    "wallghost_used_near_interface_tclb_fluid_max_abs": 38.0,
+    "ghost_neighbor_count_near_interface_tclb_fluid_max_abs": 38.0,
+    "periodic_boundary_slots_near_interface_tclb_fluid_max_abs": 0.0,
+    "center_boundary_slots_near_interface_tclb_fluid_max_abs": 12.0
+  },
+  "mask_note": "offline mask does not include TCLB outer/domain walls; boundary mismatch is dominated by non-cylinder walls",
+  "next_gate": "If B14 shows offline operator mismatch, update B10/B11 offline reconstruction to TCLB-compatible stencil/mask before changing solver physics."
+}
