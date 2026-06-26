@@ -55,6 +55,39 @@ SCALAR_FIELDS = [
     "ReplayFphiMaxAbs",
     "ReplayTmp1",
     "ReplayTmp1BoundedShadow",
+    "B20ProbeActive",
+    "B20FphiActiveSum",
+    "B20FphiActiveMaxAbs",
+    "B20FphiRawPostForceSum",
+    "B20FphiRawPostForceMaxAbs",
+    "B20FphiPreForceSum",
+    "B20FphiPreForceMaxAbs",
+    "B20FphiBoundedSum",
+    "B20FphiBoundedMaxAbs",
+    "B20HeqActiveSum",
+    "B20HeqActiveMaxAbs",
+    "B20HeqRawPostForceSum",
+    "B20HeqRawPostForceMaxAbs",
+    "B20HeqPreForceSum",
+    "B20HeqPreForceMaxAbs",
+    "B20HeqBoundedSum",
+    "B20HeqBoundedMaxAbs",
+    "B20HPostActiveSum",
+    "B20HPostActiveMaxAbs",
+    "B20HPostRawPostForceSum",
+    "B20HPostRawPostForceMaxAbs",
+    "B20HPostPreForceSum",
+    "B20HPostPreForceMaxAbs",
+    "B20HPostBoundedSum",
+    "B20HPostBoundedMaxAbs",
+    "B20PhaseFromHActiveShadow",
+    "B20PhaseFromHRawPostForceShadow",
+    "B20PhaseFromHPreForceShadow",
+    "B20PhaseFromHBoundedShadow",
+    "B20HPostActiveOutOfBoundsFlag",
+    "B20HPostRawPostForceOutOfBoundsFlag",
+    "B20HPostPreForceOutOfBoundsFlag",
+    "B20HPostBoundedOutOfBoundsFlag",
     "ForceIterCount",
     "ForceIterResidual",
 ]
@@ -84,6 +117,19 @@ VECTOR_FIELDS = [
     "ReplayMomentumDeltaG",
     "ReplayFpressureNoThird",
     "ReplayFpressurePhysical",
+    "B18FmuLegacy",
+    "B18FmuPreForce",
+    "B18FmuPostForce",
+    "B18FmuForceExcluded",
+    "B18FmuIncoming",
+    "B18FmuCandidateDelta",
+    "B18ForceOverRhoRaw",
+    "B18ForceOverRhoDensityFloor",
+    "B18ForceOverRhoPhaseMixture",
+    "B18HVelocityLegacy",
+    "B18HVelocityPreForce",
+    "B18HVelocityRawPostForce",
+    "B18HVelocityBoundedShadow",
 ]
 
 STRESS_GROUPS = {
@@ -127,6 +173,46 @@ STRESS_GROUPS = {
         "ReplayStressYZ",
         "ReplayStressZZ",
     ],
+    "B18StressLegacyNorm": [
+        "B18StressLegacyXX",
+        "B18StressLegacyXY",
+        "B18StressLegacyXZ",
+        "B18StressLegacyYY",
+        "B18StressLegacyYZ",
+        "B18StressLegacyZZ",
+    ],
+    "B18StressPreForceNorm": [
+        "B18StressPreForceXX",
+        "B18StressPreForceXY",
+        "B18StressPreForceXZ",
+        "B18StressPreForceYY",
+        "B18StressPreForceYZ",
+        "B18StressPreForceZZ",
+    ],
+    "B18StressPostForceNorm": [
+        "B18StressPostForceXX",
+        "B18StressPostForceXY",
+        "B18StressPostForceXZ",
+        "B18StressPostForceYY",
+        "B18StressPostForceYZ",
+        "B18StressPostForceZZ",
+    ],
+    "B18StressForceExcludedNorm": [
+        "B18StressForceExcludedXX",
+        "B18StressForceExcludedXY",
+        "B18StressForceExcludedXZ",
+        "B18StressForceExcludedYY",
+        "B18StressForceExcludedYZ",
+        "B18StressForceExcludedZZ",
+    ],
+    "B18StressIncomingNorm": [
+        "B18StressIncomingXX",
+        "B18StressIncomingXY",
+        "B18StressIncomingXZ",
+        "B18StressIncomingYY",
+        "B18StressIncomingYZ",
+        "B18StressIncomingZZ",
+    ],
 }
 
 DERIVED_VECTOR_MAG_FIELDS = {
@@ -149,6 +235,19 @@ DERIVED_VECTOR_MAG_FIELDS = {
     "VelocityNorm": "U",
     "MomentumAfterGNorm": "ReplayMomentumAfterG",
     "MomentumDeltaGNorm": "ReplayMomentumDeltaG",
+    "B18FmuLegacyNorm": "B18FmuLegacy",
+    "B18FmuPreForceNorm": "B18FmuPreForce",
+    "B18FmuPostForceNorm": "B18FmuPostForce",
+    "B18FmuForceExcludedNorm": "B18FmuForceExcluded",
+    "B18FmuIncomingNorm": "B18FmuIncoming",
+    "B18FmuCandidateDeltaNorm": "B18FmuCandidateDelta",
+    "B18ForceOverRhoRawNorm": "B18ForceOverRhoRaw",
+    "B18ForceOverRhoDensityFloorNorm": "B18ForceOverRhoDensityFloor",
+    "B18ForceOverRhoPhaseMixtureNorm": "B18ForceOverRhoPhaseMixture",
+    "B18HVelocityLegacyNorm": "B18HVelocityLegacy",
+    "B18HVelocityPreForceNorm": "B18HVelocityPreForce",
+    "B18HVelocityRawPostForceNorm": "B18HVelocityRawPostForce",
+    "B18HVelocityBoundedShadowNorm": "B18HVelocityBoundedShadow",
 }
 
 TARGET_FIELDS = [
@@ -172,6 +271,49 @@ TARGET_FIELDS = [
     "StressPostForceNorm",
     "StressPostMinusPreNorm",
     "StressPostOverPreRatio",
+    "B18ProbeActive",
+    "B18StressPreForceNorm",
+    "B18StressPostForceNorm",
+    "B18StressForceExcludedNorm",
+    "B18StressIncomingNorm",
+    "B18StressPostMinusPreNorm",
+    "B18StressPostOverPre",
+    "B18StressAmplificationFlag",
+    "B18FmuPreForceNorm",
+    "B18FmuPostForceNorm",
+    "B18FmuForceExcludedNorm",
+    "B18FmuCandidateDeltaNorm",
+    "B18ForceOverRhoRawNorm",
+    "B18ForceOverRhoDensityFloorNorm",
+    "B18ForceOverRhoPhaseMixtureNorm",
+    "B18HVelocityLegacyNorm",
+    "B18HVelocityPreForceNorm",
+    "B18HVelocityRawPostForceNorm",
+    "B18HVelocityBoundedShadowNorm",
+    "B18HeqLegacyMaxAbs",
+    "B18HeqPreForceMaxAbs",
+    "B18HeqBoundedShadowMaxAbs",
+    "B20ProbeActive",
+    "B20FphiActiveMaxAbs",
+    "B20FphiRawPostForceMaxAbs",
+    "B20FphiPreForceMaxAbs",
+    "B20FphiBoundedMaxAbs",
+    "B20HeqActiveMaxAbs",
+    "B20HeqRawPostForceMaxAbs",
+    "B20HeqPreForceMaxAbs",
+    "B20HeqBoundedMaxAbs",
+    "B20HPostActiveMaxAbs",
+    "B20HPostRawPostForceMaxAbs",
+    "B20HPostPreForceMaxAbs",
+    "B20HPostBoundedMaxAbs",
+    "B20PhaseFromHActiveShadow",
+    "B20PhaseFromHRawPostForceShadow",
+    "B20PhaseFromHPreForceShadow",
+    "B20PhaseFromHBoundedShadow",
+    "B20HPostActiveOutOfBoundsFlag",
+    "B20HPostRawPostForceOutOfBoundsFlag",
+    "B20HPostPreForceOutOfBoundsFlag",
+    "B20HPostBoundedOutOfBoundsFlag",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
 ]
@@ -204,6 +346,52 @@ COLOCATE_FIELDS = [
     "StressPostForceNorm",
     "StressPostMinusPreNorm",
     "StressPostOverPreRatio",
+    "B18ProbeActive",
+    "B18StressPreForceNorm",
+    "B18StressPostForceNorm",
+    "B18StressForceExcludedNorm",
+    "B18StressIncomingNorm",
+    "B18StressPostMinusPreNorm",
+    "B18StressPostOverPre",
+    "B18StressAmplificationFlag",
+    "B18FmuPreForceNorm",
+    "B18FmuPostForceNorm",
+    "B18FmuForceExcludedNorm",
+    "B18FmuCandidateDeltaNorm",
+    "B18ForceOverRhoRawNorm",
+    "B18ForceOverRhoDensityFloorNorm",
+    "B18ForceOverRhoPhaseMixtureNorm",
+    "B18RhoDenominatorRaw",
+    "B18RhoDenominatorFloor",
+    "B18RhoDenominatorPhaseMix",
+    "B18HVelocityLegacyNorm",
+    "B18HVelocityPreForceNorm",
+    "B18HVelocityRawPostForceNorm",
+    "B18HVelocityBoundedShadowNorm",
+    "B18HeqLegacyMaxAbs",
+    "B18HeqPreForceMaxAbs",
+    "B18HeqBoundedShadowMaxAbs",
+    "B20ProbeActive",
+    "B20FphiActiveMaxAbs",
+    "B20FphiRawPostForceMaxAbs",
+    "B20FphiPreForceMaxAbs",
+    "B20FphiBoundedMaxAbs",
+    "B20HeqActiveMaxAbs",
+    "B20HeqRawPostForceMaxAbs",
+    "B20HeqPreForceMaxAbs",
+    "B20HeqBoundedMaxAbs",
+    "B20HPostActiveMaxAbs",
+    "B20HPostRawPostForceMaxAbs",
+    "B20HPostPreForceMaxAbs",
+    "B20HPostBoundedMaxAbs",
+    "B20PhaseFromHActiveShadow",
+    "B20PhaseFromHRawPostForceShadow",
+    "B20PhaseFromHPreForceShadow",
+    "B20PhaseFromHBoundedShadow",
+    "B20HPostActiveOutOfBoundsFlag",
+    "B20HPostRawPostForceOutOfBoundsFlag",
+    "B20HPostPreForceOutOfBoundsFlag",
+    "B20HPostBoundedOutOfBoundsFlag",
     "UPreForceNorm",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
@@ -221,6 +409,26 @@ THRESHOLDS = {
     "fmu_raw_large": ("FmuRawNorm", 1.0e3),
     "stress_input_large": ("StressInputNorm", 1.0e3),
     "stress_post_large": ("StressPostForceNorm", 1.0e3),
+    "b18_force_raw_large": ("B18ForceOverRhoRawNorm", 1.0e3),
+    "b18_force_floor_large": ("B18ForceOverRhoDensityFloorNorm", 1.0e3),
+    "b18_force_phase_mix_large": ("B18ForceOverRhoPhaseMixtureNorm", 1.0e3),
+    "b18_stress_post_large": ("B18StressPostForceNorm", 1.0e3),
+    "b18_stress_amp_large": ("B18StressPostOverPre", 10.0),
+    "b18_fmu_post_large": ("B18FmuPostForceNorm", 1.0e3),
+    "b18_heq_legacy_large": ("B18HeqLegacyMaxAbs", 1.0),
+    "b18_heq_pre_large": ("B18HeqPreForceMaxAbs", 1.0),
+    "b20_heq_active_large": ("B20HeqActiveMaxAbs", 1.0),
+    "b20_heq_raw_post_large": ("B20HeqRawPostForceMaxAbs", 1.0),
+    "b20_heq_pre_large": ("B20HeqPreForceMaxAbs", 1.0),
+    "b20_heq_bounded_large": ("B20HeqBoundedMaxAbs", 1.0),
+    "b20_hpost_active_large": ("B20HPostActiveMaxAbs", 1.0),
+    "b20_hpost_raw_post_large": ("B20HPostRawPostForceMaxAbs", 1.0),
+    "b20_hpost_pre_large": ("B20HPostPreForceMaxAbs", 1.0),
+    "b20_hpost_bounded_large": ("B20HPostBoundedMaxAbs", 1.0),
+    "b20_phase_active_oob": ("B20PhaseFromHActiveShadow", 1.0 + 1.0e-3),
+    "b20_phase_raw_post_oob": ("B20PhaseFromHRawPostForceShadow", 1.0 + 1.0e-3),
+    "b20_phase_pre_oob": ("B20PhaseFromHPreForceShadow", 1.0 + 1.0e-3),
+    "b20_phase_bounded_oob": ("B20PhaseFromHBoundedShadow", 1.0 + 1.0e-3),
     "pressure_input_large": ("ReplayPressureInput", 1.0e3),
     "pressure_force_large": ("FpressureNorm", 1.0e3),
     "phase_from_h_out_of_bounds": ("ReplayPhaseFromH", 1.0 + 1.0e-3),
@@ -318,6 +526,10 @@ def add_derived_fields(arrays: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
     if pre is not None and post is not None:
         out["StressPostMinusPreNorm"] = np.abs(post - pre)
         out["StressPostOverPreRatio"] = post / (pre + 1.0e-300)
+    b18_pre = scalarize(out.get("B18StressPreForceNorm"))
+    b18_post = scalarize(out.get("B18StressPostForceNorm"))
+    if b18_pre is not None and b18_post is not None:
+        out["B18StressPostMinusPreNorm"] = np.abs(b18_post - b18_pre)
     return out
 
 
@@ -641,6 +853,26 @@ def key_summary(
     pressure = first("threshold_pressure_input_large")
     phase = first("threshold_phase_from_h_out_of_bounds")
     hpost = first("threshold_hpost_large")
+    b18_force_raw = first("threshold_b18_force_raw_large")
+    b18_force_floor = first("threshold_b18_force_floor_large")
+    b18_force_phase_mix = first("threshold_b18_force_phase_mix_large")
+    b18_stress_post = first("threshold_b18_stress_post_large")
+    b18_stress_amp = first("threshold_b18_stress_amp_large")
+    b18_fmu_post = first("threshold_b18_fmu_post_large")
+    b18_heq_legacy = first("threshold_b18_heq_legacy_large")
+    b18_heq_pre = first("threshold_b18_heq_pre_large")
+    b20_heq_active = first("threshold_b20_heq_active_large")
+    b20_heq_raw_post = first("threshold_b20_heq_raw_post_large")
+    b20_heq_pre = first("threshold_b20_heq_pre_large")
+    b20_heq_bounded = first("threshold_b20_heq_bounded_large")
+    b20_hpost_active = first("threshold_b20_hpost_active_large")
+    b20_hpost_raw_post = first("threshold_b20_hpost_raw_post_large")
+    b20_hpost_pre = first("threshold_b20_hpost_pre_large")
+    b20_hpost_bounded = first("threshold_b20_hpost_bounded_large")
+    b20_phase_active = first("threshold_b20_phase_active_oob")
+    b20_phase_raw_post = first("threshold_b20_phase_raw_post_oob")
+    b20_phase_pre = first("threshold_b20_phase_pre_oob")
+    b20_phase_bounded = first("threshold_b20_phase_bounded_oob")
 
     branch = "undetermined"
     reason = "No configured onset threshold was crossed."
@@ -664,9 +896,64 @@ def key_summary(
         branch = "h_population_update_first"
         reason = "HPost magnitude crosses threshold before PhaseFromH leaves bounds."
 
+    b18_branch = "not_available"
+    b18_reason = "B18 fields were not present or did not cross configured thresholds."
+    if b18_stress_post and (
+        b18_force_raw is None or int(b18_stress_post["step"]) <= int(b18_force_raw["step"])
+    ):
+        b18_branch = "stress_timelevel_shadow"
+        b18_reason = "B18 post-force stress crosses before or with raw F/rho."
+    if b18_stress_amp and (
+        b18_stress_post is None or int(b18_stress_amp["step"]) <= int(b18_stress_post["step"])
+    ):
+        b18_branch = "stress_amplification_shadow"
+        b18_reason = "B18 post/pre stress amplification crosses first."
+    if b18_force_raw and (
+        b18_stress_post is None or int(b18_force_raw["step"]) < int(b18_stress_post["step"])
+    ):
+        b18_branch = "force_over_rho_raw_denominator_shadow"
+        b18_reason = "B18 raw F/rho crosses before post-force stress."
+    if b18_force_raw and not b18_force_floor:
+        b18_branch = "force_density_floor_relief_shadow"
+        b18_reason = "B18 raw F/rho crosses, while density-floor shadow does not cross."
+    if b18_force_raw and not b18_force_phase_mix:
+        b18_branch = "phase_mixture_denominator_relief_shadow"
+        b18_reason = "B18 raw F/rho crosses, while phase-mixture denominator shadow does not cross."
+    if b18_heq_legacy and (b18_heq_pre is None or int(b18_heq_legacy["step"]) < int(b18_heq_pre["step"])):
+        b18_branch = "h_velocity_input_shadow"
+        b18_reason = "B18 legacy h-equilibrium shadow crosses earlier than pre-force h-equilibrium shadow."
+
+    b20_branch = "not_available"
+    b20_reason = "B20 fields were not present or did not cross configured thresholds."
+    if b20_hpost_active:
+        b20_branch = "active_hpost_shadow_unbounded"
+        b20_reason = "B20 active hpost shadow crosses the configured threshold."
+    if b20_phase_active:
+        b20_branch = "active_phase_from_h_shadow_out_of_bounds"
+        b20_reason = "B20 active PhaseFromH shadow leaves the physical phase interval."
+    if b20_phase_active and b20_phase_raw_post and b20_phase_pre:
+        raw_step = int(b20_phase_raw_post["step"])
+        pre_step = int(b20_phase_pre["step"])
+        active_step = int(b20_phase_active["step"])
+        if raw_step <= active_step and raw_step < pre_step:
+            b20_branch = "raw_post_force_h_velocity_shadow_first"
+            b20_reason = "Raw post-force h-update candidate leaves bounds earlier than pre-force candidate."
+        elif pre_step <= active_step and pre_step < raw_step:
+            b20_branch = "pre_force_h_velocity_shadow_first"
+            b20_reason = "Pre-force h-update candidate leaves bounds earlier than raw post-force candidate."
+        elif raw_step == pre_step == active_step:
+            b20_branch = "h_update_common_source"
+            b20_reason = "Raw post-force and pre-force h-update candidates leave bounds at the same step."
+    if b20_phase_active and not b20_phase_bounded:
+        b20_branch = "bounded_velocity_relief_shadow"
+        b20_reason = "B20 active PhaseFromH leaves bounds while bounded-velocity candidate does not."
+    if b20_heq_active and (b20_hpost_active is None or int(b20_heq_active["step"]) <= int(b20_hpost_active["step"])):
+        b20_branch = "heq_candidate_large_before_hpost"
+        b20_reason = "B20 active heq shadow crosses before or with hpost."
+
     return {
         "root": str(root),
-        "status": "B17_DIAGNOSTIC_COMPLETE",
+        "status": "B17_B18_DIAGNOSTIC_COMPLETE",
         "claim_limit": "diagnostic-only; not contact-angle validation and not a solver fix",
         "frame_count": len(frame_summaries),
         "stat_row_count": len(stats_rows),
@@ -678,13 +965,39 @@ def key_summary(
         "first_pressure_input_onset": pressure,
         "first_phase_from_h_onset": phase,
         "first_hpost_onset": hpost,
+        "first_b18_force_raw_onset": b18_force_raw,
+        "first_b18_force_floor_onset": b18_force_floor,
+        "first_b18_force_phase_mix_onset": b18_force_phase_mix,
+        "first_b18_stress_post_onset": b18_stress_post,
+        "first_b18_stress_amp_onset": b18_stress_amp,
+        "first_b18_fmu_post_onset": b18_fmu_post,
+        "first_b18_heq_legacy_onset": b18_heq_legacy,
+        "first_b18_heq_pre_onset": b18_heq_pre,
+        "first_b20_heq_active_onset": b20_heq_active,
+        "first_b20_heq_raw_post_onset": b20_heq_raw_post,
+        "first_b20_heq_pre_onset": b20_heq_pre,
+        "first_b20_heq_bounded_onset": b20_heq_bounded,
+        "first_b20_hpost_active_onset": b20_hpost_active,
+        "first_b20_hpost_raw_post_onset": b20_hpost_raw_post,
+        "first_b20_hpost_pre_onset": b20_hpost_pre,
+        "first_b20_hpost_bounded_onset": b20_hpost_bounded,
+        "first_b20_phase_active_onset": b20_phase_active,
+        "first_b20_phase_raw_post_onset": b20_phase_raw_post,
+        "first_b20_phase_pre_onset": b20_phase_pre,
+        "first_b20_phase_bounded_onset": b20_phase_bounded,
         "primary_branch": branch,
         "primary_branch_reason": reason,
+        "b18_primary_branch": b18_branch,
+        "b18_primary_branch_reason": b18_reason,
+        "b20_primary_branch": b20_branch,
+        "b20_primary_branch_reason": b20_reason,
         "notes": [
             "Use mask-specific argmax records before changing solver physics.",
             "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
             "If stress_post exceeds stress_pre at the same argmax before phase loss, stress time-level is implicated.",
+            "B18 force-excluded stress is a diagnostic shadow candidate, not a physics write path.",
             "If phase/h fields lead force diagnostics, return to h update and phase-advection timeline.",
+            "B20 bounded-velocity h-update fields are shadow diagnostics only, not a physics limiter.",
         ],
     }
 
@@ -703,6 +1016,7 @@ def main() -> int:
     parser.add_argument("root", type=Path, help="Case directory or root containing case directories.")
     parser.add_argument("--out-dir", type=Path, default=None)
     parser.add_argument("--case-glob", default="*")
+    parser.add_argument("--prefix", default="b17", help="Output filename prefix, e.g. b17 or b18.")
     args = parser.parse_args()
 
     root = args.root.resolve()
@@ -740,17 +1054,18 @@ def main() -> int:
     summary["pvti_only_cases_skipped"] = pvti_only
     summary["frame_summaries"] = frame_summaries
 
-    write_csv(out_dir / "b17_mask_stats.csv", all_stats)
-    (out_dir / "b17_argmax_trace.json").write_text(
+    prefix = args.prefix
+    write_csv(out_dir / f"{prefix}_mask_stats.csv", all_stats)
+    (out_dir / f"{prefix}_argmax_trace.json").write_text(
         json.dumps(all_argmax, indent=2, sort_keys=True), encoding="utf-8"
     )
-    (out_dir / "b17_first_onset.json").write_text(
+    (out_dir / f"{prefix}_first_onset.json").write_text(
         json.dumps(onsets, indent=2, sort_keys=True), encoding="utf-8"
     )
-    (out_dir / "b17_field_presence.json").write_text(
+    (out_dir / f"{prefix}_field_presence.json").write_text(
         json.dumps(frame_summaries, indent=2, sort_keys=True), encoding="utf-8"
     )
-    (out_dir / "b17_key_summary.json").write_text(
+    (out_dir / f"{prefix}_key_summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True), encoding="utf-8"
     )
     print(json.dumps({k: v for k, v in summary.items() if k != "frame_summaries"}, indent=2, sort_keys=True))

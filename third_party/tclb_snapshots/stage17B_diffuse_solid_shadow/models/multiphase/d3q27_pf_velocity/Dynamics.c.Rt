@@ -190,6 +190,26 @@ CudaDeviceFunction int stage14_momentum_closure_diagnostics_active(){
 	return (stage16_replay_diagnostics_active() && MomentumClosureDiagnosticsMode > 0.5);
 }
 
+CudaDeviceFunction int stage14_b18_closure_diagnostics_active(){
+	return (stage14_momentum_closure_diagnostics_active() && Stage14B18ClosureDiagnosticsMode > 0.5);
+}
+
+CudaDeviceFunction int stage14_b20_hupdate_diagnostics_active(){
+	return (stage16_replay_diagnostics_active() && Stage14B20HUpdateDiagnosticsMode > 0.5);
+}
+
+CudaDeviceFunction real_t stage14_stress_norm6(real_t stress[6]){
+	return sqrt(stress[0]*stress[0] + 2.0*stress[1]*stress[1] + 2.0*stress[2]*stress[2] +
+	            stress[3]*stress[3] + 2.0*stress[4]*stress[4] + stress[5]*stress[5]);
+}
+
+CudaDeviceFunction void stage14_fmu_from_stress(real_t out[3], real_t stress[6], vector_t gradPhi, real_t tau){
+	real_t scale = (0.5-tau) * (Density_h-Density_l);
+	out[0] = scale * (stress[0]*gradPhi.x + stress[1]*gradPhi.y + stress[2]*gradPhi.z);
+	out[1] = scale * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
+	out[2] = scale * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
+}
+
 CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayPhaseConsumed = 0.0;
 	ReplayLapPhi = 0.0;
@@ -318,6 +338,117 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayForceFixedPointMode = 0.0;
 	ReplayForceRhoRaw = 0.0;
 	ReplayForceRhoEffective = 0.0;
+	B18ProbeActive = 0.0;
+	B18StressLegacyXX = 0.0;
+	B18StressLegacyXY = 0.0;
+	B18StressLegacyXZ = 0.0;
+	B18StressLegacyYY = 0.0;
+	B18StressLegacyYZ = 0.0;
+	B18StressLegacyZZ = 0.0;
+	B18StressPreForceXX = 0.0;
+	B18StressPreForceXY = 0.0;
+	B18StressPreForceXZ = 0.0;
+	B18StressPreForceYY = 0.0;
+	B18StressPreForceYZ = 0.0;
+	B18StressPreForceZZ = 0.0;
+	B18StressPostForceXX = 0.0;
+	B18StressPostForceXY = 0.0;
+	B18StressPostForceXZ = 0.0;
+	B18StressPostForceYY = 0.0;
+	B18StressPostForceYZ = 0.0;
+	B18StressPostForceZZ = 0.0;
+	B18StressForceExcludedXX = 0.0;
+	B18StressForceExcludedXY = 0.0;
+	B18StressForceExcludedXZ = 0.0;
+	B18StressForceExcludedYY = 0.0;
+	B18StressForceExcludedYZ = 0.0;
+	B18StressForceExcludedZZ = 0.0;
+	B18StressIncomingXX = 0.0;
+	B18StressIncomingXY = 0.0;
+	B18StressIncomingXZ = 0.0;
+	B18StressIncomingYY = 0.0;
+	B18StressIncomingYZ = 0.0;
+	B18StressIncomingZZ = 0.0;
+	B18StressPostOverPre = 0.0;
+	B18StressAmplificationFlag = 0.0;
+	B18FmuLegacyX = 0.0;
+	B18FmuLegacyY = 0.0;
+	B18FmuLegacyZ = 0.0;
+	B18FmuPreForceX = 0.0;
+	B18FmuPreForceY = 0.0;
+	B18FmuPreForceZ = 0.0;
+	B18FmuPostForceX = 0.0;
+	B18FmuPostForceY = 0.0;
+	B18FmuPostForceZ = 0.0;
+	B18FmuForceExcludedX = 0.0;
+	B18FmuForceExcludedY = 0.0;
+	B18FmuForceExcludedZ = 0.0;
+	B18FmuIncomingX = 0.0;
+	B18FmuIncomingY = 0.0;
+	B18FmuIncomingZ = 0.0;
+	B18FmuCandidateDeltaX = 0.0;
+	B18FmuCandidateDeltaY = 0.0;
+	B18FmuCandidateDeltaZ = 0.0;
+	B18ForceOverRhoRawX = 0.0;
+	B18ForceOverRhoRawY = 0.0;
+	B18ForceOverRhoRawZ = 0.0;
+	B18ForceOverRhoDensityFloorX = 0.0;
+	B18ForceOverRhoDensityFloorY = 0.0;
+	B18ForceOverRhoDensityFloorZ = 0.0;
+	B18ForceOverRhoPhaseMixtureX = 0.0;
+	B18ForceOverRhoPhaseMixtureY = 0.0;
+	B18ForceOverRhoPhaseMixtureZ = 0.0;
+	B18RhoDenominatorRaw = 0.0;
+	B18RhoDenominatorFloor = 0.0;
+	B18RhoDenominatorPhaseMix = 0.0;
+	B18HVelocityLegacyX = 0.0;
+	B18HVelocityLegacyY = 0.0;
+	B18HVelocityLegacyZ = 0.0;
+	B18HVelocityPreForceX = 0.0;
+	B18HVelocityPreForceY = 0.0;
+	B18HVelocityPreForceZ = 0.0;
+	B18HVelocityRawPostForceX = 0.0;
+	B18HVelocityRawPostForceY = 0.0;
+	B18HVelocityRawPostForceZ = 0.0;
+	B18HVelocityBoundedShadowX = 0.0;
+	B18HVelocityBoundedShadowY = 0.0;
+	B18HVelocityBoundedShadowZ = 0.0;
+	B18HeqLegacyMaxAbs = 0.0;
+	B18HeqPreForceMaxAbs = 0.0;
+	B18HeqBoundedShadowMaxAbs = 0.0;
+	B20ProbeActive = 0.0;
+	B20FphiActiveSum = 0.0;
+	B20FphiActiveMaxAbs = 0.0;
+	B20FphiRawPostForceSum = 0.0;
+	B20FphiRawPostForceMaxAbs = 0.0;
+	B20FphiPreForceSum = 0.0;
+	B20FphiPreForceMaxAbs = 0.0;
+	B20FphiBoundedSum = 0.0;
+	B20FphiBoundedMaxAbs = 0.0;
+	B20HeqActiveSum = 0.0;
+	B20HeqActiveMaxAbs = 0.0;
+	B20HeqRawPostForceSum = 0.0;
+	B20HeqRawPostForceMaxAbs = 0.0;
+	B20HeqPreForceSum = 0.0;
+	B20HeqPreForceMaxAbs = 0.0;
+	B20HeqBoundedSum = 0.0;
+	B20HeqBoundedMaxAbs = 0.0;
+	B20HPostActiveSum = 0.0;
+	B20HPostActiveMaxAbs = 0.0;
+	B20HPostRawPostForceSum = 0.0;
+	B20HPostRawPostForceMaxAbs = 0.0;
+	B20HPostPreForceSum = 0.0;
+	B20HPostPreForceMaxAbs = 0.0;
+	B20HPostBoundedSum = 0.0;
+	B20HPostBoundedMaxAbs = 0.0;
+	B20PhaseFromHActiveShadow = 0.0;
+	B20PhaseFromHRawPostForceShadow = 0.0;
+	B20PhaseFromHPreForceShadow = 0.0;
+	B20PhaseFromHBoundedShadow = 0.0;
+	B20HPostActiveOutOfBoundsFlag = 0.0;
+	B20HPostRawPostForceOutOfBoundsFlag = 0.0;
+	B20HPostPreForceOutOfBoundsFlag = 0.0;
+	B20HPostBoundedOutOfBoundsFlag = 0.0;
 	B5SignedDistance = 0.0;
 	B5NearWallBandFlag = 0.0;
 	B5ContactLineBandFlag = 0.0;
@@ -1190,6 +1321,199 @@ CudaDeviceFunction real_t getReplayForceRhoRaw(){
 CudaDeviceFunction real_t getReplayForceRhoEffective(){
 	return stage14_momentum_closure_scalar(ReplayForceRhoEffective(0,0,0));
 }
+
+CudaDeviceFunction real_t stage14_b18_scalar(real_t value){
+	if (stage14_b18_closure_diagnostics_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB18ProbeActive(){
+	return stage14_b18_scalar(B18ProbeActive(0,0,0));
+}
+
+CudaDeviceFunction real_t getB18StressLegacyXX(){ return stage14_b18_scalar(B18StressLegacyXX(0,0,0)); }
+CudaDeviceFunction real_t getB18StressLegacyXY(){ return stage14_b18_scalar(B18StressLegacyXY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressLegacyXZ(){ return stage14_b18_scalar(B18StressLegacyXZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressLegacyYY(){ return stage14_b18_scalar(B18StressLegacyYY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressLegacyYZ(){ return stage14_b18_scalar(B18StressLegacyYZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressLegacyZZ(){ return stage14_b18_scalar(B18StressLegacyZZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPreForceXX(){ return stage14_b18_scalar(B18StressPreForceXX(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPreForceXY(){ return stage14_b18_scalar(B18StressPreForceXY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPreForceXZ(){ return stage14_b18_scalar(B18StressPreForceXZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPreForceYY(){ return stage14_b18_scalar(B18StressPreForceYY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPreForceYZ(){ return stage14_b18_scalar(B18StressPreForceYZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPreForceZZ(){ return stage14_b18_scalar(B18StressPreForceZZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostForceXX(){ return stage14_b18_scalar(B18StressPostForceXX(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostForceXY(){ return stage14_b18_scalar(B18StressPostForceXY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostForceXZ(){ return stage14_b18_scalar(B18StressPostForceXZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostForceYY(){ return stage14_b18_scalar(B18StressPostForceYY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostForceYZ(){ return stage14_b18_scalar(B18StressPostForceYZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostForceZZ(){ return stage14_b18_scalar(B18StressPostForceZZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressForceExcludedXX(){ return stage14_b18_scalar(B18StressForceExcludedXX(0,0,0)); }
+CudaDeviceFunction real_t getB18StressForceExcludedXY(){ return stage14_b18_scalar(B18StressForceExcludedXY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressForceExcludedXZ(){ return stage14_b18_scalar(B18StressForceExcludedXZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressForceExcludedYY(){ return stage14_b18_scalar(B18StressForceExcludedYY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressForceExcludedYZ(){ return stage14_b18_scalar(B18StressForceExcludedYZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressForceExcludedZZ(){ return stage14_b18_scalar(B18StressForceExcludedZZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressIncomingXX(){ return stage14_b18_scalar(B18StressIncomingXX(0,0,0)); }
+CudaDeviceFunction real_t getB18StressIncomingXY(){ return stage14_b18_scalar(B18StressIncomingXY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressIncomingXZ(){ return stage14_b18_scalar(B18StressIncomingXZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressIncomingYY(){ return stage14_b18_scalar(B18StressIncomingYY(0,0,0)); }
+CudaDeviceFunction real_t getB18StressIncomingYZ(){ return stage14_b18_scalar(B18StressIncomingYZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressIncomingZZ(){ return stage14_b18_scalar(B18StressIncomingZZ(0,0,0)); }
+CudaDeviceFunction real_t getB18StressPostOverPre(){ return stage14_b18_scalar(B18StressPostOverPre(0,0,0)); }
+CudaDeviceFunction real_t getB18StressAmplificationFlag(){ return stage14_b18_scalar(B18StressAmplificationFlag(0,0,0)); }
+
+CudaDeviceFunction vector_t getB18FmuLegacy(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18FmuLegacyX(0,0,0));
+	out.y = stage14_b18_scalar(B18FmuLegacyY(0,0,0));
+	out.z = stage14_b18_scalar(B18FmuLegacyZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18FmuPreForce(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18FmuPreForceX(0,0,0));
+	out.y = stage14_b18_scalar(B18FmuPreForceY(0,0,0));
+	out.z = stage14_b18_scalar(B18FmuPreForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18FmuPostForce(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18FmuPostForceX(0,0,0));
+	out.y = stage14_b18_scalar(B18FmuPostForceY(0,0,0));
+	out.z = stage14_b18_scalar(B18FmuPostForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18FmuForceExcluded(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18FmuForceExcludedX(0,0,0));
+	out.y = stage14_b18_scalar(B18FmuForceExcludedY(0,0,0));
+	out.z = stage14_b18_scalar(B18FmuForceExcludedZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18FmuIncoming(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18FmuIncomingX(0,0,0));
+	out.y = stage14_b18_scalar(B18FmuIncomingY(0,0,0));
+	out.z = stage14_b18_scalar(B18FmuIncomingZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18FmuCandidateDelta(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18FmuCandidateDeltaX(0,0,0));
+	out.y = stage14_b18_scalar(B18FmuCandidateDeltaY(0,0,0));
+	out.z = stage14_b18_scalar(B18FmuCandidateDeltaZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18ForceOverRhoRaw(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18ForceOverRhoRawX(0,0,0));
+	out.y = stage14_b18_scalar(B18ForceOverRhoRawY(0,0,0));
+	out.z = stage14_b18_scalar(B18ForceOverRhoRawZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18ForceOverRhoDensityFloor(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18ForceOverRhoDensityFloorX(0,0,0));
+	out.y = stage14_b18_scalar(B18ForceOverRhoDensityFloorY(0,0,0));
+	out.z = stage14_b18_scalar(B18ForceOverRhoDensityFloorZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18ForceOverRhoPhaseMixture(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18ForceOverRhoPhaseMixtureX(0,0,0));
+	out.y = stage14_b18_scalar(B18ForceOverRhoPhaseMixtureY(0,0,0));
+	out.z = stage14_b18_scalar(B18ForceOverRhoPhaseMixtureZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getB18RhoDenominatorRaw(){ return stage14_b18_scalar(B18RhoDenominatorRaw(0,0,0)); }
+CudaDeviceFunction real_t getB18RhoDenominatorFloor(){ return stage14_b18_scalar(B18RhoDenominatorFloor(0,0,0)); }
+CudaDeviceFunction real_t getB18RhoDenominatorPhaseMix(){ return stage14_b18_scalar(B18RhoDenominatorPhaseMix(0,0,0)); }
+
+CudaDeviceFunction vector_t getB18HVelocityLegacy(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18HVelocityLegacyX(0,0,0));
+	out.y = stage14_b18_scalar(B18HVelocityLegacyY(0,0,0));
+	out.z = stage14_b18_scalar(B18HVelocityLegacyZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18HVelocityPreForce(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18HVelocityPreForceX(0,0,0));
+	out.y = stage14_b18_scalar(B18HVelocityPreForceY(0,0,0));
+	out.z = stage14_b18_scalar(B18HVelocityPreForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18HVelocityRawPostForce(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18HVelocityRawPostForceX(0,0,0));
+	out.y = stage14_b18_scalar(B18HVelocityRawPostForceY(0,0,0));
+	out.z = stage14_b18_scalar(B18HVelocityRawPostForceZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB18HVelocityBoundedShadow(){
+	vector_t out;
+	out.x = stage14_b18_scalar(B18HVelocityBoundedShadowX(0,0,0));
+	out.y = stage14_b18_scalar(B18HVelocityBoundedShadowY(0,0,0));
+	out.z = stage14_b18_scalar(B18HVelocityBoundedShadowZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getB18HeqLegacyMaxAbs(){ return stage14_b18_scalar(B18HeqLegacyMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB18HeqPreForceMaxAbs(){ return stage14_b18_scalar(B18HeqPreForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB18HeqBoundedShadowMaxAbs(){ return stage14_b18_scalar(B18HeqBoundedShadowMaxAbs(0,0,0)); }
+
+CudaDeviceFunction real_t stage14_b20_scalar(real_t value){
+	if (stage14_b20_hupdate_diagnostics_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB20ProbeActive(){ return stage14_b20_scalar(B20ProbeActive(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiActiveSum(){ return stage14_b20_scalar(B20FphiActiveSum(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiActiveMaxAbs(){ return stage14_b20_scalar(B20FphiActiveMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiRawPostForceSum(){ return stage14_b20_scalar(B20FphiRawPostForceSum(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiRawPostForceMaxAbs(){ return stage14_b20_scalar(B20FphiRawPostForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiPreForceSum(){ return stage14_b20_scalar(B20FphiPreForceSum(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiPreForceMaxAbs(){ return stage14_b20_scalar(B20FphiPreForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiBoundedSum(){ return stage14_b20_scalar(B20FphiBoundedSum(0,0,0)); }
+CudaDeviceFunction real_t getB20FphiBoundedMaxAbs(){ return stage14_b20_scalar(B20FphiBoundedMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqActiveSum(){ return stage14_b20_scalar(B20HeqActiveSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqActiveMaxAbs(){ return stage14_b20_scalar(B20HeqActiveMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqRawPostForceSum(){ return stage14_b20_scalar(B20HeqRawPostForceSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqRawPostForceMaxAbs(){ return stage14_b20_scalar(B20HeqRawPostForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqPreForceSum(){ return stage14_b20_scalar(B20HeqPreForceSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqPreForceMaxAbs(){ return stage14_b20_scalar(B20HeqPreForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqBoundedSum(){ return stage14_b20_scalar(B20HeqBoundedSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HeqBoundedMaxAbs(){ return stage14_b20_scalar(B20HeqBoundedMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostActiveSum(){ return stage14_b20_scalar(B20HPostActiveSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostActiveMaxAbs(){ return stage14_b20_scalar(B20HPostActiveMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostRawPostForceSum(){ return stage14_b20_scalar(B20HPostRawPostForceSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostRawPostForceMaxAbs(){ return stage14_b20_scalar(B20HPostRawPostForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostPreForceSum(){ return stage14_b20_scalar(B20HPostPreForceSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostPreForceMaxAbs(){ return stage14_b20_scalar(B20HPostPreForceMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostBoundedSum(){ return stage14_b20_scalar(B20HPostBoundedSum(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostBoundedMaxAbs(){ return stage14_b20_scalar(B20HPostBoundedMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB20PhaseFromHActiveShadow(){ return stage14_b20_scalar(B20PhaseFromHActiveShadow(0,0,0)); }
+CudaDeviceFunction real_t getB20PhaseFromHRawPostForceShadow(){ return stage14_b20_scalar(B20PhaseFromHRawPostForceShadow(0,0,0)); }
+CudaDeviceFunction real_t getB20PhaseFromHPreForceShadow(){ return stage14_b20_scalar(B20PhaseFromHPreForceShadow(0,0,0)); }
+CudaDeviceFunction real_t getB20PhaseFromHBoundedShadow(){ return stage14_b20_scalar(B20PhaseFromHBoundedShadow(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostActiveOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostActiveOutOfBoundsFlag(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostRawPostForceOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostRawPostForceOutOfBoundsFlag(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostPreForceOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostPreForceOutOfBoundsFlag(0,0,0)); }
+CudaDeviceFunction real_t getB20HPostBoundedOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostBoundedOutOfBoundsFlag(0,0,0)); }
 
 CudaDeviceFunction real_t getWallGradDeltaMag(){
 	return WallGradDeltaMag(0,0,0);
@@ -2437,6 +2761,12 @@ CudaDeviceFunction void CollisionMRT()
 	real_t F_mu_iter1[3] = {0.0, 0.0, 0.0};
 	real_t stress_prev[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	real_t stress_iter1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t b18_stress_force_excluded[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t b18_stress_incoming[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t b18_fmu_pre[3] = {0.0, 0.0, 0.0};
+	real_t b18_fmu_post[3] = {0.0, 0.0, 0.0};
+	real_t b18_fmu_force_excluded[3] = {0.0, 0.0, 0.0};
+	real_t b18_fmu_incoming[3] = {0.0, 0.0, 0.0};
 	real_t pressure_force_input = 0.0;
 	real_t force_rho_eff = 0.0;
 	real_t force_rho_inv = 0.0;
@@ -2462,6 +2792,17 @@ CudaDeviceFunction void CollisionMRT()
 		rho.inv = rho ^ (-1)
 	?>
 	p = m0[0];
+	if (stage14_b18_closure_diagnostics_active()) {
+		<?R
+			b18_stress_incoming = PV("b18_stress_incoming[",1:6-1,"]")
+			C(b18_stress_incoming[1], sum( U[,1]*U[,1] * g )); # XX
+			C(b18_stress_incoming[2], sum( U[,1]*U[,2] * g )); # XY
+			C(b18_stress_incoming[3], sum( U[,1]*U[,3] * g )); # XZ
+			C(b18_stress_incoming[4], sum( U[,2]*U[,2] * g )); # YY
+			C(b18_stress_incoming[5], sum( U[,2]*U[,3] * g )); # YZ
+			C(b18_stress_incoming[6], sum( U[,3]*U[,3] * g )); # ZZ
+		?>
+	}
 	pressure_force_input = stage14_pressure_force_input(p, rho);
 	force_rho_eff = stage14_effective_force_rho(rho);
 	force_rho_inv = stage14_inv_force_rho(rho);
@@ -2555,6 +2896,9 @@ CudaDeviceFunction void CollisionMRT()
 		ReplayFsurfY = F_surf[1];
 		ReplayFsurfZ = F_surf[2];
 	}
+	if (stage14_b18_closure_diagnostics_active()) {
+		stage14_fmu_from_stress(b18_fmu_incoming, b18_stress_incoming, gradPhi, tau);
+	}
 	// Viscous force fixed-point iteration. ForceFixedTol<=0 preserves the
 	// legacy fixed-count loop controlled by force_fixed_iterator.
 	int force_iter_limit = stage14_force_iter_limit_from_mode();
@@ -2579,6 +2923,9 @@ CudaDeviceFunction void CollisionMRT()
 		F_mu[1] = (0.5-tau) * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
 		F_mu[2] = (0.5-tau) * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
 		real_t F_mu_raw[3] = {F_mu[0], F_mu[1], F_mu[2]};
+		if (stage14_b18_closure_diagnostics_active()) {
+			stage14_fmu_from_stress(b18_fmu_pre, stress, gradPhi, tau);
+		}
 		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
 		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
 		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
@@ -2763,6 +3110,105 @@ CudaDeviceFunction void CollisionMRT()
 			ReplayStressPostForceShadowYY = stress_post_force_shadow[3];
 			ReplayStressPostForceShadowYZ = stress_post_force_shadow[4];
 			ReplayStressPostForceShadowZZ = stress_post_force_shadow[5];
+			if (stage14_b18_closure_diagnostics_active()) {
+				real_t b18_eq_post_force[27] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				                                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+				real_t b18_stress_eq_post[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+				<?R
+					b18_eq_post_force = PV("b18_eq_post_force[",1:27-1,"]")
+					b18_stress_eq_post = PV("b18_stress_eq_post[",1:6-1,"]")
+					C(b18_eq_post_force, EQ$feq)
+					C(b18_stress_eq_post[1], sum( U[,1]*U[,1] * b18_eq_post_force )); # XX
+					C(b18_stress_eq_post[2], sum( U[,1]*U[,2] * b18_eq_post_force )); # XY
+					C(b18_stress_eq_post[3], sum( U[,1]*U[,3] * b18_eq_post_force )); # XZ
+					C(b18_stress_eq_post[4], sum( U[,2]*U[,2] * b18_eq_post_force )); # YY
+					C(b18_stress_eq_post[5], sum( U[,2]*U[,3] * b18_eq_post_force )); # YZ
+					C(b18_stress_eq_post[6], sum( U[,3]*U[,3] * b18_eq_post_force )); # ZZ
+				?>
+				for (int b18_si=0; b18_si<6; b18_si++) {
+					b18_stress_force_excluded[b18_si] = b18_stress_incoming[b18_si] - b18_stress_eq_post[b18_si];
+				}
+				stage14_fmu_from_stress(b18_fmu_post, stress_post_force_shadow, gradPhi, tau);
+				stage14_fmu_from_stress(b18_fmu_force_excluded, b18_stress_force_excluded, gradPhi, tau);
+				real_t b18_pre_norm = stage14_stress_norm6(stress);
+				real_t b18_post_norm = stage14_stress_norm6(stress_post_force_shadow);
+				real_t b18_raw_denom = rho;
+				real_t b18_floor_denom = rho;
+				real_t b18_floor_value = ForceDensityRhoFloor;
+				if (b18_floor_value <= 0.0) b18_floor_value = Density_l;
+				if (b18_floor_value < 1.0e-30) b18_floor_value = 1.0e-30;
+				if (b18_floor_denom < b18_floor_value) b18_floor_denom = b18_floor_value;
+				real_t b18_phase = C;
+				if (b18_phase < PhaseField_l) b18_phase = PhaseField_l;
+				if (b18_phase > PhaseField_h) b18_phase = PhaseField_h;
+				real_t b18_phase_mix = Density_l + (b18_phase - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+				if (b18_raw_denom < 1.0e-30) b18_raw_denom = 1.0e-30;
+				if (b18_phase_mix < 1.0e-30) b18_phase_mix = 1.0e-30;
+				B18ProbeActive = 1.0;
+				B18StressLegacyXX = stress[0];
+				B18StressLegacyXY = stress[1];
+				B18StressLegacyXZ = stress[2];
+				B18StressLegacyYY = stress[3];
+				B18StressLegacyYZ = stress[4];
+				B18StressLegacyZZ = stress[5];
+				B18StressPreForceXX = stress[0];
+				B18StressPreForceXY = stress[1];
+				B18StressPreForceXZ = stress[2];
+				B18StressPreForceYY = stress[3];
+				B18StressPreForceYZ = stress[4];
+				B18StressPreForceZZ = stress[5];
+				B18StressPostForceXX = stress_post_force_shadow[0];
+				B18StressPostForceXY = stress_post_force_shadow[1];
+				B18StressPostForceXZ = stress_post_force_shadow[2];
+				B18StressPostForceYY = stress_post_force_shadow[3];
+				B18StressPostForceYZ = stress_post_force_shadow[4];
+				B18StressPostForceZZ = stress_post_force_shadow[5];
+				B18StressForceExcludedXX = b18_stress_force_excluded[0];
+				B18StressForceExcludedXY = b18_stress_force_excluded[1];
+				B18StressForceExcludedXZ = b18_stress_force_excluded[2];
+				B18StressForceExcludedYY = b18_stress_force_excluded[3];
+				B18StressForceExcludedYZ = b18_stress_force_excluded[4];
+				B18StressForceExcludedZZ = b18_stress_force_excluded[5];
+				B18StressIncomingXX = b18_stress_incoming[0];
+				B18StressIncomingXY = b18_stress_incoming[1];
+				B18StressIncomingXZ = b18_stress_incoming[2];
+				B18StressIncomingYY = b18_stress_incoming[3];
+				B18StressIncomingYZ = b18_stress_incoming[4];
+				B18StressIncomingZZ = b18_stress_incoming[5];
+				B18StressPostOverPre = b18_post_norm / (b18_pre_norm + 1.0e-300);
+				B18StressAmplificationFlag = (B18StressPostOverPre > 10.0) ? 1.0 : 0.0;
+				B18FmuLegacyX = F_mu_raw[0];
+				B18FmuLegacyY = F_mu_raw[1];
+				B18FmuLegacyZ = F_mu_raw[2];
+				B18FmuPreForceX = b18_fmu_pre[0];
+				B18FmuPreForceY = b18_fmu_pre[1];
+				B18FmuPreForceZ = b18_fmu_pre[2];
+				B18FmuPostForceX = b18_fmu_post[0];
+				B18FmuPostForceY = b18_fmu_post[1];
+				B18FmuPostForceZ = b18_fmu_post[2];
+				B18FmuForceExcludedX = b18_fmu_force_excluded[0];
+				B18FmuForceExcludedY = b18_fmu_force_excluded[1];
+				B18FmuForceExcludedZ = b18_fmu_force_excluded[2];
+				B18FmuIncomingX = b18_fmu_incoming[0];
+				B18FmuIncomingY = b18_fmu_incoming[1];
+				B18FmuIncomingZ = b18_fmu_incoming[2];
+				B18FmuCandidateDeltaX = b18_fmu_post[0] - b18_fmu_pre[0];
+				B18FmuCandidateDeltaY = b18_fmu_post[1] - b18_fmu_pre[1];
+				B18FmuCandidateDeltaZ = b18_fmu_post[2] - b18_fmu_pre[2];
+				B18ForceOverRhoRawX = F_total[0] / b18_raw_denom;
+				B18ForceOverRhoRawY = F_total[1] / b18_raw_denom;
+				B18ForceOverRhoRawZ = F_total[2] / b18_raw_denom;
+				B18ForceOverRhoDensityFloorX = F_total[0] / b18_floor_denom;
+				B18ForceOverRhoDensityFloorY = F_total[1] / b18_floor_denom;
+				B18ForceOverRhoDensityFloorZ = F_total[2] / b18_floor_denom;
+				B18ForceOverRhoPhaseMixtureX = F_total[0] / b18_phase_mix;
+				B18ForceOverRhoPhaseMixtureY = F_total[1] / b18_phase_mix;
+				B18ForceOverRhoPhaseMixtureZ = F_total[2] / b18_phase_mix;
+				B18RhoDenominatorRaw = b18_raw_denom;
+				B18RhoDenominatorFloor = b18_floor_denom;
+				B18RhoDenominatorPhaseMix = b18_phase_mix;
+			}
 		}
 		if (force_iter_guard_stop) {
 			force_iter_converged = true;
@@ -2802,6 +3248,32 @@ CudaDeviceFunction void CollisionMRT()
 		ReplayPhaseAdvVelocityY = phase_adv_V;
 		ReplayPhaseAdvVelocityZ = phase_adv_W;
 	}
+	if (stage14_b18_closure_diagnostics_active()) {
+		real_t b18_bounded_u = U;
+		real_t b18_bounded_v = V;
+		real_t b18_bounded_w = W;
+		real_t b18_speed = sqrt(b18_bounded_u*b18_bounded_u + b18_bounded_v*b18_bounded_v + b18_bounded_w*b18_bounded_w);
+		real_t b18_speed_bound = Stage14B18VelocityBound;
+		if (b18_speed_bound <= 0.0) b18_speed_bound = 0.2;
+		if (b18_speed > b18_speed_bound && b18_speed > 1.0e-30) {
+			real_t b18_scale = b18_speed_bound / b18_speed;
+			b18_bounded_u *= b18_scale;
+			b18_bounded_v *= b18_scale;
+			b18_bounded_w *= b18_scale;
+		}
+		B18HVelocityLegacyX = phase_adv_U;
+		B18HVelocityLegacyY = phase_adv_V;
+		B18HVelocityLegacyZ = phase_adv_W;
+		B18HVelocityPreForceX = m0[1];
+		B18HVelocityPreForceY = m0[2];
+		B18HVelocityPreForceZ = m0[3];
+		B18HVelocityRawPostForceX = U;
+		B18HVelocityRawPostForceY = V;
+		B18HVelocityRawPostForceZ = W;
+		B18HVelocityBoundedShadowX = b18_bounded_u;
+		B18HVelocityBoundedShadowY = b18_bounded_v;
+		B18HVelocityBoundedShadowZ = b18_bounded_w;
+	}
 	U = phase_adv_U;
 	V = phase_adv_V;
 	W = phase_adv_W;
@@ -2831,6 +3303,180 @@ CudaDeviceFunction void CollisionMRT()
 		}
 		ReplayHPreMaxAbs = h_pre_max_diag;
 		ReplayHeqMaxAbs = heq_max_diag;
+	}
+	if (stage14_b18_closure_diagnostics_active()) {
+		real_t b18_heq_legacy_max_diag = 0.0;
+		for (int stage14_hi=0; stage14_hi<hPops; stage14_hi++) {
+			b18_heq_legacy_max_diag = stage14_max_abs2(b18_heq_legacy_max_diag, heq[stage14_hi]);
+		}
+		B18HeqLegacyMaxAbs = b18_heq_legacy_max_diag;
+		real_t b18_heq_pre_force[hPops];
+		real_t b18_heq_bounded[hPops];
+		real_t b18_saved_u = U;
+		real_t b18_saved_v = V;
+		real_t b18_saved_w = W;
+		U = B18HVelocityPreForceX;
+		V = B18HVelocityPreForceY;
+		W = B18HVelocityPreForceZ;
+		<?R
+			b18_heq_pre_force = PV("b18_heq_pre_force[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b18_pre = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b18_heq_pre_force, EQ_h_b18_pre$feq * PV("C"))
+		?>
+		U = B18HVelocityBoundedShadowX;
+		V = B18HVelocityBoundedShadowY;
+		W = B18HVelocityBoundedShadowZ;
+		<?R
+			b18_heq_bounded = PV("b18_heq_bounded[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b18_bounded = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b18_heq_bounded, EQ_h_b18_bounded$feq * PV("C"))
+		?>
+		U = b18_saved_u;
+		V = b18_saved_v;
+		W = b18_saved_w;
+		real_t b18_heq_pre_max_diag = 0.0;
+		real_t b18_heq_bounded_max_diag = 0.0;
+		for (int stage14_hi=0; stage14_hi<hPops; stage14_hi++) {
+			b18_heq_pre_max_diag = stage14_max_abs2(b18_heq_pre_max_diag, b18_heq_pre_force[stage14_hi]);
+			b18_heq_bounded_max_diag = stage14_max_abs2(b18_heq_bounded_max_diag, b18_heq_bounded[stage14_hi]);
+		}
+		B18HeqPreForceMaxAbs = b18_heq_pre_max_diag;
+		B18HeqBoundedShadowMaxAbs = b18_heq_bounded_max_diag;
+	}
+	if (stage14_b20_hupdate_diagnostics_active()) {
+		real_t b20_h_pre[hPops];
+		real_t b20_heq_raw_post[hPops];
+		real_t b20_heq_pre_force[hPops];
+		real_t b20_heq_bounded[hPops];
+		real_t b20_hpost_active[hPops];
+		real_t b20_hpost_raw_post[hPops];
+		real_t b20_hpost_pre_force[hPops];
+		real_t b20_hpost_bounded[hPops];
+		<?R
+			b20_h_pre = PV("b20_h_pre[",1:(if (Options$q27) 27 else 15)-1,"]")
+			b20_hpost_active = PV("b20_hpost_active[",1:(if (Options$q27) 27 else 15)-1,"]")
+			C(b20_h_pre, h)
+			C(b20_hpost_active, b20_h_pre - omega * (b20_h_pre - heq + 0.5*Fphi) + Fphi)
+		?>
+		real_t b20_saved_u = U;
+		real_t b20_saved_v = V;
+		real_t b20_saved_w = W;
+		real_t b20_bounded_u = momentum_U;
+		real_t b20_bounded_v = momentum_V;
+		real_t b20_bounded_w = momentum_W;
+		real_t b20_speed = sqrt(b20_bounded_u*b20_bounded_u + b20_bounded_v*b20_bounded_v + b20_bounded_w*b20_bounded_w);
+		real_t b20_speed_bound = Stage14B18VelocityBound;
+		if (b20_speed_bound <= 0.0) b20_speed_bound = 0.2;
+		if (b20_speed > b20_speed_bound && b20_speed > 1.0e-30) {
+			real_t b20_scale = b20_speed_bound / b20_speed;
+			b20_bounded_u *= b20_scale;
+			b20_bounded_v *= b20_scale;
+			b20_bounded_w *= b20_scale;
+		}
+		U = momentum_U;
+		V = momentum_V;
+		W = momentum_W;
+		<?R
+			b20_heq_raw_post = PV("b20_heq_raw_post[",1:(if (Options$q27) 27 else 15)-1,"]")
+			b20_hpost_raw_post = PV("b20_hpost_raw_post[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b20_raw = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b20_heq_raw_post, EQ_h_b20_raw$feq * PV("C"))
+			C(b20_hpost_raw_post, b20_h_pre - omega * (b20_h_pre - b20_heq_raw_post + 0.5*Fphi) + Fphi)
+		?>
+		U = m0[1];
+		V = m0[2];
+		W = m0[3];
+		<?R
+			b20_heq_pre_force = PV("b20_heq_pre_force[",1:(if (Options$q27) 27 else 15)-1,"]")
+			b20_hpost_pre_force = PV("b20_hpost_pre_force[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b20_pre = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b20_heq_pre_force, EQ_h_b20_pre$feq * PV("C"))
+			C(b20_hpost_pre_force, b20_h_pre - omega * (b20_h_pre - b20_heq_pre_force + 0.5*Fphi) + Fphi)
+		?>
+		U = b20_bounded_u;
+		V = b20_bounded_v;
+		W = b20_bounded_w;
+		<?R
+			b20_heq_bounded = PV("b20_heq_bounded[",1:(if (Options$q27) 27 else 15)-1,"]")
+			b20_hpost_bounded = PV("b20_hpost_bounded[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b20_bounded = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b20_heq_bounded, EQ_h_b20_bounded$feq * PV("C"))
+			C(b20_hpost_bounded, b20_h_pre - omega * (b20_h_pre - b20_heq_bounded + 0.5*Fphi) + Fphi)
+		?>
+		U = b20_saved_u;
+		V = b20_saved_v;
+		W = b20_saved_w;
+		real_t b20_fphi_sum = 0.0;
+		real_t b20_fphi_max = 0.0;
+		real_t b20_heq_active_sum = 0.0;
+		real_t b20_heq_active_max = 0.0;
+		real_t b20_heq_raw_sum = 0.0;
+		real_t b20_heq_raw_max = 0.0;
+		real_t b20_heq_pre_sum = 0.0;
+		real_t b20_heq_pre_max = 0.0;
+		real_t b20_heq_bounded_sum = 0.0;
+		real_t b20_heq_bounded_max = 0.0;
+		real_t b20_hpost_active_sum = 0.0;
+		real_t b20_hpost_active_max = 0.0;
+		real_t b20_hpost_raw_sum = 0.0;
+		real_t b20_hpost_raw_max = 0.0;
+		real_t b20_hpost_pre_sum = 0.0;
+		real_t b20_hpost_pre_max = 0.0;
+		real_t b20_hpost_bounded_sum = 0.0;
+		real_t b20_hpost_bounded_max = 0.0;
+		for (int b20_i=0; b20_i<hPops; b20_i++) {
+			b20_fphi_sum += F_phi[b20_i];
+			b20_fphi_max = stage14_max_abs2(b20_fphi_max, F_phi[b20_i]);
+			b20_heq_active_sum += heq[b20_i];
+			b20_heq_active_max = stage14_max_abs2(b20_heq_active_max, heq[b20_i]);
+			b20_heq_raw_sum += b20_heq_raw_post[b20_i];
+			b20_heq_raw_max = stage14_max_abs2(b20_heq_raw_max, b20_heq_raw_post[b20_i]);
+			b20_heq_pre_sum += b20_heq_pre_force[b20_i];
+			b20_heq_pre_max = stage14_max_abs2(b20_heq_pre_max, b20_heq_pre_force[b20_i]);
+			b20_heq_bounded_sum += b20_heq_bounded[b20_i];
+			b20_heq_bounded_max = stage14_max_abs2(b20_heq_bounded_max, b20_heq_bounded[b20_i]);
+			b20_hpost_active_sum += b20_hpost_active[b20_i];
+			b20_hpost_active_max = stage14_max_abs2(b20_hpost_active_max, b20_hpost_active[b20_i]);
+			b20_hpost_raw_sum += b20_hpost_raw_post[b20_i];
+			b20_hpost_raw_max = stage14_max_abs2(b20_hpost_raw_max, b20_hpost_raw_post[b20_i]);
+			b20_hpost_pre_sum += b20_hpost_pre_force[b20_i];
+			b20_hpost_pre_max = stage14_max_abs2(b20_hpost_pre_max, b20_hpost_pre_force[b20_i]);
+			b20_hpost_bounded_sum += b20_hpost_bounded[b20_i];
+			b20_hpost_bounded_max = stage14_max_abs2(b20_hpost_bounded_max, b20_hpost_bounded[b20_i]);
+		}
+		B20ProbeActive = 1.0;
+		B20FphiActiveSum = b20_fphi_sum;
+		B20FphiActiveMaxAbs = b20_fphi_max;
+		B20FphiRawPostForceSum = b20_fphi_sum;
+		B20FphiRawPostForceMaxAbs = b20_fphi_max;
+		B20FphiPreForceSum = b20_fphi_sum;
+		B20FphiPreForceMaxAbs = b20_fphi_max;
+		B20FphiBoundedSum = b20_fphi_sum;
+		B20FphiBoundedMaxAbs = b20_fphi_max;
+		B20HeqActiveSum = b20_heq_active_sum;
+		B20HeqActiveMaxAbs = b20_heq_active_max;
+		B20HeqRawPostForceSum = b20_heq_raw_sum;
+		B20HeqRawPostForceMaxAbs = b20_heq_raw_max;
+		B20HeqPreForceSum = b20_heq_pre_sum;
+		B20HeqPreForceMaxAbs = b20_heq_pre_max;
+		B20HeqBoundedSum = b20_heq_bounded_sum;
+		B20HeqBoundedMaxAbs = b20_heq_bounded_max;
+		B20HPostActiveSum = b20_hpost_active_sum;
+		B20HPostActiveMaxAbs = b20_hpost_active_max;
+		B20HPostRawPostForceSum = b20_hpost_raw_sum;
+		B20HPostRawPostForceMaxAbs = b20_hpost_raw_max;
+		B20HPostPreForceSum = b20_hpost_pre_sum;
+		B20HPostPreForceMaxAbs = b20_hpost_pre_max;
+		B20HPostBoundedSum = b20_hpost_bounded_sum;
+		B20HPostBoundedMaxAbs = b20_hpost_bounded_max;
+		B20PhaseFromHActiveShadow = b20_hpost_active_sum;
+		B20PhaseFromHRawPostForceShadow = b20_hpost_raw_sum;
+		B20PhaseFromHPreForceShadow = b20_hpost_pre_sum;
+		B20PhaseFromHBoundedShadow = b20_hpost_bounded_sum;
+		B20HPostActiveOutOfBoundsFlag = (b20_hpost_active_sum < PhaseField_l || b20_hpost_active_sum > PhaseField_h) ? 1.0 : 0.0;
+		B20HPostRawPostForceOutOfBoundsFlag = (b20_hpost_raw_sum < PhaseField_l || b20_hpost_raw_sum > PhaseField_h) ? 1.0 : 0.0;
+		B20HPostPreForceOutOfBoundsFlag = (b20_hpost_pre_sum < PhaseField_l || b20_hpost_pre_sum > PhaseField_h) ? 1.0 : 0.0;
+		B20HPostBoundedOutOfBoundsFlag = (b20_hpost_bounded_sum < PhaseField_l || b20_hpost_bounded_sum > PhaseField_h) ? 1.0 : 0.0;
 	}
 	<?R
 	C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)

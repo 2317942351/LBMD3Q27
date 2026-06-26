@@ -1,0 +1,258 @@
+{
+  "argmax_record_count": 11970,
+  "b18_primary_branch": "stress_amplification_shadow",
+  "b18_primary_branch_reason": "B18 post/pre stress amplification crosses first.",
+  "b20_primary_branch": "heq_candidate_large_before_hpost",
+  "b20_primary_branch_reason": "B20 active heq shadow crosses before or with hpost.",
+  "claim_limit": "diagnostic-only; not contact-angle validation and not a solver fix",
+  "first_b18_fmu_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18FmuPostForceNorm",
+    "mask": "low_rho",
+    "step": 13,
+    "threshold": 1000.0,
+    "trigger": "threshold_b18_fmu_post_large",
+    "value": 9301.220114821685
+  },
+  "first_b18_force_floor_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18ForceOverRhoDensityFloorNorm",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_b18_force_floor_large",
+    "value": 6338801.965494513
+  },
+  "first_b18_force_phase_mix_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18ForceOverRhoPhaseMixtureNorm",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_b18_force_phase_mix_large",
+    "value": 6338801.965494513
+  },
+  "first_b18_force_raw_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18ForceOverRhoRawNorm",
+    "mask": "low_rho",
+    "step": 13,
+    "threshold": 1000.0,
+    "trigger": "threshold_b18_force_raw_large",
+    "value": 1.438616531550725e+29
+  },
+  "first_b18_heq_legacy_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18HeqLegacyMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b18_heq_legacy_large",
+    "value": 2.6814315084217064
+  },
+  "first_b18_heq_pre_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18HeqPreForceMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b18_heq_pre_large",
+    "value": 2.2502365729960427
+  },
+  "first_b18_stress_amp_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18StressPostOverPre",
+    "mask": "near_interface_wall",
+    "step": 1,
+    "threshold": 10.0,
+    "trigger": "threshold_b18_stress_amp_large",
+    "value": 2.7643583244716704e+293
+  },
+  "first_b18_stress_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "B18StressPostForceNorm",
+    "mask": "interface_wide",
+    "step": 13,
+    "threshold": 1000.0,
+    "trigger": "threshold_b18_stress_post_large",
+    "value": 8211.920105469133
+  },
+  "first_b20_heq_active_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HeqActiveMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_heq_active_large",
+    "value": 2.6814315084217064
+  },
+  "first_b20_heq_bounded_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HeqBoundedMaxAbs",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_heq_bounded_large",
+    "value": 295.3987967210061
+  },
+  "first_b20_heq_pre_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HeqPreForceMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_heq_pre_large",
+    "value": 2.2502365729960427
+  },
+  "first_b20_heq_raw_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HeqRawPostForceMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_heq_raw_post_large",
+    "value": 2.6814315084217064
+  },
+  "first_b20_hpost_active_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HPostActiveMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_hpost_active_large",
+    "value": 1.9148838246017725
+  },
+  "first_b20_hpost_bounded_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HPostBoundedMaxAbs",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_hpost_bounded_large",
+    "value": 46646.31771915187
+  },
+  "first_b20_hpost_pre_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HPostPreForceMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_hpost_pre_large",
+    "value": 1.60688744215487
+  },
+  "first_b20_hpost_raw_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20HPostRawPostForceMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_b20_hpost_raw_post_large",
+    "value": 1.9148838246017725
+  },
+  "first_b20_phase_active_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20PhaseFromHActiveShadow",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1.001,
+    "trigger": "threshold_b20_phase_active_oob",
+    "value": 1060.607388496399
+  },
+  "first_b20_phase_bounded_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20PhaseFromHBoundedShadow",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1.001,
+    "trigger": "threshold_b20_phase_bounded_oob",
+    "value": 1060.6073818440377
+  },
+  "first_b20_phase_pre_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20PhaseFromHPreForceShadow",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1.001,
+    "trigger": "threshold_b20_phase_pre_oob",
+    "value": 1060.607388496399
+  },
+  "first_b20_phase_raw_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "B20PhaseFromHRawPostForceShadow",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1.001,
+    "trigger": "threshold_b20_phase_raw_post_oob",
+    "value": 1060.607388496399
+  },
+  "first_fmu_raw_onset": {
+    "case": "wall_60to30_10",
+    "field": "FmuRawNorm",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_fmu_raw_large",
+    "value": 2809.363799570865
+  },
+  "first_force_over_rho_onset": {
+    "case": "wall_60to30_10",
+    "field": "ForceOverRhoNorm",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_force_over_rho_large",
+    "value": 4527.415146843487
+  },
+  "first_hpost_onset": {
+    "case": "wall_60to30_10",
+    "field": "ReplayHPostMaxAbs",
+    "mask": "near_interface_wall",
+    "step": 13,
+    "threshold": 1.0,
+    "trigger": "threshold_hpost_large",
+    "value": 1.9148838246017725
+  },
+  "first_phase_from_h_onset": {
+    "case": "wall_60to30_10",
+    "field": "ReplayPhaseFromH",
+    "mask": "low_rho",
+    "step": 13,
+    "threshold": 1.001,
+    "trigger": "threshold_phase_from_h_out_of_bounds",
+    "value": 554.6179695990377
+  },
+  "first_pressure_input_onset": {
+    "case": "wall_60to30_10",
+    "field": "ReplayPressureInput",
+    "mask": "low_rho",
+    "step": 14,
+    "threshold": 1000.0,
+    "trigger": "threshold_pressure_input_large",
+    "value": 15730304.099209242
+  },
+  "first_stress_input_onset": null,
+  "first_stress_post_onset": {
+    "case": "wall_60to30_10",
+    "field": "StressPostForceNorm",
+    "mask": "interface_wide",
+    "step": 13,
+    "threshold": 1000.0,
+    "trigger": "threshold_stress_post_large",
+    "value": 8211.920105469133
+  },
+  "frame_count": 21,
+  "notes": [
+    "Use mask-specific argmax records before changing solver physics.",
+    "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
+    "If stress_post exceeds stress_pre at the same argmax before phase loss, stress time-level is implicated.",
+    "B18 force-excluded stress is a diagnostic shadow candidate, not a physics write path.",
+    "If phase/h fields lead force diagnostics, return to h update and phase-advection timeline.",
+    "B20 bounded-velocity h-update fields are shadow diagnostics only, not a physics limiter."
+  ],
+  "primary_branch": "phase_update_or_h_advection_first",
+  "primary_branch_reason": "PhaseFromH leaves bounds before configured force-over-rho onset.",
+  "pvti_only_cases_skipped": [],
+  "root": "/mnt/usb1t/RUNS/runs/stage14_B20_hupdate_shadow_mode0_20260626/probe_wall_60to30_R200_step20",
+  "stat_row_count": 13650,
+  "status": "B17_B18_DIAGNOSTIC_COMPLETE"
+}

@@ -1,5 +1,60 @@
 # Current Stage Index
 
+## Current Review Entry: Stage14-B18/B19/B20 (2026-06-26)
+
+Status: `exploratory_not_validation / failed_negative_evidence`.
+
+Start current cloud-side review here:
+
+```text
+docs/stage14/104_cloud_repo_update_review_guide_20260626.md
+```
+
+The current branch is:
+
+```text
+work/phasefield-c-reference-20260623
+```
+
+Current uploaded review packet:
+
+```text
+docs/stage14/101_stage14_B18_shadow_closure_20260625.md
+docs/stage14/102_stage14_B19_phase_advection_mode_split_20260626.md
+docs/stage14/103_stage14_B20_hupdate_shadow_20260626.md
+docs/stage14/104_cloud_repo_update_review_guide_20260626.md
+artifacts/stage14_B18_shadow_closure_20260625/
+artifacts/stage14_B18_shadow_closure_20260625_rerun/
+artifacts/stage14_B19_phaseadv_mode0_20260626/
+artifacts/stage14_B20_hupdate_shadow_mode0_20260626/
+artifacts/stage14_B20_hupdate_shadow_mode1_20260626/
+artifacts/stage14_B20_mode0_mode1_compare_20260626.csv
+```
+
+Important interpretation boundary:
+
+```text
+B18/B19/B20 are shadow diagnostics, not solver fixes.
+The high-density-ratio flat-wall short probe still fails.
+The current evidence narrows the failure toward h-population/heq/hpost
+amplification and phase-population closure, not contact-angle tuning.
+Do not claim contact-angle validation, curved-wall validation, or dynamic
+impact readiness from this packet.
+```
+
+Large raw field files remain excluded by repository policy:
+
+```text
+*.vti
+*.pvti
+*.pri
+GPU binaries and build trees
+opaque archives
+```
+
+Large detailed argmax traces are not first-read cloud evidence. Use the curated
+JSON/CSV summaries and the B20 step 12-14 key metrics first.
+
 ## Current Baseline: Phase-Field Rebuild (2026-06-23)
 
 Status: `audit_baseline / exploratory_not_validation`.

@@ -135,6 +135,189 @@ VTK_FIELDS = ",".join(
         "ReplayForceFixedPointMode",
         "ReplayForceRhoRaw",
         "ReplayForceRhoEffective",
+        "B18ProbeActive",
+        "B18StressLegacyXX",
+        "B18StressLegacyXY",
+        "B18StressLegacyXZ",
+        "B18StressLegacyYY",
+        "B18StressLegacyYZ",
+        "B18StressLegacyZZ",
+        "B18StressPreForceXX",
+        "B18StressPreForceXY",
+        "B18StressPreForceXZ",
+        "B18StressPreForceYY",
+        "B18StressPreForceYZ",
+        "B18StressPreForceZZ",
+        "B18StressPostForceXX",
+        "B18StressPostForceXY",
+        "B18StressPostForceXZ",
+        "B18StressPostForceYY",
+        "B18StressPostForceYZ",
+        "B18StressPostForceZZ",
+        "B18StressForceExcludedXX",
+        "B18StressForceExcludedXY",
+        "B18StressForceExcludedXZ",
+        "B18StressForceExcludedYY",
+        "B18StressForceExcludedYZ",
+        "B18StressForceExcludedZZ",
+        "B18StressIncomingXX",
+        "B18StressIncomingXY",
+        "B18StressIncomingXZ",
+        "B18StressIncomingYY",
+        "B18StressIncomingYZ",
+        "B18StressIncomingZZ",
+        "B18StressPostOverPre",
+        "B18StressAmplificationFlag",
+        "B18FmuLegacy",
+        "B18FmuPreForce",
+        "B18FmuPostForce",
+        "B18FmuForceExcluded",
+        "B18FmuIncoming",
+        "B18FmuCandidateDelta",
+        "B18ForceOverRhoRaw",
+        "B18ForceOverRhoDensityFloor",
+        "B18ForceOverRhoPhaseMixture",
+        "B18RhoDenominatorRaw",
+        "B18RhoDenominatorFloor",
+        "B18RhoDenominatorPhaseMix",
+        "B18HVelocityLegacy",
+        "B18HVelocityPreForce",
+        "B18HVelocityRawPostForce",
+        "B18HVelocityBoundedShadow",
+        "B18HeqLegacyMaxAbs",
+        "B18HeqPreForceMaxAbs",
+        "B18HeqBoundedShadowMaxAbs",
+        "B20ProbeActive",
+        "B20FphiActiveSum",
+        "B20FphiActiveMaxAbs",
+        "B20FphiRawPostForceSum",
+        "B20FphiRawPostForceMaxAbs",
+        "B20FphiPreForceSum",
+        "B20FphiPreForceMaxAbs",
+        "B20FphiBoundedSum",
+        "B20FphiBoundedMaxAbs",
+        "B20HeqActiveSum",
+        "B20HeqActiveMaxAbs",
+        "B20HeqRawPostForceSum",
+        "B20HeqRawPostForceMaxAbs",
+        "B20HeqPreForceSum",
+        "B20HeqPreForceMaxAbs",
+        "B20HeqBoundedSum",
+        "B20HeqBoundedMaxAbs",
+        "B20HPostActiveSum",
+        "B20HPostActiveMaxAbs",
+        "B20HPostRawPostForceSum",
+        "B20HPostRawPostForceMaxAbs",
+        "B20HPostPreForceSum",
+        "B20HPostPreForceMaxAbs",
+        "B20HPostBoundedSum",
+        "B20HPostBoundedMaxAbs",
+        "B20PhaseFromHActiveShadow",
+        "B20PhaseFromHRawPostForceShadow",
+        "B20PhaseFromHPreForceShadow",
+        "B20PhaseFromHBoundedShadow",
+        "B20HPostActiveOutOfBoundsFlag",
+        "B20HPostRawPostForceOutOfBoundsFlag",
+        "B20HPostPreForceOutOfBoundsFlag",
+        "B20HPostBoundedOutOfBoundsFlag",
+    ]
+)
+
+VTK_FIELDS_MINIMAL = ",".join(
+    [
+        "PhaseField",
+        "Rho",
+        "U",
+        "BOUNDARY",
+        "IsItBoundary",
+        "GradPhi",
+        "ForceIterResidual",
+        "ForceIterCount",
+        "ReplayPhaseConsumed",
+        "ReplayPhaseFromH",
+        "ReplayGradPhi",
+        "ReplayFpressure",
+        "ReplayFmu",
+        "ReplayFtotal",
+        "ReplayRho",
+        "ReplayTau",
+        "ReplayUPreForce",
+        "ReplayUPostForce",
+        "ReplayPhaseAdvVelocity",
+        "ReplayForceOverRho",
+        "ReplayHPreMaxAbs",
+        "ReplayHPostMaxAbs",
+        "ReplayHeqMaxAbs",
+        "ReplayFphiMaxAbs",
+        "ReplayTmp1",
+        "ReplayPhaseOutOfBoundsFlag",
+        "ReplayPressureInput",
+        "ReplayStressPreForceShadowXX",
+        "ReplayStressPreForceShadowXY",
+        "ReplayStressPreForceShadowXZ",
+        "ReplayStressPreForceShadowYY",
+        "ReplayStressPreForceShadowYZ",
+        "ReplayStressPreForceShadowZZ",
+        "ReplayStressPostForceShadowXX",
+        "ReplayStressPostForceShadowXY",
+        "ReplayStressPostForceShadowXZ",
+        "ReplayStressPostForceShadowYY",
+        "ReplayStressPostForceShadowYZ",
+        "ReplayStressPostForceShadowZZ",
+        "ReplayFmuRaw",
+        "ReplayFmuDelta",
+        "ReplayForceRhoRaw",
+        "ReplayForceRhoEffective",
+        "B18ProbeActive",
+        "B18StressPreForceXX",
+        "B18StressPreForceXY",
+        "B18StressPreForceXZ",
+        "B18StressPreForceYY",
+        "B18StressPreForceYZ",
+        "B18StressPreForceZZ",
+        "B18StressPostForceXX",
+        "B18StressPostForceXY",
+        "B18StressPostForceXZ",
+        "B18StressPostForceYY",
+        "B18StressPostForceYZ",
+        "B18StressPostForceZZ",
+        "B18StressPostOverPre",
+        "B18StressAmplificationFlag",
+        "B18FmuPostForce",
+        "B18ForceOverRhoRaw",
+        "B18ForceOverRhoDensityFloor",
+        "B18ForceOverRhoPhaseMixture",
+        "B18RhoDenominatorRaw",
+        "B18RhoDenominatorFloor",
+        "B18RhoDenominatorPhaseMix",
+        "B18HVelocityLegacy",
+        "B18HVelocityPreForce",
+        "B18HVelocityRawPostForce",
+        "B18HVelocityBoundedShadow",
+        "B18HeqLegacyMaxAbs",
+        "B18HeqPreForceMaxAbs",
+        "B18HeqBoundedShadowMaxAbs",
+        "B20ProbeActive",
+        "B20FphiActiveMaxAbs",
+        "B20FphiRawPostForceMaxAbs",
+        "B20FphiPreForceMaxAbs",
+        "B20FphiBoundedMaxAbs",
+        "B20HeqActiveMaxAbs",
+        "B20HeqRawPostForceMaxAbs",
+        "B20HeqPreForceMaxAbs",
+        "B20HeqBoundedMaxAbs",
+        "B20HPostActiveMaxAbs",
+        "B20HPostRawPostForceMaxAbs",
+        "B20HPostPreForceMaxAbs",
+        "B20HPostBoundedMaxAbs",
+        "B20PhaseFromHActiveShadow",
+        "B20PhaseFromHRawPostForceShadow",
+        "B20PhaseFromHPreForceShadow",
+        "B20PhaseFromHBoundedShadow",
+        "B20HPostActiveOutOfBoundsFlag",
+        "B20HPostRawPostForceOutOfBoundsFlag",
+        "B20HPostPreForceOutOfBoundsFlag",
+        "B20HPostBoundedOutOfBoundsFlag",
     ]
 )
 
@@ -238,6 +421,9 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("PhaseAdvectionVelocityMode", args.phase_advection_velocity_mode),
             param("MomentumForceMode", args.momentum_force_mode),
             param("MomentumClosureDiagnosticsMode", args.momentum_closure_diagnostics_mode),
+            param("Stage14B18ClosureDiagnosticsMode", args.b18_closure_diagnostics_mode),
+            param("Stage14B18VelocityBound", args.b18_velocity_bound),
+            param("Stage14B20HUpdateDiagnosticsMode", args.b20_hupdate_diagnostics_mode),
             param("MomentumClosureProbeMode", args.momentum_closure_probe_mode),
             param("PressureClosureMode", args.pressure_closure_mode),
             param("PressureClosureReference", args.pressure_closure_reference),
@@ -258,12 +444,19 @@ def common_model_params(args: argparse.Namespace) -> str:
     )
 
 
+def vtk_fields_for(args: argparse.Namespace) -> str:
+    if args.vtk_field_set == "minimal":
+        return VTK_FIELDS_MINIMAL
+    return VTK_FIELDS
+
+
 def render_bulk_xml(
     iterations: int,
     vtk_period: int,
     log_period: int,
     args: argparse.Namespace,
 ) -> str:
+    vtk_fields = vtk_fields_for(args)
     return f"""<?xml version="1.0"?>
 <CLBConfig version="2.0" output="output/" permissive="true">
   <Geometry nx="32" ny="24" nz="24">
@@ -281,11 +474,11 @@ def render_bulk_xml(
     <Param name="WallCompactStencilMode" value="0"/>
     <Param name="radAngle" value="90d"/>
   </Model>
-  <VTK what="{VTK_FIELDS}"/>
+  <VTK what="{vtk_fields}"/>
   <Log Iterations="{log_period}"/>
   <Failcheck Iterations="{log_period}"/>
   <Solve Iterations="{iterations}">
-    <VTK Iterations="{vtk_period}" what="{VTK_FIELDS}"/>
+    <VTK Iterations="{vtk_period}" what="{vtk_fields}"/>
     <Log Iterations="{log_period}"/>
     <Failcheck Iterations="{log_period}"/>
   </Solve>
@@ -301,6 +494,7 @@ def render_wall_xml(
     log_period: int,
     args: argparse.Namespace,
 ) -> str:
+    vtk_fields = vtk_fields_for(args)
     volume_radius = 16.0
     parent_radius = cap_sphere_radius(volume_radius, init_theta)
     theta = math.radians(init_theta)
@@ -345,11 +539,11 @@ def render_wall_xml(
     <Param name="WallCompactStencilWriteAllowedFlag" value="0"/>
     <Param name="radAngle" value="{bc_theta:.16g}d" zone="FlatLowerY"/>
   </Model>
-  <VTK what="{VTK_FIELDS}"/>
+  <VTK what="{vtk_fields}"/>
   <Log Iterations="{log_period}"/>
   <Failcheck Iterations="{log_period}"/>
   <Solve Iterations="{iterations}">
-    <VTK Iterations="{vtk_period}" what="{VTK_FIELDS}"/>
+    <VTK Iterations="{vtk_period}" what="{vtk_fields}"/>
     <Log Iterations="{log_period}"/>
     <Failcheck Iterations="{log_period}"/>
   </Solve>
@@ -419,7 +613,8 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "vtk_period": args.vtk_period,
             "log_period": args.log_period,
             "physical_grid": xml_grid(xml),
-            "vtk_fields": VTK_FIELDS.split(","),
+            "vtk_field_set": args.vtk_field_set,
+            "vtk_fields": vtk_fields_for(args).split(","),
             "binary": args.binary,
             "binary_sha256": binary_hash(args.binary),
             "gpu": args.gpu,
@@ -427,6 +622,9 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "phase_advection_velocity_mode": args.phase_advection_velocity_mode,
             "momentum_force_mode": args.momentum_force_mode,
             "momentum_closure_diagnostics_mode": args.momentum_closure_diagnostics_mode,
+            "b18_closure_diagnostics_mode": args.b18_closure_diagnostics_mode,
+            "b18_velocity_bound": args.b18_velocity_bound,
+            "b20_hupdate_diagnostics_mode": args.b20_hupdate_diagnostics_mode,
             "momentum_closure_probe_mode": args.momentum_closure_probe_mode,
             "pressure_closure_mode": args.pressure_closure_mode,
             "pressure_closure_reference": args.pressure_closure_reference,
@@ -603,7 +801,7 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
             "missing_required_replay": [name for name in REQUIRED_REPLAY_FIELDS if name not in arrays],
             "stats": {},
         }
-        for name in [
+        base_summary_fields = [
             "PhaseField",
             "WallGhost",
             "ForceIterResidual",
@@ -693,7 +891,18 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
             "PhaseStencilGhostUseCount",
             "PhaseStencilFallbackCount",
             "PhaseStencilMidpointFallbackCount",
-        ]:
+        ]
+        fields_to_summarize = list(
+            dict.fromkeys(
+                base_summary_fields
+                + sorted(
+                    name
+                    for name in arrays
+                    if name.startswith("B18") or name.startswith("B20")
+                )
+            )
+        )
+        for name in fields_to_summarize:
             if name in arrays:
                 frame["stats"][name] = field_stats(
                     crop_to_physical(arrays[name], dims, physical_grid)
@@ -734,6 +943,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gpu", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=10)
     parser.add_argument("--vtk-period", type=int, default=1)
+    parser.add_argument("--vtk-field-set", choices=("full", "minimal"), default="full")
     parser.add_argument("--log-period", type=int, default=1)
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--cases", default="all")
@@ -741,6 +951,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--phase-advection-velocity-mode", type=int, default=0)
     parser.add_argument("--momentum-force-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-diagnostics-mode", type=int, default=0)
+    parser.add_argument("--b18-closure-diagnostics-mode", type=int, default=0)
+    parser.add_argument("--b18-velocity-bound", type=float, default=0.2)
+    parser.add_argument("--b20-hupdate-diagnostics-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-probe-mode", type=int, default=0)
     parser.add_argument("--pressure-closure-mode", type=int, default=0)
     parser.add_argument("--pressure-closure-reference", type=float, default=0.0)
