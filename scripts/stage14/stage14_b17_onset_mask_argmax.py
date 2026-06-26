@@ -88,6 +88,51 @@ SCALAR_FIELDS = [
     "B20HPostRawPostForceOutOfBoundsFlag",
     "B20HPostPreForceOutOfBoundsFlag",
     "B20HPostBoundedOutOfBoundsFlag",
+    "B21ProbeActive",
+    "B21HPreSum",
+    "B21HPreSumAbs",
+    "B21HPreL2",
+    "B21HPreMin",
+    "B21HPreMax",
+    "B21HPreMaxAbs",
+    "B21HPreMaxAbsIndex",
+    "B21HPrePosSum",
+    "B21HPreNegSumAbs",
+    "B21HPreCancellationRatio",
+    "B21HPreSignedRange",
+    "B21HeqSum",
+    "B21HeqSumMinusC",
+    "B21HeqSumAbs",
+    "B21HeqL2",
+    "B21HeqMin",
+    "B21HeqMax",
+    "B21HeqMaxAbs",
+    "B21HeqMaxAbsIndex",
+    "B21HeqCancellationRatio",
+    "B21HeqVelocityMachShadow",
+    "B21HeqVelocitySquared",
+    "B21FphiSum",
+    "B21FphiSumAbs",
+    "B21FphiL2",
+    "B21FphiMin",
+    "B21FphiMax",
+    "B21FphiMaxAbs",
+    "B21FphiMaxAbsIndex",
+    "B21FphiCancellationRatio",
+    "B21Tmp1",
+    "B21NormalMag",
+    "B21HPostSum",
+    "B21HPostSumAbs",
+    "B21HPostL2",
+    "B21HPostMin",
+    "B21HPostMax",
+    "B21HPostMaxAbs",
+    "B21HPostMaxAbsIndex",
+    "B21HPostPosSum",
+    "B21HPostNegSumAbs",
+    "B21HPostCancellationRatio",
+    "B21HPostOutOfBoundsFlag",
+    "B21HPostSumMinusFormula",
     "ForceIterCount",
     "ForceIterResidual",
 ]
@@ -314,6 +359,33 @@ TARGET_FIELDS = [
     "B20HPostRawPostForceOutOfBoundsFlag",
     "B20HPostPreForceOutOfBoundsFlag",
     "B20HPostBoundedOutOfBoundsFlag",
+    "B21ProbeActive",
+    "B21HPreSum",
+    "B21HPreSumAbs",
+    "B21HPreMaxAbs",
+    "B21HPreMaxAbsIndex",
+    "B21HPreCancellationRatio",
+    "B21HeqSum",
+    "B21HeqSumMinusC",
+    "B21HeqSumAbs",
+    "B21HeqMaxAbs",
+    "B21HeqMaxAbsIndex",
+    "B21HeqCancellationRatio",
+    "B21HeqVelocityMachShadow",
+    "B21FphiSum",
+    "B21FphiSumAbs",
+    "B21FphiMaxAbs",
+    "B21FphiMaxAbsIndex",
+    "B21FphiCancellationRatio",
+    "B21Tmp1",
+    "B21NormalMag",
+    "B21HPostSum",
+    "B21HPostSumAbs",
+    "B21HPostMaxAbs",
+    "B21HPostMaxAbsIndex",
+    "B21HPostCancellationRatio",
+    "B21HPostOutOfBoundsFlag",
+    "B21HPostSumMinusFormula",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
 ]
@@ -392,6 +464,51 @@ COLOCATE_FIELDS = [
     "B20HPostRawPostForceOutOfBoundsFlag",
     "B20HPostPreForceOutOfBoundsFlag",
     "B20HPostBoundedOutOfBoundsFlag",
+    "B21ProbeActive",
+    "B21HPreSum",
+    "B21HPreSumAbs",
+    "B21HPreL2",
+    "B21HPreMin",
+    "B21HPreMax",
+    "B21HPreMaxAbs",
+    "B21HPreMaxAbsIndex",
+    "B21HPrePosSum",
+    "B21HPreNegSumAbs",
+    "B21HPreCancellationRatio",
+    "B21HPreSignedRange",
+    "B21HeqSum",
+    "B21HeqSumMinusC",
+    "B21HeqSumAbs",
+    "B21HeqL2",
+    "B21HeqMin",
+    "B21HeqMax",
+    "B21HeqMaxAbs",
+    "B21HeqMaxAbsIndex",
+    "B21HeqCancellationRatio",
+    "B21HeqVelocityMachShadow",
+    "B21HeqVelocitySquared",
+    "B21FphiSum",
+    "B21FphiSumAbs",
+    "B21FphiL2",
+    "B21FphiMin",
+    "B21FphiMax",
+    "B21FphiMaxAbs",
+    "B21FphiMaxAbsIndex",
+    "B21FphiCancellationRatio",
+    "B21Tmp1",
+    "B21NormalMag",
+    "B21HPostSum",
+    "B21HPostSumAbs",
+    "B21HPostL2",
+    "B21HPostMin",
+    "B21HPostMax",
+    "B21HPostMaxAbs",
+    "B21HPostMaxAbsIndex",
+    "B21HPostPosSum",
+    "B21HPostNegSumAbs",
+    "B21HPostCancellationRatio",
+    "B21HPostOutOfBoundsFlag",
+    "B21HPostSumMinusFormula",
     "UPreForceNorm",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
@@ -429,6 +546,16 @@ THRESHOLDS = {
     "b20_phase_raw_post_oob": ("B20PhaseFromHRawPostForceShadow", 1.0 + 1.0e-3),
     "b20_phase_pre_oob": ("B20PhaseFromHPreForceShadow", 1.0 + 1.0e-3),
     "b20_phase_bounded_oob": ("B20PhaseFromHBoundedShadow", 1.0 + 1.0e-3),
+    "b21_hpre_cancel_large": ("B21HPreCancellationRatio", 100.0),
+    "b21_hpre_max_large": ("B21HPreMaxAbs", 1.0),
+    "b21_heq_cancel_large": ("B21HeqCancellationRatio", 100.0),
+    "b21_hpost_cancel_large": ("B21HPostCancellationRatio", 100.0),
+    "b21_heq_max_large": ("B21HeqMaxAbs", 1.0),
+    "b21_hpost_max_large": ("B21HPostMaxAbs", 1.0),
+    "b21_hpost_sum_oob": ("B21HPostSum", 1.0 + 1.0e-3),
+    "b21_hpost_flag_oob": ("B21HPostOutOfBoundsFlag", 0.5),
+    "b21_hpost_formula_residual_large": ("B21HPostSumMinusFormula", 1.0e-8),
+    "b21_heq_mach_large": ("B21HeqVelocityMachShadow", 1.0),
     "pressure_input_large": ("ReplayPressureInput", 1.0e3),
     "pressure_force_large": ("FpressureNorm", 1.0e3),
     "phase_from_h_out_of_bounds": ("ReplayPhaseFromH", 1.0 + 1.0e-3),
@@ -873,6 +1000,16 @@ def key_summary(
     b20_phase_raw_post = first("threshold_b20_phase_raw_post_oob")
     b20_phase_pre = first("threshold_b20_phase_pre_oob")
     b20_phase_bounded = first("threshold_b20_phase_bounded_oob")
+    b21_hpre_cancel = first("threshold_b21_hpre_cancel_large")
+    b21_hpre_max = first("threshold_b21_hpre_max_large")
+    b21_heq_cancel = first("threshold_b21_heq_cancel_large")
+    b21_heq_max = first("threshold_b21_heq_max_large")
+    b21_heq_mach = first("threshold_b21_heq_mach_large")
+    b21_hpost_cancel = first("threshold_b21_hpost_cancel_large")
+    b21_hpost_max = first("threshold_b21_hpost_max_large")
+    b21_hpost_sum_oob = first("threshold_b21_hpost_sum_oob")
+    b21_hpost_flag_oob = first("threshold_b21_hpost_flag_oob")
+    b21_hpost_formula = first("threshold_b21_hpost_formula_residual_large")
 
     branch = "undetermined"
     reason = "No configured onset threshold was crossed."
@@ -951,9 +1088,53 @@ def key_summary(
         b20_branch = "heq_candidate_large_before_hpost"
         b20_reason = "B20 active heq shadow crosses before or with hpost."
 
+    def onset_step(item: dict[str, Any] | None) -> int | None:
+        if item is None:
+            return None
+        return int(item["step"])
+
+    def earlier_or_equal(
+        item: dict[str, Any] | None, *others: dict[str, Any] | None
+    ) -> bool:
+        item_step = onset_step(item)
+        if item_step is None:
+            return False
+        other_steps = [step for step in (onset_step(other) for other in others) if step is not None]
+        return not other_steps or item_step <= min(other_steps)
+
+    b21_branch = "not_available"
+    b21_reason = "B21 fields were not present or did not cross configured thresholds."
+    if b21_hpost_formula:
+        b21_branch = "hpost_formula_consistency_or_template_indexing"
+        b21_reason = (
+            "B21 hpost sum disagrees with the scalar sum of the same update formula; "
+            "check generated R-template indexing before changing physics."
+        )
+    if earlier_or_equal(b21_hpre_max, b21_heq_max, b21_hpost_max):
+        b21_branch = "incoming_h_population_streaming_history_contamination"
+        b21_reason = "B21 HPre population amplitude is already large before or with heq/hpost growth."
+    elif earlier_or_equal(b21_hpre_cancel, b21_heq_cancel, b21_hpost_cancel):
+        b21_branch = "incoming_h_population_cancellation"
+        b21_reason = "B21 HPre has strong signed cancellation before or with heq/hpost cancellation."
+    elif earlier_or_equal(b21_heq_mach, b21_heq_max, b21_hpost_max):
+        b21_branch = "phase_advection_velocity_mach_first"
+        b21_reason = "B21 heq Mach shadow crosses first, implicating the phase-advection velocity."
+    elif earlier_or_equal(b21_heq_max, b21_hpost_max, b21_hpost_sum_oob, b21_hpost_flag_oob):
+        b21_branch = "heq_population_large_before_hpost"
+        b21_reason = "B21 heq population amplitude crosses before or with hpost/phase-sum failure."
+    elif earlier_or_equal(b21_hpost_max, b21_hpost_sum_oob, b21_hpost_flag_oob):
+        b21_branch = "hpost_population_update_amplification"
+        b21_reason = "B21 hpost population amplitude crosses before or with the hpost phase-sum failure."
+    elif b21_hpost_sum_oob or b21_hpost_flag_oob:
+        b21_branch = "hpost_sum_out_of_bounds_without_large_population_marker"
+        b21_reason = "B21 hpost phase sum leaves bounds without an earlier configured population-amplitude onset."
+    elif b21_heq_cancel:
+        b21_branch = "heq_cancellation_without_amplitude_threshold"
+        b21_reason = "B21 heq cancellation threshold crosses without the max-abs threshold crossing."
+
     return {
         "root": str(root),
-        "status": "B17_B18_DIAGNOSTIC_COMPLETE",
+        "status": "B17_B18_B20_B21_DIAGNOSTIC_COMPLETE",
         "claim_limit": "diagnostic-only; not contact-angle validation and not a solver fix",
         "frame_count": len(frame_summaries),
         "stat_row_count": len(stats_rows),
@@ -985,12 +1166,24 @@ def key_summary(
         "first_b20_phase_raw_post_onset": b20_phase_raw_post,
         "first_b20_phase_pre_onset": b20_phase_pre,
         "first_b20_phase_bounded_onset": b20_phase_bounded,
+        "first_b21_hpre_cancel_onset": b21_hpre_cancel,
+        "first_b21_hpre_max_onset": b21_hpre_max,
+        "first_b21_heq_cancel_onset": b21_heq_cancel,
+        "first_b21_heq_max_onset": b21_heq_max,
+        "first_b21_heq_mach_onset": b21_heq_mach,
+        "first_b21_hpost_cancel_onset": b21_hpost_cancel,
+        "first_b21_hpost_max_onset": b21_hpost_max,
+        "first_b21_hpost_sum_oob_onset": b21_hpost_sum_oob,
+        "first_b21_hpost_flag_oob_onset": b21_hpost_flag_oob,
+        "first_b21_hpost_formula_residual_onset": b21_hpost_formula,
         "primary_branch": branch,
         "primary_branch_reason": reason,
         "b18_primary_branch": b18_branch,
         "b18_primary_branch_reason": b18_reason,
         "b20_primary_branch": b20_branch,
         "b20_primary_branch_reason": b20_reason,
+        "b21_primary_branch": b21_branch,
+        "b21_primary_branch_reason": b21_reason,
         "notes": [
             "Use mask-specific argmax records before changing solver physics.",
             "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
@@ -998,6 +1191,9 @@ def key_summary(
             "B18 force-excluded stress is a diagnostic shadow candidate, not a physics write path.",
             "If phase/h fields lead force diagnostics, return to h update and phase-advection timeline.",
             "B20 bounded-velocity h-update fields are shadow diagnostics only, not a physics limiter.",
+            "B21 h-population fields are shadow diagnostics only and must not be interpreted as a solver write path.",
+            "If B21 hpost formula residual appears first, audit generated TCLB indexing before changing the physical model.",
+            "If B21 HPre is already large, inspect AddDensity streaming/history before modifying wetting or force closures.",
         ],
     }
 

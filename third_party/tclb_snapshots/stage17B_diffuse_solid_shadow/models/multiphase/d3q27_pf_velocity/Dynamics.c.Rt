@@ -198,6 +198,10 @@ CudaDeviceFunction int stage14_b20_hupdate_diagnostics_active(){
 	return (stage16_replay_diagnostics_active() && Stage14B20HUpdateDiagnosticsMode > 0.5);
 }
 
+CudaDeviceFunction int stage14_b21_hpopulation_audit_active(){
+	return (stage16_replay_diagnostics_active() && Stage14B21HPopulationAuditMode > 0.5);
+}
+
 CudaDeviceFunction real_t stage14_stress_norm6(real_t stress[6]){
 	return sqrt(stress[0]*stress[0] + 2.0*stress[1]*stress[1] + 2.0*stress[2]*stress[2] +
 	            stress[3]*stress[3] + 2.0*stress[4]*stress[4] + stress[5]*stress[5]);
@@ -449,6 +453,51 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	B20HPostRawPostForceOutOfBoundsFlag = 0.0;
 	B20HPostPreForceOutOfBoundsFlag = 0.0;
 	B20HPostBoundedOutOfBoundsFlag = 0.0;
+	B21ProbeActive = 0.0;
+	B21HPreSum = 0.0;
+	B21HPreSumAbs = 0.0;
+	B21HPreL2 = 0.0;
+	B21HPreMin = 0.0;
+	B21HPreMax = 0.0;
+	B21HPreMaxAbs = 0.0;
+	B21HPreMaxAbsIndex = 0.0;
+	B21HPrePosSum = 0.0;
+	B21HPreNegSumAbs = 0.0;
+	B21HPreCancellationRatio = 0.0;
+	B21HPreSignedRange = 0.0;
+	B21HeqSum = 0.0;
+	B21HeqSumMinusC = 0.0;
+	B21HeqSumAbs = 0.0;
+	B21HeqL2 = 0.0;
+	B21HeqMin = 0.0;
+	B21HeqMax = 0.0;
+	B21HeqMaxAbs = 0.0;
+	B21HeqMaxAbsIndex = 0.0;
+	B21HeqCancellationRatio = 0.0;
+	B21HeqVelocityMachShadow = 0.0;
+	B21HeqVelocitySquared = 0.0;
+	B21FphiSum = 0.0;
+	B21FphiSumAbs = 0.0;
+	B21FphiL2 = 0.0;
+	B21FphiMin = 0.0;
+	B21FphiMax = 0.0;
+	B21FphiMaxAbs = 0.0;
+	B21FphiMaxAbsIndex = 0.0;
+	B21FphiCancellationRatio = 0.0;
+	B21Tmp1 = 0.0;
+	B21NormalMag = 0.0;
+	B21HPostSum = 0.0;
+	B21HPostSumAbs = 0.0;
+	B21HPostL2 = 0.0;
+	B21HPostMin = 0.0;
+	B21HPostMax = 0.0;
+	B21HPostMaxAbs = 0.0;
+	B21HPostMaxAbsIndex = 0.0;
+	B21HPostPosSum = 0.0;
+	B21HPostNegSumAbs = 0.0;
+	B21HPostCancellationRatio = 0.0;
+	B21HPostOutOfBoundsFlag = 0.0;
+	B21HPostSumMinusFormula = 0.0;
 	B5SignedDistance = 0.0;
 	B5NearWallBandFlag = 0.0;
 	B5ContactLineBandFlag = 0.0;
@@ -1025,6 +1074,12 @@ CudaDeviceFunction real_t stage14_max_abs2(real_t a, real_t b) {
 	return (aa > bb) ? aa : bb;
 }
 
+CudaDeviceFunction real_t stage14_cancellation_ratio(real_t sum_abs, real_t sum_value) {
+	real_t denom = fabs(sum_value);
+	if (denom < 1.0e-30) denom = 1.0e-30;
+	return sum_abs / denom;
+}
+
 CudaDeviceFunction int stage14_force_iter_limit_from_mode() {
 	if (ForceFixedPointMode > 1.5 && ForceFixedPointMode < 2.5) {
 		return 1;
@@ -1514,6 +1569,57 @@ CudaDeviceFunction real_t getB20HPostActiveOutOfBoundsFlag(){ return stage14_b20
 CudaDeviceFunction real_t getB20HPostRawPostForceOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostRawPostForceOutOfBoundsFlag(0,0,0)); }
 CudaDeviceFunction real_t getB20HPostPreForceOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostPreForceOutOfBoundsFlag(0,0,0)); }
 CudaDeviceFunction real_t getB20HPostBoundedOutOfBoundsFlag(){ return stage14_b20_scalar(B20HPostBoundedOutOfBoundsFlag(0,0,0)); }
+
+CudaDeviceFunction real_t stage14_b21_scalar(real_t value){
+	if (stage14_b21_hpopulation_audit_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB21ProbeActive(){ return stage14_b21_scalar(B21ProbeActive(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreSum(){ return stage14_b21_scalar(B21HPreSum(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreSumAbs(){ return stage14_b21_scalar(B21HPreSumAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreL2(){ return stage14_b21_scalar(B21HPreL2(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreMin(){ return stage14_b21_scalar(B21HPreMin(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreMax(){ return stage14_b21_scalar(B21HPreMax(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreMaxAbs(){ return stage14_b21_scalar(B21HPreMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreMaxAbsIndex(){ return stage14_b21_scalar(B21HPreMaxAbsIndex(0,0,0)); }
+CudaDeviceFunction real_t getB21HPrePosSum(){ return stage14_b21_scalar(B21HPrePosSum(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreNegSumAbs(){ return stage14_b21_scalar(B21HPreNegSumAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreCancellationRatio(){ return stage14_b21_scalar(B21HPreCancellationRatio(0,0,0)); }
+CudaDeviceFunction real_t getB21HPreSignedRange(){ return stage14_b21_scalar(B21HPreSignedRange(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqSum(){ return stage14_b21_scalar(B21HeqSum(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqSumMinusC(){ return stage14_b21_scalar(B21HeqSumMinusC(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqSumAbs(){ return stage14_b21_scalar(B21HeqSumAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqL2(){ return stage14_b21_scalar(B21HeqL2(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqMin(){ return stage14_b21_scalar(B21HeqMin(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqMax(){ return stage14_b21_scalar(B21HeqMax(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqMaxAbs(){ return stage14_b21_scalar(B21HeqMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqMaxAbsIndex(){ return stage14_b21_scalar(B21HeqMaxAbsIndex(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqCancellationRatio(){ return stage14_b21_scalar(B21HeqCancellationRatio(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqVelocityMachShadow(){ return stage14_b21_scalar(B21HeqVelocityMachShadow(0,0,0)); }
+CudaDeviceFunction real_t getB21HeqVelocitySquared(){ return stage14_b21_scalar(B21HeqVelocitySquared(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiSum(){ return stage14_b21_scalar(B21FphiSum(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiSumAbs(){ return stage14_b21_scalar(B21FphiSumAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiL2(){ return stage14_b21_scalar(B21FphiL2(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiMin(){ return stage14_b21_scalar(B21FphiMin(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiMax(){ return stage14_b21_scalar(B21FphiMax(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiMaxAbs(){ return stage14_b21_scalar(B21FphiMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiMaxAbsIndex(){ return stage14_b21_scalar(B21FphiMaxAbsIndex(0,0,0)); }
+CudaDeviceFunction real_t getB21FphiCancellationRatio(){ return stage14_b21_scalar(B21FphiCancellationRatio(0,0,0)); }
+CudaDeviceFunction real_t getB21Tmp1(){ return stage14_b21_scalar(B21Tmp1(0,0,0)); }
+CudaDeviceFunction real_t getB21NormalMag(){ return stage14_b21_scalar(B21NormalMag(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostSum(){ return stage14_b21_scalar(B21HPostSum(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostSumAbs(){ return stage14_b21_scalar(B21HPostSumAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostL2(){ return stage14_b21_scalar(B21HPostL2(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostMin(){ return stage14_b21_scalar(B21HPostMin(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostMax(){ return stage14_b21_scalar(B21HPostMax(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostMaxAbs(){ return stage14_b21_scalar(B21HPostMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostMaxAbsIndex(){ return stage14_b21_scalar(B21HPostMaxAbsIndex(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostPosSum(){ return stage14_b21_scalar(B21HPostPosSum(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostNegSumAbs(){ return stage14_b21_scalar(B21HPostNegSumAbs(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostCancellationRatio(){ return stage14_b21_scalar(B21HPostCancellationRatio(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostOutOfBoundsFlag(){ return stage14_b21_scalar(B21HPostOutOfBoundsFlag(0,0,0)); }
+CudaDeviceFunction real_t getB21HPostSumMinusFormula(){ return stage14_b21_scalar(B21HPostSumMinusFormula(0,0,0)); }
 
 CudaDeviceFunction real_t getWallGradDeltaMag(){
 	return WallGradDeltaMag(0,0,0);
@@ -3477,6 +3583,111 @@ CudaDeviceFunction void CollisionMRT()
 		B20HPostRawPostForceOutOfBoundsFlag = (b20_hpost_raw_sum < PhaseField_l || b20_hpost_raw_sum > PhaseField_h) ? 1.0 : 0.0;
 		B20HPostPreForceOutOfBoundsFlag = (b20_hpost_pre_sum < PhaseField_l || b20_hpost_pre_sum > PhaseField_h) ? 1.0 : 0.0;
 		B20HPostBoundedOutOfBoundsFlag = (b20_hpost_bounded_sum < PhaseField_l || b20_hpost_bounded_sum > PhaseField_h) ? 1.0 : 0.0;
+	}
+	if (stage14_b21_hpopulation_audit_active()) {
+		real_t b21_h_pre[hPops];
+		real_t b21_hpost[hPops];
+		<?R
+			b21_h_pre = PV("b21_h_pre[",1:(if (Options$q27) 27 else 15)-1,"]")
+			b21_hpost = PV("b21_hpost[",1:(if (Options$q27) 27 else 15)-1,"]")
+			C(b21_h_pre, h)
+			C(b21_hpost, b21_h_pre - omega * (b21_h_pre - heq + 0.5*Fphi) + Fphi)
+		?>
+		real_t hpre_sum = 0.0, hpre_sum_abs = 0.0, hpre_l2 = 0.0;
+		real_t hpre_min = b21_h_pre[0], hpre_max = b21_h_pre[0], hpre_max_abs = fabs(b21_h_pre[0]);
+		real_t hpre_idx = 0.0, hpre_pos = 0.0, hpre_neg_abs = 0.0;
+		real_t heq_sum = 0.0, heq_sum_abs = 0.0, heq_l2 = 0.0;
+		real_t heq_min = heq[0], heq_max = heq[0], heq_max_abs = fabs(heq[0]);
+		real_t heq_idx = 0.0;
+		real_t fphi_sum = 0.0, fphi_sum_abs = 0.0, fphi_l2 = 0.0;
+		real_t fphi_min = F_phi[0], fphi_max = F_phi[0], fphi_max_abs = fabs(F_phi[0]);
+		real_t fphi_idx = 0.0;
+		real_t hpost_sum = 0.0, hpost_sum_abs = 0.0, hpost_l2 = 0.0;
+		real_t hpost_min = b21_hpost[0], hpost_max = b21_hpost[0], hpost_max_abs = fabs(b21_hpost[0]);
+		real_t hpost_idx = 0.0, hpost_pos = 0.0, hpost_neg_abs = 0.0;
+		for (int b21_i=0; b21_i<hPops; b21_i++) {
+			real_t hp = b21_h_pre[b21_i];
+			real_t he = heq[b21_i];
+			real_t fp = F_phi[b21_i];
+			real_t ho = b21_hpost[b21_i];
+			real_t hp_abs = fabs(hp);
+			real_t he_abs = fabs(he);
+			real_t fp_abs = fabs(fp);
+			real_t ho_abs = fabs(ho);
+			hpre_sum += hp;
+			hpre_sum_abs += hp_abs;
+			hpre_l2 += hp*hp;
+			if (hp < hpre_min) hpre_min = hp;
+			if (hp > hpre_max) hpre_max = hp;
+			if (hp_abs > hpre_max_abs) { hpre_max_abs = hp_abs; hpre_idx = (real_t)b21_i; }
+			if (hp >= 0.0) hpre_pos += hp; else hpre_neg_abs += -hp;
+			heq_sum += he;
+			heq_sum_abs += he_abs;
+			heq_l2 += he*he;
+			if (he < heq_min) heq_min = he;
+			if (he > heq_max) heq_max = he;
+			if (he_abs > heq_max_abs) { heq_max_abs = he_abs; heq_idx = (real_t)b21_i; }
+			fphi_sum += fp;
+			fphi_sum_abs += fp_abs;
+			fphi_l2 += fp*fp;
+			if (fp < fphi_min) fphi_min = fp;
+			if (fp > fphi_max) fphi_max = fp;
+			if (fp_abs > fphi_max_abs) { fphi_max_abs = fp_abs; fphi_idx = (real_t)b21_i; }
+			hpost_sum += ho;
+			hpost_sum_abs += ho_abs;
+			hpost_l2 += ho*ho;
+			if (ho < hpost_min) hpost_min = ho;
+			if (ho > hpost_max) hpost_max = ho;
+			if (ho_abs > hpost_max_abs) { hpost_max_abs = ho_abs; hpost_idx = (real_t)b21_i; }
+			if (ho >= 0.0) hpost_pos += ho; else hpost_neg_abs += -ho;
+		}
+		real_t hpost_formula_sum = hpre_sum - omega_phi * (hpre_sum - heq_sum + 0.5*fphi_sum) + fphi_sum;
+		real_t phase_speed2 = phase_adv_U*phase_adv_U + phase_adv_V*phase_adv_V + phase_adv_W*phase_adv_W;
+		B21ProbeActive = 1.0;
+		B21HPreSum = hpre_sum;
+		B21HPreSumAbs = hpre_sum_abs;
+		B21HPreL2 = sqrt(hpre_l2);
+		B21HPreMin = hpre_min;
+		B21HPreMax = hpre_max;
+		B21HPreMaxAbs = hpre_max_abs;
+		B21HPreMaxAbsIndex = hpre_idx;
+		B21HPrePosSum = hpre_pos;
+		B21HPreNegSumAbs = hpre_neg_abs;
+		B21HPreCancellationRatio = stage14_cancellation_ratio(hpre_sum_abs, hpre_sum);
+		B21HPreSignedRange = hpre_max - hpre_min;
+		B21HeqSum = heq_sum;
+		B21HeqSumMinusC = heq_sum - C;
+		B21HeqSumAbs = heq_sum_abs;
+		B21HeqL2 = sqrt(heq_l2);
+		B21HeqMin = heq_min;
+		B21HeqMax = heq_max;
+		B21HeqMaxAbs = heq_max_abs;
+		B21HeqMaxAbsIndex = heq_idx;
+		B21HeqCancellationRatio = stage14_cancellation_ratio(heq_sum_abs, heq_sum);
+		B21HeqVelocitySquared = phase_speed2;
+		B21HeqVelocityMachShadow = sqrt(3.0*phase_speed2);
+		B21FphiSum = fphi_sum;
+		B21FphiSumAbs = fphi_sum_abs;
+		B21FphiL2 = sqrt(fphi_l2);
+		B21FphiMin = fphi_min;
+		B21FphiMax = fphi_max;
+		B21FphiMaxAbs = fphi_max_abs;
+		B21FphiMaxAbsIndex = fphi_idx;
+		B21FphiCancellationRatio = stage14_cancellation_ratio(fphi_sum_abs, fphi_sum);
+		B21Tmp1 = tmp1;
+		B21NormalMag = sqrt(n.x*n.x + n.y*n.y + n.z*n.z);
+		B21HPostSum = hpost_sum;
+		B21HPostSumAbs = hpost_sum_abs;
+		B21HPostL2 = sqrt(hpost_l2);
+		B21HPostMin = hpost_min;
+		B21HPostMax = hpost_max;
+		B21HPostMaxAbs = hpost_max_abs;
+		B21HPostMaxAbsIndex = hpost_idx;
+		B21HPostPosSum = hpost_pos;
+		B21HPostNegSumAbs = hpost_neg_abs;
+		B21HPostCancellationRatio = stage14_cancellation_ratio(hpost_sum_abs, hpost_sum);
+		B21HPostOutOfBoundsFlag = (hpost_sum < PhaseField_l || hpost_sum > PhaseField_h) ? 1.0 : 0.0;
+		B21HPostSumMinusFormula = hpost_sum - hpost_formula_sum;
 	}
 	<?R
 	C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)

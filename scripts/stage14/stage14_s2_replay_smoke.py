@@ -220,6 +220,51 @@ VTK_FIELDS = ",".join(
         "B20HPostRawPostForceOutOfBoundsFlag",
         "B20HPostPreForceOutOfBoundsFlag",
         "B20HPostBoundedOutOfBoundsFlag",
+        "B21ProbeActive",
+        "B21HPreSum",
+        "B21HPreSumAbs",
+        "B21HPreL2",
+        "B21HPreMin",
+        "B21HPreMax",
+        "B21HPreMaxAbs",
+        "B21HPreMaxAbsIndex",
+        "B21HPrePosSum",
+        "B21HPreNegSumAbs",
+        "B21HPreCancellationRatio",
+        "B21HPreSignedRange",
+        "B21HeqSum",
+        "B21HeqSumMinusC",
+        "B21HeqSumAbs",
+        "B21HeqL2",
+        "B21HeqMin",
+        "B21HeqMax",
+        "B21HeqMaxAbs",
+        "B21HeqMaxAbsIndex",
+        "B21HeqCancellationRatio",
+        "B21HeqVelocityMachShadow",
+        "B21HeqVelocitySquared",
+        "B21FphiSum",
+        "B21FphiSumAbs",
+        "B21FphiL2",
+        "B21FphiMin",
+        "B21FphiMax",
+        "B21FphiMaxAbs",
+        "B21FphiMaxAbsIndex",
+        "B21FphiCancellationRatio",
+        "B21Tmp1",
+        "B21NormalMag",
+        "B21HPostSum",
+        "B21HPostSumAbs",
+        "B21HPostL2",
+        "B21HPostMin",
+        "B21HPostMax",
+        "B21HPostMaxAbs",
+        "B21HPostMaxAbsIndex",
+        "B21HPostPosSum",
+        "B21HPostNegSumAbs",
+        "B21HPostCancellationRatio",
+        "B21HPostOutOfBoundsFlag",
+        "B21HPostSumMinusFormula",
     ]
 )
 
@@ -318,6 +363,97 @@ VTK_FIELDS_MINIMAL = ",".join(
         "B20HPostRawPostForceOutOfBoundsFlag",
         "B20HPostPreForceOutOfBoundsFlag",
         "B20HPostBoundedOutOfBoundsFlag",
+        "B21ProbeActive",
+        "B21HPreSum",
+        "B21HPreSumAbs",
+        "B21HPreMaxAbs",
+        "B21HPreMaxAbsIndex",
+        "B21HPreCancellationRatio",
+        "B21HeqSum",
+        "B21HeqSumMinusC",
+        "B21HeqSumAbs",
+        "B21HeqMaxAbs",
+        "B21HeqMaxAbsIndex",
+        "B21HeqCancellationRatio",
+        "B21HeqVelocityMachShadow",
+        "B21FphiSum",
+        "B21FphiSumAbs",
+        "B21FphiMaxAbs",
+        "B21FphiMaxAbsIndex",
+        "B21FphiCancellationRatio",
+        "B21Tmp1",
+        "B21NormalMag",
+        "B21HPostSum",
+        "B21HPostSumAbs",
+        "B21HPostMaxAbs",
+        "B21HPostMaxAbsIndex",
+        "B21HPostCancellationRatio",
+        "B21HPostOutOfBoundsFlag",
+        "B21HPostSumMinusFormula",
+    ]
+)
+
+VTK_FIELDS_B21 = ",".join(
+    [
+        "PhaseField",
+        "Rho",
+        "U",
+        "BOUNDARY",
+        "IsItBoundary",
+        "ReplayPhaseFromH",
+        "ReplayPhaseAdvVelocity",
+        "ReplayForceOverRho",
+        "ReplayHPreMaxAbs",
+        "ReplayHPostMaxAbs",
+        "ReplayHeqMaxAbs",
+        "ReplayFphiMaxAbs",
+        "ReplayTmp1",
+        "ReplayPhaseOutOfBoundsFlag",
+        "B21ProbeActive",
+        "B21HPreSum",
+        "B21HPreSumAbs",
+        "B21HPreL2",
+        "B21HPreMin",
+        "B21HPreMax",
+        "B21HPreMaxAbs",
+        "B21HPreMaxAbsIndex",
+        "B21HPrePosSum",
+        "B21HPreNegSumAbs",
+        "B21HPreCancellationRatio",
+        "B21HPreSignedRange",
+        "B21HeqSum",
+        "B21HeqSumMinusC",
+        "B21HeqSumAbs",
+        "B21HeqL2",
+        "B21HeqMin",
+        "B21HeqMax",
+        "B21HeqMaxAbs",
+        "B21HeqMaxAbsIndex",
+        "B21HeqCancellationRatio",
+        "B21HeqVelocityMachShadow",
+        "B21HeqVelocitySquared",
+        "B21FphiSum",
+        "B21FphiSumAbs",
+        "B21FphiL2",
+        "B21FphiMin",
+        "B21FphiMax",
+        "B21FphiMaxAbs",
+        "B21FphiMaxAbsIndex",
+        "B21FphiCancellationRatio",
+        "B21Tmp1",
+        "B21NormalMag",
+        "B21HPostSum",
+        "B21HPostSumAbs",
+        "B21HPostL2",
+        "B21HPostMin",
+        "B21HPostMax",
+        "B21HPostMaxAbs",
+        "B21HPostMaxAbsIndex",
+        "B21HPostPosSum",
+        "B21HPostNegSumAbs",
+        "B21HPostCancellationRatio",
+        "B21HPostOutOfBoundsFlag",
+        "B21HPostSumMinusFormula",
     ]
 )
 
@@ -369,6 +505,24 @@ REQUIRED_REPLAY_FIELDS = [
     "ReplayForceRhoRaw",
     "ReplayForceRhoEffective",
 ]
+
+REQUIRED_FIELDS_BY_VTK_SET = {
+    "b21": [
+        "PhaseField",
+        "Rho",
+        "BOUNDARY",
+        "IsItBoundary",
+        "ReplayPhaseFromH",
+        "ReplayPhaseAdvVelocity",
+        "ReplayForceOverRho",
+        "ReplayHPostMaxAbs",
+        "B21ProbeActive",
+        "B21HPreMaxAbs",
+        "B21HeqMaxAbs",
+        "B21HPostMaxAbs",
+        "B21HPostSumMinusFormula",
+    ],
+}
 
 
 @dataclass(frozen=True)
@@ -424,6 +578,7 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("Stage14B18ClosureDiagnosticsMode", args.b18_closure_diagnostics_mode),
             param("Stage14B18VelocityBound", args.b18_velocity_bound),
             param("Stage14B20HUpdateDiagnosticsMode", args.b20_hupdate_diagnostics_mode),
+            param("Stage14B21HPopulationAuditMode", args.b21_hpopulation_audit_mode),
             param("MomentumClosureProbeMode", args.momentum_closure_probe_mode),
             param("PressureClosureMode", args.pressure_closure_mode),
             param("PressureClosureReference", args.pressure_closure_reference),
@@ -445,9 +600,19 @@ def common_model_params(args: argparse.Namespace) -> str:
 
 
 def vtk_fields_for(args: argparse.Namespace) -> str:
+    if args.vtk_field_set == "b21":
+        return VTK_FIELDS_B21
     if args.vtk_field_set == "minimal":
         return VTK_FIELDS_MINIMAL
     return VTK_FIELDS
+
+
+def required_fields_for(metadata: dict[str, Any] | None = None) -> list[str]:
+    if metadata:
+        field_set = metadata.get("vtk_field_set")
+        if field_set in REQUIRED_FIELDS_BY_VTK_SET:
+            return REQUIRED_FIELDS_BY_VTK_SET[str(field_set)]
+    return REQUIRED_REPLAY_FIELDS
 
 
 def render_bulk_xml(
@@ -625,6 +790,7 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "b18_closure_diagnostics_mode": args.b18_closure_diagnostics_mode,
             "b18_velocity_bound": args.b18_velocity_bound,
             "b20_hupdate_diagnostics_mode": args.b20_hupdate_diagnostics_mode,
+            "b21_hpopulation_audit_mode": args.b21_hpopulation_audit_mode,
             "momentum_closure_probe_mode": args.momentum_closure_probe_mode,
             "pressure_closure_mode": args.pressure_closure_mode,
             "pressure_closure_reference": args.pressure_closure_reference,
@@ -769,14 +935,16 @@ def field_stats(arr: np.ndarray) -> dict[str, Any]:
 
 def summarize_case(case_dir: Path) -> dict[str, Any]:
     physical_grid = None
+    metadata: dict[str, Any] = {}
     metadata_path = case_dir / "case_metadata.json"
     if metadata_path.exists():
         try:
-            physical_grid = json.loads(metadata_path.read_text(encoding="utf-8")).get(
-                "physical_grid"
-            )
+            metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            physical_grid = metadata.get("physical_grid")
         except json.JSONDecodeError:
             physical_grid = None
+            metadata = {}
+    required_fields = required_fields_for(metadata)
     vtis = sorted((case_dir / "output").glob("case_VTK_P00_*.vti"), key=step_of)
     summary: dict[str, Any] = {
         "case": case_dir.name,
@@ -784,7 +952,8 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
         "n_vti": len(vtis),
         "steps": [step_of(path) for path in vtis],
         "physical_grid": physical_grid,
-        "required_replay_fields": REQUIRED_REPLAY_FIELDS,
+        "vtk_field_set": metadata.get("vtk_field_set"),
+        "required_replay_fields": required_fields,
         "frames": [],
         "failures": [],
     }
@@ -798,7 +967,7 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
             "vti": str(path),
             "dims": list(dims),
             "array_count": len(arrays),
-            "missing_required_replay": [name for name in REQUIRED_REPLAY_FIELDS if name not in arrays],
+            "missing_required_replay": [name for name in required_fields if name not in arrays],
             "stats": {},
         }
         base_summary_fields = [
@@ -898,7 +1067,7 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
                 + sorted(
                     name
                     for name in arrays
-                    if name.startswith("B18") or name.startswith("B20")
+                    if name.startswith("B18") or name.startswith("B20") or name.startswith("B21")
                 )
             )
         )
@@ -943,7 +1112,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gpu", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=10)
     parser.add_argument("--vtk-period", type=int, default=1)
-    parser.add_argument("--vtk-field-set", choices=("full", "minimal"), default="full")
+    parser.add_argument("--vtk-field-set", choices=("full", "minimal", "b21"), default="full")
     parser.add_argument("--log-period", type=int, default=1)
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--cases", default="all")
@@ -954,6 +1123,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--b18-closure-diagnostics-mode", type=int, default=0)
     parser.add_argument("--b18-velocity-bound", type=float, default=0.2)
     parser.add_argument("--b20-hupdate-diagnostics-mode", type=int, default=0)
+    parser.add_argument("--b21-hpopulation-audit-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-probe-mode", type=int, default=0)
     parser.add_argument("--pressure-closure-mode", type=int, default=0)
     parser.add_argument("--pressure-closure-reference", type=float, default=0.0)
