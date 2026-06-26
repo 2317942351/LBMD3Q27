@@ -651,12 +651,29 @@ def step_of(path: Path) -> int:
     return int(match.group(1)) if match else -1
 
 
+def requested_vti_arrays() -> set[str]:
+    names: set[str] = set(SCALAR_FIELDS + VECTOR_FIELDS + COLOCATE_FIELDS)
+    for source in DERIVED_VECTOR_MAG_FIELDS.values():
+        names.add(source)
+    for sources in STRESS_GROUPS.values():
+        names.update(sources)
+    return names
+
+
 def load_vti(path: Path) -> tuple[tuple[int, int, int], dict[str, np.ndarray]]:
     import vtk  # type: ignore
     from vtk.util.numpy_support import vtk_to_numpy  # type: ignore
 
     reader = vtk.vtkXMLImageDataReader()
     reader.SetFileName(str(path))
+    reader.UpdateInformation()
+    cell_selection = reader.GetCellDataArraySelection()
+    wanted = requested_vti_arrays()
+    if cell_selection is not None:
+        cell_selection.DisableAllArrays()
+        for name in wanted:
+            if cell_selection.ArrayExists(name):
+                cell_selection.EnableArray(name)
     reader.Update()
     image = reader.GetOutput()
     dims = tuple(int(v) - 1 for v in image.GetDimensions())

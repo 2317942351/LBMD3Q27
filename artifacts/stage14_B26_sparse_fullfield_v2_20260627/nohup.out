@@ -1,0 +1,24 @@
+stage=stage14_B26_sparse_fullfield
+root=/mnt/usb1t/RUNS/runs/stage14_B26_sparse_fullfield_v2_20260627
+gpu=1
+binary=/home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
+iterations=12
+vtk_period=1
+density_h=1.0
+density_l=0.005
+pressure_closure_mode=1
+force_fixed_point_mode=2
+phase_advection_velocity_mode=1
+probes=M0_FD0_full M0_FD1_full
+claim_limit=diagnostic_only_not_contact_angle_validation
+2a5729a8041dcd3db150149b623764862778d799cd657b55ab43fc2cab47cef6  /home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
+GPU 0: Quadro P4000 (UUID: GPU-35592b0d-56ad-6c22-ced4-72fc9bbec8d8)
+GPU 1: Tesla P100-PCIE-16GB (UUID: GPU-f650e558-d920-2fcb-0a8e-45cbc17c1ca2)
+GPU 2: Tesla P100-PCIE-16GB (UUID: GPU-2abee638-4460-b364-cd98-08cb6eaf11f7)
+文件系统        大小  已用  可用 已用% 挂载点
+/dev/sdd1       468G  169G  276G   38% /mnt/usb1t
+RUN_B26 tag=M0_FD0_full ForceDensityClosureMode=0
+RUN_B26 tag=M0_FD1_full ForceDensityClosureMode=1
+文件系统        大小  已用  可用 已用% 挂载点
+/dev/sdd1       468G  169G  276G   38% /mnt/usb1t
+OVERALL_RC=3
