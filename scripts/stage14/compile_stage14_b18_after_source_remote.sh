@@ -15,6 +15,13 @@ cd "${ROOT}"
 {
   date
   tools/RT -b -q \
+    -f src/SUMMARY.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/SUMMARY" \
+    -i options.R
+  echo "SUMMARY_RT_RC=0"
+  tools/RT -b -q \
     -f src/Consts.h.Rt \
     -I tools,src,models/multiphase/d3q27_pf_velocity \
     -w "CLB/${TARGET}/" \
@@ -63,16 +70,74 @@ cd "${ROOT}"
     -o "CLB/${TARGET}/cuda.cu" \
     -i options.R
   echo "CUDA_RT_RC=0"
+  tools/RT -b -q \
+    -f src/Lattice.cu.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/Lattice.cu" \
+    -i options.R
+  echo "LATTICE_CU_RT_RC=0"
+  tools/RT -b -q \
+    -f src/Lattice.h.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/Lattice.h" \
+    -i options.R
+  echo "LATTICE_H_RT_RC=0"
+  tools/RT -b -q \
+    -f src/LatticeAccess.inc.cpp.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/LatticeAccess.inc.cpp" \
+    -i options.R
+  echo "LATTICE_ACCESS_RT_RC=0"
+  tools/RT -b -q \
+    -f src/LatticeContainer.h.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/LatticeContainer.h" \
+    -i options.R
+  echo "LATTICE_CONTAINER_H_RT_RC=0"
+  tools/RT -b -q \
+    -f src/LatticeContainer.inc.cpp.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/LatticeContainer.inc.cpp" \
+    -i options.R
+  echo "LATTICE_CONTAINER_INC_RT_RC=0"
+  tools/RT -b -q \
+    -f src/Solver.cpp.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/Solver.cpp" \
+    -i options.R
+  echo "SOLVER_CPP_RT_RC=0"
+  tools/RT -b -q \
+    -f src/Solver.h.Rt \
+    -I tools,src,models/multiphase/d3q27_pf_velocity \
+    -w "CLB/${TARGET}/" \
+    -o "CLB/${TARGET}/Solver.h" \
+    -i options.R
+  echo "SOLVER_H_RT_RC=0"
   grep -q "CudaConstantMemory real_t Stage14B18ClosureDiagnosticsMode" "CLB/${TARGET}/cuda.cu"
   grep -q "#define B18FmuLegacyX" "CLB/${TARGET}/cuda.cu"
   grep -q "CudaConstantMemory real_t Stage14B20HUpdateDiagnosticsMode" "CLB/${TARGET}/cuda.cu"
   grep -q "#define B20HPostActiveMaxAbs" "CLB/${TARGET}/cuda.cu"
   grep -q "CudaConstantMemory real_t Stage14B21HPopulationAuditMode" "CLB/${TARGET}/cuda.cu"
   grep -q "#define B21HPostSumMinusFormula" "CLB/${TARGET}/cuda.cu"
+  grep -q "CudaConstantMemory real_t Stage14B22VelocityProducerAuditMode" "CLB/${TARGET}/cuda.cu"
+  grep -q "#define B22HeqFromM0MaxAbs" "CLB/${TARGET}/cuda.cu"
   grep -q "real_t B21HPostSumMinusFormula" "CLB/${TARGET}/Dynamics.h"
+  grep -q "real_t B22HeqFromM0MaxAbs" "CLB/${TARGET}/Dynamics.h"
   grep -q "SETTINGS_Stage14B21HPopulationAuditMode" "CLB/${TARGET}/Consts.h"
+  grep -q "SETTINGS_Stage14B22VelocityProducerAuditMode" "CLB/${TARGET}/Consts.h"
   grep -q '"Stage14B21HPopulationAuditMode"' "CLB/${TARGET}/Lists.cpp"
-  echo "CUDA_B18_B20_B21_ACCESSORS_OK=1"
+  grep -q '"Stage14B22VelocityProducerAuditMode"' "CLB/${TARGET}/Lists.cpp"
+  grep -q "GetB22ProbeActive" "CLB/${TARGET}/Lattice.cu"
+  grep -q "load_B22ProbeActive" "CLB/${TARGET}/LatticeAccess.inc.cpp"
+  grep -q "GetB22ProbeActive" "CLB/${TARGET}/Solver.cpp"
+  echo "CUDA_B18_B20_B21_B22_ACCESSORS_OK=1"
+  find "CLB/${TARGET}" -maxdepth 1 -name '*.o' -delete
   make -C "CLB/${TARGET}" -j "${JOBS:-8}"
   echo "BUILD_RC=0"
   sha256sum "CLB/${TARGET}/main"

@@ -202,6 +202,10 @@ CudaDeviceFunction int stage14_b21_hpopulation_audit_active(){
 	return (stage16_replay_diagnostics_active() && Stage14B21HPopulationAuditMode > 0.5);
 }
 
+CudaDeviceFunction int stage14_b22_velocity_producer_audit_active(){
+	return (stage16_replay_diagnostics_active() && Stage14B22VelocityProducerAuditMode > 0.5);
+}
+
 CudaDeviceFunction real_t stage14_stress_norm6(real_t stress[6]){
 	return sqrt(stress[0]*stress[0] + 2.0*stress[1]*stress[1] + 2.0*stress[2]*stress[2] +
 	            stress[3]*stress[3] + 2.0*stress[4]*stress[4] + stress[5]*stress[5]);
@@ -498,6 +502,37 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	B21HPostCancellationRatio = 0.0;
 	B21HPostOutOfBoundsFlag = 0.0;
 	B21HPostSumMinusFormula = 0.0;
+	B22ProbeActive = 0.0;
+	B22M0UX = 0.0;
+	B22M0UY = 0.0;
+	B22M0UZ = 0.0;
+	B22MomentumUX = 0.0;
+	B22MomentumUY = 0.0;
+	B22MomentumUZ = 0.0;
+	B22PhaseAdvUX = 0.0;
+	B22PhaseAdvUY = 0.0;
+	B22PhaseAdvUZ = 0.0;
+	B22M0Speed = 0.0;
+	B22MomentumSpeed = 0.0;
+	B22PhaseAdvSpeed = 0.0;
+	B22ForceOverRhoX = 0.0;
+	B22ForceOverRhoY = 0.0;
+	B22ForceOverRhoZ = 0.0;
+	B22ForceOverRhoMag = 0.0;
+	B22ForceRhoRaw = 0.0;
+	B22ForceRhoEffective = 0.0;
+	B22HalfForceUX = 0.0;
+	B22HalfForceUY = 0.0;
+	B22HalfForceUZ = 0.0;
+	B22FpressureMag = 0.0;
+	B22FsurfMag = 0.0;
+	B22FmuMag = 0.0;
+	B22FtotalMag = 0.0;
+	B22HeqFromM0MaxAbs = 0.0;
+	B22HeqFromMomentumMaxAbs = 0.0;
+	B22HeqFromBoundedShadowMaxAbs = 0.0;
+	B22VelocitySourceId = 0.0;
+	B22VelocityMachExceededFlag = 0.0;
 	B5SignedDistance = 0.0;
 	B5NearWallBandFlag = 0.0;
 	B5ContactLineBandFlag = 0.0;
@@ -1620,6 +1655,71 @@ CudaDeviceFunction real_t getB21HPostNegSumAbs(){ return stage14_b21_scalar(B21H
 CudaDeviceFunction real_t getB21HPostCancellationRatio(){ return stage14_b21_scalar(B21HPostCancellationRatio(0,0,0)); }
 CudaDeviceFunction real_t getB21HPostOutOfBoundsFlag(){ return stage14_b21_scalar(B21HPostOutOfBoundsFlag(0,0,0)); }
 CudaDeviceFunction real_t getB21HPostSumMinusFormula(){ return stage14_b21_scalar(B21HPostSumMinusFormula(0,0,0)); }
+
+CudaDeviceFunction real_t stage14_b22_scalar(real_t value){
+	if (stage14_b22_velocity_producer_audit_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB22ProbeActive(){ return stage14_b22_scalar(B22ProbeActive(0,0,0)); }
+
+CudaDeviceFunction vector_t getB22M0U(){
+	vector_t out;
+	out.x = stage14_b22_scalar(B22M0UX(0,0,0));
+	out.y = stage14_b22_scalar(B22M0UY(0,0,0));
+	out.z = stage14_b22_scalar(B22M0UZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB22MomentumU(){
+	vector_t out;
+	out.x = stage14_b22_scalar(B22MomentumUX(0,0,0));
+	out.y = stage14_b22_scalar(B22MomentumUY(0,0,0));
+	out.z = stage14_b22_scalar(B22MomentumUZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction vector_t getB22PhaseAdvU(){
+	vector_t out;
+	out.x = stage14_b22_scalar(B22PhaseAdvUX(0,0,0));
+	out.y = stage14_b22_scalar(B22PhaseAdvUY(0,0,0));
+	out.z = stage14_b22_scalar(B22PhaseAdvUZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getB22M0Speed(){ return stage14_b22_scalar(B22M0Speed(0,0,0)); }
+CudaDeviceFunction real_t getB22MomentumSpeed(){ return stage14_b22_scalar(B22MomentumSpeed(0,0,0)); }
+CudaDeviceFunction real_t getB22PhaseAdvSpeed(){ return stage14_b22_scalar(B22PhaseAdvSpeed(0,0,0)); }
+
+CudaDeviceFunction vector_t getB22ForceOverRho(){
+	vector_t out;
+	out.x = stage14_b22_scalar(B22ForceOverRhoX(0,0,0));
+	out.y = stage14_b22_scalar(B22ForceOverRhoY(0,0,0));
+	out.z = stage14_b22_scalar(B22ForceOverRhoZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getB22ForceOverRhoMag(){ return stage14_b22_scalar(B22ForceOverRhoMag(0,0,0)); }
+CudaDeviceFunction real_t getB22ForceRhoRaw(){ return stage14_b22_scalar(B22ForceRhoRaw(0,0,0)); }
+CudaDeviceFunction real_t getB22ForceRhoEffective(){ return stage14_b22_scalar(B22ForceRhoEffective(0,0,0)); }
+
+CudaDeviceFunction vector_t getB22HalfForceU(){
+	vector_t out;
+	out.x = stage14_b22_scalar(B22HalfForceUX(0,0,0));
+	out.y = stage14_b22_scalar(B22HalfForceUY(0,0,0));
+	out.z = stage14_b22_scalar(B22HalfForceUZ(0,0,0));
+	return out;
+}
+
+CudaDeviceFunction real_t getB22FpressureMag(){ return stage14_b22_scalar(B22FpressureMag(0,0,0)); }
+CudaDeviceFunction real_t getB22FsurfMag(){ return stage14_b22_scalar(B22FsurfMag(0,0,0)); }
+CudaDeviceFunction real_t getB22FmuMag(){ return stage14_b22_scalar(B22FmuMag(0,0,0)); }
+CudaDeviceFunction real_t getB22FtotalMag(){ return stage14_b22_scalar(B22FtotalMag(0,0,0)); }
+CudaDeviceFunction real_t getB22HeqFromM0MaxAbs(){ return stage14_b22_scalar(B22HeqFromM0MaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB22HeqFromMomentumMaxAbs(){ return stage14_b22_scalar(B22HeqFromMomentumMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB22HeqFromBoundedShadowMaxAbs(){ return stage14_b22_scalar(B22HeqFromBoundedShadowMaxAbs(0,0,0)); }
+CudaDeviceFunction real_t getB22VelocitySourceId(){ return stage14_b22_scalar(B22VelocitySourceId(0,0,0)); }
+CudaDeviceFunction real_t getB22VelocityMachExceededFlag(){ return stage14_b22_scalar(B22VelocityMachExceededFlag(0,0,0)); }
 
 CudaDeviceFunction real_t getWallGradDeltaMag(){
 	return WallGradDeltaMag(0,0,0);
@@ -3353,6 +3453,100 @@ CudaDeviceFunction void CollisionMRT()
 		ReplayPhaseAdvVelocityX = phase_adv_U;
 		ReplayPhaseAdvVelocityY = phase_adv_V;
 		ReplayPhaseAdvVelocityZ = phase_adv_W;
+	}
+	if (stage14_b22_velocity_producer_audit_active()) {
+		real_t force_over_rho_x = F_total[0] * force_rho_inv;
+		real_t force_over_rho_y = F_total[1] * force_rho_inv;
+		real_t force_over_rho_z = F_total[2] * force_rho_inv;
+		real_t half_force_x = 0.5 * force_over_rho_x;
+		real_t half_force_y = 0.5 * force_over_rho_y;
+		real_t half_force_z = 0.5 * force_over_rho_z;
+		real_t m0_speed = sqrt(m0[1]*m0[1] + m0[2]*m0[2] + m0[3]*m0[3]);
+		real_t momentum_speed = sqrt(momentum_U*momentum_U + momentum_V*momentum_V + momentum_W*momentum_W);
+		real_t phase_adv_speed = sqrt(phase_adv_U*phase_adv_U + phase_adv_V*phase_adv_V + phase_adv_W*phase_adv_W);
+		real_t b22_bounded_u = phase_adv_U;
+		real_t b22_bounded_v = phase_adv_V;
+		real_t b22_bounded_w = phase_adv_W;
+		real_t b22_bound = Stage14B18VelocityBound;
+		if (b22_bound <= 0.0) b22_bound = 0.2;
+		if (phase_adv_speed > b22_bound && phase_adv_speed > 1.0e-30) {
+			real_t b22_scale = b22_bound / phase_adv_speed;
+			b22_bounded_u *= b22_scale;
+			b22_bounded_v *= b22_scale;
+			b22_bounded_w *= b22_scale;
+		}
+		real_t b22_heq_m0[hPops];
+		real_t b22_heq_momentum[hPops];
+		real_t b22_heq_bounded[hPops];
+		real_t b22_saved_u = U;
+		real_t b22_saved_v = V;
+		real_t b22_saved_w = W;
+		U = m0[1];
+		V = m0[2];
+		W = m0[3];
+		<?R
+			b22_heq_m0 = PV("b22_heq_m0[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b22_m0 = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b22_heq_m0, EQ_h_b22_m0$feq * PV("C"))
+		?>
+		U = momentum_U;
+		V = momentum_V;
+		W = momentum_W;
+		<?R
+			b22_heq_momentum = PV("b22_heq_momentum[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b22_momentum = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b22_heq_momentum, EQ_h_b22_momentum$feq * PV("C"))
+		?>
+		U = b22_bounded_u;
+		V = b22_bounded_v;
+		W = b22_bounded_w;
+		<?R
+			b22_heq_bounded = PV("b22_heq_bounded[",1:(if (Options$q27) 27 else 15)-1,"]")
+			EQ_h_b22_bounded = MRT_eq(U[1:PF_velocities,],PV(1),u)
+			C(b22_heq_bounded, EQ_h_b22_bounded$feq * PV("C"))
+		?>
+		U = b22_saved_u;
+		V = b22_saved_v;
+		W = b22_saved_w;
+		real_t heq_m0_max = 0.0;
+		real_t heq_momentum_max = 0.0;
+		real_t heq_bounded_max = 0.0;
+		for (int b22_i=0; b22_i<hPops; b22_i++) {
+			heq_m0_max = stage14_max_abs2(heq_m0_max, b22_heq_m0[b22_i]);
+			heq_momentum_max = stage14_max_abs2(heq_momentum_max, b22_heq_momentum[b22_i]);
+			heq_bounded_max = stage14_max_abs2(heq_bounded_max, b22_heq_bounded[b22_i]);
+		}
+		B22ProbeActive = 1.0;
+		B22M0UX = m0[1];
+		B22M0UY = m0[2];
+		B22M0UZ = m0[3];
+		B22MomentumUX = momentum_U;
+		B22MomentumUY = momentum_V;
+		B22MomentumUZ = momentum_W;
+		B22PhaseAdvUX = phase_adv_U;
+		B22PhaseAdvUY = phase_adv_V;
+		B22PhaseAdvUZ = phase_adv_W;
+		B22M0Speed = m0_speed;
+		B22MomentumSpeed = momentum_speed;
+		B22PhaseAdvSpeed = phase_adv_speed;
+		B22ForceOverRhoX = force_over_rho_x;
+		B22ForceOverRhoY = force_over_rho_y;
+		B22ForceOverRhoZ = force_over_rho_z;
+		B22ForceOverRhoMag = sqrt(force_over_rho_x*force_over_rho_x + force_over_rho_y*force_over_rho_y + force_over_rho_z*force_over_rho_z);
+		B22ForceRhoRaw = rho;
+		B22ForceRhoEffective = force_rho_eff;
+		B22HalfForceUX = half_force_x;
+		B22HalfForceUY = half_force_y;
+		B22HalfForceUZ = half_force_z;
+		B22FpressureMag = sqrt(F_pressure[0]*F_pressure[0] + F_pressure[1]*F_pressure[1] + F_pressure[2]*F_pressure[2]);
+		B22FsurfMag = sqrt(F_surf[0]*F_surf[0] + F_surf[1]*F_surf[1] + F_surf[2]*F_surf[2]);
+		B22FmuMag = sqrt(F_mu[0]*F_mu[0] + F_mu[1]*F_mu[1] + F_mu[2]*F_mu[2]);
+		B22FtotalMag = sqrt(F_total[0]*F_total[0] + F_total[1]*F_total[1] + F_total[2]*F_total[2]);
+		B22HeqFromM0MaxAbs = heq_m0_max;
+		B22HeqFromMomentumMaxAbs = heq_momentum_max;
+		B22HeqFromBoundedShadowMaxAbs = heq_bounded_max;
+		B22VelocitySourceId = (PhaseAdvectionVelocityMode > 0.5) ? 1.0 : 0.0;
+		B22VelocityMachExceededFlag = (sqrt(3.0*phase_adv_speed*phase_adv_speed) > 1.0) ? 1.0 : 0.0;
 	}
 	if (stage14_b18_closure_diagnostics_active()) {
 		real_t b18_bounded_u = U;

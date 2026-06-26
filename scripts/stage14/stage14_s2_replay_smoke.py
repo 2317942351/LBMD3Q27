@@ -390,6 +390,27 @@ VTK_FIELDS_MINIMAL = ",".join(
         "B21HPostCancellationRatio",
         "B21HPostOutOfBoundsFlag",
         "B21HPostSumMinusFormula",
+        "B22ProbeActive",
+        "B22M0U",
+        "B22MomentumU",
+        "B22PhaseAdvU",
+        "B22M0Speed",
+        "B22MomentumSpeed",
+        "B22PhaseAdvSpeed",
+        "B22ForceOverRho",
+        "B22ForceOverRhoMag",
+        "B22ForceRhoRaw",
+        "B22ForceRhoEffective",
+        "B22HalfForceU",
+        "B22FpressureMag",
+        "B22FsurfMag",
+        "B22FmuMag",
+        "B22FtotalMag",
+        "B22HeqFromM0MaxAbs",
+        "B22HeqFromMomentumMaxAbs",
+        "B22HeqFromBoundedShadowMaxAbs",
+        "B22VelocitySourceId",
+        "B22VelocityMachExceededFlag",
     ]
 )
 
@@ -454,6 +475,50 @@ VTK_FIELDS_B21 = ",".join(
         "B21HPostCancellationRatio",
         "B21HPostOutOfBoundsFlag",
         "B21HPostSumMinusFormula",
+    ]
+)
+
+VTK_FIELDS_B22 = ",".join(
+    [
+        "PhaseField",
+        "Rho",
+        "U",
+        "BOUNDARY",
+        "IsItBoundary",
+        "ReplayPhaseFromH",
+        "ReplayPhaseAdvVelocity",
+        "ReplayForceOverRho",
+        "ReplayFpressure",
+        "ReplayFsurf",
+        "ReplayFmu",
+        "ReplayFtotal",
+        "ReplayHPostMaxAbs",
+        "ReplayHeqMaxAbs",
+        "B21ProbeActive",
+        "B21HeqVelocityMachShadow",
+        "B21HeqMaxAbs",
+        "B21HPostMaxAbs",
+        "B22ProbeActive",
+        "B22M0U",
+        "B22MomentumU",
+        "B22PhaseAdvU",
+        "B22M0Speed",
+        "B22MomentumSpeed",
+        "B22PhaseAdvSpeed",
+        "B22ForceOverRho",
+        "B22ForceOverRhoMag",
+        "B22ForceRhoRaw",
+        "B22ForceRhoEffective",
+        "B22HalfForceU",
+        "B22FpressureMag",
+        "B22FsurfMag",
+        "B22FmuMag",
+        "B22FtotalMag",
+        "B22HeqFromM0MaxAbs",
+        "B22HeqFromMomentumMaxAbs",
+        "B22HeqFromBoundedShadowMaxAbs",
+        "B22VelocitySourceId",
+        "B22VelocityMachExceededFlag",
     ]
 )
 
@@ -522,6 +587,27 @@ REQUIRED_FIELDS_BY_VTK_SET = {
         "B21HPostMaxAbs",
         "B21HPostSumMinusFormula",
     ],
+    "b22": [
+        "PhaseField",
+        "Rho",
+        "BOUNDARY",
+        "IsItBoundary",
+        "ReplayPhaseFromH",
+        "ReplayPhaseAdvVelocity",
+        "ReplayForceOverRho",
+        "B22ProbeActive",
+        "B22M0U",
+        "B22MomentumU",
+        "B22PhaseAdvU",
+        "B22M0Speed",
+        "B22MomentumSpeed",
+        "B22PhaseAdvSpeed",
+        "B22ForceOverRhoMag",
+        "B22HeqFromM0MaxAbs",
+        "B22HeqFromMomentumMaxAbs",
+        "B22HeqFromBoundedShadowMaxAbs",
+        "B22VelocitySourceId",
+    ],
 }
 
 
@@ -579,6 +665,7 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("Stage14B18VelocityBound", args.b18_velocity_bound),
             param("Stage14B20HUpdateDiagnosticsMode", args.b20_hupdate_diagnostics_mode),
             param("Stage14B21HPopulationAuditMode", args.b21_hpopulation_audit_mode),
+            param("Stage14B22VelocityProducerAuditMode", args.b22_velocity_producer_audit_mode),
             param("MomentumClosureProbeMode", args.momentum_closure_probe_mode),
             param("PressureClosureMode", args.pressure_closure_mode),
             param("PressureClosureReference", args.pressure_closure_reference),
@@ -600,6 +687,8 @@ def common_model_params(args: argparse.Namespace) -> str:
 
 
 def vtk_fields_for(args: argparse.Namespace) -> str:
+    if args.vtk_field_set == "b22":
+        return VTK_FIELDS_B22
     if args.vtk_field_set == "b21":
         return VTK_FIELDS_B21
     if args.vtk_field_set == "minimal":
@@ -791,6 +880,7 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "b18_velocity_bound": args.b18_velocity_bound,
             "b20_hupdate_diagnostics_mode": args.b20_hupdate_diagnostics_mode,
             "b21_hpopulation_audit_mode": args.b21_hpopulation_audit_mode,
+            "b22_velocity_producer_audit_mode": args.b22_velocity_producer_audit_mode,
             "momentum_closure_probe_mode": args.momentum_closure_probe_mode,
             "pressure_closure_mode": args.pressure_closure_mode,
             "pressure_closure_reference": args.pressure_closure_reference,
@@ -1067,7 +1157,10 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
                 + sorted(
                     name
                     for name in arrays
-                    if name.startswith("B18") or name.startswith("B20") or name.startswith("B21")
+                    if name.startswith("B18")
+                    or name.startswith("B20")
+                    or name.startswith("B21")
+                    or name.startswith("B22")
                 )
             )
         )
@@ -1112,7 +1205,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gpu", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=10)
     parser.add_argument("--vtk-period", type=int, default=1)
-    parser.add_argument("--vtk-field-set", choices=("full", "minimal", "b21"), default="full")
+    parser.add_argument("--vtk-field-set", choices=("full", "minimal", "b21", "b22"), default="full")
     parser.add_argument("--log-period", type=int, default=1)
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--cases", default="all")
@@ -1124,6 +1217,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--b18-velocity-bound", type=float, default=0.2)
     parser.add_argument("--b20-hupdate-diagnostics-mode", type=int, default=0)
     parser.add_argument("--b21-hpopulation-audit-mode", type=int, default=0)
+    parser.add_argument("--b22-velocity-producer-audit-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-probe-mode", type=int, default=0)
     parser.add_argument("--pressure-closure-mode", type=int, default=0)
     parser.add_argument("--pressure-closure-reference", type=float, default=0.0)

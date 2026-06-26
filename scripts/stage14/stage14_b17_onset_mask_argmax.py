@@ -133,6 +133,22 @@ SCALAR_FIELDS = [
     "B21HPostCancellationRatio",
     "B21HPostOutOfBoundsFlag",
     "B21HPostSumMinusFormula",
+    "B22ProbeActive",
+    "B22M0Speed",
+    "B22MomentumSpeed",
+    "B22PhaseAdvSpeed",
+    "B22ForceOverRhoMag",
+    "B22ForceRhoRaw",
+    "B22ForceRhoEffective",
+    "B22FpressureMag",
+    "B22FsurfMag",
+    "B22FmuMag",
+    "B22FtotalMag",
+    "B22HeqFromM0MaxAbs",
+    "B22HeqFromMomentumMaxAbs",
+    "B22HeqFromBoundedShadowMaxAbs",
+    "B22VelocitySourceId",
+    "B22VelocityMachExceededFlag",
     "ForceIterCount",
     "ForceIterResidual",
 ]
@@ -175,6 +191,11 @@ VECTOR_FIELDS = [
     "B18HVelocityPreForce",
     "B18HVelocityRawPostForce",
     "B18HVelocityBoundedShadow",
+    "B22M0U",
+    "B22MomentumU",
+    "B22PhaseAdvU",
+    "B22ForceOverRho",
+    "B22HalfForceU",
 ]
 
 STRESS_GROUPS = {
@@ -293,6 +314,11 @@ DERIVED_VECTOR_MAG_FIELDS = {
     "B18HVelocityPreForceNorm": "B18HVelocityPreForce",
     "B18HVelocityRawPostForceNorm": "B18HVelocityRawPostForce",
     "B18HVelocityBoundedShadowNorm": "B18HVelocityBoundedShadow",
+    "B22M0UNorm": "B22M0U",
+    "B22MomentumUNorm": "B22MomentumU",
+    "B22PhaseAdvUNorm": "B22PhaseAdvU",
+    "B22ForceOverRhoNorm": "B22ForceOverRho",
+    "B22HalfForceUNorm": "B22HalfForceU",
 }
 
 TARGET_FIELDS = [
@@ -386,6 +412,27 @@ TARGET_FIELDS = [
     "B21HPostCancellationRatio",
     "B21HPostOutOfBoundsFlag",
     "B21HPostSumMinusFormula",
+    "B22ProbeActive",
+    "B22M0Speed",
+    "B22MomentumSpeed",
+    "B22PhaseAdvSpeed",
+    "B22M0UNorm",
+    "B22MomentumUNorm",
+    "B22PhaseAdvUNorm",
+    "B22ForceOverRhoNorm",
+    "B22ForceOverRhoMag",
+    "B22HalfForceUNorm",
+    "B22ForceRhoRaw",
+    "B22ForceRhoEffective",
+    "B22FpressureMag",
+    "B22FsurfMag",
+    "B22FmuMag",
+    "B22FtotalMag",
+    "B22HeqFromM0MaxAbs",
+    "B22HeqFromMomentumMaxAbs",
+    "B22HeqFromBoundedShadowMaxAbs",
+    "B22VelocitySourceId",
+    "B22VelocityMachExceededFlag",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
 ]
@@ -509,6 +556,27 @@ COLOCATE_FIELDS = [
     "B21HPostCancellationRatio",
     "B21HPostOutOfBoundsFlag",
     "B21HPostSumMinusFormula",
+    "B22ProbeActive",
+    "B22M0Speed",
+    "B22MomentumSpeed",
+    "B22PhaseAdvSpeed",
+    "B22M0UNorm",
+    "B22MomentumUNorm",
+    "B22PhaseAdvUNorm",
+    "B22ForceOverRhoNorm",
+    "B22ForceOverRhoMag",
+    "B22HalfForceUNorm",
+    "B22ForceRhoRaw",
+    "B22ForceRhoEffective",
+    "B22FpressureMag",
+    "B22FsurfMag",
+    "B22FmuMag",
+    "B22FtotalMag",
+    "B22HeqFromM0MaxAbs",
+    "B22HeqFromMomentumMaxAbs",
+    "B22HeqFromBoundedShadowMaxAbs",
+    "B22VelocitySourceId",
+    "B22VelocityMachExceededFlag",
     "UPreForceNorm",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
@@ -556,6 +624,18 @@ THRESHOLDS = {
     "b21_hpost_flag_oob": ("B21HPostOutOfBoundsFlag", 0.5),
     "b21_hpost_formula_residual_large": ("B21HPostSumMinusFormula", 1.0e-8),
     "b21_heq_mach_large": ("B21HeqVelocityMachShadow", 1.0),
+    "b22_m0_speed_large": ("B22M0Speed", 1.0),
+    "b22_momentum_speed_large": ("B22MomentumSpeed", 1.0),
+    "b22_phase_adv_speed_large": ("B22PhaseAdvSpeed", 1.0),
+    "b22_force_over_rho_large": ("B22ForceOverRhoMag", 1.0e3),
+    "b22_force_pressure_large": ("B22FpressureMag", 1.0e3),
+    "b22_force_surf_large": ("B22FsurfMag", 1.0e3),
+    "b22_force_mu_large": ("B22FmuMag", 1.0e3),
+    "b22_force_total_large": ("B22FtotalMag", 1.0e3),
+    "b22_heq_m0_large": ("B22HeqFromM0MaxAbs", 1.0),
+    "b22_heq_momentum_large": ("B22HeqFromMomentumMaxAbs", 1.0),
+    "b22_heq_bounded_large": ("B22HeqFromBoundedShadowMaxAbs", 1.0),
+    "b22_velocity_mach_flag": ("B22VelocityMachExceededFlag", 0.5),
     "pressure_input_large": ("ReplayPressureInput", 1.0e3),
     "pressure_force_large": ("FpressureNorm", 1.0e3),
     "phase_from_h_out_of_bounds": ("ReplayPhaseFromH", 1.0 + 1.0e-3),
@@ -1010,6 +1090,18 @@ def key_summary(
     b21_hpost_sum_oob = first("threshold_b21_hpost_sum_oob")
     b21_hpost_flag_oob = first("threshold_b21_hpost_flag_oob")
     b21_hpost_formula = first("threshold_b21_hpost_formula_residual_large")
+    b22_m0_speed = first("threshold_b22_m0_speed_large")
+    b22_momentum_speed = first("threshold_b22_momentum_speed_large")
+    b22_phase_adv_speed = first("threshold_b22_phase_adv_speed_large")
+    b22_force_over_rho = first("threshold_b22_force_over_rho_large")
+    b22_force_pressure = first("threshold_b22_force_pressure_large")
+    b22_force_surf = first("threshold_b22_force_surf_large")
+    b22_force_mu = first("threshold_b22_force_mu_large")
+    b22_force_total = first("threshold_b22_force_total_large")
+    b22_heq_m0 = first("threshold_b22_heq_m0_large")
+    b22_heq_momentum = first("threshold_b22_heq_momentum_large")
+    b22_heq_bounded = first("threshold_b22_heq_bounded_large")
+    b22_mach_flag = first("threshold_b22_velocity_mach_flag")
 
     branch = "undetermined"
     reason = "No configured onset threshold was crossed."
@@ -1132,6 +1224,46 @@ def key_summary(
         b21_branch = "heq_cancellation_without_amplitude_threshold"
         b21_reason = "B21 heq cancellation threshold crosses without the max-abs threshold crossing."
 
+    b22_branch = "not_available"
+    b22_reason = "B22 fields were not present or did not cross configured thresholds."
+    if b22_m0_speed and earlier_or_equal(b22_m0_speed, b22_momentum_speed, b22_phase_adv_speed):
+        b22_branch = "m0_velocity_first"
+        b22_reason = "B22 m0/pre-force velocity crosses before or with post-force and active phase-advection velocity."
+    elif b22_momentum_speed and earlier_or_equal(b22_momentum_speed, b22_phase_adv_speed):
+        b22_branch = "post_force_momentum_velocity_first"
+        b22_reason = "B22 post-force momentum velocity crosses before or with active phase-advection velocity."
+    elif b22_phase_adv_speed:
+        b22_branch = "phase_advection_velocity_selected_source_first"
+        b22_reason = "B22 active phase-advection velocity crosses the velocity threshold."
+    if b22_force_over_rho and (
+        b22_m0_speed is None or int(b22_force_over_rho["step"]) <= int(b22_m0_speed["step"])
+    ):
+        b22_branch = "force_over_rho_feeds_velocity"
+        b22_reason = "B22 F/rho crosses no later than m0 velocity; inspect denominator and force split."
+    if b22_force_mu and (
+        b22_force_over_rho is None or int(b22_force_mu["step"]) <= int(b22_force_over_rho["step"])
+    ):
+        b22_branch = "fmu_force_component_first"
+        b22_reason = "B22 F_mu magnitude crosses before or with F/rho."
+    if b22_force_pressure and (
+        b22_force_over_rho is None or int(b22_force_pressure["step"]) <= int(b22_force_over_rho["step"])
+    ):
+        b22_branch = "pressure_force_component_first"
+        b22_reason = "B22 pressure-force magnitude crosses before or with F/rho."
+    if b22_heq_m0 and (
+        b22_m0_speed is None or int(b22_heq_m0["step"]) <= int(b22_m0_speed["step"])
+    ):
+        b22_branch = "heq_from_m0_large_without_prior_m0_threshold"
+        b22_reason = "B22 m0-based heq is large without a prior configured m0-speed crossing; audit heq formula/scaling."
+    if b22_heq_momentum and (
+        b22_momentum_speed is None or int(b22_heq_momentum["step"]) <= int(b22_momentum_speed["step"])
+    ):
+        b22_branch = "heq_from_post_force_large_without_prior_momentum_threshold"
+        b22_reason = "B22 post-force heq is large without a prior configured post-force velocity crossing."
+    if (b22_heq_m0 or b22_heq_momentum) and not b22_heq_bounded:
+        b22_branch = "bounded_velocity_relief_shadow"
+        b22_reason = "B22 unbounded heq candidate crosses while bounded-velocity heq candidate does not."
+
     return {
         "root": str(root),
         "status": "B17_B18_B20_B21_DIAGNOSTIC_COMPLETE",
@@ -1176,6 +1308,18 @@ def key_summary(
         "first_b21_hpost_sum_oob_onset": b21_hpost_sum_oob,
         "first_b21_hpost_flag_oob_onset": b21_hpost_flag_oob,
         "first_b21_hpost_formula_residual_onset": b21_hpost_formula,
+        "first_b22_m0_speed_onset": b22_m0_speed,
+        "first_b22_momentum_speed_onset": b22_momentum_speed,
+        "first_b22_phase_adv_speed_onset": b22_phase_adv_speed,
+        "first_b22_force_over_rho_onset": b22_force_over_rho,
+        "first_b22_force_pressure_onset": b22_force_pressure,
+        "first_b22_force_surf_onset": b22_force_surf,
+        "first_b22_force_mu_onset": b22_force_mu,
+        "first_b22_force_total_onset": b22_force_total,
+        "first_b22_heq_m0_onset": b22_heq_m0,
+        "first_b22_heq_momentum_onset": b22_heq_momentum,
+        "first_b22_heq_bounded_onset": b22_heq_bounded,
+        "first_b22_velocity_mach_flag_onset": b22_mach_flag,
         "primary_branch": branch,
         "primary_branch_reason": reason,
         "b18_primary_branch": b18_branch,
@@ -1184,6 +1328,8 @@ def key_summary(
         "b20_primary_branch_reason": b20_reason,
         "b21_primary_branch": b21_branch,
         "b21_primary_branch_reason": b21_reason,
+        "b22_primary_branch": b22_branch,
+        "b22_primary_branch_reason": b22_reason,
         "notes": [
             "Use mask-specific argmax records before changing solver physics.",
             "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
@@ -1192,8 +1338,11 @@ def key_summary(
             "If phase/h fields lead force diagnostics, return to h update and phase-advection timeline.",
             "B20 bounded-velocity h-update fields are shadow diagnostics only, not a physics limiter.",
             "B21 h-population fields are shadow diagnostics only and must not be interpreted as a solver write path.",
+            "B22 velocity-producer fields are shadow diagnostics only and must not be interpreted as a solver write path.",
             "If B21 hpost formula residual appears first, audit generated TCLB indexing before changing the physical model.",
             "If B21 HPre is already large, inspect AddDensity streaming/history before modifying wetting or force closures.",
+            "If B22 m0 velocity is already large, inspect g AddDensity streaming/history and MRT force insertion before modifying wetting.",
+            "If B22 post-force velocity is large but m0 is not, inspect F/rho denominator and force components before modifying h equilibrium.",
         ],
     }
 

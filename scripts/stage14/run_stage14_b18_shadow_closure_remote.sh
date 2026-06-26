@@ -13,6 +13,7 @@ PHASE_ADV_MODE="${PHASE_ADV_MODE:-1}"
 VTK_FIELD_SET="${VTK_FIELD_SET:-full}"
 B20_MODE="${B20_MODE:-0}"
 B21_MODE="${B21_MODE:-0}"
+B22_MODE="${B22_MODE:-0}"
 FREE_THRESHOLD_KB="${FREE_THRESHOLD_KB:-52428800}"
 
 mkdir -p "${ROOT}"
@@ -35,6 +36,7 @@ fi
   echo "Stage14B18ClosureDiagnosticsMode=1"
   echo "Stage14B20HUpdateDiagnosticsMode=${B20_MODE}"
   echo "Stage14B21HPopulationAuditMode=${B21_MODE}"
+  echo "Stage14B22VelocityProducerAuditMode=${B22_MODE}"
 } | tee "${ROOT}/run_config.txt"
 sha256sum "${BIN}" | tee "${ROOT}/binary_sha256.txt"
 nvidia-smi -L | tee "${ROOT}/nvidia_smi_L.txt"
@@ -62,6 +64,7 @@ set +e
   --b18-velocity-bound 0.2 \
   --b20-hupdate-diagnostics-mode "${B20_MODE}" \
   --b21-hpopulation-audit-mode "${B21_MODE}" \
+  --b22-velocity-producer-audit-mode "${B22_MODE}" \
   --momentum-closure-probe-mode 1 \
   --phase-advection-velocity-mode "${PHASE_ADV_MODE}" \
   --momentum-force-mode 0 \
