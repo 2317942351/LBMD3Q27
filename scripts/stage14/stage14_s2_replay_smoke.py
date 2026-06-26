@@ -580,6 +580,65 @@ VTK_FIELDS_B26 = ",".join(
     dict.fromkeys(VTK_FIELDS.split(",") + VTK_FIELDS_B22.split(","))
 )
 
+B27_STRESS_REQUIRED_FIELDS = [
+    "PhaseField",
+    "Rho",
+    "BOUNDARY",
+    "IsItBoundary",
+    "ReplayPhaseFromH",
+    "ReplayForceOverRho",
+    "ReplayForceRhoRaw",
+    "ReplayForceRhoEffective",
+    "ReplayFmuRaw",
+    "ReplayFmuDelta",
+    "B18ProbeActive",
+    "B18StressPreForceXX",
+    "B18StressPreForceXY",
+    "B18StressPreForceXZ",
+    "B18StressPreForceYY",
+    "B18StressPreForceYZ",
+    "B18StressPreForceZZ",
+    "B18StressPostForceXX",
+    "B18StressPostForceXY",
+    "B18StressPostForceXZ",
+    "B18StressPostForceYY",
+    "B18StressPostForceYZ",
+    "B18StressPostForceZZ",
+    "B18StressPostOverPre",
+    "B18StressAmplificationFlag",
+    "B18FmuPreForce",
+    "B18FmuPostForce",
+    "B18FmuForceExcluded",
+    "B18FmuCandidateDelta",
+    "B18ForceOverRhoRaw",
+    "B18ForceOverRhoDensityFloor",
+    "B18ForceOverRhoPhaseMixture",
+    "B18RhoDenominatorRaw",
+    "B18RhoDenominatorFloor",
+    "B18RhoDenominatorPhaseMix",
+    "B21ProbeActive",
+    "B21HeqVelocityMachShadow",
+    "B21HeqMaxAbs",
+    "B21HPostMaxAbs",
+    "B22ProbeActive",
+    "B22M0Speed",
+    "B22MomentumSpeed",
+    "B22PhaseAdvSpeed",
+    "B22ForceOverRhoMag",
+    "B22ForceRhoRaw",
+    "B22ForceRhoEffective",
+    "B22FpressureMag",
+    "B22FsurfMag",
+    "B22FmuMag",
+    "B22FtotalMag",
+    "B22HeqFromM0MaxAbs",
+    "B22HeqFromMomentumMaxAbs",
+    "B22HeqFromBoundedShadowMaxAbs",
+    "B22VelocitySourceId",
+]
+
+VTK_FIELDS_B27_STRESS = ",".join(B27_STRESS_REQUIRED_FIELDS)
+
 REQUIRED_REPLAY_FIELDS = [
     "ReplayPhaseConsumed",
     "ReplayPhaseFromH",
@@ -667,6 +726,7 @@ REQUIRED_FIELDS_BY_VTK_SET = {
         "B22VelocitySourceId",
     ],
     "b26": B26_REQUIRED_FIELDS,
+    "b27stress": B27_STRESS_REQUIRED_FIELDS,
 }
 
 
@@ -746,6 +806,8 @@ def common_model_params(args: argparse.Namespace) -> str:
 
 
 def vtk_fields_for(args: argparse.Namespace) -> str:
+    if args.vtk_field_set == "b27stress":
+        return VTK_FIELDS_B27_STRESS
     if args.vtk_field_set == "b26":
         return VTK_FIELDS_B26
     if args.vtk_field_set == "b22":
@@ -1266,7 +1328,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gpu", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=10)
     parser.add_argument("--vtk-period", type=int, default=1)
-    parser.add_argument("--vtk-field-set", choices=("full", "minimal", "b21", "b22", "b26"), default="full")
+    parser.add_argument("--vtk-field-set", choices=("full", "minimal", "b21", "b22", "b26", "b27stress"), default="full")
     parser.add_argument("--log-period", type=int, default=1)
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--cases", default="all")
