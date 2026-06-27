@@ -1,0 +1,58 @@
+{
+  "atol": 1e-08,
+  "claim_limit": "local replay algebra comparison only; not runtime validation",
+  "comparisons": [
+    {
+      "ReplayM0": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "ReplayMF": [
+        0.01,
+        -0.02,
+        0.03
+      ],
+      "ReplayMomentumAfterG": [
+        0.005,
+        -0.01,
+        0.015
+      ],
+      "ReplayMomentumDeltaG": [
+        0.005,
+        -0.01,
+        0.015
+      ],
+      "case": "synthetic",
+      "delta_minus_expected": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "delta_norm": 0.01870828693386971,
+      "delta_over_mf_norm": 0.5,
+      "expected_delta_half_mf": [
+        0.005,
+        -0.01,
+        0.015
+      ],
+      "field": "ReplayForceOverRho",
+      "flat_index": 0,
+      "ijk": [
+        0,
+        0,
+        0
+      ],
+      "mask": "all_cells",
+      "max_abs_diff": 0.0,
+      "mf_norm": 0.03741657386773942,
+      "pass": true,
+      "source": "artifacts\\stage14_B34_mrt_algebra_harness_20260627\\b34_synthetic_argmax_trace.json",
+      "step": 0
+    }
+  ],
+  "fail_count": 0,
+  "max_abs_diff": 0.0,
+  "pass_count": 1,
+  "record_count": 1
+}
