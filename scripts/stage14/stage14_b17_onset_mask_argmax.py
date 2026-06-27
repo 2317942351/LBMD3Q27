@@ -330,8 +330,12 @@ TARGET_FIELDS = [
     "ReplayFphiMaxAbs",
     "ReplayTmp1",
     "ReplayPressureInput",
+    "ReplayLapPhi",
+    "ReplayMu",
     "FpressureNorm",
     "FpressurePhysicalNorm",
+    "GradPhiNorm",
+    "FsurfNorm",
     "FmuRawNorm",
     "FmuDeltaNorm",
     "FtotalNorm",
@@ -441,6 +445,8 @@ COLOCATE_FIELDS = [
     "PhaseField",
     "ReplayPhaseFromH",
     "ReplayPhaseConsumed",
+    "ReplayLapPhi",
+    "ReplayMu",
     "Rho",
     "ReplayRho",
     "ReplayRhoForForce",
@@ -450,6 +456,7 @@ COLOCATE_FIELDS = [
     "ReplayTauUsed",
     "ReplayMu",
     "GradPhiNorm",
+    "FsurfNorm",
     "P",
     "ReplayPressureInput",
     "ReplayPressurePhysicalInput",
@@ -590,6 +597,10 @@ COLOCATE_FIELDS = [
 ]
 
 THRESHOLDS = {
+    "lap_phi_large": ("ReplayLapPhi", 1.0e3),
+    "mu_large": ("ReplayMu", 1.0e3),
+    "grad_phi_large": ("GradPhiNorm", 1.0e2),
+    "fsurf_large": ("FsurfNorm", 1.0e3),
     "force_over_rho_large": ("ForceOverRhoNorm", 1.0e3),
     "fmu_raw_large": ("FmuRawNorm", 1.0e3),
     "stress_input_large": ("StressInputNorm", 1.0e3),
@@ -1075,6 +1086,10 @@ def key_summary(
     stress_post = first("threshold_stress_post_large")
     stress_input = first("threshold_stress_input_large")
     pressure = first("threshold_pressure_input_large")
+    lap_phi = first("threshold_lap_phi_large")
+    mu = first("threshold_mu_large")
+    grad_phi = first("threshold_grad_phi_large")
+    fsurf = first("threshold_fsurf_large")
     phase = first("threshold_phase_from_h_out_of_bounds")
     hpost = first("threshold_hpost_large")
     b18_force_raw = first("threshold_b18_force_raw_large")
@@ -1122,7 +1137,19 @@ def key_summary(
 
     branch = "undetermined"
     reason = "No configured onset threshold was crossed."
-    if force and (phase is None or int(force["step"]) <= int(phase["step"])):
+    if lap_phi and (force is None or int(lap_phi["step"]) <= int(force["step"])):
+        branch = "mu_laplace_first"
+        reason = "LapPhi crosses its threshold before or with force-over-rho onset."
+    elif mu and (force is None or int(mu["step"]) <= int(force["step"])):
+        branch = "mu_first"
+        reason = "Mu crosses its threshold before or with force-over-rho onset."
+    elif grad_phi and (force is None or int(grad_phi["step"]) <= int(force["step"])):
+        branch = "grad_phi_first"
+        reason = "GradPhi crosses its threshold before or with force-over-rho onset."
+    elif fsurf and (force is None or int(fsurf["step"]) <= int(force["step"])):
+        branch = "surface_force_first"
+        reason = "F_surf crosses its threshold before or with force-over-rho onset."
+    elif force and (phase is None or int(force["step"]) <= int(phase["step"])):
         if fmu and int(fmu["step"]) <= int(force["step"]):
             branch = "fmu_force_over_rho_feedback"
             reason = "F_mu grows no later than F/rho and before or with phase loss."
@@ -1293,6 +1320,10 @@ def key_summary(
         "first_stress_post_onset": stress_post,
         "first_stress_input_onset": stress_input,
         "first_pressure_input_onset": pressure,
+        "first_lap_phi_onset": lap_phi,
+        "first_mu_onset": mu,
+        "first_grad_phi_onset": grad_phi,
+        "first_fsurf_onset": fsurf,
         "first_phase_from_h_onset": phase,
         "first_hpost_onset": hpost,
         "first_b18_force_raw_onset": b18_force_raw,
@@ -1351,6 +1382,8 @@ def key_summary(
             "Use mask-specific argmax records before changing solver physics.",
             "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
             "If stress_post exceeds stress_pre at the same argmax before phase loss, stress time-level is implicated.",
+            "If LapPhi or Mu leads, audit calcMu and near-wall Laplace before changing force insertion.",
+            "If GradPhi or Fsurf leads, audit calcGradPhi and F_surf scaling before changing F_mu.",
             "B18 force-excluded stress is a diagnostic shadow candidate, not a physics write path.",
             "If phase/h fields lead force diagnostics, return to h update and phase-advection timeline.",
             "B20 bounded-velocity h-update fields are shadow diagnostics only, not a physics limiter.",

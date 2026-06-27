@@ -641,6 +641,93 @@ B27_STRESS_REQUIRED_FIELDS = [
 
 VTK_FIELDS_B27_STRESS = ",".join(B27_STRESS_REQUIRED_FIELDS)
 
+B33_LEDGER_REQUIRED_FIELDS = list(
+    dict.fromkeys(
+        [
+            "PhaseField",
+            "Rho",
+            "P",
+            "BOUNDARY",
+            "IsItBoundary",
+            "ReplayPhaseConsumed",
+            "ReplayPhaseFromH",
+            "ReplayPhaseOutOfBoundsFlag",
+            "ReplayLapPhi",
+            "ReplayMu",
+            "ReplayGradPhi",
+            "ReplayFsurf",
+            "ReplayFpressure",
+            "ReplayFbody",
+            "ReplayFmu",
+            "ReplayFmuRaw",
+            "ReplayFmuDelta",
+            "ReplayFtotal",
+            "ReplayForceOverRho",
+            "ReplayRho",
+            "ReplayTau",
+            "ReplayTauUsed",
+            "ReplayRhoForForce",
+            "ReplayForceRhoRaw",
+            "ReplayForceRhoEffective",
+            "ReplayPressureMoment",
+            "ReplayPressureInput",
+            "ReplayPressurePhysicalInput",
+            "ReplayFpressureNoThird",
+            "ReplayFpressurePhysical",
+            "ReplayUPreForce",
+            "ReplayUPostForce",
+            "ReplayPhaseAdvVelocity",
+            "ReplayM0",
+            "ReplayVelocityHalfForce",
+            "ReplayMF",
+            "ReplayMomentumAfterG",
+            "ReplayMomentumDeltaG",
+            "ReplayStressInputXX",
+            "ReplayStressInputXY",
+            "ReplayStressInputXZ",
+            "ReplayStressInputYY",
+            "ReplayStressInputYZ",
+            "ReplayStressInputZZ",
+            "ReplayStressIter1XX",
+            "ReplayStressIter1XY",
+            "ReplayStressIter1XZ",
+            "ReplayStressIter1YY",
+            "ReplayStressIter1YZ",
+            "ReplayStressIter1ZZ",
+            "ReplayStressPreForceShadowXX",
+            "ReplayStressPreForceShadowXY",
+            "ReplayStressPreForceShadowXZ",
+            "ReplayStressPreForceShadowYY",
+            "ReplayStressPreForceShadowYZ",
+            "ReplayStressPreForceShadowZZ",
+            "ReplayStressPostForceShadowXX",
+            "ReplayStressPostForceShadowXY",
+            "ReplayStressPostForceShadowXZ",
+            "ReplayStressPostForceShadowYY",
+            "ReplayStressPostForceShadowYZ",
+            "ReplayStressPostForceShadowZZ",
+            "ReplayHPreSum",
+            "ReplayHPostSum",
+            "ReplayHeqSum",
+            "ReplayHPreMaxAbs",
+            "ReplayHPostMaxAbs",
+            "ReplayHeqMaxAbs",
+            "ReplayFphiSum",
+            "ReplayFphiMaxAbs",
+            "ReplayTmp1",
+            "ReplayTmp1BoundedShadow",
+            "ReplayForceInjectionMode",
+            "ReplayPressureClosureMode",
+            "ReplayForceDensityClosureMode",
+            "ReplayForceFixedPointMode",
+            "ReplayFmuStressClosureMode",
+        ]
+        + B27_STRESS_REQUIRED_FIELDS
+    )
+)
+
+VTK_FIELDS_B33_LEDGER = ",".join(B33_LEDGER_REQUIRED_FIELDS)
+
 REQUIRED_REPLAY_FIELDS = [
     "ReplayPhaseConsumed",
     "ReplayPhaseFromH",
@@ -730,6 +817,7 @@ REQUIRED_FIELDS_BY_VTK_SET = {
     ],
     "b26": B26_REQUIRED_FIELDS,
     "b27stress": B27_STRESS_REQUIRED_FIELDS,
+    "b33ledger": B33_LEDGER_REQUIRED_FIELDS,
 }
 
 
@@ -810,6 +898,8 @@ def common_model_params(args: argparse.Namespace) -> str:
 
 
 def vtk_fields_for(args: argparse.Namespace) -> str:
+    if args.vtk_field_set == "b33ledger":
+        return VTK_FIELDS_B33_LEDGER
     if args.vtk_field_set == "b27stress":
         return VTK_FIELDS_B27_STRESS
     if args.vtk_field_set == "b26":
@@ -1333,7 +1423,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--gpu", type=int, default=1)
     parser.add_argument("--iterations", type=int, default=10)
     parser.add_argument("--vtk-period", type=int, default=1)
-    parser.add_argument("--vtk-field-set", choices=("full", "minimal", "b21", "b22", "b26", "b27stress"), default="full")
+    parser.add_argument(
+        "--vtk-field-set",
+        choices=("full", "minimal", "b21", "b22", "b26", "b27stress", "b33ledger"),
+        default="full",
+    )
     parser.add_argument("--log-period", type=int, default=1)
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--cases", default="all")

@@ -1,0 +1,376 @@
+{
+  "checks": [
+    {
+      "detail": "`pnorm/U/V/W` primary state should be AddDensity streaming state. Conditional OutFlow AddField helpers are recorded as warnings.",
+      "evidence": {
+        "AddDensity": {
+          "U": [
+            28
+          ],
+          "V": [
+            29
+          ],
+          "W": [
+            30
+          ],
+          "pnorm": [
+            27
+          ]
+        },
+        "AddField": {
+          "U": [
+            586,
+            587
+          ],
+          "V": [],
+          "W": [],
+          "pnorm": []
+        }
+      },
+      "name": "streamed_macros_are_adddensity",
+      "status": "warning"
+    },
+    {
+      "detail": "Replay/Bxx diagnostics should be AddField and must not participate in TCLB streaming.",
+      "evidence": {
+        "AddDensity": {
+          "B18ProbeActive": [],
+          "B21ProbeActive": [],
+          "B22ProbeActive": [],
+          "ReplayFmuX": [],
+          "ReplayForceOverRhoX": [],
+          "ReplayFsurfX": [],
+          "ReplayFtotalX": [],
+          "ReplayGradPhiX": [],
+          "ReplayLapPhi": [],
+          "ReplayMu": []
+        },
+        "AddField": {
+          "B18ProbeActive": [
+            351
+          ],
+          "B21ProbeActive": [
+            462
+          ],
+          "B22ProbeActive": [
+            507
+          ],
+          "ReplayFmuX": [
+            238
+          ],
+          "ReplayForceOverRhoX": [
+            256
+          ],
+          "ReplayFsurfX": [
+            229
+          ],
+          "ReplayFtotalX": [
+            241
+          ],
+          "ReplayGradPhiX": [
+            226
+          ],
+          "ReplayLapPhi": [
+            224
+          ],
+          "ReplayMu": [
+            225
+          ]
+        }
+      },
+      "name": "replay_fields_are_addfield",
+      "status": "pass"
+    },
+    {
+      "detail": "Stage14 diagnostic settings are available in model XML.",
+      "evidence": {
+        "AddSetting": {
+          "FmuStressClosureMode": [
+            1066
+          ],
+          "ForceDensityClosureMode": [
+            1076
+          ],
+          "ForceFixedPointMode": [
+            1078
+          ],
+          "MomentumClosureDiagnosticsMode": [
+            1067
+          ],
+          "MomentumForceMode": [
+            1065
+          ],
+          "PressureClosureMode": [
+            1074
+          ],
+          "ReplayDiagnosticsMode": [
+            1062
+          ],
+          "Stage14B18ClosureDiagnosticsMode": [
+            1068
+          ],
+          "Stage14B21HPopulationAuditMode": [
+            1071
+          ],
+          "Stage14B22VelocityProducerAuditMode": [
+            1072
+          ]
+        }
+      },
+      "name": "diagnostic_and_candidate_settings_exist",
+      "status": "pass"
+    },
+    {
+      "detail": "CollisionMRT producer-consumer anchors appear in expected source order.",
+      "evidence": {
+        "anchors": [
+          {
+            "label": "CollisionMRT start",
+            "line": 2957,
+            "needle": "CudaDeviceFunction void CollisionMRT()"
+          },
+          {
+            "label": "PhaseF consumed",
+            "line": 2959,
+            "needle": "PhaseF = PhaseF(0,0,0);"
+          },
+          {
+            "label": "calcMu",
+            "line": 2971,
+            "needle": "real_t mu = calcMu( C );"
+          },
+          {
+            "label": "m0 from streamed g",
+            "line": 3012,
+            "needle": "C(m0[selR], (M %*% g)[selR])"
+          },
+          {
+            "label": "pressure input",
+            "line": 3059,
+            "needle": "pressure_force_input = stage14_pressure_force_input"
+          },
+          {
+            "label": "calcGradPhi",
+            "line": 3092,
+            "needle": "gradPhi = calcGradPhi();"
+          },
+          {
+            "label": "calc_Fp",
+            "line": 3130,
+            "needle": "calc_Fp(&F_pressure[0]"
+          },
+          {
+            "label": "calc_Fs",
+            "line": 3132,
+            "needle": "calc_Fs(&F_surf[0]"
+          },
+          {
+            "label": "F_mu MRT",
+            "line": 3176,
+            "needle": "F_mu[0] = (0.5-tau) *"
+          },
+          {
+            "label": "F_total assembly",
+            "line": 3193,
+            "needle": "F_total[0] = F_surf[0] + F_pressure[0]"
+          },
+          {
+            "label": "force mode split",
+            "line": 3205,
+            "needle": "stage14_apply_momentum_force_mode"
+          },
+          {
+            "label": "half-force velocity",
+            "line": 3332,
+            "needle": "m0[2:4] + 0.5 * F_total"
+          },
+          {
+            "label": "h update",
+            "line": 3957,
+            "needle": "C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)"
+          },
+          {
+            "label": "MRT mF insertion",
+            "line": 3975,
+            "needle": "mF[2:4] = PV(\"momentum_force_injection_scale\")"
+          },
+          {
+            "label": "g update",
+            "line": 3978,
+            "needle": "C(g, invM %*% m)"
+          },
+          {
+            "label": "momentum after g replay",
+            "line": 4009,
+            "needle": "ReplayMomentumAfterGX = momentum_after_g[0];"
+          }
+        ]
+      },
+      "name": "collision_mrt_force_order",
+      "status": "pass"
+    },
+    {
+      "detail": "MRT and BGK F_mu prefactors differ; this is recorded as a B35 branch, not changed in B32.5/B33.",
+      "evidence": {
+        "bgk_lines": [
+          4290
+        ],
+        "mrt_lines": [
+          3176
+        ]
+      },
+      "name": "fmu_prefactor_mrt_bgk_recorded",
+      "status": "warning"
+    },
+    {
+      "detail": "Boundary sentinel should be -999.0 after prior Stage13 audit.",
+      "evidence": {
+        "line": 268
+      },
+      "name": "boundary_sentinel_guard_recorded",
+      "status": "pass"
+    }
+  ],
+  "claim_limit": "static source semantics audit only; not runtime validation",
+  "files": {
+    "Boundary.c.Rt": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity\\Boundary.c.Rt",
+    "Dynamics.R": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity\\Dynamics.R",
+    "Dynamics.c.Rt": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity\\Dynamics.c.Rt"
+  },
+  "model_dir": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\third_party\\tclb_snapshots\\stage17B_diffuse_solid_shadow\\models\\multiphase\\d3q27_pf_velocity",
+  "next_gate": "B33 first-bad-cell ledger if no fail status",
+  "repo_root": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo",
+  "stage_order": {
+    "stage_lines": [
+      {
+        "line": 625,
+        "text": "AddStage(\"PhaseInit\", \"Init\", save=Fields$group %in% save_initial_PF)"
+      },
+      {
+        "line": 626,
+        "text": "AddStage(\"BaseInit\" , \"Init_distributions\", save=Fields$group %in% save_initial)"
+      },
+      {
+        "line": 627,
+        "text": "AddStage(\"calcPhase\", \"calcPhaseF\", save=Fields$name %in% c(\"PhaseF\", \"ReplayPhaseFromH\"), load=DensityAll$group %in% load_phase)"
+      },
+      {
+        "line": 628,
+        "text": "AddStage(\"BaseIter\" , \"Run\", save=Fields$group %in% save_iteration, load=DensityAll$group %in% load_iteration )"
+      },
+      {
+        "line": 629,
+        "text": "AddStage(name=\"InitFromFieldsStage\", load=DensityAll$group %in% \"init\",read=FALSE, save=Fields$group %in% save_initial_PF)"
+      },
+      {
+        "line": 632,
+        "text": "AddStage(\"WallInit_CA\"  , \"Init_wallNorm\", save=Fields$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+      },
+      {
+        "line": 633,
+        "text": "AddStage(\"calcWall_CA\"  , \"calcWallPhase\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"gradPhi\", \"PF\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+      },
+      {
+        "line": 635,
+        "text": "AddStage('calcPhaseGrad', \"calcPhaseGrad\", load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"), save=Fields$group==\"gradPhi\")"
+      },
+      {
+        "line": 636,
+        "text": "AddStage('calcPhaseGrad_init', \"calcPhaseGrad_init\", load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"), save=Fields$group==\"gradPhi\")"
+      },
+      {
+        "line": 637,
+        "text": "AddStage(\"calcWallPhase_correction\", \"calcWallPhase_correction\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"))"
+      },
+      {
+        "line": 639,
+        "text": "AddStage(\"WallInit\" , \"Init_wallNorm\", save=Fields$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+      },
+      {
+        "line": 640,
+        "text": "AddStage(\"calcWall\" , \"calcWallPhase\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"solid_boundary\", extra_fields_to_load_for_bc))"
+      },
+      {
+        "line": 641,
+        "text": "AddStage(\"calcWallPhase_correction\", \"calcWallPhase_correction\", save=Fields$name %in% stage13_wall_phase_save_fields, load=DensityAll$group %in% c(\"nw\", \"PF\", \"solid_boundary\"))"
+      },
+      {
+        "line": 644,
+        "text": "AddStage(\"CopyDistributions\", \"TempCopy\",  save=Fields$group %in% c(\"g\",\"h\",\"Vel\",\"nw\", \"PF\",\"Thermal\"))"
+      },
+      {
+        "line": 645,
+        "text": "AddStage(\"CopyThermal\",\"ThermalCopy\", save=Fields$name %in% c(\"Temp\",\"Cond\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"Temp\",\"Cond\",\"SurfaceTension\"))"
+      },
+      {
+        "line": 646,
+        "text": "AddStage(\"RK_1\", \"TempUpdate1\", save=Fields$name==\"RK1\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"Cond\",\"PhaseF\",\"Temp\"))"
+      },
+      {
+        "line": 647,
+        "text": "AddStage(\"RK_2\", \"TempUpdate2\", save=Fields$name==\"RK2\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"Cond\",\"PhaseF\",\"Temp\"))"
+      },
+      {
+        "line": 648,
+        "text": "AddStage(\"RK_3\", \"TempUpdate3\", save=Fields$name==\"RK3\", load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"RK2\",\"Cond\",\"PhaseF\",\"Temp\"))"
+      },
+      {
+        "line": 649,
+        "text": "AddStage(\"RK_4\", \"TempUpdate4\", save=Fields$name %in% c(\"Temp\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"U\",\"V\",\"W\",\"RK1\",\"RK2\",\"RK3\",\"Cond\",\"PhaseF\",\"Temp\"))"
+      },
+      {
+        "line": 651,
+        "text": "AddStage(\"NonLocalTemp\",\"BoundUpdate\", save=Fields$name %in% c(\"Temp\",\"SurfaceTension\"), load=DensityAll$name %in% c(\"Temp\"))"
+      },
+      {
+        "line": 658,
+        "text": "AddAction(\"TempToSteadyState\", c(\"CopyDistributions\",\"RK_1\", \"RK_2\", \"RK_3\", \"RK_4\",\"NonLocalTemp\"))"
+      },
+      {
+        "line": 659,
+        "text": "AddAction(\"Iteration\", c(\"BaseIter\", \"calcPhase\", \"calcWall\",\"RK_1\", \"RK_2\", \"RK_3\", \"RK_4\",\"NonLocalTemp\"))"
+      },
+      {
+        "line": 660,
+        "text": "AddAction(\"IterationConstantTemp\", c(\"BaseIter\", \"calcPhase\", \"calcWall\",\"CopyThermal\"))"
+      },
+      {
+        "line": 661,
+        "text": "AddAction(\"Init\"     , c(\"PhaseInit\",\"WallInit\" , \"calcWall\",\"BaseInit\"))"
+      },
+      {
+        "line": 664,
+        "text": "AddAction(\"Iteration\", c(\"BaseIter\", \"calcPhase\",  calcGrad, \"calcWall_CA\", \"calcWallPhase_correction\"))"
+      },
+      {
+        "line": 665,
+        "text": "AddAction(\"Init\"     , c(\"PhaseInit\",\"WallInit_CA\" , \"calcPhaseGrad_init\"  , \"calcWall_CA\", \"calcWallPhase_correction\", \"BaseInit\"))"
+      },
+      {
+        "line": 666,
+        "text": "AddAction(\"InitFields\"     , c(\"InitFromFieldsStage\",\"WallInit_CA\" , \"calcPhaseGrad_init\", \"calcWall_CA\", \"calcWallPhase_correction\", \"BaseInit\"))"
+      },
+      {
+        "line": 668,
+        "text": "AddAction(\"Iteration\", c(\"BaseIter\", \"calcPhase\", \"calcWall\", \"calcWallPhase_correction\"))"
+      },
+      {
+        "line": 669,
+        "text": "AddAction(\"Init\"     , c(\"PhaseInit\",\"WallInit\" , \"calcWall\",\"calcWallPhase_correction\", \"BaseInit\"))"
+      },
+      {
+        "line": 670,
+        "text": "AddAction(\"InitFields\", c(\"InitFromFieldsStage\",\"WallInit\" , \"calcWall\", \"calcWallPhase_correction\", \"BaseInit\"))"
+      }
+    ],
+    "stage_markers": {
+      "BaseIter": 628,
+      "calcPhase": 627,
+      "calcPhaseGrad": 635,
+      "calcWallPhase_correction": 637,
+      "calcWall_CA": 633,
+      "geometric_iteration_action": 664
+    }
+  },
+  "verdict": "semantics_audit_pass_with_warnings"
+}
