@@ -299,6 +299,7 @@ DERIVED_VECTOR_MAG_FIELDS = {
     "UPostIter1Norm": "ReplayUPostIter1",
     "PhaseAdvVelocityNorm": "ReplayPhaseAdvVelocity",
     "VelocityNorm": "U",
+    "MFNorm": "ReplayMF",
     "MomentumAfterGNorm": "ReplayMomentumAfterG",
     "MomentumDeltaGNorm": "ReplayMomentumDeltaG",
     "B18FmuLegacyNorm": "B18FmuLegacy",
@@ -437,6 +438,9 @@ TARGET_FIELDS = [
     "B22HeqFromBoundedShadowMaxAbs",
     "B22VelocitySourceId",
     "B22VelocityMachExceededFlag",
+    "MFNorm",
+    "MomentumAfterGNorm",
+    "MomentumDeltaGNorm",
     "UPostForceNorm",
     "PhaseAdvVelocityNorm",
 ]

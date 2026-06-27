@@ -728,6 +728,29 @@ B33_LEDGER_REQUIRED_FIELDS = list(
 
 VTK_FIELDS_B33_LEDGER = ",".join(B33_LEDGER_REQUIRED_FIELDS)
 
+B34_MRT_REQUIRED_FIELDS = [
+    "PhaseField",
+    "Rho",
+    "BOUNDARY",
+    "IsItBoundary",
+    "ReplayM0",
+    "ReplayVelocityHalfForce",
+    "ReplayMF",
+    "ReplayMomentumAfterG",
+    "ReplayMomentumDeltaG",
+    "ReplayForceOverRho",
+    "ReplayFtotal",
+    "ReplayRho",
+    "ReplayForceRhoEffective",
+    "ReplayForceInjectionMode",
+    "ReplayPressureClosureMode",
+    "ReplayForceDensityClosureMode",
+    "ReplayForceFixedPointMode",
+    "ReplayFmuStressClosureMode",
+]
+
+VTK_FIELDS_B34_MRT = ",".join(B34_MRT_REQUIRED_FIELDS)
+
 REQUIRED_REPLAY_FIELDS = [
     "ReplayPhaseConsumed",
     "ReplayPhaseFromH",
@@ -817,6 +840,7 @@ REQUIRED_FIELDS_BY_VTK_SET = {
     ],
     "b26": B26_REQUIRED_FIELDS,
     "b27stress": B27_STRESS_REQUIRED_FIELDS,
+    "b34mrt": B34_MRT_REQUIRED_FIELDS,
     "b33ledger": B33_LEDGER_REQUIRED_FIELDS,
 }
 
@@ -898,6 +922,8 @@ def common_model_params(args: argparse.Namespace) -> str:
 
 
 def vtk_fields_for(args: argparse.Namespace) -> str:
+    if args.vtk_field_set == "b34mrt":
+        return VTK_FIELDS_B34_MRT
     if args.vtk_field_set == "b33ledger":
         return VTK_FIELDS_B33_LEDGER
     if args.vtk_field_set == "b27stress":
@@ -1425,7 +1451,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--vtk-period", type=int, default=1)
     parser.add_argument(
         "--vtk-field-set",
-        choices=("full", "minimal", "b21", "b22", "b26", "b27stress", "b33ledger"),
+        choices=("full", "minimal", "b21", "b22", "b26", "b27stress", "b34mrt", "b33ledger"),
         default="full",
     )
     parser.add_argument("--log-period", type=int, default=1)

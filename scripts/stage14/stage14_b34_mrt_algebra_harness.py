@@ -8,6 +8,10 @@ The harness mirrors the active TCLB template algebra:
     g = invM @ m
     momentum_after_g = sum(e_i * g_i)
 
+In the generated MRT path, Req[1:4] is built from the half-force velocity
+U = m0[1:4] + 0.5*F/rho_eff. Therefore the default node expects the post-g
+momentum change to be one full mF, not half mF.
+
 It is intentionally local algebra only. It does not validate TCLB streaming,
 stage load/save, or contact-angle physics.
 """
@@ -135,14 +139,17 @@ def mrt_update(
 def default_node() -> dict[str, Any]:
     m0 = np.zeros(27)
     m0[0] = 1.0
+    force_over_rho = np.array([0.01, -0.02, 0.03], dtype=float)
     req = np.zeros(27)
     req[0] = 1.0
+    req[1:4] = 0.5 * force_over_rho
     return {
         "m0": m0.tolist(),
         "req": req.tolist(),
-        "force_over_rho": [0.01, -0.02, 0.03],
+        "force_over_rho": force_over_rho.tolist(),
         "tau": 0.3,
         "injection_scale": 1.0,
+        "expected_delta_scale": 1.0,
     }
 
 
@@ -194,7 +201,7 @@ def main() -> int:
         "result": result,
         "comparison": compare(result, node, args.atol),
         "matrix_condition": float(np.linalg.cond(moment_matrix())),
-        "source_formula": "Dynamics.c.Rt lines near mF[2:4] and m=m0-(m0-EQ+0.5*mF)*Omega+mF",
+        "source_formula": "Dynamics.c.Rt lines near mF[2:4] and m=m0-(m0-EQ+0.5*mF)*Omega+mF; generated Dynamics.c uses half-force velocity in Req[1:4]",
     }
     if args.out:
         args.out.parent.mkdir(parents=True, exist_ok=True)

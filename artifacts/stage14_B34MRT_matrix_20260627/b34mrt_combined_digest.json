@@ -1,0 +1,211 @@
+{
+  "binary_sha256": "263bdd7bfc48e179dcab367f61481814b426682f96a32ddf2a6d96bb47d7d97b",
+  "claim_limit": "force insertion replay gate only; not contact-angle validation; not dynamic impact readiness",
+  "main_findings": [
+    "Generated Dynamics.c uses half-force velocity in the equilibrium momentum row and then adds the explicit force moment; expected replay relation is ReplayMomentumDeltaG ~= 1.0*ReplayMF, not 0.5*ReplayMF.",
+    "L0_full filtered replay compare passes 1093/1093 records with expected_scale=1.0; the old half-mF expectation is falsified by both generated code and runtime replay.",
+    "L1_noFmu, L2_noSurf, and L4_zeroForce have no configured force/rho onset in the 20-step B34MRT gate.",
+    "L3_noPressure still shows force_over_rho_density_closure onset at step 15, matching L0 behavior and excluding pressure as primary trigger.",
+    "All force-split probes pass the filtered full-mF replay relation, so MRT force insertion is not the first root cause under this gate."
+  ],
+  "next_branch": "Proceed to B35 coupled numerator split focused on F_surf + F_mu / low-density denominator amplification. Do not modify MRT force insertion first.",
+  "rows": [
+    {
+      "allrecords": {
+        "dropped_record_count": 0,
+        "expected_scale": 1.0,
+        "fail_count": 111,
+        "filters": {
+          "max_delta_norm": null,
+          "max_mf_norm": null,
+          "max_step": null
+        },
+        "max_abs_diff": 2.6312347830779998e+290,
+        "max_abs_full_diff": 2.6312347830779998e+290,
+        "max_abs_half_diff": 2.6312347830779998e+290,
+        "pass_count": 1126,
+        "raw_record_count": 1237,
+        "record_count": 1237,
+        "rtol": 1e-09
+      },
+      "filtered": {
+        "dropped_record_count": 144,
+        "expected_scale": 1.0,
+        "fail_count": 0,
+        "filters": {
+          "max_delta_norm": 1000000.0,
+          "max_mf_norm": 1000000.0,
+          "max_step": null
+        },
+        "max_abs_diff": 0.00023947362900478275,
+        "max_abs_full_diff": 0.00023947362900478275,
+        "max_abs_half_diff": 442717.49318830244,
+        "pass_count": 1093,
+        "raw_record_count": 1237,
+        "record_count": 1093,
+        "rtol": 1e-09
+      },
+      "first_fmu_raw_onset": null,
+      "first_force_over_rho_onset": {
+        "case": "wall_60to30_10",
+        "field": "ForceOverRhoNorm",
+        "mask": "low_rho",
+        "step": 15,
+        "threshold": 1000.0,
+        "trigger": "threshold_force_over_rho_large",
+        "value": 885434.9865443383
+      },
+      "first_fsurf_onset": null,
+      "first_grad_phi_onset": null,
+      "first_mu_onset": null,
+      "first_phase_from_h_onset": null,
+      "primary_branch": "force_over_rho_density_closure",
+      "tag": "L0_full"
+    },
+    {
+      "allrecords": {
+        "dropped_record_count": 0,
+        "fail_count": 0,
+        "max_abs_diff": 2.6020852139652106e-18,
+        "max_abs_full_diff": 2.6020852139652106e-18,
+        "max_abs_half_diff": 0.0012917448697613483,
+        "pass_count": 1260,
+        "raw_record_count": 1260,
+        "record_count": 1260
+      },
+      "analyzer_status": "ANALYZER_RC=0",
+      "b34_compare_allrecords_status": "COMPARE_ALL_RC=0",
+      "b34_compare_filtered_status": "COMPARE_FILTERED_RC=0",
+      "driver_status": "DRIVER_RC=0",
+      "filtered": {
+        "dropped_record_count": 0,
+        "fail_count": 0,
+        "max_abs_diff": 2.6020852139652106e-18,
+        "max_abs_full_diff": 2.6020852139652106e-18,
+        "max_abs_half_diff": 0.0012917448697613483,
+        "pass_count": 1260,
+        "raw_record_count": 1260,
+        "record_count": 1260
+      },
+      "first_fmu_raw_onset": null,
+      "first_force_over_rho_onset": null,
+      "first_fsurf_onset": null,
+      "first_grad_phi_onset": null,
+      "first_mu_onset": null,
+      "first_phase_from_h_onset": null,
+      "primary_branch": "undetermined",
+      "tag": "L1_noFmu"
+    },
+    {
+      "allrecords": {
+        "dropped_record_count": 0,
+        "fail_count": 0,
+        "max_abs_diff": 0.0,
+        "max_abs_full_diff": 0.0,
+        "max_abs_half_diff": 0.0,
+        "pass_count": 1260,
+        "raw_record_count": 1260,
+        "record_count": 1260
+      },
+      "analyzer_status": "ANALYZER_RC=0",
+      "b34_compare_allrecords_status": "COMPARE_ALL_RC=0",
+      "b34_compare_filtered_status": "COMPARE_FILTERED_RC=0",
+      "driver_status": "DRIVER_RC=0",
+      "filtered": {
+        "dropped_record_count": 0,
+        "fail_count": 0,
+        "max_abs_diff": 0.0,
+        "max_abs_full_diff": 0.0,
+        "max_abs_half_diff": 0.0,
+        "pass_count": 1260,
+        "raw_record_count": 1260,
+        "record_count": 1260
+      },
+      "first_fmu_raw_onset": null,
+      "first_force_over_rho_onset": null,
+      "first_fsurf_onset": null,
+      "first_grad_phi_onset": null,
+      "first_mu_onset": null,
+      "first_phase_from_h_onset": null,
+      "primary_branch": "undetermined",
+      "tag": "L2_noSurf"
+    },
+    {
+      "allrecords": {
+        "dropped_record_count": 0,
+        "fail_count": 111,
+        "max_abs_diff": 8.283516909689999e+290,
+        "max_abs_full_diff": 8.283516909689999e+290,
+        "max_abs_half_diff": 8.283516909689999e+290,
+        "pass_count": 1123,
+        "raw_record_count": 1234,
+        "record_count": 1234
+      },
+      "analyzer_status": "ANALYZER_RC=0",
+      "b34_compare_allrecords_status": "COMPARE_ALL_RC=2",
+      "b34_compare_filtered_status": "COMPARE_FILTERED_RC=0",
+      "driver_status": "DRIVER_RC=0",
+      "filtered": {
+        "dropped_record_count": 140,
+        "fail_count": 0,
+        "max_abs_diff": 0.0002390300652418409,
+        "max_abs_full_diff": 0.0002390300652418409,
+        "max_abs_half_diff": 434514.80573532294,
+        "pass_count": 1094,
+        "raw_record_count": 1234,
+        "record_count": 1094
+      },
+      "first_fmu_raw_onset": null,
+      "first_force_over_rho_onset": {
+        "case": "wall_60to30_10",
+        "field": "ForceOverRhoNorm",
+        "mask": "low_rho",
+        "step": 15,
+        "threshold": 1000.0,
+        "trigger": "threshold_force_over_rho_large",
+        "value": 869029.6116138679
+      },
+      "first_fsurf_onset": null,
+      "first_grad_phi_onset": null,
+      "first_mu_onset": null,
+      "first_phase_from_h_onset": null,
+      "primary_branch": "force_over_rho_density_closure",
+      "tag": "L3_noPressure"
+    },
+    {
+      "allrecords": {
+        "dropped_record_count": 0,
+        "fail_count": 0,
+        "max_abs_diff": 0.0,
+        "max_abs_full_diff": 0.0,
+        "max_abs_half_diff": 0.0,
+        "pass_count": 1260,
+        "raw_record_count": 1260,
+        "record_count": 1260
+      },
+      "analyzer_status": "ANALYZER_RC=0",
+      "b34_compare_allrecords_status": "COMPARE_ALL_RC=0",
+      "b34_compare_filtered_status": "COMPARE_FILTERED_RC=0",
+      "driver_status": "DRIVER_RC=0",
+      "filtered": {
+        "dropped_record_count": 0,
+        "fail_count": 0,
+        "max_abs_diff": 0.0,
+        "max_abs_full_diff": 0.0,
+        "max_abs_half_diff": 0.0,
+        "pass_count": 1260,
+        "raw_record_count": 1260,
+        "record_count": 1260
+      },
+      "first_fmu_raw_onset": null,
+      "first_force_over_rho_onset": null,
+      "first_fsurf_onset": null,
+      "first_grad_phi_onset": null,
+      "first_mu_onset": null,
+      "first_phase_from_h_onset": null,
+      "primary_branch": "undetermined",
+      "tag": "L4_zeroForce"
+    }
+  ],
+  "stage": "Stage14-B34MRT"
+}
