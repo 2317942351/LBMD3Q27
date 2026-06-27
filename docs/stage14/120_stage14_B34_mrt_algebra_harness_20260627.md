@@ -107,3 +107,44 @@ max_abs(ReplayMomentumDeltaG - 0.5*ReplayMF) <= tolerance
 
 If the comparison fails, B35/B36 must not change `F_surf` or `F_mu` first.
 The next branch would be MRT force insertion or replay-field timing.
+
+## Teacher MCP Follow-Up
+
+Teacher MCP reviewed the implemented B32.5/B34/B35 state and returned
+`NEEDS_FIX`: B34 replay comparison now has higher priority than B35 physical
+candidate work. The reason is that the local algebra already predicts a
+specific replay relation:
+
+```text
+ReplayMomentumDeltaG ~= 0.5 * ReplayMF
+```
+
+If actual TCLB replay fields do not satisfy this at B33 first-bad nodes, the
+next branch is force insertion or replay timing, not `F_surf/F_mu` physics.
+
+## Historical Artifact Fallback
+
+A temporary attempt was made to use existing B18 artifacts:
+
+```text
+artifacts/stage14_B18_shadow_closure_20260625/b18_argmax_trace.json
+```
+
+The comparison produced:
+
+```text
+record_count = 0
+```
+
+because the old argmax trace did not co-locate raw vector values for:
+
+```text
+ReplayMF
+ReplayMomentumDeltaG
+ReplayMomentumAfterG
+ReplayM0
+```
+
+This is why B33 must be rerun with the updated analyzer. The analyzer now
+includes those raw vectors in `COLOCATE_FIELDS`; old B18/B27/B32 summaries
+cannot substitute for B33/B34.
