@@ -133,9 +133,11 @@ VTK_FIELDS = ",".join(
         "ReplayPressureClosureMode",
         "ReplayForceDensityClosureMode",
         "ReplayForceFixedPointMode",
+        "ReplayFmuStressClosureMode",
         "ReplayForceRhoRaw",
-        "ReplayForceRhoEffective",
-        "B18ProbeActive",
+    "ReplayForceRhoEffective",
+    "ReplayFmuStressClosureMode",
+    "B18ProbeActive",
         "B18StressLegacyXX",
         "B18StressLegacyXY",
         "B18StressLegacyXZ",
@@ -684,6 +686,7 @@ REQUIRED_REPLAY_FIELDS = [
     "ReplayPressureClosureMode",
     "ReplayForceDensityClosureMode",
     "ReplayForceFixedPointMode",
+    "ReplayFmuStressClosureMode",
     "ReplayForceRhoRaw",
     "ReplayForceRhoEffective",
 ]
@@ -779,6 +782,7 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("ReplayDiagnosticsMode", args.replay_mode),
             param("PhaseAdvectionVelocityMode", args.phase_advection_velocity_mode),
             param("MomentumForceMode", args.momentum_force_mode),
+            param("FmuStressClosureMode", args.fmu_stress_closure_mode),
             param("MomentumClosureDiagnosticsMode", args.momentum_closure_diagnostics_mode),
             param("Stage14B18ClosureDiagnosticsMode", args.b18_closure_diagnostics_mode),
             param("Stage14B18VelocityBound", args.b18_velocity_bound),
@@ -998,6 +1002,7 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "replay_mode": args.replay_mode,
             "phase_advection_velocity_mode": args.phase_advection_velocity_mode,
             "momentum_force_mode": args.momentum_force_mode,
+            "fmu_stress_closure_mode": args.fmu_stress_closure_mode,
             "momentum_closure_diagnostics_mode": args.momentum_closure_diagnostics_mode,
             "b18_closure_diagnostics_mode": args.b18_closure_diagnostics_mode,
             "b18_velocity_bound": args.b18_velocity_bound,
@@ -1335,6 +1340,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--replay-mode", type=int, default=1)
     parser.add_argument("--phase-advection-velocity-mode", type=int, default=0)
     parser.add_argument("--momentum-force-mode", type=int, default=0)
+    parser.add_argument("--fmu-stress-closure-mode", type=int, default=0)
     parser.add_argument("--momentum-closure-diagnostics-mode", type=int, default=0)
     parser.add_argument("--b18-closure-diagnostics-mode", type=int, default=0)
     parser.add_argument("--b18-velocity-bound", type=float, default=0.2)

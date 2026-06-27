@@ -218,6 +218,10 @@ CudaDeviceFunction void stage14_fmu_from_stress(real_t out[3], real_t stress[6],
 	out[2] = scale * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
 }
 
+CudaDeviceFunction int stage14_b28_incoming_neq_active(){
+	return (FmuStressClosureMode > 1.5 && FmuStressClosureMode < 2.5);
+}
+
 CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayPhaseConsumed = 0.0;
 	ReplayLapPhi = 0.0;
@@ -344,6 +348,7 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	ReplayPressureClosureMode = 0.0;
 	ReplayForceDensityClosureMode = 0.0;
 	ReplayForceFixedPointMode = 0.0;
+	ReplayFmuStressClosureMode = 0.0;
 	ReplayForceRhoRaw = 0.0;
 	ReplayForceRhoEffective = 0.0;
 	B18ProbeActive = 0.0;
@@ -816,6 +821,12 @@ CudaDeviceFunction real_t stage14_effective_force_rho(real_t rho) {
 		if (rho_floor <= 0.0) rho_floor = Density_l;
 		if (rho_floor < 1.0e-30) rho_floor = 1.0e-30;
 		if (rho_eff < rho_floor) rho_eff = rho_floor;
+	} else if (ForceDensityClosureMode > 1.5 && ForceDensityClosureMode < 2.5) {
+		real_t phase_for_density = PhaseF(0,0,0);
+		if (phase_for_density < PhaseField_l) phase_for_density = PhaseField_l;
+		if (phase_for_density > PhaseField_h) phase_for_density = PhaseField_h;
+		rho_eff = Density_l + (phase_for_density - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+		if (rho_eff < 1.0e-30) rho_eff = 1.0e-30;
 	}
 	return rho_eff;
 }
@@ -1402,6 +1413,10 @@ CudaDeviceFunction real_t getReplayForceDensityClosureMode(){
 
 CudaDeviceFunction real_t getReplayForceFixedPointMode(){
 	return stage14_momentum_closure_scalar(ReplayForceFixedPointMode(0,0,0));
+}
+
+CudaDeviceFunction real_t getReplayFmuStressClosureMode(){
+	return stage14_momentum_closure_scalar(ReplayFmuStressClosureMode(0,0,0));
 }
 
 CudaDeviceFunction real_t getReplayForceRhoRaw(){
@@ -2969,6 +2984,8 @@ CudaDeviceFunction void CollisionMRT()
 	real_t stress_iter1[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	real_t b18_stress_force_excluded[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 	real_t b18_stress_incoming[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t b28_stress_incoming_neq[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+	real_t b28_fmu_candidate[3] = {0.0, 0.0, 0.0};
 	real_t b18_fmu_pre[3] = {0.0, 0.0, 0.0};
 	real_t b18_fmu_post[3] = {0.0, 0.0, 0.0};
 	real_t b18_fmu_force_excluded[3] = {0.0, 0.0, 0.0};
@@ -2998,7 +3015,7 @@ CudaDeviceFunction void CollisionMRT()
 		rho.inv = rho ^ (-1)
 	?>
 	p = m0[0];
-	if (stage14_b18_closure_diagnostics_active()) {
+	if (stage14_b18_closure_diagnostics_active() || stage14_b28_incoming_neq_active()) {
 		<?R
 			b18_stress_incoming = PV("b18_stress_incoming[",1:6-1,"]")
 			C(b18_stress_incoming[1], sum( U[,1]*U[,1] * g )); # XX
@@ -3008,6 +3025,36 @@ CudaDeviceFunction void CollisionMRT()
 			C(b18_stress_incoming[5], sum( U[,2]*U[,3] * g )); # YZ
 			C(b18_stress_incoming[6], sum( U[,3]*U[,3] * g )); # ZZ
 		?>
+	}
+	if (stage14_b28_incoming_neq_active()) {
+		real_t b28_u_saved = U;
+		real_t b28_v_saved = V;
+		real_t b28_w_saved = W;
+		U = m0[1];
+		V = m0[2];
+		W = m0[3];
+		real_t b28_eq_preforce[27];
+		real_t b28_stress_eq_preforce[6];
+		<?R
+			b28_eq_preforce = PV("b28_eq_preforce[",1:27-1,"]")
+			b28_stress_eq_preforce = PV("b28_stress_eq_preforce[",1:6-1,"]")
+			EQ_b28_pre = MRT_eq(U,PV(1),u,mat=t(M))
+			EQ_b28_pre$Req[1] = PV("p")
+			EQ_b28_pre$feq = solve(M) %*% EQ_b28_pre$Req
+			C(b28_eq_preforce, EQ_b28_pre$feq)
+			C(b28_stress_eq_preforce[1], sum( U[,1]*U[,1] * b28_eq_preforce )); # XX
+			C(b28_stress_eq_preforce[2], sum( U[,1]*U[,2] * b28_eq_preforce )); # XY
+			C(b28_stress_eq_preforce[3], sum( U[,1]*U[,3] * b28_eq_preforce )); # XZ
+			C(b28_stress_eq_preforce[4], sum( U[,2]*U[,2] * b28_eq_preforce )); # YY
+			C(b28_stress_eq_preforce[5], sum( U[,2]*U[,3] * b28_eq_preforce )); # YZ
+			C(b28_stress_eq_preforce[6], sum( U[,3]*U[,3] * b28_eq_preforce )); # ZZ
+		?>
+		U = b28_u_saved;
+		V = b28_v_saved;
+		W = b28_w_saved;
+		for (int b28_si=0; b28_si<6; b28_si++) {
+			b28_stress_incoming_neq[b28_si] = b18_stress_incoming[b28_si] - b28_stress_eq_preforce[b28_si];
+		}
 	}
 	pressure_force_input = stage14_pressure_force_input(p, rho);
 	force_rho_eff = stage14_effective_force_rho(rho);
@@ -3036,6 +3083,7 @@ CudaDeviceFunction void CollisionMRT()
 		ReplayPressureClosureMode = PressureClosureMode;
 		ReplayForceDensityClosureMode = ForceDensityClosureMode;
 		ReplayForceFixedPointMode = ForceFixedPointMode;
+		ReplayFmuStressClosureMode = FmuStressClosureMode;
 		ReplayForceRhoRaw = rho;
 		ReplayForceRhoEffective = force_rho_eff;
 	}
@@ -3129,6 +3177,16 @@ CudaDeviceFunction void CollisionMRT()
 		F_mu[1] = (0.5-tau) * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
 		F_mu[2] = (0.5-tau) * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
 		real_t F_mu_raw[3] = {F_mu[0], F_mu[1], F_mu[2]};
+		if (FmuStressClosureMode > 0.5 && FmuStressClosureMode < 1.5 && j > 1) {
+			F_mu[0] = F_mu_iter1[0];
+			F_mu[1] = F_mu_iter1[1];
+			F_mu[2] = F_mu_iter1[2];
+		} else if (stage14_b28_incoming_neq_active()) {
+			stage14_fmu_from_stress(b28_fmu_candidate, b28_stress_incoming_neq, gradPhi, tau);
+			F_mu[0] = b28_fmu_candidate[0];
+			F_mu[1] = b28_fmu_candidate[1];
+			F_mu[2] = b28_fmu_candidate[2];
+		}
 		if (stage14_b18_closure_diagnostics_active()) {
 			stage14_fmu_from_stress(b18_fmu_pre, stress, gradPhi, tau);
 		}
@@ -3449,6 +3507,17 @@ CudaDeviceFunction void CollisionMRT()
 		phase_adv_V = m0[2];
 		phase_adv_W = m0[3];
 	}
+	if (PhaseAdvectionVelocityMode > 1.5 && PhaseAdvectionVelocityMode < 2.5) {
+		real_t phase_adv_speed = sqrt(phase_adv_U*phase_adv_U + phase_adv_V*phase_adv_V + phase_adv_W*phase_adv_W);
+		real_t phase_adv_bound = Stage14B18VelocityBound;
+		if (phase_adv_bound <= 0.0) phase_adv_bound = 0.2;
+		if (phase_adv_speed > phase_adv_bound && phase_adv_speed > 1.0e-30) {
+			real_t phase_adv_scale = phase_adv_bound / phase_adv_speed;
+			phase_adv_U *= phase_adv_scale;
+			phase_adv_V *= phase_adv_scale;
+			phase_adv_W *= phase_adv_scale;
+		}
+	}
 	if (stage16_replay_diagnostics_active()) {
 		ReplayPhaseAdvVelocityX = phase_adv_U;
 		ReplayPhaseAdvVelocityY = phase_adv_V;
@@ -3545,7 +3614,8 @@ CudaDeviceFunction void CollisionMRT()
 		B22HeqFromM0MaxAbs = heq_m0_max;
 		B22HeqFromMomentumMaxAbs = heq_momentum_max;
 		B22HeqFromBoundedShadowMaxAbs = heq_bounded_max;
-		B22VelocitySourceId = (PhaseAdvectionVelocityMode > 0.5) ? 1.0 : 0.0;
+		B22VelocitySourceId = (PhaseAdvectionVelocityMode > 1.5 && PhaseAdvectionVelocityMode < 2.5) ? 2.0 :
+		                      ((PhaseAdvectionVelocityMode > 0.5) ? 1.0 : 0.0);
 		B22VelocityMachExceededFlag = (sqrt(3.0*phase_adv_speed*phase_adv_speed) > 1.0) ? 1.0 : 0.0;
 	}
 	if (stage14_b18_closure_diagnostics_active()) {
