@@ -34,7 +34,7 @@ PhaseF
 B34 local smoke showed the current MRT algebra predicts:
 
 ```text
-ReplayMomentumDeltaG ~= 0.5 * ReplayMF
+ReplayMomentumDeltaG ~= 1.0 * ReplayMF
 ```
 
 The B33 runtime ledger is still required because the first B33 run was

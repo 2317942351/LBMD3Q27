@@ -4,8 +4,11 @@ Date: 2026-06-27
 
 Branch: `work/phasefield-c-reference-20260623`
 
-Status: runbook only. B36-B40 cannot start until B33 runtime and B34 replay
-comparison are complete.
+Status: updated after B35-B37 runtime evidence on 2026-06-28.
+
+B36 and B37 have been executed and rejected as repair candidates. B38 is no
+longer a flat-wall contact-angle gate. The current B38 is a diagnostic
+first-bad force ledger.
 
 ## Hard Gate Before B36
 
@@ -23,7 +26,7 @@ Teacher MCP review of B33/B34 runtime evidence
 The B34 pass condition is:
 
 ```text
-ReplayMomentumDeltaG ~= 0.5 * ReplayMF
+ReplayMomentumDeltaG ~= 1.0 * ReplayMF
 ```
 
 at B33 first-bad co-located nodes.
@@ -41,7 +44,7 @@ Trigger:
 
 ```text
 B34 replay compare fails:
-ReplayMomentumDeltaG - 0.5*ReplayMF is not near zero
+ReplayMomentumDeltaG - 1.0*ReplayMF is not near zero
 ```
 
 Code anchors:
@@ -174,71 +177,118 @@ FmuPrefactorMode = 0 legacy, 1 BGK-style shadow, 2 BGK-style write candidate
 
 Requires literature check before write mode.
 
-## B37: Flat-Wall Short Stability Gate
+## B37: GradPhi Force-Consumer Cap Attempt
 
-Only after one B36 candidate is selected:
+B37 was executed as a default-off force-consumer `gradPhi` cap candidate:
 
 ```text
 case = wall_60to30_10
 Density_l = 0.005
-steps = 20, 100, 500
-vtk_period = sparse after 20-step proof
+steps = 20
+cap modes = shadow/write
+caps = 20, 10, 5
 ```
 
-Pass:
+B37 is rejected:
 
 ```text
-No nonfinite
-No step-15 force/rho spike
-PhaseFromH remains diagnostically bounded
-B34 replay relation still passes
+cap_hit_fraction = 0.0 at first onset
+step 15 |gradPhi| ~= 0.391
+step 15 ForceOverRhoNorm ~= 8.854e5
+step 20 ForceOverRhoNorm ~= 9.281e152
+step 20 nonfinite_total = 1151148
 ```
 
-Fail:
+Meaning:
 
 ```text
-Return to selected B36 branch.
-Do not try another unrelated physics patch without explaining why the branch changed.
+Excessive |gradPhi| is not the first-order root cause.
+B37 must not be promoted as a repair.
 ```
 
-## B38: Flat-Wall Contact-Angle Gate
+## B38: First-Bad Force Ledger
 
-Only after B37 passes:
+B38 replaces the old contact-angle gate. It must run before any further write
+candidate:
 
 ```text
-equilibrium wall theta 30, 90, 150
-decoupled wall 60->30
-decoupled wall 120->150
+case = wall_60to30_10
+Density_l = 0.005
+steps = 20
+vtk_period = 1
+vtk_field_set = b33ledger
+Stage14B18ClosureDiagnosticsMode = 1
 ```
 
 Required outputs:
 
 ```text
-angle JSON/CSV
-2D morphology images
-mass drift
-kinetic energy
-spurious velocity
-force closure digest
+b38_key_summary.json
+b38_argmax_trace.json
+stage14_B38_first_bad_ledger_digest.json
+stage14_B38_first_bad_ledger_digest.md
+binary_sha256.txt
+run.log / run.status / case_metadata.json
 ```
 
-Pass criterion:
+B38 pass criterion is diagnostic completeness, not physical stability:
 
 ```text
-decoupled cases move toward target BC
-morphology and angle metric agree
-force closure does not rely on clamp/zero-force hacks
+Identify whether the next branch is:
+  mu_or_laplace_branch
+  grad_or_surface_force_branch
+  fmu_stress_timelevel_branch
+  force_density_denominator_branch
+  force_assembly_or_fmu_numerator_branch
 ```
 
-## B39: Sphere/Cylinder Regression
+## B39: Single Evidence-Selected Repair Candidate
 
-Only after B38:
+Only after B38 and Teacher MCP review:
 
-1. rerun Stage17B diffuse-solid shadow for cylinder and sphere.
-2. rerun controlled-write curved cases only if shadow continuity remains good.
-3. run static curved contact-angle cases.
-4. compare with flat-wall force closure fields to ensure no new near-wall
-   `F_total/rho` spike appears.
+```text
+Choose one branch only.
+Keep it default-off.
+Do not mix stress, denominator, pressure, wetting, and phase updates in one patch.
+Verify with wall_60to30_10 20-step first.
+```
+
+If B38 shows stress/F_mu leads, B39 may target:
+
+```text
+FmuStressClosureMode candidate
+Fmu prefactor consistency
+pre-force or force-excluded non-equilibrium stress
+```
+
+If B38 shows denominator alone leads, B39 may target:
+
+```text
+force-density denominator closure derived from phase mixture/rho floor
+```
+
+If B38 shows mu/lapPhi or grad/Fsurf leads, B39 returns to stencil and surface
+force reconstruction.
+
+## B40: Stress Construction Audit
+
+B39 showed that none of the existing `FmuStressClosureMode` choices is a
+sufficient repair. Therefore B40 is not a short stability gate yet. It is a
+stress construction audit.
+
+```text
+Audit:
+  current relaxed-stress path
+  incoming raw stress
+  incoming non-equilibrium stress
+  post-force shadow stress
+  equilibrium stress subtraction
+  MRT/BGK F_mu prefactor consistency
+```
+
+Only after B40 identifies a mathematically defensible stress path can a new
+default-off write candidate be created. Flat-wall contact-angle validation
+remains after the selected candidate survives a short stability re-gate.
 
 ## B40: Dynamic Impact Preflight
 
@@ -274,12 +324,14 @@ validation_passed wording
 
 ## Current Stop Point
 
-As of this runbook, B36-B40 are blocked by:
+As of 2026-06-28:
 
 ```text
-B33 runtime unavailable due to remote I/O/SSH issue
-B34 replay comparison lacking B33 co-located vectors
+B35 coupled numerator split completed.
+B36 force-over-rho cap rejected.
+B37 gradPhi force-consumer cap rejected.
+Server reboot recovered /mnt/usb1t and P100 access.
+B38 first-bad ledger is the immediate next operational action.
+B39 mode matrix completed afterward and rejected all existing FmuStressClosureMode values.
+B40 stress construction audit is now the immediate next operational action.
 ```
-
-The immediate next operational action is to restore SSH and rerun B33 on a
-non-USB root.

@@ -1,0 +1,17 @@
+stage=stage14_B39_fmu_stress_mode_matrix
+root=/mnt/usb1t/RUNS/runs/stage14_B39_fmu_stress_mode_matrix_20260628
+gpu=1
+binary=/home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
+iterations=20
+vtk_period=1
+vtk_field_set=b33ledger
+density_h=1.0
+density_l=0.005
+pressure_closure_mode=1
+force_fixed_point_mode=2
+phase_advection_velocity_mode=2
+force_density_closure_mode=2
+force_density_rho_floor=0.005
+stage14_b18_closure_diagnostics_mode=1
+matrix=M0_FmuStressClosureMode0,M1_FmuStressClosureMode1,M2_FmuStressClosureMode2
+claim_limit=diagnostic_mode_matrix_not_contact_angle_validation

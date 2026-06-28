@@ -751,6 +751,181 @@ B34_MRT_REQUIRED_FIELDS = [
 
 VTK_FIELDS_B34_MRT = ",".join(B34_MRT_REQUIRED_FIELDS)
 
+B35_FORCE_CANDIDATES = [
+    "Legacy",
+    "NoGhost",
+    "MuBounded",
+    "GradBounded",
+    "PrefactorTau",
+]
+
+B35_FORCE_DENOMINATORS = [
+    "Raw",
+    "DensityFloor",
+    "PhaseMixture",
+    "Capped",
+]
+
+B35_SPLIT_REQUIRED_FIELDS = [
+    "PhaseField",
+    "Rho",
+    "BOUNDARY",
+    "IsItBoundary",
+    "ReplayPhaseFromH",
+    "ReplayMu",
+    "ReplayGradPhi",
+    "ReplayFsurf",
+    "ReplayFmu",
+    "ReplayFtotal",
+    "ReplayForceOverRho",
+    "ReplayRho",
+    "ReplayTau",
+    "ReplayForceRhoEffective",
+    "B35ProbeActive",
+    "B35LapPhiNoGhost",
+    "B35MuNoGhost",
+    "B35MuBounded",
+    "B35GradPhiNoGhost",
+    "B35GradPhiBounded",
+    "B35FsurfNoGhost",
+    "B35FtotalLegacy",
+    "B35FtotalNoGhost",
+    "B35FtotalMuBounded",
+    "B35FtotalGradBounded",
+    "B35FtotalPrefactorTau",
+    "B35ForceOverRhoLegacy",
+    "B35ForceOverRhoNoGhost",
+    "B35ForceOverRhoMuBounded",
+    "B35ForceOverRhoGradBounded",
+    "B35ForceOverRhoPrefactorTau",
+    "B35MuClampHit",
+    "B35GradClampHit",
+    "B35ForceRhoRaw",
+    "B35ForceRhoDensityFloor",
+    "B35ForceRhoPhaseMixture",
+    "B35ForceRhoEffective",
+]
+
+VTK_FIELDS_B35_SPLIT = ",".join(B35_SPLIT_REQUIRED_FIELDS)
+
+B36_CAP_REQUIRED_FIELDS = [
+    "PhaseField",
+    "Rho",
+    "BOUNDARY",
+    "IsItBoundary",
+    "ReplayPhaseFromH",
+    "ReplayFsurf",
+    "ReplayFpressure",
+    "ReplayFmu",
+    "ReplayFtotal",
+    "ReplayForceOverRho",
+    "ReplayRho",
+    "ReplayForceRhoEffective",
+    "ReplayPhaseAdvVelocity",
+    "ReplayUPostForce",
+    "ReplayMF",
+    "ReplayMomentumAfterG",
+    "ReplayMomentumDeltaG",
+    "B36ProbeActive",
+    "B36ForceOverRhoPreCap",
+    "B36ForceOverRhoPostCap",
+    "B36ForceOverRhoPreCapMag",
+    "B36ForceOverRhoPostCapMag",
+    "B36ForceOverRhoCapScale",
+    "B36ForceOverRhoCapHit",
+]
+
+VTK_FIELDS_B36_CAP = ",".join(B36_CAP_REQUIRED_FIELDS)
+
+B37_GRAD_CAP_REQUIRED_FIELDS = [
+    "PhaseField",
+    "Rho",
+    "BOUNDARY",
+    "IsItBoundary",
+    "ReplayPhaseFromH",
+    "ReplayGradPhi",
+    "ReplayFsurf",
+    "ReplayFpressure",
+    "ReplayFmu",
+    "ReplayFtotal",
+    "ReplayForceOverRho",
+    "ReplayRho",
+    "ReplayForceRhoEffective",
+    "ReplayPhaseAdvVelocity",
+    "ReplayUPostForce",
+    "ReplayMF",
+    "ReplayMomentumAfterG",
+    "ReplayMomentumDeltaG",
+    "B37ProbeActive",
+    "B37GradPhiPreCap",
+    "B37GradPhiPostCap",
+    "B37GradPhiPreCapMag",
+    "B37GradPhiPostCapMag",
+    "B37GradPhiCapScale",
+    "B37GradPhiCapHit",
+]
+
+VTK_FIELDS_B37_GRAD_CAP = ",".join(B37_GRAD_CAP_REQUIRED_FIELDS)
+
+B40_STRESS_REQUIRED_FIELDS = [
+    "PhaseField",
+    "Rho",
+    "P",
+    "BOUNDARY",
+    "IsItBoundary",
+    "ReplayPhaseFromH",
+    "ReplayGradPhi",
+    "ReplayFsurf",
+    "ReplayFpressure",
+    "ReplayFbody",
+    "ReplayFmu",
+    "ReplayFmuRaw",
+    "ReplayFtotal",
+    "ReplayForceOverRho",
+    "ReplayTau",
+    "ReplayTauUsed",
+    "ReplayRhoForForce",
+    "ReplayForceRhoEffective",
+    "ReplayStressPreForceShadowXX",
+    "ReplayStressPreForceShadowXY",
+    "ReplayStressPreForceShadowXZ",
+    "ReplayStressPreForceShadowYY",
+    "ReplayStressPreForceShadowYZ",
+    "ReplayStressPreForceShadowZZ",
+    "ReplayStressPostForceShadowXX",
+    "ReplayStressPostForceShadowXY",
+    "ReplayStressPostForceShadowXZ",
+    "ReplayStressPostForceShadowYY",
+    "ReplayStressPostForceShadowYZ",
+    "ReplayStressPostForceShadowZZ",
+    "B40ProbeActive",
+    "B40FmuLegacyScale",
+    "B40FmuBGKScale",
+    "B40StressLegacyMatchDeltaNorm",
+    "B40StressMomentRawNorm",
+    "B40StressMomentRelaxedNorm",
+    "B40StressIncomingRawNorm",
+    "B40StressIncomingNeqPreNorm",
+    "B40StressBGKPopNeqPreNorm",
+    "B40StressPostForceNorm",
+    "B40StressRawOverRelaxed",
+    "B40StressPostOverRelaxed",
+    "B40FmuMomentRawLegacy",
+    "B40FmuMomentRawBGK",
+    "B40FmuMomentRelaxedLegacy",
+    "B40FmuMomentRelaxedBGK",
+    "B40FmuIncomingRawLegacy",
+    "B40FmuIncomingNeqPreLegacy",
+    "B40FmuBGKPopNeqPreLegacy",
+    "B40FmuBGKPopNeqPreBGK",
+    "B40FmuPostForceLegacy",
+    "B40ForceOverRhoMomentRawLegacy",
+    "B40ForceOverRhoMomentRelaxedLegacy",
+    "B40ForceOverRhoBGKPopNeqPreBGK",
+]
+
+VTK_FIELDS_B40_STRESS = ",".join(B40_STRESS_REQUIRED_FIELDS)
+
 REQUIRED_REPLAY_FIELDS = [
     "ReplayPhaseConsumed",
     "ReplayPhaseFromH",
@@ -841,6 +1016,10 @@ REQUIRED_FIELDS_BY_VTK_SET = {
     "b26": B26_REQUIRED_FIELDS,
     "b27stress": B27_STRESS_REQUIRED_FIELDS,
     "b34mrt": B34_MRT_REQUIRED_FIELDS,
+    "b35split": B35_SPLIT_REQUIRED_FIELDS,
+    "b36cap": B36_CAP_REQUIRED_FIELDS,
+    "b37gradcap": B37_GRAD_CAP_REQUIRED_FIELDS,
+    "b40stress": B40_STRESS_REQUIRED_FIELDS,
     "b33ledger": B33_LEDGER_REQUIRED_FIELDS,
 }
 
@@ -908,6 +1087,17 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("ForceDensityRhoFloor", args.force_density_rho_floor),
             param("ForceFixedPointMode", args.force_fixed_point_mode),
             param("ForceFixedDivergenceGuardFactor", args.force_fixed_divergence_guard_factor),
+            param(
+                "Stage14B35CoupledNumeratorDiagnosticsMode",
+                args.b35_coupled_numerator_diagnostics_mode,
+            ),
+            param("Stage14B35MuAbsCap", args.b35_mu_abs_cap),
+            param("Stage14B35GradPhiCap", args.b35_grad_phi_cap),
+            param("Stage14B36ForceOverRhoLimiterMode", args.b36_force_over_rho_limiter_mode),
+            param("Stage14B36ForceOverRhoCap", args.b36_force_over_rho_cap),
+            param("Stage14B37GradPhiCapMode", args.b37_grad_phi_cap_mode),
+            param("Stage14B37GradPhiCap", args.b37_grad_phi_cap),
+            param("Stage14B40StressAuditMode", args.b40_stress_audit_mode),
             param("force_fixed_iterator", args.force_fixed_iterator),
             param("ForceFixedTol", args.force_fixed_tol),
             param("ForceFixedMaxIter", args.force_fixed_max_iter),
@@ -924,6 +1114,14 @@ def common_model_params(args: argparse.Namespace) -> str:
 def vtk_fields_for(args: argparse.Namespace) -> str:
     if args.vtk_field_set == "b34mrt":
         return VTK_FIELDS_B34_MRT
+    if args.vtk_field_set == "b35split":
+        return VTK_FIELDS_B35_SPLIT
+    if args.vtk_field_set == "b36cap":
+        return VTK_FIELDS_B36_CAP
+    if args.vtk_field_set == "b37gradcap":
+        return VTK_FIELDS_B37_GRAD_CAP
+    if args.vtk_field_set == "b40stress":
+        return VTK_FIELDS_B40_STRESS
     if args.vtk_field_set == "b33ledger":
         return VTK_FIELDS_B33_LEDGER
     if args.vtk_field_set == "b27stress":
@@ -1134,6 +1332,15 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "force_fixed_tol": args.force_fixed_tol,
             "force_fixed_max_iter": args.force_fixed_max_iter,
             "force_fixed_divergence_guard_factor": args.force_fixed_divergence_guard_factor,
+            "b35_coupled_numerator_diagnostics_mode": args.b35_coupled_numerator_diagnostics_mode,
+            "b35_mu_abs_cap": args.b35_mu_abs_cap,
+            "b35_grad_phi_cap": args.b35_grad_phi_cap,
+            "b35_force_over_rho_cap": args.b35_force_over_rho_cap,
+            "b36_force_over_rho_limiter_mode": args.b36_force_over_rho_limiter_mode,
+            "b36_force_over_rho_cap": args.b36_force_over_rho_cap,
+            "b37_grad_phi_cap_mode": args.b37_grad_phi_cap_mode,
+            "b37_grad_phi_cap": args.b37_grad_phi_cap,
+            "b40_stress_audit_mode": args.b40_stress_audit_mode,
             "density_h": args.density_h,
             "density_l": args.density_l,
             "viscosity_h": args.viscosity_h,
@@ -1158,6 +1365,8 @@ def run_cases(case_dirs: list[Path], args: argparse.Namespace) -> list[dict[str,
     env["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
     env["OMPI_MCA_plm_rsh_agent"] = "/usr/bin/ssh"
     env["LD_LIBRARY_PATH"] = "/usr/local/cuda-12.6/lib64:" + env.get("LD_LIBRARY_PATH", "")
+    for key in ("DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY", "DBUS_SESSION_BUS_ADDRESS"):
+        env.pop(key, None)
     results = []
     for case_dir in case_dirs:
         with (case_dir / "run.log").open("w", encoding="utf-8", errors="replace") as log:
@@ -1405,6 +1614,10 @@ def summarize_case(case_dir: Path) -> dict[str, Any]:
                     or name.startswith("B20")
                     or name.startswith("B21")
                     or name.startswith("B22")
+                    or name.startswith("B35")
+                    or name.startswith("B36")
+                    or name.startswith("B37")
+                    or name.startswith("B40")
                 )
             )
         )
@@ -1451,7 +1664,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--vtk-period", type=int, default=1)
     parser.add_argument(
         "--vtk-field-set",
-        choices=("full", "minimal", "b21", "b22", "b26", "b27stress", "b34mrt", "b33ledger"),
+        choices=(
+            "full",
+            "minimal",
+            "b21",
+            "b22",
+            "b26",
+            "b27stress",
+            "b34mrt",
+            "b35split",
+            "b36cap",
+            "b37gradcap",
+            "b40stress",
+            "b33ledger",
+        ),
         default="full",
     )
     parser.add_argument("--log-period", type=int, default=1)
@@ -1476,6 +1702,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--force-fixed-tol", type=float, default=0.0)
     parser.add_argument("--force-fixed-max-iter", type=int, default=2)
     parser.add_argument("--force-fixed-divergence-guard-factor", type=float, default=100.0)
+    parser.add_argument("--b35-coupled-numerator-diagnostics-mode", type=int, default=0)
+    parser.add_argument("--b35-mu-abs-cap", type=float, default=0.0)
+    parser.add_argument("--b35-grad-phi-cap", type=float, default=0.0)
+    parser.add_argument("--b35-force-over-rho-cap", type=float, default=0.0)
+    parser.add_argument("--b36-force-over-rho-limiter-mode", type=int, default=0)
+    parser.add_argument("--b36-force-over-rho-cap", type=float, default=0.0)
+    parser.add_argument("--b37-grad-phi-cap-mode", type=int, default=0)
+    parser.add_argument("--b37-grad-phi-cap", type=float, default=0.0)
+    parser.add_argument("--b40-stress-audit-mode", type=int, default=0)
     parser.add_argument("--density-h", type=float, default=1.0)
     parser.add_argument("--density-l", type=float, default=0.001)
     parser.add_argument("--viscosity-h", type=float, default=0.1)

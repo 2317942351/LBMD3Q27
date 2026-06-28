@@ -1,0 +1,398 @@
+{
+  "artifact_root": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\artifacts\\stage14_B37_grad_phi_cap_20260628",
+  "binary_sha256": "3f3e79b5f234136b515094c6dba6e2e2237e3bdbde8a31dcba1f65c37d0ce78e  /home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main",
+  "cases": {
+    "M0_baseline": {
+      "analyzer_status": "ANALYZER_RC=0",
+      "cases": [
+        {
+          "cap": 0.0,
+          "case": "wall_60to30_10",
+          "failures": [
+            "momentum_delta_g_not_mf",
+            "nonfinite_fields"
+          ],
+          "mode": 0,
+          "status": "fail",
+          "steps": {
+            "1": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.0,
+              "max_pre_cap_grad_phi": 0.0,
+              "max_replay_force_over_rho": 0.0026067563159362004,
+              "max_replay_minus_post_grad_phi": 0.38994697891101315,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "10": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.0,
+              "max_pre_cap_grad_phi": 0.0,
+              "max_replay_force_over_rho": 0.44756817247817804,
+              "max_replay_minus_post_grad_phi": 0.3908672261373405,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "15": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.0,
+              "max_pre_cap_grad_phi": 0.0,
+              "max_replay_force_over_rho": 885434.9865443383,
+              "max_replay_minus_post_grad_phi": 0.3912051178198273,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "20": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "nonfinite_fields",
+                "momentum_delta_g_not_mf"
+              ],
+              "max_post_cap_grad_phi": 0.0,
+              "max_pre_cap_grad_phi": 0.0,
+              "max_replay_force_over_rho": 9.281471742419461e+152,
+              "max_replay_minus_post_grad_phi": 0.4776384792059714,
+              "nonfinite_total": 1151148,
+              "phase_from_h_oob_count": 0
+            }
+          }
+        }
+      ],
+      "driver_status": "DRIVER_RC=0",
+      "failures": [
+        "momentum_delta_g_not_mf",
+        "nonfinite_fields"
+      ],
+      "gate_exists": true,
+      "gate_status": "GATE_RC=3",
+      "status": "fail",
+      "vti_count_txt": "VTK_COUNT=42"
+    },
+    "M1_shadow_cap20": {
+      "analyzer_status": "ANALYZER_RC=0",
+      "cases": [
+        {
+          "cap": 20.0,
+          "case": "wall_60to30_10",
+          "failures": [
+            "momentum_delta_g_not_mf",
+            "nonfinite_fields"
+          ],
+          "mode": 1,
+          "status": "fail",
+          "steps": {
+            "1": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.38994697891101315,
+              "max_pre_cap_grad_phi": 0.38994697891101315,
+              "max_replay_force_over_rho": 0.0026067563159362004,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "10": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.3908672261373405,
+              "max_pre_cap_grad_phi": 0.3908672261373405,
+              "max_replay_force_over_rho": 0.44756817247817804,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "15": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.3912051178198273,
+              "max_pre_cap_grad_phi": 0.3912051178198273,
+              "max_replay_force_over_rho": 885434.9865443383,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "20": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "nonfinite_fields",
+                "momentum_delta_g_not_mf"
+              ],
+              "max_post_cap_grad_phi": 0.4776384792059714,
+              "max_pre_cap_grad_phi": 0.4776384792059714,
+              "max_replay_force_over_rho": 9.281471742419461e+152,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 1151148,
+              "phase_from_h_oob_count": 0
+            }
+          }
+        }
+      ],
+      "driver_status": "DRIVER_RC=0",
+      "failures": [
+        "momentum_delta_g_not_mf",
+        "nonfinite_fields"
+      ],
+      "gate_exists": true,
+      "gate_status": "GATE_RC=3",
+      "status": "fail",
+      "vti_count_txt": "VTK_COUNT=42"
+    },
+    "M2_write_cap10": {
+      "analyzer_status": "ANALYZER_RC=0",
+      "cases": [
+        {
+          "cap": 10.0,
+          "case": "wall_60to30_10",
+          "failures": [
+            "force_over_rho_exceeds_limit",
+            "momentum_delta_g_not_mf",
+            "nonfinite_fields"
+          ],
+          "mode": 2,
+          "status": "fail",
+          "steps": {
+            "1": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.38994697891101315,
+              "max_pre_cap_grad_phi": 0.38994697891101315,
+              "max_replay_force_over_rho": 0.0026067563159362004,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "10": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.3908672261373405,
+              "max_pre_cap_grad_phi": 0.3908672261373405,
+              "max_replay_force_over_rho": 0.44756817247817804,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "15": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "force_over_rho_exceeds_limit"
+              ],
+              "max_post_cap_grad_phi": 0.3912051178198273,
+              "max_pre_cap_grad_phi": 0.3912051178198273,
+              "max_replay_force_over_rho": 885434.9865443383,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "20": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "nonfinite_fields",
+                "force_over_rho_exceeds_limit",
+                "momentum_delta_g_not_mf"
+              ],
+              "max_post_cap_grad_phi": 0.4776384792059714,
+              "max_pre_cap_grad_phi": 0.4776384792059714,
+              "max_replay_force_over_rho": 9.281471742419461e+152,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 1151148,
+              "phase_from_h_oob_count": 0
+            }
+          }
+        }
+      ],
+      "driver_status": "DRIVER_RC=0",
+      "failures": [
+        "force_over_rho_exceeds_limit",
+        "momentum_delta_g_not_mf",
+        "nonfinite_fields"
+      ],
+      "gate_exists": true,
+      "gate_status": "GATE_RC=3",
+      "status": "fail",
+      "vti_count_txt": "VTK_COUNT=42"
+    },
+    "M2_write_cap20": {
+      "analyzer_status": "ANALYZER_RC=0",
+      "cases": [
+        {
+          "cap": 20.0,
+          "case": "wall_60to30_10",
+          "failures": [
+            "force_over_rho_exceeds_limit",
+            "momentum_delta_g_not_mf",
+            "nonfinite_fields"
+          ],
+          "mode": 2,
+          "status": "fail",
+          "steps": {
+            "1": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.38994697891101315,
+              "max_pre_cap_grad_phi": 0.38994697891101315,
+              "max_replay_force_over_rho": 0.0026067563159362004,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "10": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.3908672261373405,
+              "max_pre_cap_grad_phi": 0.3908672261373405,
+              "max_replay_force_over_rho": 0.44756817247817804,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "15": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "force_over_rho_exceeds_limit"
+              ],
+              "max_post_cap_grad_phi": 0.3912051178198273,
+              "max_pre_cap_grad_phi": 0.3912051178198273,
+              "max_replay_force_over_rho": 885434.9865443383,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "20": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "nonfinite_fields",
+                "force_over_rho_exceeds_limit",
+                "momentum_delta_g_not_mf"
+              ],
+              "max_post_cap_grad_phi": 0.4776384792059714,
+              "max_pre_cap_grad_phi": 0.4776384792059714,
+              "max_replay_force_over_rho": 9.281471742419461e+152,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 1151148,
+              "phase_from_h_oob_count": 0
+            }
+          }
+        }
+      ],
+      "driver_status": "DRIVER_RC=0",
+      "failures": [
+        "force_over_rho_exceeds_limit",
+        "momentum_delta_g_not_mf",
+        "nonfinite_fields"
+      ],
+      "gate_exists": true,
+      "gate_status": "GATE_RC=3",
+      "status": "fail",
+      "vti_count_txt": "VTK_COUNT=42"
+    },
+    "M2_write_cap5": {
+      "analyzer_status": "ANALYZER_RC=0",
+      "cases": [
+        {
+          "cap": 5.0,
+          "case": "wall_60to30_10",
+          "failures": [
+            "force_over_rho_exceeds_limit",
+            "momentum_delta_g_not_mf",
+            "nonfinite_fields"
+          ],
+          "mode": 2,
+          "status": "fail",
+          "steps": {
+            "1": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.38994697891101315,
+              "max_pre_cap_grad_phi": 0.38994697891101315,
+              "max_replay_force_over_rho": 0.0026067563159362004,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "10": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.3908672261373405,
+              "max_pre_cap_grad_phi": 0.3908672261373405,
+              "max_replay_force_over_rho": 0.44756817247817804,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "15": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "force_over_rho_exceeds_limit"
+              ],
+              "max_post_cap_grad_phi": 0.3912051178198273,
+              "max_pre_cap_grad_phi": 0.3912051178198273,
+              "max_replay_force_over_rho": 885434.9865443383,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            },
+            "20": {
+              "cap_hit_fraction": 0.0,
+              "failures": [
+                "nonfinite_fields",
+                "force_over_rho_exceeds_limit",
+                "momentum_delta_g_not_mf"
+              ],
+              "max_post_cap_grad_phi": 0.4776384792059714,
+              "max_pre_cap_grad_phi": 0.4776384792059714,
+              "max_replay_force_over_rho": 9.281471742419461e+152,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 1151148,
+              "phase_from_h_oob_count": 0
+            }
+          }
+        }
+      ],
+      "driver_status": "DRIVER_RC=0",
+      "failures": [
+        "force_over_rho_exceeds_limit",
+        "momentum_delta_g_not_mf",
+        "nonfinite_fields"
+      ],
+      "gate_exists": true,
+      "gate_status": "GATE_RC=3",
+      "status": "fail",
+      "vti_count_txt": "VTK_COUNT=42"
+    },
+    "S0_smoke_mode2_cap100": {
+      "analyzer_status": "ANALYZER_RC=0",
+      "cases": [
+        {
+          "cap": 100.0,
+          "case": "wall_60to30_10",
+          "failures": [],
+          "mode": 2,
+          "status": "pass",
+          "steps": {
+            "1": {
+              "cap_hit_fraction": 0.0,
+              "failures": [],
+              "max_post_cap_grad_phi": 0.38994697891101315,
+              "max_pre_cap_grad_phi": 0.38994697891101315,
+              "max_replay_force_over_rho": 0.0026067563159362004,
+              "max_replay_minus_post_grad_phi": 0.0,
+              "nonfinite_total": 0,
+              "phase_from_h_oob_count": 0
+            }
+          }
+        }
+      ],
+      "driver_status": "DRIVER_RC=0",
+      "failures": [],
+      "gate_exists": true,
+      "gate_status": "GATE_RC=0",
+      "status": "pass",
+      "vti_count_txt": "VTK_COUNT=4"
+    }
+  },
+  "remote_root": "/mnt/usb1t/RUNS/runs/stage14_B37_grad_phi_cap_retry2_20260628",
+  "status_text": "OVERALL_RC=3\nVERDICT=b37_grad_phi_cap_gate_failed"
+}

@@ -60,7 +60,7 @@ Therefore, with the current MRT formula and `Omega=1` on the momentum rows,
 the single-node algebra predicts:
 
 ```text
-ReplayMomentumDeltaG ~= 0.5 * ReplayMF
+ReplayMomentumDeltaG ~= 1.0 * ReplayMF
 ```
 
 This does not by itself prove a bug. It means B34 must compare this local
@@ -102,7 +102,7 @@ python scripts/stage14/stage14_b34_mrt_replay_compare.py \
 Pass criterion:
 
 ```text
-max_abs(ReplayMomentumDeltaG - 0.5*ReplayMF) <= tolerance
+max_abs(ReplayMomentumDeltaG - 1.0*ReplayMF) <= tolerance
 ```
 
 If the comparison fails, B35/B36 must not change `F_surf` or `F_mu` first.
@@ -116,7 +116,7 @@ candidate work. The reason is that the local algebra already predicts a
 specific replay relation:
 
 ```text
-ReplayMomentumDeltaG ~= 0.5 * ReplayMF
+ReplayMomentumDeltaG ~= 1.0 * ReplayMF
 ```
 
 If actual TCLB replay fields do not satisfy this at B33 first-bad nodes, the

@@ -18,6 +18,38 @@ from typing import Any
 
 import numpy as np
 
+B35_FORCE_CANDIDATES = [
+    "Legacy",
+    "NoGhost",
+    "MuBounded",
+    "GradBounded",
+    "PrefactorTau",
+]
+
+B35_FORCE_DENOMINATORS = [
+    "Raw",
+    "DensityFloor",
+    "PhaseMixture",
+    "Capped",
+]
+
+B35_FORCE_TOTAL_VECTOR_FIELDS = {
+    candidate: f"B35Ftotal{candidate}" for candidate in B35_FORCE_CANDIDATES
+}
+
+B35_FORCE_DENOMINATOR_SCALAR_FIELDS = {
+    "Raw": "B35ForceRhoRaw",
+    "DensityFloor": "B35ForceRhoDensityFloor",
+    "PhaseMixture": "B35ForceRhoPhaseMixture",
+    "Capped": "B35ForceRhoEffective",
+}
+
+B35_FORCE_OVER_RHO_DERIVED_NORMS = [
+    f"B35ForceOverRho{candidate}{denominator}Norm"
+    for candidate in B35_FORCE_CANDIDATES
+    for denominator in B35_FORCE_DENOMINATORS
+]
+
 
 SCALAR_FIELDS = [
     "PhaseField",
@@ -149,6 +181,38 @@ SCALAR_FIELDS = [
     "B22HeqFromBoundedShadowMaxAbs",
     "B22VelocitySourceId",
     "B22VelocityMachExceededFlag",
+    "B35ProbeActive",
+    "B35LapPhiNoGhost",
+    "B35MuNoGhost",
+    "B35MuBounded",
+    "B35MuClampHit",
+    "B35GradClampHit",
+    "B35ForceRhoRaw",
+    "B35ForceRhoDensityFloor",
+    "B35ForceRhoPhaseMixture",
+    "B35ForceRhoEffective",
+    "B36ProbeActive",
+    "B36ForceOverRhoPreCapMag",
+    "B36ForceOverRhoPostCapMag",
+    "B36ForceOverRhoCapScale",
+    "B36ForceOverRhoCapHit",
+    "B37ProbeActive",
+    "B37GradPhiPreCapMag",
+    "B37GradPhiPostCapMag",
+    "B37GradPhiCapScale",
+    "B37GradPhiCapHit",
+    "B40ProbeActive",
+    "B40FmuLegacyScale",
+    "B40FmuBGKScale",
+    "B40StressLegacyMatchDeltaNorm",
+    "B40StressMomentRawNorm",
+    "B40StressMomentRelaxedNorm",
+    "B40StressIncomingRawNorm",
+    "B40StressIncomingNeqPreNorm",
+    "B40StressBGKPopNeqPreNorm",
+    "B40StressPostForceNorm",
+    "B40StressRawOverRelaxed",
+    "B40StressPostOverRelaxed",
     "ForceIterCount",
     "ForceIterResidual",
 ]
@@ -196,6 +260,42 @@ VECTOR_FIELDS = [
     "B22PhaseAdvU",
     "B22ForceOverRho",
     "B22HalfForceU",
+    "B35GradPhiNoGhost",
+    "B35GradPhiBounded",
+    "B35FsurfLegacy",
+    "B35FsurfNoGhost",
+    "B35FsurfMuBounded",
+    "B35FsurfGradBounded",
+    "B35FmuLegacy",
+    "B35FmuNoGhost",
+    "B35FmuGradBounded",
+    "B35FmuPrefactorTau",
+    "B35FtotalLegacy",
+    "B35FtotalNoGhost",
+    "B35FtotalMuBounded",
+    "B35FtotalGradBounded",
+    "B35FtotalPrefactorTau",
+    "B35ForceOverRhoLegacy",
+    "B35ForceOverRhoNoGhost",
+    "B35ForceOverRhoMuBounded",
+    "B35ForceOverRhoGradBounded",
+    "B35ForceOverRhoPrefactorTau",
+    "B36ForceOverRhoPreCap",
+    "B36ForceOverRhoPostCap",
+    "B37GradPhiPreCap",
+    "B37GradPhiPostCap",
+    "B40FmuMomentRawLegacy",
+    "B40FmuMomentRawBGK",
+    "B40FmuMomentRelaxedLegacy",
+    "B40FmuMomentRelaxedBGK",
+    "B40FmuIncomingRawLegacy",
+    "B40FmuIncomingNeqPreLegacy",
+    "B40FmuBGKPopNeqPreLegacy",
+    "B40FmuBGKPopNeqPreBGK",
+    "B40FmuPostForceLegacy",
+    "B40ForceOverRhoMomentRawLegacy",
+    "B40ForceOverRhoMomentRelaxedLegacy",
+    "B40ForceOverRhoBGKPopNeqPreBGK",
 ]
 
 STRESS_GROUPS = {
@@ -287,6 +387,7 @@ DERIVED_VECTOR_MAG_FIELDS = {
     "FpressureNorm": "ReplayFpressure",
     "FpressureNoThirdNorm": "ReplayFpressureNoThird",
     "FpressurePhysicalNorm": "ReplayFpressurePhysical",
+    "FbodyNorm": "ReplayFbody",
     "FmuNorm": "ReplayFmu",
     "FmuRawNorm": "ReplayFmuRaw",
     "FmuDeltaNorm": "ReplayFmuDelta",
@@ -320,6 +421,42 @@ DERIVED_VECTOR_MAG_FIELDS = {
     "B22PhaseAdvUNorm": "B22PhaseAdvU",
     "B22ForceOverRhoNorm": "B22ForceOverRho",
     "B22HalfForceUNorm": "B22HalfForceU",
+    "B35GradPhiNoGhostNorm": "B35GradPhiNoGhost",
+    "B35GradPhiBoundedNorm": "B35GradPhiBounded",
+    "B35FsurfLegacyNorm": "B35FsurfLegacy",
+    "B35FsurfNoGhostNorm": "B35FsurfNoGhost",
+    "B35FsurfMuBoundedNorm": "B35FsurfMuBounded",
+    "B35FsurfGradBoundedNorm": "B35FsurfGradBounded",
+    "B35FmuLegacyNorm": "B35FmuLegacy",
+    "B35FmuNoGhostNorm": "B35FmuNoGhost",
+    "B35FmuGradBoundedNorm": "B35FmuGradBounded",
+    "B35FmuPrefactorTauNorm": "B35FmuPrefactorTau",
+    "B35FtotalLegacyNorm": "B35FtotalLegacy",
+    "B35FtotalNoGhostNorm": "B35FtotalNoGhost",
+    "B35FtotalMuBoundedNorm": "B35FtotalMuBounded",
+    "B35FtotalGradBoundedNorm": "B35FtotalGradBounded",
+    "B35FtotalPrefactorTauNorm": "B35FtotalPrefactorTau",
+    "B35ForceOverRhoLegacyNorm": "B35ForceOverRhoLegacy",
+    "B35ForceOverRhoNoGhostNorm": "B35ForceOverRhoNoGhost",
+    "B35ForceOverRhoMuBoundedNorm": "B35ForceOverRhoMuBounded",
+    "B35ForceOverRhoGradBoundedNorm": "B35ForceOverRhoGradBounded",
+    "B35ForceOverRhoPrefactorTauNorm": "B35ForceOverRhoPrefactorTau",
+    "B36ForceOverRhoPreCapNorm": "B36ForceOverRhoPreCap",
+    "B36ForceOverRhoPostCapNorm": "B36ForceOverRhoPostCap",
+    "B37GradPhiPreCapNorm": "B37GradPhiPreCap",
+    "B37GradPhiPostCapNorm": "B37GradPhiPostCap",
+    "B40FmuMomentRawLegacyNorm": "B40FmuMomentRawLegacy",
+    "B40FmuMomentRawBGKNorm": "B40FmuMomentRawBGK",
+    "B40FmuMomentRelaxedLegacyNorm": "B40FmuMomentRelaxedLegacy",
+    "B40FmuMomentRelaxedBGKNorm": "B40FmuMomentRelaxedBGK",
+    "B40FmuIncomingRawLegacyNorm": "B40FmuIncomingRawLegacy",
+    "B40FmuIncomingNeqPreLegacyNorm": "B40FmuIncomingNeqPreLegacy",
+    "B40FmuBGKPopNeqPreLegacyNorm": "B40FmuBGKPopNeqPreLegacy",
+    "B40FmuBGKPopNeqPreBGKNorm": "B40FmuBGKPopNeqPreBGK",
+    "B40FmuPostForceLegacyNorm": "B40FmuPostForceLegacy",
+    "B40ForceOverRhoMomentRawLegacyNorm": "B40ForceOverRhoMomentRawLegacy",
+    "B40ForceOverRhoMomentRelaxedLegacyNorm": "B40ForceOverRhoMomentRelaxedLegacy",
+    "B40ForceOverRhoBGKPopNeqPreBGKNorm": "B40ForceOverRhoBGKPopNeqPreBGK",
 }
 
 TARGET_FIELDS = [
@@ -335,8 +472,10 @@ TARGET_FIELDS = [
     "ReplayMu",
     "FpressureNorm",
     "FpressurePhysicalNorm",
+    "FbodyNorm",
     "GradPhiNorm",
     "FsurfNorm",
+    "FmuNorm",
     "FmuRawNorm",
     "FmuDeltaNorm",
     "FtotalNorm",
@@ -362,6 +501,28 @@ TARGET_FIELDS = [
     "B18ForceOverRhoRawNorm",
     "B18ForceOverRhoDensityFloorNorm",
     "B18ForceOverRhoPhaseMixtureNorm",
+    "B35ForceOverRhoLegacyRawNorm",
+    "B35ForceOverRhoLegacyDensityFloorNorm",
+    "B35ForceOverRhoLegacyPhaseMixtureNorm",
+    "B35ForceOverRhoLegacyCappedNorm",
+    "B35ForceOverRhoNoGhostRawNorm",
+    "B35ForceOverRhoNoGhostDensityFloorNorm",
+    "B35ForceOverRhoNoGhostPhaseMixtureNorm",
+    "B35ForceOverRhoNoGhostCappedNorm",
+    "B36ProbeActive",
+    "B36ForceOverRhoPreCapNorm",
+    "B36ForceOverRhoPostCapNorm",
+    "B36ForceOverRhoPreCapMag",
+    "B36ForceOverRhoPostCapMag",
+    "B36ForceOverRhoCapScale",
+    "B36ForceOverRhoCapHit",
+    "B37ProbeActive",
+    "B37GradPhiPreCapNorm",
+    "B37GradPhiPostCapNorm",
+    "B37GradPhiPreCapMag",
+    "B37GradPhiPostCapMag",
+    "B37GradPhiCapScale",
+    "B37GradPhiCapHit",
     "B18HVelocityLegacyNorm",
     "B18HVelocityPreForceNorm",
     "B18HVelocityRawPostForceNorm",
@@ -471,7 +632,9 @@ COLOCATE_FIELDS = [
     "ReplayMomentumDeltaG",
     "FpressureNorm",
     "FpressurePhysicalNorm",
+    "FbodyNorm",
     "FmuRawNorm",
+    "FmuNorm",
     "FmuDeltaNorm",
     "FtotalNorm",
     "ForceOverRhoNorm",
@@ -499,6 +662,30 @@ COLOCATE_FIELDS = [
     "B18RhoDenominatorRaw",
     "B18RhoDenominatorFloor",
     "B18RhoDenominatorPhaseMix",
+    "B35ForceRhoRaw",
+    "B35ForceRhoDensityFloor",
+    "B35ForceRhoPhaseMixture",
+    "B35ForceRhoEffective",
+    "B35ForceOverRhoLegacyRawNorm",
+    "B35ForceOverRhoLegacyDensityFloorNorm",
+    "B35ForceOverRhoLegacyPhaseMixtureNorm",
+    "B35ForceOverRhoLegacyCappedNorm",
+    "B35ForceOverRhoNoGhostRawNorm",
+    "B35ForceOverRhoNoGhostDensityFloorNorm",
+    "B35ForceOverRhoNoGhostPhaseMixtureNorm",
+    "B35ForceOverRhoNoGhostCappedNorm",
+    "B35ForceOverRhoMuBoundedRawNorm",
+    "B35ForceOverRhoMuBoundedDensityFloorNorm",
+    "B35ForceOverRhoMuBoundedPhaseMixtureNorm",
+    "B35ForceOverRhoMuBoundedCappedNorm",
+    "B35ForceOverRhoGradBoundedRawNorm",
+    "B35ForceOverRhoGradBoundedDensityFloorNorm",
+    "B35ForceOverRhoGradBoundedPhaseMixtureNorm",
+    "B35ForceOverRhoGradBoundedCappedNorm",
+    "B35ForceOverRhoPrefactorTauRawNorm",
+    "B35ForceOverRhoPrefactorTauDensityFloorNorm",
+    "B35ForceOverRhoPrefactorTauPhaseMixtureNorm",
+    "B35ForceOverRhoPrefactorTauCappedNorm",
     "B18HVelocityLegacyNorm",
     "B18HVelocityPreForceNorm",
     "B18HVelocityRawPostForceNorm",
@@ -611,6 +798,7 @@ THRESHOLDS = {
     "grad_phi_large": ("GradPhiNorm", 1.0e2),
     "fsurf_large": ("FsurfNorm", 1.0e3),
     "force_over_rho_large": ("ForceOverRhoNorm", 1.0e3),
+    "fmu_large": ("FmuNorm", 1.0e3),
     "fmu_raw_large": ("FmuRawNorm", 1.0e3),
     "stress_input_large": ("StressInputNorm", 1.0e3),
     "stress_post_large": ("StressPostForceNorm", 1.0e3),
@@ -656,6 +844,48 @@ THRESHOLDS = {
     "b22_heq_momentum_large": ("B22HeqFromMomentumMaxAbs", 1.0),
     "b22_heq_bounded_large": ("B22HeqFromBoundedShadowMaxAbs", 1.0),
     "b22_velocity_mach_flag": ("B22VelocityMachExceededFlag", 0.5),
+    "b35_mu_no_ghost_large": ("B35MuNoGhost", 1.0e3),
+    "b35_grad_no_ghost_large": ("B35GradPhiNoGhostNorm", 1.0e2),
+    "b35_fsurf_no_ghost_large": ("B35FsurfNoGhostNorm", 1.0e3),
+    "b35_force_legacy_large": ("B35ForceOverRhoLegacyNorm", 1.0e3),
+    "b35_force_no_ghost_large": ("B35ForceOverRhoNoGhostNorm", 1.0e3),
+    "b35_force_mu_bounded_large": ("B35ForceOverRhoMuBoundedNorm", 1.0e3),
+    "b35_force_grad_bounded_large": ("B35ForceOverRhoGradBoundedNorm", 1.0e3),
+    "b35_force_prefactor_tau_large": ("B35ForceOverRhoPrefactorTauNorm", 1.0e3),
+    "b35_force_legacy_raw_large": ("B35ForceOverRhoLegacyRawNorm", 1.0e3),
+    "b35_force_legacy_floor_large": ("B35ForceOverRhoLegacyDensityFloorNorm", 1.0e3),
+    "b35_force_legacy_phase_mix_large": ("B35ForceOverRhoLegacyPhaseMixtureNorm", 1.0e3),
+    "b35_force_legacy_capped_large": ("B35ForceOverRhoLegacyCappedNorm", 1.0e3),
+    **{
+        f"b35_force_{candidate.lower()}_{denominator.lower()}_large": (
+            f"B35ForceOverRho{candidate}{denominator}Norm",
+            1.0e3,
+        )
+        for candidate in ("NoGhost", "MuBounded", "GradBounded", "PrefactorTau")
+        for denominator in B35_FORCE_DENOMINATORS
+    },
+    "b35_mu_clamp_hit": ("B35MuClampHit", 0.5),
+    "b35_grad_clamp_hit": ("B35GradClampHit", 0.5),
+    "b36_pre_cap_large": ("B36ForceOverRhoPreCapMag", 1.0e3),
+    "b36_post_cap_large": ("B36ForceOverRhoPostCapMag", 1.0e3),
+    "b36_cap_hit": ("B36ForceOverRhoCapHit", 0.5),
+    "b37_grad_pre_cap_large": ("B37GradPhiPreCapMag", 1.0e2),
+    "b37_grad_post_cap_large": ("B37GradPhiPostCapMag", 1.0e2),
+    "b37_grad_cap_hit": ("B37GradPhiCapHit", 0.5),
+    "b40_stress_match_delta_large": ("B40StressLegacyMatchDeltaNorm", 1.0e-8),
+    "b40_stress_moment_raw_large": ("B40StressMomentRawNorm", 1.0e3),
+    "b40_stress_moment_relaxed_large": ("B40StressMomentRelaxedNorm", 1.0e3),
+    "b40_stress_incoming_raw_large": ("B40StressIncomingRawNorm", 1.0e3),
+    "b40_stress_incoming_neq_pre_large": ("B40StressIncomingNeqPreNorm", 1.0e3),
+    "b40_stress_bgk_pop_neq_pre_large": ("B40StressBGKPopNeqPreNorm", 1.0e3),
+    "b40_stress_post_large": ("B40StressPostForceNorm", 1.0e3),
+    "b40_stress_post_over_relaxed_large": ("B40StressPostOverRelaxed", 10.0),
+    "b40_fmu_moment_raw_legacy_large": ("B40FmuMomentRawLegacyNorm", 1.0e3),
+    "b40_fmu_moment_relaxed_legacy_large": ("B40FmuMomentRelaxedLegacyNorm", 1.0e3),
+    "b40_fmu_bgk_pop_neq_pre_bgk_large": ("B40FmuBGKPopNeqPreBGKNorm", 1.0e3),
+    "b40_force_moment_raw_legacy_large": ("B40ForceOverRhoMomentRawLegacyNorm", 1.0e3),
+    "b40_force_moment_relaxed_legacy_large": ("B40ForceOverRhoMomentRelaxedLegacyNorm", 1.0e3),
+    "b40_force_bgk_pop_neq_pre_bgk_large": ("B40ForceOverRhoBGKPopNeqPreBGKNorm", 1.0e3),
     "pressure_input_large": ("ReplayPressureInput", 1.0e3),
     "pressure_force_large": ("FpressureNorm", 1.0e3),
     "phase_from_h_out_of_bounds": ("ReplayPhaseFromH", 1.0 + 1.0e-3),
@@ -664,6 +894,13 @@ THRESHOLDS = {
     "fphi_large": ("ReplayFphiMaxAbs", 1.0),
     "hpost_large": ("ReplayHPostMaxAbs", 1.0),
 }
+
+# Keep the target statistics list consistent with threshold definitions.  B40
+# exposed a bug where thresholds were added but their fields were not included
+# in TARGET_FIELDS, making the branch appear unavailable despite valid VTI data.
+TARGET_FIELDS = list(
+    dict.fromkeys(TARGET_FIELDS + [field for field, _threshold in THRESHOLDS.values()])
+)
 
 
 def step_of(path: Path) -> int:
@@ -755,6 +992,26 @@ def stress_norm(arrays: dict[str, np.ndarray], names: list[str]) -> np.ndarray |
     return np.sqrt(np.sum(weights[None, :] * stacked * stacked, axis=1))
 
 
+def derived_force_over_rho_norm(
+    arrays: dict[str, np.ndarray],
+    total_field: str,
+    denominator_field: str,
+) -> np.ndarray | None:
+    total = arrays.get(total_field)
+    denominator = scalarize(arrays.get(denominator_field))
+    if total is None or denominator is None:
+        return None
+    total_values = np.asarray(total, dtype=float)
+    if total_values.ndim != 2 or total_values.shape[1] != 3:
+        return None
+    denom = np.asarray(denominator, dtype=float).reshape(-1)
+    if denom.shape[0] != total_values.shape[0]:
+        return None
+    safe_denom = np.where(np.isfinite(denom) & (np.abs(denom) > 1.0e-300), denom, 1.0e-300)
+    force_over_rho = total_values / safe_denom[:, None]
+    return np.linalg.norm(force_over_rho, axis=1)
+
+
 def add_derived_fields(arrays: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
     out = dict(arrays)
     for name, source in DERIVED_VECTOR_MAG_FIELDS.items():
@@ -774,6 +1031,11 @@ def add_derived_fields(arrays: dict[str, np.ndarray]) -> dict[str, np.ndarray]:
     b18_post = scalarize(out.get("B18StressPostForceNorm"))
     if b18_pre is not None and b18_post is not None:
         out["B18StressPostMinusPreNorm"] = np.abs(b18_post - b18_pre)
+    for candidate, total_field in B35_FORCE_TOTAL_VECTOR_FIELDS.items():
+        for denominator, denominator_field in B35_FORCE_DENOMINATOR_SCALAR_FIELDS.items():
+            values = derived_force_over_rho_norm(out, total_field, denominator_field)
+            if values is not None:
+                out[f"B35ForceOverRho{candidate}{denominator}Norm"] = values
     return out
 
 
@@ -1091,7 +1353,8 @@ def key_summary(
         return matches[0]
 
     force = first("threshold_force_over_rho_large")
-    fmu = first("threshold_fmu_raw_large")
+    fmu_actual = first("threshold_fmu_large")
+    fmu_raw = first("threshold_fmu_raw_large")
     stress_post = first("threshold_stress_post_large")
     stress_input = first("threshold_stress_input_large")
     pressure = first("threshold_pressure_input_large")
@@ -1143,6 +1406,49 @@ def key_summary(
     b22_heq_momentum = first("threshold_b22_heq_momentum_large")
     b22_heq_bounded = first("threshold_b22_heq_bounded_large")
     b22_mach_flag = first("threshold_b22_velocity_mach_flag")
+    b35_mu_no_ghost = first("threshold_b35_mu_no_ghost_large")
+    b35_grad_no_ghost = first("threshold_b35_grad_no_ghost_large")
+    b35_fsurf_no_ghost = first("threshold_b35_fsurf_no_ghost_large")
+    b35_force_legacy = first("threshold_b35_force_legacy_large")
+    b35_force_no_ghost = first("threshold_b35_force_no_ghost_large")
+    b35_force_mu_bounded = first("threshold_b35_force_mu_bounded_large")
+    b35_force_grad_bounded = first("threshold_b35_force_grad_bounded_large")
+    b35_force_prefactor_tau = first("threshold_b35_force_prefactor_tau_large")
+    b35_force_legacy_raw = first("threshold_b35_force_legacy_raw_large")
+    b35_force_legacy_floor = first("threshold_b35_force_legacy_floor_large")
+    b35_force_legacy_phase_mix = first("threshold_b35_force_legacy_phase_mix_large")
+    b35_force_legacy_capped = first("threshold_b35_force_legacy_capped_large")
+    b35_force_no_ghost_raw = first("threshold_b35_force_noghost_raw_large")
+    b35_force_no_ghost_floor = first("threshold_b35_force_noghost_densityfloor_large")
+    b35_force_no_ghost_phase_mix = first("threshold_b35_force_noghost_phasemixture_large")
+    b35_force_mu_bounded_raw = first("threshold_b35_force_mubounded_raw_large")
+    b35_force_mu_bounded_phase_mix = first("threshold_b35_force_mubounded_phasemixture_large")
+    b35_force_grad_bounded_raw = first("threshold_b35_force_gradbounded_raw_large")
+    b35_force_grad_bounded_phase_mix = first("threshold_b35_force_gradbounded_phasemixture_large")
+    b35_force_prefactor_tau_raw = first("threshold_b35_force_prefactortau_raw_large")
+    b35_force_prefactor_tau_phase_mix = first("threshold_b35_force_prefactortau_phasemixture_large")
+    b35_mu_clamp_hit = first("threshold_b35_mu_clamp_hit")
+    b35_grad_clamp_hit = first("threshold_b35_grad_clamp_hit")
+    b36_pre_cap = first("threshold_b36_pre_cap_large")
+    b36_post_cap = first("threshold_b36_post_cap_large")
+    b36_cap_hit = first("threshold_b36_cap_hit")
+    b37_grad_pre_cap = first("threshold_b37_grad_pre_cap_large")
+    b37_grad_post_cap = first("threshold_b37_grad_post_cap_large")
+    b37_grad_cap_hit = first("threshold_b37_grad_cap_hit")
+    b40_stress_match_delta = first("threshold_b40_stress_match_delta_large")
+    b40_stress_moment_raw = first("threshold_b40_stress_moment_raw_large")
+    b40_stress_moment_relaxed = first("threshold_b40_stress_moment_relaxed_large")
+    b40_stress_incoming_raw = first("threshold_b40_stress_incoming_raw_large")
+    b40_stress_incoming_neq_pre = first("threshold_b40_stress_incoming_neq_pre_large")
+    b40_stress_bgk_pop_neq_pre = first("threshold_b40_stress_bgk_pop_neq_pre_large")
+    b40_stress_post = first("threshold_b40_stress_post_large")
+    b40_stress_post_over_relaxed = first("threshold_b40_stress_post_over_relaxed_large")
+    b40_fmu_moment_raw_legacy = first("threshold_b40_fmu_moment_raw_legacy_large")
+    b40_fmu_moment_relaxed_legacy = first("threshold_b40_fmu_moment_relaxed_legacy_large")
+    b40_fmu_bgk_pop_neq_pre_bgk = first("threshold_b40_fmu_bgk_pop_neq_pre_bgk_large")
+    b40_force_moment_raw_legacy = first("threshold_b40_force_moment_raw_legacy_large")
+    b40_force_moment_relaxed_legacy = first("threshold_b40_force_moment_relaxed_legacy_large")
+    b40_force_bgk_pop_neq_pre_bgk = first("threshold_b40_force_bgk_pop_neq_pre_bgk_large")
 
     branch = "undetermined"
     reason = "No configured onset threshold was crossed."
@@ -1159,9 +1465,12 @@ def key_summary(
         branch = "surface_force_first"
         reason = "F_surf crosses its threshold before or with force-over-rho onset."
     elif force and (phase is None or int(force["step"]) <= int(phase["step"])):
-        if fmu and int(fmu["step"]) <= int(force["step"]):
+        if fmu_actual and int(fmu_actual["step"]) <= int(force["step"]):
             branch = "fmu_force_over_rho_feedback"
-            reason = "F_mu grows no later than F/rho and before or with phase loss."
+            reason = "Actual F_mu grows no later than F/rho and before or with phase loss."
+        elif fmu_raw and int(fmu_raw["step"]) <= int(force["step"]):
+            branch = "fmu_force_over_rho_feedback"
+            reason = "Raw F_mu grows no later than F/rho and before or with phase loss."
         elif stress_post and int(stress_post["step"]) <= int(force["step"]):
             branch = "stress_timelevel_or_fixed_point_feedback"
             reason = "Post-force stress grows no later than F/rho and before or with phase loss."
@@ -1317,15 +1626,99 @@ def key_summary(
         b22_branch = "bounded_velocity_relief_shadow"
         b22_reason = "B22 unbounded heq candidate crosses while bounded-velocity heq candidate does not."
 
+    b35_branch = "not_available"
+    b35_reason = "B35 fields were not present or did not cross configured thresholds."
+    b35_legacy_marker = b35_force_legacy or b35_force_legacy_raw
+    if b35_legacy_marker:
+        if b35_force_legacy_raw and not b35_force_legacy_floor:
+            b35_branch = "legacy_density_floor_denominator_relief_shadow"
+            b35_reason = (
+                "Legacy B35 raw denominator crosses while density-floor denominator does not."
+            )
+        elif b35_force_legacy_raw and not b35_force_legacy_phase_mix:
+            b35_branch = "legacy_phase_mixture_denominator_relief_shadow"
+            b35_reason = (
+                "Legacy B35 raw denominator crosses while bounded phase-mixture denominator does not."
+            )
+        elif b35_force_legacy_raw and not b35_force_legacy_capped:
+            b35_branch = "legacy_force_over_rho_cap_relief_shadow"
+            b35_reason = (
+                "Legacy B35 raw denominator crosses while capped effective-denominator shadow does not."
+            )
+        elif not b35_force_no_ghost:
+            b35_branch = "no_ghost_coupled_numerator_relief_shadow"
+            b35_reason = (
+                "Legacy coupled force/rho crosses while the no-ghost mu+gradPhi candidate does not."
+            )
+        elif not b35_force_grad_bounded:
+            b35_branch = "gradphi_coupled_numerator_relief_shadow"
+            b35_reason = (
+                "Legacy coupled force/rho crosses while bounded-gradient coupled candidate does not."
+            )
+        elif not b35_force_mu_bounded:
+            b35_branch = "mu_surface_numerator_relief_shadow"
+            b35_reason = "Legacy coupled force/rho crosses while bounded-mu surface-force candidate does not."
+        elif not b35_force_prefactor_tau:
+            b35_branch = "fmu_prefactor_tau_relief_shadow"
+            b35_reason = (
+                "Legacy coupled force/rho crosses while the BGK-style prefactor shadow does not."
+            )
+        elif b35_force_legacy_raw and b35_force_legacy_floor and b35_force_legacy_phase_mix and b35_force_legacy_capped:
+            b35_branch = "denominator_not_relieved_current_effective_spike"
+            b35_reason = (
+                "Legacy raw, density-floor, phase-mixture, and current-effective denominator shadows all cross; "
+                "the B35 force/rho onset is not relieved by the tested denominator substitutions."
+            )
+        else:
+            b35_branch = "coupled_numerator_persists_across_shadows"
+            b35_reason = (
+                "Legacy and all configured B35 coupled numerator shadows cross the force/rho threshold."
+            )
+    elif b35_force_no_ghost or b35_force_mu_bounded or b35_force_grad_bounded or b35_force_prefactor_tau:
+        b35_branch = "candidate_shadow_introduces_large_force"
+        b35_reason = "A B35 candidate crosses the force/rho threshold without the legacy B35 marker."
+    elif b35_mu_no_ghost or b35_grad_no_ghost or b35_fsurf_no_ghost:
+        b35_branch = "no_ghost_intermediate_large_without_force_threshold"
+        b35_reason = "No-ghost intermediate fields are large, but B35 force/rho threshold is not crossed."
+    elif b35_mu_clamp_hit or b35_grad_clamp_hit:
+        b35_branch = "bounded_shadow_active_without_force_threshold"
+        b35_reason = "A B35 mu/gradient clamp shadow was active, but no B35 force/rho threshold was crossed."
+
+    b40_branch = "not_available"
+    b40_reason = "B40 stress fields were not present or did not cross configured thresholds."
+    if b40_stress_match_delta:
+        b40_branch = "instrumentation_mismatch"
+        b40_reason = "B40 relaxed-moment shadow does not match the legacy stress path; fix instrumentation before using the result."
+    elif b40_stress_post_over_relaxed or b40_stress_post:
+        b40_branch = "post_force_shadow_amplification"
+        b40_reason = "Post-force shadow stress grows relative to relaxed-moment stress; inspect fixed-point time level and half-force velocity use."
+    elif b40_force_moment_relaxed_legacy or b40_fmu_moment_relaxed_legacy or b40_stress_moment_relaxed:
+        if not (b40_force_bgk_pop_neq_pre_bgk or b40_fmu_bgk_pop_neq_pre_bgk or b40_stress_bgk_pop_neq_pre):
+            b40_branch = "relaxed_mrt_residual_only"
+            b40_reason = "Current relaxed MRT residual stress crosses while BGK-style population non-equilibrium shadow does not."
+        else:
+            b40_branch = "shared_mrt_and_bgk_population_stress_growth"
+            b40_reason = "Relaxed MRT and BGK-style population non-equilibrium shadows both cross; inspect incoming g/equilibrium subtraction."
+    elif b40_force_moment_raw_legacy or b40_fmu_moment_raw_legacy or b40_stress_moment_raw:
+        b40_branch = "raw_moment_residual_first"
+        b40_reason = "Unrelaxed moment residual crosses before relaxed/BGK shadows; inspect moment residual and equilibrium Req construction."
+    elif b40_stress_incoming_raw or b40_stress_incoming_neq_pre:
+        b40_branch = "incoming_stress_first"
+        b40_reason = "Incoming raw or pre-force non-equilibrium stress crosses; inspect AddDensity streaming/history before changing F_mu formula."
+    elif b40_force_bgk_pop_neq_pre_bgk or b40_fmu_bgk_pop_neq_pre_bgk or b40_stress_bgk_pop_neq_pre:
+        b40_branch = "bgk_population_neq_first"
+        b40_reason = "BGK-style population non-equilibrium shadow crosses; stress issue is upstream of MRT relaxation choice."
+
     return {
         "root": str(root),
-        "status": "B17_B18_B20_B21_DIAGNOSTIC_COMPLETE",
+        "status": "B17_B18_B20_B21_B22_B35_DIAGNOSTIC_COMPLETE",
         "claim_limit": "diagnostic-only; not contact-angle validation and not a solver fix",
         "frame_count": len(frame_summaries),
         "stat_row_count": len(stats_rows),
         "argmax_record_count": len(argmax_rows),
         "first_force_over_rho_onset": force,
-        "first_fmu_raw_onset": fmu,
+        "first_fmu_onset": fmu_actual,
+        "first_fmu_raw_onset": fmu_raw,
         "first_stress_post_onset": stress_post,
         "first_stress_input_onset": stress_input,
         "first_pressure_input_onset": pressure,
@@ -1377,6 +1770,49 @@ def key_summary(
         "first_b22_heq_momentum_onset": b22_heq_momentum,
         "first_b22_heq_bounded_onset": b22_heq_bounded,
         "first_b22_velocity_mach_flag_onset": b22_mach_flag,
+        "first_b35_mu_no_ghost_onset": b35_mu_no_ghost,
+        "first_b35_grad_no_ghost_onset": b35_grad_no_ghost,
+        "first_b35_fsurf_no_ghost_onset": b35_fsurf_no_ghost,
+        "first_b35_force_legacy_onset": b35_force_legacy,
+        "first_b35_force_no_ghost_onset": b35_force_no_ghost,
+        "first_b35_force_mu_bounded_onset": b35_force_mu_bounded,
+        "first_b35_force_grad_bounded_onset": b35_force_grad_bounded,
+        "first_b35_force_prefactor_tau_onset": b35_force_prefactor_tau,
+        "first_b35_force_legacy_raw_onset": b35_force_legacy_raw,
+        "first_b35_force_legacy_floor_onset": b35_force_legacy_floor,
+        "first_b35_force_legacy_phase_mix_onset": b35_force_legacy_phase_mix,
+        "first_b35_force_legacy_capped_onset": b35_force_legacy_capped,
+        "first_b35_force_no_ghost_raw_onset": b35_force_no_ghost_raw,
+        "first_b35_force_no_ghost_floor_onset": b35_force_no_ghost_floor,
+        "first_b35_force_no_ghost_phase_mix_onset": b35_force_no_ghost_phase_mix,
+        "first_b35_force_mu_bounded_raw_onset": b35_force_mu_bounded_raw,
+        "first_b35_force_mu_bounded_phase_mix_onset": b35_force_mu_bounded_phase_mix,
+        "first_b35_force_grad_bounded_raw_onset": b35_force_grad_bounded_raw,
+        "first_b35_force_grad_bounded_phase_mix_onset": b35_force_grad_bounded_phase_mix,
+        "first_b35_force_prefactor_tau_raw_onset": b35_force_prefactor_tau_raw,
+        "first_b35_force_prefactor_tau_phase_mix_onset": b35_force_prefactor_tau_phase_mix,
+        "first_b35_mu_clamp_hit": b35_mu_clamp_hit,
+        "first_b35_grad_clamp_hit": b35_grad_clamp_hit,
+        "first_b40_stress_match_delta_onset": b40_stress_match_delta,
+        "first_b40_stress_moment_raw_onset": b40_stress_moment_raw,
+        "first_b40_stress_moment_relaxed_onset": b40_stress_moment_relaxed,
+        "first_b40_stress_incoming_raw_onset": b40_stress_incoming_raw,
+        "first_b40_stress_incoming_neq_pre_onset": b40_stress_incoming_neq_pre,
+        "first_b40_stress_bgk_pop_neq_pre_onset": b40_stress_bgk_pop_neq_pre,
+        "first_b40_stress_post_onset": b40_stress_post,
+        "first_b40_stress_post_over_relaxed_onset": b40_stress_post_over_relaxed,
+        "first_b40_fmu_moment_raw_legacy_onset": b40_fmu_moment_raw_legacy,
+        "first_b40_fmu_moment_relaxed_legacy_onset": b40_fmu_moment_relaxed_legacy,
+        "first_b40_fmu_bgk_pop_neq_pre_bgk_onset": b40_fmu_bgk_pop_neq_pre_bgk,
+        "first_b40_force_moment_raw_legacy_onset": b40_force_moment_raw_legacy,
+        "first_b40_force_moment_relaxed_legacy_onset": b40_force_moment_relaxed_legacy,
+        "first_b40_force_bgk_pop_neq_pre_bgk_onset": b40_force_bgk_pop_neq_pre_bgk,
+        "first_b36_pre_cap_onset": b36_pre_cap,
+        "first_b36_post_cap_onset": b36_post_cap,
+        "first_b36_cap_hit": b36_cap_hit,
+        "first_b37_grad_pre_cap_onset": b37_grad_pre_cap,
+        "first_b37_grad_post_cap_onset": b37_grad_post_cap,
+        "first_b37_grad_cap_hit": b37_grad_cap_hit,
         "primary_branch": branch,
         "primary_branch_reason": reason,
         "b18_primary_branch": b18_branch,
@@ -1387,6 +1823,10 @@ def key_summary(
         "b21_primary_branch_reason": b21_reason,
         "b22_primary_branch": b22_branch,
         "b22_primary_branch_reason": b22_reason,
+        "b35_primary_branch": b35_branch,
+        "b35_primary_branch_reason": b35_reason,
+        "b40_primary_branch": b40_branch,
+        "b40_primary_branch_reason": b40_reason,
         "notes": [
             "Use mask-specific argmax records before changing solver physics.",
             "If high values localize in low_rho/gas_bulk, force-density closure is implicated.",
@@ -1402,6 +1842,8 @@ def key_summary(
             "If B21 HPre is already large, inspect AddDensity streaming/history before modifying wetting or force closures.",
             "If B22 m0 velocity is already large, inspect g AddDensity streaming/history and MRT force insertion before modifying wetting.",
             "If B22 post-force velocity is large but m0 is not, inspect F/rho denominator and force components before modifying h equilibrium.",
+            "B35 coupled numerator fields are shadow diagnostics only; use them to choose B36, not as a validation claim.",
+            "If B35 no-ghost or bounded candidates relieve force/rho onset, promote exactly one minimal B36 write candidate behind a default-off setting.",
         ],
     }
 

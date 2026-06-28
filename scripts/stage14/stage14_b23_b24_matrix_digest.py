@@ -30,12 +30,34 @@ ONSET_KEYS = [
     "first_grad_phi_onset",
     "first_fsurf_onset",
     "first_force_over_rho_onset",
+    "first_fmu_onset",
     "first_fmu_raw_onset",
     "first_pressure_input_onset",
     "first_stress_post_onset",
     "first_b18_force_raw_onset",
     "first_b18_force_floor_onset",
     "first_b18_force_phase_mix_onset",
+    "first_b35_force_legacy_onset",
+    "first_b35_force_no_ghost_onset",
+    "first_b35_force_mu_bounded_onset",
+    "first_b35_force_grad_bounded_onset",
+    "first_b35_force_prefactor_tau_onset",
+    "first_b35_force_legacy_raw_onset",
+    "first_b35_force_legacy_floor_onset",
+    "first_b35_force_legacy_phase_mix_onset",
+    "first_b35_force_legacy_capped_onset",
+    "first_b35_force_no_ghost_raw_onset",
+    "first_b35_force_no_ghost_floor_onset",
+    "first_b35_force_no_ghost_phase_mix_onset",
+    "first_b35_force_mu_bounded_raw_onset",
+    "first_b35_force_mu_bounded_phase_mix_onset",
+    "first_b35_force_grad_bounded_raw_onset",
+    "first_b35_force_grad_bounded_phase_mix_onset",
+    "first_b35_force_prefactor_tau_raw_onset",
+    "first_b35_force_prefactor_tau_phase_mix_onset",
+    "first_b35_mu_no_ghost_onset",
+    "first_b35_grad_no_ghost_onset",
+    "first_b35_fsurf_no_ghost_onset",
 ]
 
 
@@ -66,7 +88,7 @@ def read_case_metadata(probe_dir: Path) -> dict[str, Any]:
 
 def summary_paths(root: Path) -> list[Path]:
     paths: list[Path] = []
-    for prefix in ("b23", "b24", "b27", "b28", "b29", "b30", "b31", "b32"):
+    for prefix in ("b23", "b24", "b27", "b28", "b29", "b30", "b31", "b32", "b33", "b35", "b39"):
         paths.extend(sorted(root.glob(f"*/{prefix}_key_summary.json")))
     return paths
 
@@ -98,6 +120,8 @@ def build_rows(root: Path) -> list[dict[str, Any]]:
             "b21_primary_branch": summary.get("b21_primary_branch"),
             "b22_primary_branch": summary.get("b22_primary_branch"),
             "b22_primary_branch_reason": summary.get("b22_primary_branch_reason"),
+            "b35_primary_branch": summary.get("b35_primary_branch"),
+            "b35_primary_branch_reason": summary.get("b35_primary_branch_reason"),
         }
         for key in ONSET_KEYS:
             row[f"{key}_step"] = onset_step(summary, key)

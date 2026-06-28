@@ -1,0 +1,6 @@
+/usr/lib/python3/dist-packages/numpy/linalg/linalg.py:2582: RuntimeWarning: overflow encountered in multiply
+  s = (x.conj() * x).real
+/usr/lib/python3/dist-packages/numpy/linalg/linalg.py:2583: RuntimeWarning: overflow encountered in reduce
+  return sqrt(add.reduce(s, axis=axis, keepdims=keepdims))
+/home/yuan/stage14_b17_onset_mask_argmax.py:935: RuntimeWarning: overflow encountered in multiply
+  return np.sqrt(np.sum(weights[None, :] * stacked * stacked, axis=1))

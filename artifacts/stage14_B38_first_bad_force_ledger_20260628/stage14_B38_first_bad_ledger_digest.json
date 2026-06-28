@@ -1,0 +1,233 @@
+{
+  "b18_branch_from_analyzer": "stress_amplification_shadow",
+  "b18_branch_reason_from_analyzer": "B18 post/pre stress amplification crosses first.",
+  "b38_digest_verdict": "fmu_stress_timelevel_branch",
+  "claim_limit": "diagnostic-only; not contact-angle validation and not a solver fix",
+  "first_onsets": {
+    "first_b18_fmu_post_onset": {
+      "case": "wall_60to30_10",
+      "field": "B18FmuPostForceNorm",
+      "mask": "low_rho",
+      "step": 15,
+      "threshold": 1000.0,
+      "trigger": "threshold_b18_fmu_post_large",
+      "value": 9158415794.71234
+    },
+    "first_b18_force_floor_onset": {
+      "case": "wall_60to30_10",
+      "field": "B18ForceOverRhoDensityFloorNorm",
+      "mask": "low_rho",
+      "step": 15,
+      "threshold": 1000.0,
+      "trigger": "threshold_b18_force_floor_large",
+      "value": 885434.9865443382
+    },
+    "first_b18_force_phase_mix_onset": {
+      "case": "wall_60to30_10",
+      "field": "B18ForceOverRhoPhaseMixtureNorm",
+      "mask": "low_rho",
+      "step": 15,
+      "threshold": 1000.0,
+      "trigger": "threshold_b18_force_phase_mix_large",
+      "value": 885434.9865443382
+    },
+    "first_b18_force_raw_onset": {
+      "case": "wall_60to30_10",
+      "field": "B18ForceOverRhoRawNorm",
+      "mask": "low_rho",
+      "step": 15,
+      "threshold": 1000.0,
+      "trigger": "threshold_b18_force_raw_large",
+      "value": 885434.9865443382
+    },
+    "first_b18_stress_post_onset": {
+      "case": "wall_60to30_10",
+      "field": "B18StressPostForceNorm",
+      "mask": "low_rho",
+      "step": 14,
+      "threshold": 1000.0,
+      "trigger": "threshold_b18_stress_post_large",
+      "value": 2250.338818100119
+    },
+    "first_fmu_raw_onset": {
+      "case": "wall_60to30_10",
+      "field": "FmuRawNorm",
+      "mask": "near_interface_wall",
+      "step": 16,
+      "threshold": 1000.0,
+      "trigger": "threshold_fmu_raw_large",
+      "value": 6535.948743877294
+    },
+    "first_force_over_rho_onset": {
+      "case": "wall_60to30_10",
+      "field": "ForceOverRhoNorm",
+      "mask": "low_rho",
+      "step": 15,
+      "threshold": 1000.0,
+      "trigger": "threshold_force_over_rho_large",
+      "value": 885434.9865443383
+    },
+    "first_fsurf_onset": null,
+    "first_grad_phi_onset": null,
+    "first_hpost_onset": null,
+    "first_lap_phi_onset": null,
+    "first_mu_onset": null,
+    "first_phase_from_h_onset": null,
+    "first_pressure_input_onset": {
+      "case": "wall_60to30_10",
+      "field": "ReplayPressureInput",
+      "mask": "near_interface_wall",
+      "step": 16,
+      "threshold": 1000.0,
+      "trigger": "threshold_pressure_input_large",
+      "value": 1210.1179737746318
+    },
+    "first_stress_post_onset": {
+      "case": "wall_60to30_10",
+      "field": "StressPostForceNorm",
+      "mask": "low_rho",
+      "step": 14,
+      "threshold": 1000.0,
+      "trigger": "threshold_stress_post_large",
+      "value": 2250.338818100119
+    }
+  },
+  "interpretation_notes": [
+    "ForceOverRho first crosses threshold at step 15.",
+    "PhaseFromH does not cross the configured out-of-bounds threshold before the force ledger failure.",
+    "ReplayMu and ReplayLapPhi do not lead the failure under current thresholds.",
+    "ReplayGradPhi and Fsurf do not lead the failure under current thresholds.",
+    "At the selected argmax, |Ftotal|=4427.18, |F/rho|=885435, rho_eff=0.005.",
+    "At the selected argmax, |Fmu_raw|=11.38, |Fsurf|=8.07714e-06.",
+    "B18 stress shadow at argmax: pre=287.524, post=2.30175e+11, post/pre=800542780.2391785."
+  ],
+  "metadata": {
+    "b18_closure_diagnostics_mode": 1,
+    "binary_sha256": "3f3e79b5f234136b515094c6dba6e2e2237e3bdbde8a31dcba1f65c37d0ce78e",
+    "density_h": 1.0,
+    "density_l": 0.005,
+    "fmu_stress_closure_mode": 2,
+    "force_density_closure_mode": 2,
+    "force_density_rho_floor": 0.005,
+    "force_fixed_point_mode": 2,
+    "iterations": 20,
+    "momentum_closure_diagnostics_mode": 1,
+    "momentum_force_mode": 0,
+    "phase_advection_velocity_mode": 2,
+    "pressure_closure_mode": 1,
+    "vtk_field_set": "b33ledger"
+  },
+  "next_decision_rule": [
+    "If mu/lapPhi leads, inspect calcMu and stencil reconstruction before changing force insertion.",
+    "If gradPhi/Fsurf leads, inspect calcGradPhi and surface-force scaling.",
+    "If stress/Fmu leads while mu/gradPhi/Fsurf stay moderate, implement a default-off F_mu stress time-level/prefactor candidate.",
+    "If only Ftotal/rho is large and denominator shadows relieve it, implement a derived force-density closure candidate.",
+    "If all components are moderate but momentum replay fails, return to TCLB stage/AddDensity streaming and MRT insertion semantics."
+  ],
+  "primary_branch_from_analyzer": "stress_timelevel_or_fixed_point_feedback",
+  "primary_branch_reason_from_analyzer": "Post-force stress grows no later than F/rho and before or with phase loss.",
+  "root": "/mnt/usb1t/RUNS/runs/stage14_B38_first_bad_force_ledger_20260628/L0_b33ledger_b18",
+  "selected_force_argmax": {
+    "case": "wall_60to30_10",
+    "colocated": {
+      "B18FmuCandidateDeltaNorm": 9158415806.092375,
+      "B18FmuForceExcludedNorm": 7850070681.228793,
+      "B18FmuPostForceNorm": 9158415794.71234,
+      "B18FmuPreForceNorm": 11.380036184253331,
+      "B18ForceOverRhoDensityFloorNorm": 885434.9865443382,
+      "B18ForceOverRhoPhaseMixtureNorm": 885434.9865443382,
+      "B18ForceOverRhoRawNorm": 885434.9865443382,
+      "B18ProbeActive": 1.0,
+      "B18RhoDenominatorFloor": 0.005000004511684025,
+      "B18RhoDenominatorPhaseMix": 0.005000004511684025,
+      "B18RhoDenominatorRaw": 0.005000004511684025,
+      "B18StressAmplificationFlag": 1.0,
+      "B18StressPostForceNorm": 230174915351.82053,
+      "B18StressPostMinusPreNorm": 230174915064.29697,
+      "B18StressPostOverPre": 800542780.2391785,
+      "B18StressPreForceNorm": 287.5235665519975,
+      "FmuDeltaNorm": 0.0,
+      "FmuRawNorm": 11.380036184253331,
+      "ForceOverRhoNorm": 885434.9865443383,
+      "FpressureNorm": 0.02434348887518085,
+      "FpressurePhysicalNorm": 0.02434348887518085,
+      "FsurfNorm": 8.077141293655088e-06,
+      "FtotalNorm": 4427.178927524575,
+      "GradPhiNorm": 0.13397463687642877,
+      "PhaseAdvVelocityNorm": 0.2,
+      "PhaseField": 9.056482555393055e-09,
+      "ReplayForceRhoEffective": 0.005000004511684025,
+      "ReplayForceRhoRaw": 0.005000004511684025,
+      "ReplayFphiMaxAbs": 4.4783760584484827e-10,
+      "ReplayHPostMaxAbs": 1.0369717249003207e-09,
+      "ReplayHPreMaxAbs": 9.174151850694042e-10,
+      "ReplayHeqMaxAbs": 1.2629020609081326e-09,
+      "ReplayLapPhi": 0.2679492750756162,
+      "ReplayM0": [
+        0.00027812787303105324,
+        -333.09934000972197,
+        0.000278127872756162
+      ],
+      "ReplayMF": [
+        0.7414028696893704,
+        -885434.9865437174,
+        0.7414028689410367
+      ],
+      "ReplayMomentumAfterG": [
+        0.7419204711914062,
+        -885768.0858001709,
+        0.7416839599609375
+      ],
+      "ReplayMomentumDeltaG": [
+        0.7416423433183752,
+        -885434.9864601612,
+        0.7414058320881813
+      ],
+      "ReplayMu": -6.0288585078271357e-05,
+      "ReplayPhaseConsumed": 4.534355803792498e-09,
+      "ReplayPhaseFromH": 9.056482555393055e-09,
+      "ReplayRho": 0.005000004511684025,
+      "ReplayRhoForForce": 0.005000004511684025,
+      "ReplayTau": 0.8,
+      "ReplayTauUsed": 0.8,
+      "ReplayTmp1": 6.045807678905471e-09,
+      "ReplayVelocityHalfForce": [
+        0.37097956271771626,
+        -443050.59261186846,
+        0.3709795623432745
+      ],
+      "Rho": 0.005000009011200143,
+      "StressInputNorm": 287.5235665519975,
+      "StressIter1Norm": 287.5235665519975,
+      "StressPostForceNorm": 230174915351.82053,
+      "StressPostMinusPreNorm": 230174915064.29697,
+      "StressPostOverPreRatio": 800542780.2391785,
+      "StressPreForceNorm": 287.5235665519975,
+      "UPostForceNorm": 443050.5926121791,
+      "UPreForceNorm": 333.09934000995423
+    },
+    "field": "ForceOverRhoNorm",
+    "flat_index": 107630,
+    "ijk": [
+      14,
+      1,
+      14
+    ],
+    "mask": "low_rho",
+    "mask_membership": {
+      "all_cells": true,
+      "fluid_all": true,
+      "gas_bulk": true,
+      "interface_strict": false,
+      "interface_wide": false,
+      "liquid_bulk": false,
+      "low_rho": true,
+      "near_interface_wall": false,
+      "near_wall": true,
+      "solid": false
+    },
+    "max_abs": 885434.9865443383,
+    "step": 15
+  },
+  "status": "B38_FIRST_BAD_LEDGER_DIGEST_COMPLETE"
+}

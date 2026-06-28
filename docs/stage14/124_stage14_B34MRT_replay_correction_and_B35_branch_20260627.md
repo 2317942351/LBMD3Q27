@@ -12,7 +12,7 @@ dynamic-impact readiness.
 The earlier B34 local harness incorrectly predicted:
 
 ```text
-ReplayMomentumDeltaG ~= 0.5 * ReplayMF
+ReplayMomentumDeltaG ~= 1.0 * ReplayMF
 ```
 
 That was too narrow because the default harness set the equilibrium momentum

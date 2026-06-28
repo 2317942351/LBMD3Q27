@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "/home/yuan/stage14_b38_first_bad_ledger_digest.py", line 343, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "/home/yuan/stage14_b38_first_bad_ledger_digest.py", line 331, in main
+    digest = build_digest(args.root.resolve())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yuan/stage14_b38_first_bad_ledger_digest.py", line 212, in build_digest
+    summary = load_json(summary_path)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/yuan/stage14_b38_first_bad_ledger_digest.py", line 84, in load_json
+    return json.loads(path.read_text(encoding="utf-8"))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/mnt/usb1t/RUNS/runs/stage14_B39_fmu_stress_mode_matrix_20260628/M1_freeze_iter1/b38_key_summary.json'
