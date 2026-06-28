@@ -1,0 +1,17 @@
+stage=stage14_B42_stress_decomposition
+root=/mnt/usb1t/RUNS/runs/stage14_B42_stress_decomposition_20260628
+gpu=1
+binary=/home/yuan/src/TCLB_lbm2026_compile_lane/CLB/d3q27_pf_velocity_q27_geometric/main
+iterations=20
+vtk_period=1
+vtk_field_set=b40stress_plus_b42
+density_h=1.0
+density_l=0.005
+pressure_closure_mode=1
+force_fixed_point_mode=2
+phase_advection_velocity_mode=2
+force_density_closure_mode=2
+force_density_rho_floor=0.005
+stage14_b40_stress_audit_mode=1
+stage14_b42_stress_decomposition_mode=1
+claim_limit=shadow_only_stress_decomposition_not_solver_repair

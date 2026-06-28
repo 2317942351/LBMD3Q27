@@ -524,6 +524,38 @@ VTK_FIELDS_B22 = ",".join(
     ]
 )
 
+VTK_FIELDS_B45_PHASE = ",".join(
+    [
+        "PhaseField",
+        "Rho",
+        "BOUNDARY",
+        "IsItBoundary",
+        "ReplayPhaseFromH",
+        "ReplayForceOverRho",
+        "B21ProbeActive",
+        "B21HPreSum",
+        "B21HPreMaxAbs",
+        "B21HeqSum",
+        "B21HeqMaxAbs",
+        "B21HeqVelocityMachShadow",
+        "B21FphiSum",
+        "B21FphiMaxAbs",
+        "B21Tmp1",
+        "B21HPostSum",
+        "B21HPostMaxAbs",
+        "B21HPostOutOfBoundsFlag",
+        "B21HPostSumMinusFormula",
+        "B22ProbeActive",
+        "B22PhaseAdvSpeed",
+        "B22ForceOverRhoMag",
+        "B22FmuMag",
+        "B22FpressureMag",
+        "B22FsurfMag",
+        "B22FtotalMag",
+        "B22VelocityMachExceededFlag",
+    ]
+)
+
 B26_REQUIRED_FIELDS = [
     "PhaseField",
     "Rho",
@@ -922,6 +954,25 @@ B40_STRESS_REQUIRED_FIELDS = [
     "B40ForceOverRhoMomentRawLegacy",
     "B40ForceOverRhoMomentRelaxedLegacy",
     "B40ForceOverRhoBGKPopNeqPreBGK",
+    "B42ProbeActive",
+    "B42LegacyTraceThird",
+    "B42LegacyIsotropicNorm",
+    "B42LegacyDeviatoricNorm",
+    "B42RawTraceThird",
+    "B42RawIsotropicNorm",
+    "B42RawDeviatoricNorm",
+    "B42BGKTraceThird",
+    "B42BGKIsotropicNorm",
+    "B42BGKDeviatoricNorm",
+    "B42PostTraceThird",
+    "B42PostIsotropicNorm",
+    "B42PostDeviatoricNorm",
+    "B42FmuLegacyDeviatoric",
+    "B42FmuRawDeviatoric",
+    "B42FmuBGKDeviatoric",
+    "B42ForceOverRhoLegacyDeviatoric",
+    "B42ForceOverRhoRawDeviatoric",
+    "B42ForceOverRhoBGKDeviatoric",
 ]
 
 VTK_FIELDS_B40_STRESS = ",".join(B40_STRESS_REQUIRED_FIELDS)
@@ -1020,6 +1071,7 @@ REQUIRED_FIELDS_BY_VTK_SET = {
     "b36cap": B36_CAP_REQUIRED_FIELDS,
     "b37gradcap": B37_GRAD_CAP_REQUIRED_FIELDS,
     "b40stress": B40_STRESS_REQUIRED_FIELDS,
+    "b45phase": VTK_FIELDS_B45_PHASE.split(","),
     "b33ledger": B33_LEDGER_REQUIRED_FIELDS,
 }
 
@@ -1098,6 +1150,7 @@ def common_model_params(args: argparse.Namespace) -> str:
             param("Stage14B37GradPhiCapMode", args.b37_grad_phi_cap_mode),
             param("Stage14B37GradPhiCap", args.b37_grad_phi_cap),
             param("Stage14B40StressAuditMode", args.b40_stress_audit_mode),
+            param("Stage14B42StressDecompositionMode", args.b42_stress_decomposition_mode),
             param("force_fixed_iterator", args.force_fixed_iterator),
             param("ForceFixedTol", args.force_fixed_tol),
             param("ForceFixedMaxIter", args.force_fixed_max_iter),
@@ -1122,6 +1175,8 @@ def vtk_fields_for(args: argparse.Namespace) -> str:
         return VTK_FIELDS_B37_GRAD_CAP
     if args.vtk_field_set == "b40stress":
         return VTK_FIELDS_B40_STRESS
+    if args.vtk_field_set == "b45phase":
+        return VTK_FIELDS_B45_PHASE
     if args.vtk_field_set == "b33ledger":
         return VTK_FIELDS_B33_LEDGER
     if args.vtk_field_set == "b27stress":
@@ -1341,6 +1396,7 @@ def write_cases(args: argparse.Namespace) -> list[Path]:
             "b37_grad_phi_cap_mode": args.b37_grad_phi_cap_mode,
             "b37_grad_phi_cap": args.b37_grad_phi_cap,
             "b40_stress_audit_mode": args.b40_stress_audit_mode,
+            "b42_stress_decomposition_mode": args.b42_stress_decomposition_mode,
             "density_h": args.density_h,
             "density_l": args.density_l,
             "viscosity_h": args.viscosity_h,
@@ -1676,6 +1732,7 @@ def parse_args() -> argparse.Namespace:
             "b36cap",
             "b37gradcap",
             "b40stress",
+            "b45phase",
             "b33ledger",
         ),
         default="full",
@@ -1711,6 +1768,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--b37-grad-phi-cap-mode", type=int, default=0)
     parser.add_argument("--b37-grad-phi-cap", type=float, default=0.0)
     parser.add_argument("--b40-stress-audit-mode", type=int, default=0)
+    parser.add_argument("--b42-stress-decomposition-mode", type=int, default=0)
     parser.add_argument("--density-h", type=float, default=1.0)
     parser.add_argument("--density-l", type=float, default=0.001)
     parser.add_argument("--viscosity-h", type=float, default=0.1)

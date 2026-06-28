@@ -1,0 +1,47 @@
+{
+  "claim_limit": "B42 shadow-only stress decomposition; not a solver repair",
+  "focus_step": 13,
+  "input_mask_stats": "/mnt/usb1t/RUNS/runs/stage14_B42_stress_decomposition_20260628/B42_stress_decomposition/b42_mask_stats.csv",
+  "legacy_force_over_rho": 2636.4146763472304,
+  "mask": "low_rho",
+  "recommendation": "Deviatoric projection does not reduce the force-over-rho shadow below threshold; escalate to B43 stress-scale/forcing derivation.",
+  "sources": [
+    {
+      "deviatoric_norm": 362.11242942021437,
+      "fmu_deviatoric_norm": 11.673532893296445,
+      "force_over_rho_deviatoric_norm": 2124.2842100288635,
+      "force_vs_legacy": 0.8057473769536411,
+      "iso_over_dev": null,
+      "isotropic_norm": null,
+      "source": "legacy"
+    },
+    {
+      "deviatoric_norm": 14322.643828564242,
+      "fmu_deviatoric_norm": 71.277972363803,
+      "force_over_rho_deviatoric_norm": 13547.993348166909,
+      "force_vs_legacy": 5.138794541584688,
+      "iso_over_dev": null,
+      "isotropic_norm": null,
+      "source": "raw"
+    },
+    {
+      "deviatoric_norm": 14322.643828564238,
+      "fmu_deviatoric_norm": 89.09746545475373,
+      "force_over_rho_deviatoric_norm": 16935.232667669443,
+      "force_vs_legacy": 6.423584582351558,
+      "iso_over_dev": null,
+      "isotropic_norm": null,
+      "source": "bgk"
+    },
+    {
+      "deviatoric_norm": 1766155.433956263,
+      "fmu_deviatoric_norm": null,
+      "force_over_rho_deviatoric_norm": null,
+      "force_vs_legacy": null,
+      "iso_over_dev": null,
+      "isotropic_norm": null,
+      "source": "post"
+    }
+  ],
+  "verdict": "b42_no_deviatoric_candidate"
+}

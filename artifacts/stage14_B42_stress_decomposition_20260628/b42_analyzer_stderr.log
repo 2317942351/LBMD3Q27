@@ -1,0 +1,12 @@
+/usr/lib/python3/dist-packages/numpy/linalg/linalg.py:2582: RuntimeWarning: overflow encountered in multiply
+  s = (x.conj() * x).real
+/usr/lib/python3/dist-packages/numpy/linalg/linalg.py:2583: RuntimeWarning: overflow encountered in reduce
+  return sqrt(add.reduce(s, axis=axis, keepdims=keepdims))
+/home/yuan/stage14_b17_onset_mask_argmax.py:1027: RuntimeWarning: overflow encountered in multiply
+  return np.sqrt(np.sum(weights[None, :] * stacked * stacked, axis=1))
+/usr/lib/python3/dist-packages/numpy/core/fromnumeric.py:88: RuntimeWarning: overflow encountered in reduce
+  return ufunc.reduce(obj, axis, dtype, out, **passkwargs)
+/home/yuan/stage14_b17_onset_mask_argmax.py:1063: RuntimeWarning: invalid value encountered in subtract
+  out["StressPostMinusPreNorm"] = np.abs(post - pre)
+/home/yuan/stage14_b17_onset_mask_argmax.py:1064: RuntimeWarning: invalid value encountered in divide
+  out["StressPostOverPreRatio"] = post / (pre + 1.0e-300)

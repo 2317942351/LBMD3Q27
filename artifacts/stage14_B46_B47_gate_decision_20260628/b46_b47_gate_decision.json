@@ -1,0 +1,54 @@
+{
+  "b43": {
+    "legacy_force_over_rho": 2636.4146763472304,
+    "legacy_hundredth_force_over_rho": 30.211825382227214,
+    "legacy_hundredth_note": "postprocess scale only; not a solver repair",
+    "legacy_low_rho_force_over_rho": 2636.4146763472304,
+    "verdict": "b43_postprocess_scale_candidate_strong"
+  },
+  "b44": {
+    "legacy_hundredth_fmu_fraction": 0.7666625221135058,
+    "legacy_hundredth_net_over_term": 0.9465199252070805,
+    "legacy_net_over_term": 0.9312174937368342,
+    "verdict": "b44_force_balance_candidate_found"
+  },
+  "b45": {
+    "case_verdict": "b45_h_update_boundedness_fails_first",
+    "first_events": {
+      "fmu_gt_1": 13,
+      "force_over_rho_gt_100": 13,
+      "force_over_rho_gt_1000": 13,
+      "fphi_gt_1": null,
+      "heq_gt_1": null,
+      "hpost_gt_1": 9,
+      "hpost_oob": 4,
+      "mach_gt_1": null,
+      "phase_from_h_oob": 3
+    },
+    "verdict": "b45_phase_gate_failed"
+  },
+  "b46": {
+    "minimum_reopen_gate": "B45 must run at least 100 steps with PhaseField and PhaseFromH bounded, no NaN, and force/rho finite without hard clamp.",
+    "not_executed": true,
+    "reason": "PhaseFromH leaves [0,1] before force-over-rho explosion, so flat-wall contact angle morphology is not physically interpretable.",
+    "verdict": "b46_blocked_by_b45_phase_boundedness"
+  },
+  "b47": {
+    "minimum_reopen_gate": "B46 flat-wall static and decoupled direction gates must pass before curved-wall shadow/write can be interpreted physically.",
+    "not_executed": true,
+    "reason": "Curved-wall shadow/controlled-write gates depend on a bounded phase-field transport baseline. B45 failed before flat-wall physical validation.",
+    "verdict": "b47_blocked_by_b45_phase_boundedness"
+  },
+  "claim_limit": "B46/B47 gate decision only; no contact-angle or curved-wall validation claim",
+  "next_branch": {
+    "do_not_do": [
+      "do not promote F_mu scale-down as physical repair",
+      "do not run contact-angle validation while B45 fails",
+      "do not enter dynamic impact",
+      "do not write curved-wall PhaseF"
+    ],
+    "name": "B48_h_population_phasefromh_timelevel_closure",
+    "primary_target": "PhaseF -> h populations -> h update -> streaming -> PhaseFromH",
+    "required_probe": "steps 0-4 full h population producer-consumer audit at first OOB cells"
+  }
+}

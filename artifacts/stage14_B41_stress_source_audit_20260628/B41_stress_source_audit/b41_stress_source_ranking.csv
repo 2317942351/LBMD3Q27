@@ -1,0 +1,7 @@
+candidate,mask,focus_step,stress_at_focus,fmu_at_focus,force_over_rho_at_focus,force_vs_legacy_ratio,rank_score,active_mode_hint,notes
+incoming_raw_population,low_rho,13,138.67057151857364,,,,138.67057151857364,shadow only unless B42 adds force reconstruction,Raw incoming second moment; not directly a non-equilibrium stress.
+legacy_relaxed_moment,low_rho,13,383.3219828909969,14.492372866456925,2636.4146763472127,1.0,2636.4146763472127,existing legacy path / baseline,Current relaxed moment stress used by active F_mu.
+raw_moment_preforce,low_rho,13,17562.500913644606,39.964136204752776,7596.8317022518095,2.8815010667355714,7596.8317022518095,B42 candidate mode 3,Pre-force raw moment residual without Omega relaxation.
+bgk_pop_neq_preforce,low_rho,13,17562.500913644606,49.95517025594098,9495.989154937075,3.6018571889054622,9495.989154937075,B42 candidate mode 4,Pre-force population non-equilibrium with BGK-like scale.
+incoming_neq_preforce,low_rho,13,17562.500913644602,,,,17562.500913644602,existing FmuStressClosureMode=2 / compare only,Incoming population minus pre-force equilibrium.
+post_force_shadow,low_rho,13,2029121.044003016,,,,2029121.044003016,reject as active source,Post-force stress shadow; diagnostic feedback amplifier.

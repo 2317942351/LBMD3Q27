@@ -222,9 +222,26 @@ CudaDeviceFunction int stage14_b40_stress_audit_active(){
 	return (stage14_momentum_closure_diagnostics_active() && Stage14B40StressAuditMode > 0.5);
 }
 
+CudaDeviceFunction int stage14_b42_stress_decomposition_active(){
+	return (stage14_momentum_closure_diagnostics_active() && Stage14B42StressDecompositionMode > 0.5);
+}
+
 CudaDeviceFunction real_t stage14_stress_norm6(real_t stress[6]){
 	return sqrt(stress[0]*stress[0] + 2.0*stress[1]*stress[1] + 2.0*stress[2]*stress[2] +
 	            stress[3]*stress[3] + 2.0*stress[4]*stress[4] + stress[5]*stress[5]);
+}
+
+CudaDeviceFunction void stage14_deviatoric_stress6(real_t out[6], real_t stress[6], real_t *trace_third, real_t *iso_norm, real_t *dev_norm){
+	real_t q = (stress[0] + stress[3] + stress[5]) / 3.0;
+	out[0] = stress[0] - q;
+	out[1] = stress[1];
+	out[2] = stress[2];
+	out[3] = stress[3] - q;
+	out[4] = stress[4];
+	out[5] = stress[5] - q;
+	if (trace_third) *trace_third = q;
+	if (iso_norm) *iso_norm = sqrt(3.0*q*q);
+	if (dev_norm) *dev_norm = stage14_stress_norm6(out);
 }
 
 CudaDeviceFunction real_t stage14_stress_delta_norm6(real_t a[6], real_t b[6]){
@@ -611,6 +628,37 @@ CudaDeviceFunction void stage16_zero_replay_diagnostics(){
 	B40ForceOverRhoBGKPopNeqPreBGKX = 0.0;
 	B40ForceOverRhoBGKPopNeqPreBGKY = 0.0;
 	B40ForceOverRhoBGKPopNeqPreBGKZ = 0.0;
+	B42ProbeActive = 0.0;
+	B42LegacyTraceThird = 0.0;
+	B42LegacyIsotropicNorm = 0.0;
+	B42LegacyDeviatoricNorm = 0.0;
+	B42RawTraceThird = 0.0;
+	B42RawIsotropicNorm = 0.0;
+	B42RawDeviatoricNorm = 0.0;
+	B42BGKTraceThird = 0.0;
+	B42BGKIsotropicNorm = 0.0;
+	B42BGKDeviatoricNorm = 0.0;
+	B42PostTraceThird = 0.0;
+	B42PostIsotropicNorm = 0.0;
+	B42PostDeviatoricNorm = 0.0;
+	B42FmuLegacyDeviatoricX = 0.0;
+	B42FmuLegacyDeviatoricY = 0.0;
+	B42FmuLegacyDeviatoricZ = 0.0;
+	B42FmuRawDeviatoricX = 0.0;
+	B42FmuRawDeviatoricY = 0.0;
+	B42FmuRawDeviatoricZ = 0.0;
+	B42FmuBGKDeviatoricX = 0.0;
+	B42FmuBGKDeviatoricY = 0.0;
+	B42FmuBGKDeviatoricZ = 0.0;
+	B42ForceOverRhoLegacyDeviatoricX = 0.0;
+	B42ForceOverRhoLegacyDeviatoricY = 0.0;
+	B42ForceOverRhoLegacyDeviatoricZ = 0.0;
+	B42ForceOverRhoRawDeviatoricX = 0.0;
+	B42ForceOverRhoRawDeviatoricY = 0.0;
+	B42ForceOverRhoRawDeviatoricZ = 0.0;
+	B42ForceOverRhoBGKDeviatoricX = 0.0;
+	B42ForceOverRhoBGKDeviatoricY = 0.0;
+	B42ForceOverRhoBGKDeviatoricZ = 0.0;
 	B20ProbeActive = 0.0;
 	B20FphiActiveSum = 0.0;
 	B20FphiActiveMaxAbs = 0.0;
@@ -2041,6 +2089,45 @@ for (b40_name in b40_vector_getters) {
 	cat("\tout.x = stage14_b40_scalar(", b40_name, "X(0,0,0));\n", sep="")
 	cat("\tout.y = stage14_b40_scalar(", b40_name, "Y(0,0,0));\n", sep="")
 	cat("\tout.z = stage14_b40_scalar(", b40_name, "Z(0,0,0));\n", sep="")
+	cat("\treturn out;\n")
+	cat("}\n\n")
+}
+?>
+
+CudaDeviceFunction real_t stage14_b42_scalar(real_t value){
+	if (stage14_b42_stress_decomposition_active()) return value;
+	return 0.0;
+}
+
+CudaDeviceFunction real_t getB42ProbeActive(){ return stage14_b42_scalar(B42ProbeActive(0,0,0)); }
+CudaDeviceFunction real_t getB42LegacyTraceThird(){ return stage14_b42_scalar(B42LegacyTraceThird(0,0,0)); }
+CudaDeviceFunction real_t getB42LegacyIsotropicNorm(){ return stage14_b42_scalar(B42LegacyIsotropicNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42LegacyDeviatoricNorm(){ return stage14_b42_scalar(B42LegacyDeviatoricNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42RawTraceThird(){ return stage14_b42_scalar(B42RawTraceThird(0,0,0)); }
+CudaDeviceFunction real_t getB42RawIsotropicNorm(){ return stage14_b42_scalar(B42RawIsotropicNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42RawDeviatoricNorm(){ return stage14_b42_scalar(B42RawDeviatoricNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42BGKTraceThird(){ return stage14_b42_scalar(B42BGKTraceThird(0,0,0)); }
+CudaDeviceFunction real_t getB42BGKIsotropicNorm(){ return stage14_b42_scalar(B42BGKIsotropicNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42BGKDeviatoricNorm(){ return stage14_b42_scalar(B42BGKDeviatoricNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42PostTraceThird(){ return stage14_b42_scalar(B42PostTraceThird(0,0,0)); }
+CudaDeviceFunction real_t getB42PostIsotropicNorm(){ return stage14_b42_scalar(B42PostIsotropicNorm(0,0,0)); }
+CudaDeviceFunction real_t getB42PostDeviatoricNorm(){ return stage14_b42_scalar(B42PostDeviatoricNorm(0,0,0)); }
+
+<?R
+b42_vector_getters = c(
+	"B42FmuLegacyDeviatoric",
+	"B42FmuRawDeviatoric",
+	"B42FmuBGKDeviatoric",
+	"B42ForceOverRhoLegacyDeviatoric",
+	"B42ForceOverRhoRawDeviatoric",
+	"B42ForceOverRhoBGKDeviatoric"
+)
+for (b42_name in b42_vector_getters) {
+	cat("CudaDeviceFunction vector_t get", b42_name, "(){\n", sep="")
+	cat("\tvector_t out;\n")
+	cat("\tout.x = stage14_b42_scalar(", b42_name, "X(0,0,0));\n", sep="")
+	cat("\tout.y = stage14_b42_scalar(", b42_name, "Y(0,0,0));\n", sep="")
+	cat("\tout.z = stage14_b42_scalar(", b42_name, "Z(0,0,0));\n", sep="")
 	cat("\treturn out;\n")
 	cat("}\n\n")
 }
@@ -3787,6 +3874,39 @@ CudaDeviceFunction void CollisionMRT()
 			B40ForceOverRhoBGKPopNeqPreBGKX = (F_surf[0] + F_pressure[0] + F_body[0] + b40_fmu_bgk_pop_neq_pre_bgk[0]) * force_rho_inv;
 			B40ForceOverRhoBGKPopNeqPreBGKY = (F_surf[1] + F_pressure[1] + F_body[1] + b40_fmu_bgk_pop_neq_pre_bgk[1]) * force_rho_inv;
 			B40ForceOverRhoBGKPopNeqPreBGKZ = (F_surf[2] + F_pressure[2] + F_body[2] + b40_fmu_bgk_pop_neq_pre_bgk[2]) * force_rho_inv;
+			if (stage14_b42_stress_decomposition_active()) {
+				real_t b42_dev_legacy[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+				real_t b42_dev_raw[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+				real_t b42_dev_bgk[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+				real_t b42_fmu_legacy_dev[3] = {0.0, 0.0, 0.0};
+				real_t b42_fmu_raw_dev[3] = {0.0, 0.0, 0.0};
+				real_t b42_fmu_bgk_dev[3] = {0.0, 0.0, 0.0};
+				stage14_deviatoric_stress6(b42_dev_legacy, b40_stress_moment_relaxed, &B42LegacyTraceThird, &B42LegacyIsotropicNorm, &B42LegacyDeviatoricNorm);
+				stage14_deviatoric_stress6(b42_dev_raw, b40_stress_moment_raw, &B42RawTraceThird, &B42RawIsotropicNorm, &B42RawDeviatoricNorm);
+				stage14_deviatoric_stress6(b42_dev_bgk, b40_stress_bgk_pop_neq_pre, &B42BGKTraceThird, &B42BGKIsotropicNorm, &B42BGKDeviatoricNorm);
+				stage14_fmu_from_stress_scaled(b42_fmu_legacy_dev, b42_dev_legacy, gradPhi_force, tau, b40_scale_legacy);
+				stage14_fmu_from_stress_scaled(b42_fmu_raw_dev, b42_dev_raw, gradPhi_force, tau, b40_scale_legacy);
+				stage14_fmu_from_stress_scaled(b42_fmu_bgk_dev, b42_dev_bgk, gradPhi_force, tau, b40_scale_bgk);
+				B42ProbeActive = 1.0;
+				B42FmuLegacyDeviatoricX = b42_fmu_legacy_dev[0];
+				B42FmuLegacyDeviatoricY = b42_fmu_legacy_dev[1];
+				B42FmuLegacyDeviatoricZ = b42_fmu_legacy_dev[2];
+				B42FmuRawDeviatoricX = b42_fmu_raw_dev[0];
+				B42FmuRawDeviatoricY = b42_fmu_raw_dev[1];
+				B42FmuRawDeviatoricZ = b42_fmu_raw_dev[2];
+				B42FmuBGKDeviatoricX = b42_fmu_bgk_dev[0];
+				B42FmuBGKDeviatoricY = b42_fmu_bgk_dev[1];
+				B42FmuBGKDeviatoricZ = b42_fmu_bgk_dev[2];
+				B42ForceOverRhoLegacyDeviatoricX = (F_surf[0] + F_pressure[0] + F_body[0] + b42_fmu_legacy_dev[0]) * force_rho_inv;
+				B42ForceOverRhoLegacyDeviatoricY = (F_surf[1] + F_pressure[1] + F_body[1] + b42_fmu_legacy_dev[1]) * force_rho_inv;
+				B42ForceOverRhoLegacyDeviatoricZ = (F_surf[2] + F_pressure[2] + F_body[2] + b42_fmu_legacy_dev[2]) * force_rho_inv;
+				B42ForceOverRhoRawDeviatoricX = (F_surf[0] + F_pressure[0] + F_body[0] + b42_fmu_raw_dev[0]) * force_rho_inv;
+				B42ForceOverRhoRawDeviatoricY = (F_surf[1] + F_pressure[1] + F_body[1] + b42_fmu_raw_dev[1]) * force_rho_inv;
+				B42ForceOverRhoRawDeviatoricZ = (F_surf[2] + F_pressure[2] + F_body[2] + b42_fmu_raw_dev[2]) * force_rho_inv;
+				B42ForceOverRhoBGKDeviatoricX = (F_surf[0] + F_pressure[0] + F_body[0] + b42_fmu_bgk_dev[0]) * force_rho_inv;
+				B42ForceOverRhoBGKDeviatoricY = (F_surf[1] + F_pressure[1] + F_body[1] + b42_fmu_bgk_dev[1]) * force_rho_inv;
+				B42ForceOverRhoBGKDeviatoricZ = (F_surf[2] + F_pressure[2] + F_body[2] + b42_fmu_bgk_dev[2]) * force_rho_inv;
+			}
 		}
 		if (stage14_b35_coupled_numerator_diagnostics_active()) {
 			real_t b35_lp_no_ghost = 0.0;
@@ -4095,10 +4215,15 @@ CudaDeviceFunction void CollisionMRT()
 			if (stage14_b40_stress_audit_active()) {
 				stage14_fmu_from_stress_scaled(b40_fmu_post_force_legacy, stress_post_force_shadow, gradPhi_force, tau, stage14_fmu_legacy_scale(tau));
 				B40StressPostForceNorm = stage14_stress_norm6(stress_post_force_shadow);
-				B40StressPostOverRelaxed = B40StressPostForceNorm / (B40StressMomentRelaxedNorm + 1.0e-300);
-				B40FmuPostForceLegacyX = b40_fmu_post_force_legacy[0];
-				B40FmuPostForceLegacyY = b40_fmu_post_force_legacy[1];
-				B40FmuPostForceLegacyZ = b40_fmu_post_force_legacy[2];
+			B40StressPostOverRelaxed = B40StressPostForceNorm / (B40StressMomentRelaxedNorm + 1.0e-300);
+			B40FmuPostForceLegacyX = b40_fmu_post_force_legacy[0];
+			B40FmuPostForceLegacyY = b40_fmu_post_force_legacy[1];
+			B40FmuPostForceLegacyZ = b40_fmu_post_force_legacy[2];
+				if (stage14_b42_stress_decomposition_active()) {
+					real_t b42_dev_post[6] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+					stage14_deviatoric_stress6(b42_dev_post, stress_post_force_shadow, &B42PostTraceThird, &B42PostIsotropicNorm, &B42PostDeviatoricNorm);
+					B42ProbeActive = 1.0;
+				}
 			}
 			if (stage14_b18_closure_diagnostics_active()) {
 				real_t b18_eq_post_force[27] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,

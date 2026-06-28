@@ -1,0 +1,1181 @@
+{
+  "claim_limit": "B41 diagnostic ranking only; not a solver repair",
+  "focus_step": 13,
+  "input_mask_stats": "C:\\Users\\yuanz\\Desktop\\lbm-new\\repo\\artifacts\\stage14_B41_stress_source_audit_20260628\\B41_stress_source_audit\\b41_mask_stats.csv",
+  "primary_mask": "low_rho",
+  "primary_ranking": [
+    {
+      "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+      "candidate": "incoming_raw_population",
+      "first_fmu_gt_1e3": null,
+      "first_force_over_rho_gt_1e3": null,
+      "first_stress_gt_1e3": {
+        "step": 14,
+        "threshold": 1000.0,
+        "value": 525010.2617897798
+      },
+      "fmu_at_focus": null,
+      "fmu_field": "B40FmuIncomingRawLegacyNorm",
+      "focus_step": 13,
+      "force_field": null,
+      "force_over_rho_at_focus": null,
+      "force_proxy_at_focus": null,
+      "force_vs_legacy_ratio": null,
+      "mask": "low_rho",
+      "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+      "rank_score": 138.67057151857364,
+      "stress_at_focus": 138.67057151857364,
+      "stress_field": "B40StressIncomingRawNorm"
+    },
+    {
+      "active_mode_hint": "existing legacy path / baseline",
+      "candidate": "legacy_relaxed_moment",
+      "first_fmu_gt_1e3": {
+        "step": 14,
+        "threshold": 1000.0,
+        "value": 64341.717939158065
+      },
+      "first_force_over_rho_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 2636.4146763472127
+      },
+      "first_stress_gt_1e3": {
+        "step": 14,
+        "threshold": 1000.0,
+        "value": 1724171.86862168
+      },
+      "fmu_at_focus": 14.492372866456925,
+      "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+      "focus_step": 13,
+      "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+      "force_over_rho_at_focus": 2636.4146763472127,
+      "force_proxy_at_focus": 2636.4146763472127,
+      "force_vs_legacy_ratio": 1.0,
+      "mask": "low_rho",
+      "notes": "Current relaxed moment stress used by active F_mu.",
+      "rank_score": 2636.4146763472127,
+      "stress_at_focus": 383.3219828909969,
+      "stress_field": "B40StressMomentRelaxedNorm"
+    },
+    {
+      "active_mode_hint": "B42 candidate mode 3",
+      "candidate": "raw_moment_preforce",
+      "first_fmu_gt_1e3": {
+        "step": 14,
+        "threshold": 1000.0,
+        "value": 474001584.9744175
+      },
+      "first_force_over_rho_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 7596.8317022518095
+      },
+      "first_stress_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 17562.500913644606
+      },
+      "fmu_at_focus": 39.964136204752776,
+      "fmu_field": "B40FmuMomentRawLegacyNorm",
+      "focus_step": 13,
+      "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+      "force_over_rho_at_focus": 7596.8317022518095,
+      "force_proxy_at_focus": 7596.8317022518095,
+      "force_vs_legacy_ratio": 2.8815010667355714,
+      "mask": "low_rho",
+      "notes": "Pre-force raw moment residual without Omega relaxation.",
+      "rank_score": 7596.8317022518095,
+      "stress_at_focus": 17562.500913644606,
+      "stress_field": "B40StressMomentRawNorm"
+    },
+    {
+      "active_mode_hint": "B42 candidate mode 4",
+      "candidate": "bgk_pop_neq_preforce",
+      "first_fmu_gt_1e3": {
+        "step": 14,
+        "threshold": 1000.0,
+        "value": 592501981.218022
+      },
+      "first_force_over_rho_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 9495.989154937075
+      },
+      "first_stress_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 17562.500913644606
+      },
+      "fmu_at_focus": 49.95517025594098,
+      "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+      "focus_step": 13,
+      "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+      "force_over_rho_at_focus": 9495.989154937075,
+      "force_proxy_at_focus": 9495.989154937075,
+      "force_vs_legacy_ratio": 3.6018571889054622,
+      "mask": "low_rho",
+      "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+      "rank_score": 9495.989154937075,
+      "stress_at_focus": 17562.500913644606,
+      "stress_field": "B40StressBGKPopNeqPreNorm"
+    },
+    {
+      "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+      "candidate": "incoming_neq_preforce",
+      "first_fmu_gt_1e3": null,
+      "first_force_over_rho_gt_1e3": null,
+      "first_stress_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 17562.500913644602
+      },
+      "fmu_at_focus": null,
+      "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+      "focus_step": 13,
+      "force_field": null,
+      "force_over_rho_at_focus": null,
+      "force_proxy_at_focus": null,
+      "force_vs_legacy_ratio": null,
+      "mask": "low_rho",
+      "notes": "Incoming population minus pre-force equilibrium.",
+      "rank_score": 17562.500913644602,
+      "stress_at_focus": 17562.500913644602,
+      "stress_field": "B40StressIncomingNeqPreNorm"
+    },
+    {
+      "active_mode_hint": "reject as active source",
+      "candidate": "post_force_shadow",
+      "first_fmu_gt_1e3": null,
+      "first_force_over_rho_gt_1e3": null,
+      "first_stress_gt_1e3": {
+        "step": 13,
+        "threshold": 1000.0,
+        "value": 2029121.044003016
+      },
+      "fmu_at_focus": null,
+      "fmu_field": "B40FmuPostForceLegacyNorm",
+      "focus_step": 13,
+      "force_field": null,
+      "force_over_rho_at_focus": null,
+      "force_proxy_at_focus": null,
+      "force_vs_legacy_ratio": null,
+      "mask": "low_rho",
+      "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+      "rank_score": 2029121.044003016,
+      "stress_at_focus": 2029121.044003016,
+      "stress_field": "B40StressPostForceNorm"
+    }
+  ],
+  "rankings_by_mask": {
+    "all_cells": [
+      {
+        "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+        "candidate": "incoming_raw_population",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 525010.2617897798
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "all_cells",
+        "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+        "rank_score": 138.67057151857364,
+        "stress_at_focus": 138.67057151857364,
+        "stress_field": "B40StressIncomingRawNorm"
+      },
+      {
+        "active_mode_hint": "existing legacy path / baseline",
+        "candidate": "legacy_relaxed_moment",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 64341.717939158065
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2636.4146763472127
+        },
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 1724171.86862168
+        },
+        "fmu_at_focus": 14.492372866456925,
+        "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+        "force_over_rho_at_focus": 2636.4146763472127,
+        "force_proxy_at_focus": 2636.4146763472127,
+        "force_vs_legacy_ratio": 1.0,
+        "mask": "all_cells",
+        "notes": "Current relaxed moment stress used by active F_mu.",
+        "rank_score": 2636.4146763472127,
+        "stress_at_focus": 383.3219828909969,
+        "stress_field": "B40StressMomentRelaxedNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 3",
+        "candidate": "raw_moment_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 474001584.9744175
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 7596.8317022518095
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644606
+        },
+        "fmu_at_focus": 39.964136204752776,
+        "fmu_field": "B40FmuMomentRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+        "force_over_rho_at_focus": 7596.8317022518095,
+        "force_proxy_at_focus": 7596.8317022518095,
+        "force_vs_legacy_ratio": 2.8815010667355714,
+        "mask": "all_cells",
+        "notes": "Pre-force raw moment residual without Omega relaxation.",
+        "rank_score": 7596.8317022518095,
+        "stress_at_focus": 17562.500913644606,
+        "stress_field": "B40StressMomentRawNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 4",
+        "candidate": "bgk_pop_neq_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 592501981.218022
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 9495.989154937075
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644606
+        },
+        "fmu_at_focus": 49.95517025594098,
+        "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+        "force_over_rho_at_focus": 9495.989154937075,
+        "force_proxy_at_focus": 9495.989154937075,
+        "force_vs_legacy_ratio": 3.6018571889054622,
+        "mask": "all_cells",
+        "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+        "rank_score": 9495.989154937075,
+        "stress_at_focus": 17562.500913644606,
+        "stress_field": "B40StressBGKPopNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+        "candidate": "incoming_neq_preforce",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644602
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "all_cells",
+        "notes": "Incoming population minus pre-force equilibrium.",
+        "rank_score": 17562.500913644602,
+        "stress_at_focus": 17562.500913644602,
+        "stress_field": "B40StressIncomingNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "reject as active source",
+        "candidate": "post_force_shadow",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2029121.044003016
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuPostForceLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "all_cells",
+        "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+        "rank_score": 2029121.044003016,
+        "stress_at_focus": 2029121.044003016,
+        "stress_field": "B40StressPostForceNorm"
+      }
+    ],
+    "fluid_all": [
+      {
+        "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+        "candidate": "incoming_raw_population",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 525010.2617897798
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "fluid_all",
+        "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+        "rank_score": 138.67057151857364,
+        "stress_at_focus": 138.67057151857364,
+        "stress_field": "B40StressIncomingRawNorm"
+      },
+      {
+        "active_mode_hint": "existing legacy path / baseline",
+        "candidate": "legacy_relaxed_moment",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 64341.717939158065
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2636.4146763472127
+        },
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 1724171.86862168
+        },
+        "fmu_at_focus": 14.492372866456925,
+        "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+        "force_over_rho_at_focus": 2636.4146763472127,
+        "force_proxy_at_focus": 2636.4146763472127,
+        "force_vs_legacy_ratio": 1.0,
+        "mask": "fluid_all",
+        "notes": "Current relaxed moment stress used by active F_mu.",
+        "rank_score": 2636.4146763472127,
+        "stress_at_focus": 383.3219828909969,
+        "stress_field": "B40StressMomentRelaxedNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 3",
+        "candidate": "raw_moment_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 474001584.9744175
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 7596.8317022518095
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644606
+        },
+        "fmu_at_focus": 39.964136204752776,
+        "fmu_field": "B40FmuMomentRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+        "force_over_rho_at_focus": 7596.8317022518095,
+        "force_proxy_at_focus": 7596.8317022518095,
+        "force_vs_legacy_ratio": 2.8815010667355714,
+        "mask": "fluid_all",
+        "notes": "Pre-force raw moment residual without Omega relaxation.",
+        "rank_score": 7596.8317022518095,
+        "stress_at_focus": 17562.500913644606,
+        "stress_field": "B40StressMomentRawNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 4",
+        "candidate": "bgk_pop_neq_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 592501981.218022
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 9495.989154937075
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644606
+        },
+        "fmu_at_focus": 49.95517025594098,
+        "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+        "force_over_rho_at_focus": 9495.989154937075,
+        "force_proxy_at_focus": 9495.989154937075,
+        "force_vs_legacy_ratio": 3.6018571889054622,
+        "mask": "fluid_all",
+        "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+        "rank_score": 9495.989154937075,
+        "stress_at_focus": 17562.500913644606,
+        "stress_field": "B40StressBGKPopNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+        "candidate": "incoming_neq_preforce",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644602
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "fluid_all",
+        "notes": "Incoming population minus pre-force equilibrium.",
+        "rank_score": 17562.500913644602,
+        "stress_at_focus": 17562.500913644602,
+        "stress_field": "B40StressIncomingNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "reject as active source",
+        "candidate": "post_force_shadow",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2029121.044003016
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuPostForceLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "fluid_all",
+        "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+        "rank_score": 2029121.044003016,
+        "stress_at_focus": 2029121.044003016,
+        "stress_field": "B40StressPostForceNorm"
+      }
+    ],
+    "interface_wide": [
+      {
+        "active_mode_hint": "reject as active source",
+        "candidate": "post_force_shadow",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 884848777.8967981
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuPostForceLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "interface_wide",
+        "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+        "rank_score": 0.20177475509921178,
+        "stress_at_focus": 0.20177475509921178,
+        "stress_field": "B40StressPostForceNorm"
+      },
+      {
+        "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+        "candidate": "incoming_raw_population",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 37864.09073931219
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "interface_wide",
+        "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+        "rank_score": 0.2541444338563495,
+        "stress_at_focus": 0.2541444338563495,
+        "stress_field": "B40StressIncomingRawNorm"
+      },
+      {
+        "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+        "candidate": "incoming_neq_preforce",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 716577056.6478676
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "interface_wide",
+        "notes": "Incoming population minus pre-force equilibrium.",
+        "rank_score": 0.28538548610910947,
+        "stress_at_focus": 0.28538548610910947,
+        "stress_field": "B40StressIncomingNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "existing legacy path / baseline",
+        "candidate": "legacy_relaxed_moment",
+        "first_fmu_gt_1e3": {
+          "step": 16,
+          "threshold": 1000.0,
+          "value": 459818131371.03467
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 35668.046149865746
+        },
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 40181.32350956693
+        },
+        "fmu_at_focus": 0.011349164118874697,
+        "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+        "force_over_rho_at_focus": 0.7937376192687341,
+        "force_proxy_at_focus": 0.7937376192687341,
+        "force_vs_legacy_ratio": 1.0,
+        "mask": "interface_wide",
+        "notes": "Current relaxed moment stress used by active F_mu.",
+        "rank_score": 0.7937376192687341,
+        "stress_at_focus": 0.27430889978367207,
+        "stress_field": "B40StressMomentRelaxedNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 3",
+        "candidate": "raw_moment_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 2887801.336037619
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 197394797.68085566
+        },
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 716577056.6478676
+        },
+        "fmu_at_focus": 0.011919648362875635,
+        "fmu_field": "B40FmuMomentRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+        "force_over_rho_at_focus": 0.8336601059538763,
+        "force_proxy_at_focus": 0.8336601059538763,
+        "force_vs_legacy_ratio": 1.0502968307359837,
+        "mask": "interface_wide",
+        "notes": "Pre-force raw moment residual without Omega relaxation.",
+        "rank_score": 0.8336601059538763,
+        "stress_at_focus": 0.2853854861091095,
+        "stress_field": "B40StressMomentRawNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 4",
+        "candidate": "bgk_pop_neq_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 3609751.6700470233
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 246743504.17215225
+        },
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 716577056.6478674
+        },
+        "fmu_at_focus": 0.014899560453594545,
+        "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+        "force_over_rho_at_focus": 1.0422777909435903,
+        "force_proxy_at_focus": 1.0422777909435903,
+        "force_vs_legacy_ratio": 1.3131263601992744,
+        "mask": "interface_wide",
+        "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+        "rank_score": 1.0422777909435903,
+        "stress_at_focus": 0.2853854861091095,
+        "stress_field": "B40StressBGKPopNeqPreNorm"
+      }
+    ],
+    "low_rho": [
+      {
+        "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+        "candidate": "incoming_raw_population",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 525010.2617897798
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "low_rho",
+        "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+        "rank_score": 138.67057151857364,
+        "stress_at_focus": 138.67057151857364,
+        "stress_field": "B40StressIncomingRawNorm"
+      },
+      {
+        "active_mode_hint": "existing legacy path / baseline",
+        "candidate": "legacy_relaxed_moment",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 64341.717939158065
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2636.4146763472127
+        },
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 1724171.86862168
+        },
+        "fmu_at_focus": 14.492372866456925,
+        "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+        "force_over_rho_at_focus": 2636.4146763472127,
+        "force_proxy_at_focus": 2636.4146763472127,
+        "force_vs_legacy_ratio": 1.0,
+        "mask": "low_rho",
+        "notes": "Current relaxed moment stress used by active F_mu.",
+        "rank_score": 2636.4146763472127,
+        "stress_at_focus": 383.3219828909969,
+        "stress_field": "B40StressMomentRelaxedNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 3",
+        "candidate": "raw_moment_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 474001584.9744175
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 7596.8317022518095
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644606
+        },
+        "fmu_at_focus": 39.964136204752776,
+        "fmu_field": "B40FmuMomentRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+        "force_over_rho_at_focus": 7596.8317022518095,
+        "force_proxy_at_focus": 7596.8317022518095,
+        "force_vs_legacy_ratio": 2.8815010667355714,
+        "mask": "low_rho",
+        "notes": "Pre-force raw moment residual without Omega relaxation.",
+        "rank_score": 7596.8317022518095,
+        "stress_at_focus": 17562.500913644606,
+        "stress_field": "B40StressMomentRawNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 4",
+        "candidate": "bgk_pop_neq_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 592501981.218022
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 9495.989154937075
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644606
+        },
+        "fmu_at_focus": 49.95517025594098,
+        "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+        "force_over_rho_at_focus": 9495.989154937075,
+        "force_proxy_at_focus": 9495.989154937075,
+        "force_vs_legacy_ratio": 3.6018571889054622,
+        "mask": "low_rho",
+        "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+        "rank_score": 9495.989154937075,
+        "stress_at_focus": 17562.500913644606,
+        "stress_field": "B40StressBGKPopNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+        "candidate": "incoming_neq_preforce",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 17562.500913644602
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "low_rho",
+        "notes": "Incoming population minus pre-force equilibrium.",
+        "rank_score": 17562.500913644602,
+        "stress_at_focus": 17562.500913644602,
+        "stress_field": "B40StressIncomingNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "reject as active source",
+        "candidate": "post_force_shadow",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2029121.044003016
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuPostForceLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "low_rho",
+        "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+        "rank_score": 2029121.044003016,
+        "stress_at_focus": 2029121.044003016,
+        "stress_field": "B40StressPostForceNorm"
+      }
+    ],
+    "near_interface_wall": [
+      {
+        "active_mode_hint": "reject as active source",
+        "candidate": "post_force_shadow",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 884848777.8967981
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuPostForceLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "near_interface_wall",
+        "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+        "rank_score": 0.20177475509921178,
+        "stress_at_focus": 0.20177475509921178,
+        "stress_field": "B40StressPostForceNorm"
+      },
+      {
+        "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+        "candidate": "incoming_raw_population",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 37864.09073931219
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "near_interface_wall",
+        "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+        "rank_score": 0.2541444338563495,
+        "stress_at_focus": 0.2541444338563495,
+        "stress_field": "B40StressIncomingRawNorm"
+      },
+      {
+        "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+        "candidate": "incoming_neq_preforce",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 716577056.6478676
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "near_interface_wall",
+        "notes": "Incoming population minus pre-force equilibrium.",
+        "rank_score": 0.28538548610910947,
+        "stress_at_focus": 0.28538548610910947,
+        "stress_field": "B40StressIncomingNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "existing legacy path / baseline",
+        "candidate": "legacy_relaxed_moment",
+        "first_fmu_gt_1e3": {
+          "step": 16,
+          "threshold": 1000.0,
+          "value": 459818131371.03467
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 35668.046149865746
+        },
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 40181.32350956693
+        },
+        "fmu_at_focus": 0.011349164118874697,
+        "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+        "force_over_rho_at_focus": 0.7937376192687341,
+        "force_proxy_at_focus": 0.7937376192687341,
+        "force_vs_legacy_ratio": 1.0,
+        "mask": "near_interface_wall",
+        "notes": "Current relaxed moment stress used by active F_mu.",
+        "rank_score": 0.7937376192687341,
+        "stress_at_focus": 0.27430889978367207,
+        "stress_field": "B40StressMomentRelaxedNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 3",
+        "candidate": "raw_moment_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 2887801.336037619
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 197394797.68085566
+        },
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 716577056.6478676
+        },
+        "fmu_at_focus": 0.011919648362875635,
+        "fmu_field": "B40FmuMomentRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+        "force_over_rho_at_focus": 0.8336601059538763,
+        "force_proxy_at_focus": 0.8336601059538763,
+        "force_vs_legacy_ratio": 1.0502968307359837,
+        "mask": "near_interface_wall",
+        "notes": "Pre-force raw moment residual without Omega relaxation.",
+        "rank_score": 0.8336601059538763,
+        "stress_at_focus": 0.2853854861091095,
+        "stress_field": "B40StressMomentRawNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 4",
+        "candidate": "bgk_pop_neq_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 3609751.6700470233
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 246743504.17215225
+        },
+        "first_stress_gt_1e3": {
+          "step": 15,
+          "threshold": 1000.0,
+          "value": 716577056.6478674
+        },
+        "fmu_at_focus": 0.014899560453594545,
+        "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+        "force_over_rho_at_focus": 1.0422777909435903,
+        "force_proxy_at_focus": 1.0422777909435903,
+        "force_vs_legacy_ratio": 1.3131263601992744,
+        "mask": "near_interface_wall",
+        "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+        "rank_score": 1.0422777909435903,
+        "stress_at_focus": 0.2853854861091095,
+        "stress_field": "B40StressBGKPopNeqPreNorm"
+      }
+    ],
+    "near_wall": [
+      {
+        "active_mode_hint": "shadow only unless B42 adds force reconstruction",
+        "candidate": "incoming_raw_population",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 522657.72282892175
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "near_wall",
+        "notes": "Raw incoming second moment; not directly a non-equilibrium stress.",
+        "rank_score": 109.48489158474912,
+        "stress_at_focus": 109.48489158474912,
+        "stress_field": "B40StressIncomingRawNorm"
+      },
+      {
+        "active_mode_hint": "existing legacy path / baseline",
+        "candidate": "legacy_relaxed_moment",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 64341.717939158065
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2636.4146763472127
+        },
+        "first_stress_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 1724171.86862168
+        },
+        "fmu_at_focus": 14.492372866456925,
+        "fmu_field": "B40FmuMomentRelaxedLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRelaxedLegacyNorm",
+        "force_over_rho_at_focus": 2636.4146763472127,
+        "force_proxy_at_focus": 2636.4146763472127,
+        "force_vs_legacy_ratio": 1.0,
+        "mask": "near_wall",
+        "notes": "Current relaxed moment stress used by active F_mu.",
+        "rank_score": 2636.4146763472127,
+        "stress_at_focus": 383.3219828909969,
+        "stress_field": "B40StressMomentRelaxedNorm"
+      },
+      {
+        "active_mode_hint": "existing FmuStressClosureMode=2 / compare only",
+        "candidate": "incoming_neq_preforce",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 5985.930414630409
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuIncomingNeqPreLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "near_wall",
+        "notes": "Incoming population minus pre-force equilibrium.",
+        "rank_score": 5985.930414630409,
+        "stress_at_focus": 5985.930414630409,
+        "stress_field": "B40StressIncomingNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 3",
+        "candidate": "raw_moment_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 474001584.9744175
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 7596.8317022518095
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 5985.930414630409
+        },
+        "fmu_at_focus": 39.964136204752776,
+        "fmu_field": "B40FmuMomentRawLegacyNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoMomentRawLegacyNorm",
+        "force_over_rho_at_focus": 7596.8317022518095,
+        "force_proxy_at_focus": 7596.8317022518095,
+        "force_vs_legacy_ratio": 2.8815010667355714,
+        "mask": "near_wall",
+        "notes": "Pre-force raw moment residual without Omega relaxation.",
+        "rank_score": 7596.8317022518095,
+        "stress_at_focus": 5985.930414630409,
+        "stress_field": "B40StressMomentRawNorm"
+      },
+      {
+        "active_mode_hint": "B42 candidate mode 4",
+        "candidate": "bgk_pop_neq_preforce",
+        "first_fmu_gt_1e3": {
+          "step": 14,
+          "threshold": 1000.0,
+          "value": 592501981.218022
+        },
+        "first_force_over_rho_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 9495.989154937075
+        },
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 5985.930414630409
+        },
+        "fmu_at_focus": 49.95517025594098,
+        "fmu_field": "B40FmuBGKPopNeqPreBGKNorm",
+        "focus_step": 13,
+        "force_field": "B40ForceOverRhoBGKPopNeqPreBGKNorm",
+        "force_over_rho_at_focus": 9495.989154937075,
+        "force_proxy_at_focus": 9495.989154937075,
+        "force_vs_legacy_ratio": 3.6018571889054622,
+        "mask": "near_wall",
+        "notes": "Pre-force population non-equilibrium with BGK-like scale.",
+        "rank_score": 9495.989154937075,
+        "stress_at_focus": 5985.930414630409,
+        "stress_field": "B40StressBGKPopNeqPreNorm"
+      },
+      {
+        "active_mode_hint": "reject as active source",
+        "candidate": "post_force_shadow",
+        "first_fmu_gt_1e3": null,
+        "first_force_over_rho_gt_1e3": null,
+        "first_stress_gt_1e3": {
+          "step": 13,
+          "threshold": 1000.0,
+          "value": 2029121.044003016
+        },
+        "fmu_at_focus": null,
+        "fmu_field": "B40FmuPostForceLegacyNorm",
+        "focus_step": 13,
+        "force_field": null,
+        "force_over_rho_at_focus": null,
+        "force_proxy_at_focus": null,
+        "force_vs_legacy_ratio": null,
+        "mask": "near_wall",
+        "notes": "Post-force stress shadow; diagnostic feedback amplifier.",
+        "rank_score": 2029121.044003016,
+        "stress_at_focus": 2029121.044003016,
+        "stress_field": "B40StressPostForceNorm"
+      }
+    ]
+  },
+  "recommendation": "Do not directly promote the rankable raw/BGK pre-force candidates into active B42 modes: their force-over-rho at the focus step is not better than the legacy relaxed-moment path. Use B42 for a new physically motivated stress definition, such as deviatoric/pressure-removed incoming stress or moment-wise MRT scaling, and use B43 derivation before any default-off candidate is treated as a repair.",
+  "steps": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+  ],
+  "verdict": "b41_no_better_implementable_candidate"
+}
