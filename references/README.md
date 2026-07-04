@@ -61,6 +61,18 @@ Use: model-family separation for contact-angle formulas, phase-field wetting opt
 Limit: do not copy full excerpt; do not transplant pseudo-potential virtual-density or color-gradient formulas directly into the current phase-field solver.
 ```
 
+Contact-angle LBM implementation manual:
+
+```text
+Title: 接触角/润湿边界 LBM 实现方法参考手册
+Local-only markdown: C:/Users/yuanz/Downloads/接触角LBM实现方法参考手册.md
+Local SHA256: 2DE13B390E4BCA2351C6804D7BD87612122D83C115127B2BE7E5763D5E2BB1A5
+Repo metadata: references/contact_angle_lbm_manual_20260704/
+Project anchor: docs/stage18/026_contact_angle_lbm_manual_code_audit_20260704.md
+Use: model-family separation for wetting formulas, phase-field surface-free-energy/geometric contact-angle boundary choices, near-wall gradient/Laplace audit, and validation workflow constraints.
+Limit: do not copy the full manual text; do not mix Shan-Chen wall-density or color-gradient virtual-density formulas into the current conservative Allen-Cahn phase-field solver.
+```
+
 Taichi official documentation:
 
 ```text

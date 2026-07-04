@@ -1,0 +1,18 @@
+{
+  "title": "接触角/润湿边界 LBM 实现方法参考手册",
+  "local_only_path": "C:/Users/yuanz/Downloads/接触角LBM实现方法参考手册.md",
+  "sha256": "2DE13B390E4BCA2351C6804D7BD87612122D83C115127B2BE7E5763D5E2BB1A5",
+  "added_to_project": "2026-07-04",
+  "scope": "Compiled contact-angle implementation notes from three LBM textbooks, covering Shan-Chen, free-energy, color-gradient, and phase-field wetting boundary conditions.",
+  "project_use": [
+    "Separate phase-field wetting formulas from pseudo-potential virtual-density formulas.",
+    "Use surface-free-energy or geometric virtual-order-parameter boundary conditions as the Stage18 phase-field wetting route.",
+    "Audit near-wall gradient/Laplace and h_i population boundary placement before interpreting static contact angles.",
+    "Treat dynamic advancing/receding contact angle as not specified by the books and requiring separate literature/validation."
+  ],
+  "limits": [
+    "Do not copy the full manual text into the repository.",
+    "Do not transplant Shan-Chen wall-density or color-gradient virtual-density formulas directly into the conservative Allen-Cahn phase-field solver.",
+    "The manual provides implementation directions and textbook formulas, not validation evidence for the current code."
+  ]
+}
