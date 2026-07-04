@@ -482,6 +482,27 @@ def mass_correction_redistribute_kernel(hbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz
 
 
 @ti.kernel
+def wall_mass_correction_prepare_kernel(hbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, phase_wall_mode: ti.i32):
+    mass_correction_delta[None] = 0.0
+    mass_correction_weight[None] = 0.0
+    mass_correction_count[None] = 0
+    if phase_wall_mode == 4:
+        for x, y, z in ti.ndrange(nx, ny, nz):
+            if solid_field[x, y, z] == 0:
+                c = clamp01(c_field[x, y, z])
+                weight = c * (1.0 - c)
+                if weight > 1.0e-8:
+                    ti.atomic_add(mass_correction_weight[None], weight)
+                    ti.atomic_add(mass_correction_count[None], 1)
+                if phase_wall_delta_mass_field[x, y, z] != 0.0:
+                    # Existing redistribute kernel adds mass_correction_delta
+                    # back into interface cells.  A positive wall delta means
+                    # the boundary just added mass, so compensate with the
+                    # opposite sign.
+                    ti.atomic_add(mass_correction_delta[None], -phase_wall_delta_mass_field[x, y, z])
+
+
+@ti.kernel
 def rho_tau_kernel(
     nx: ti.i32,
     ny: ti.i32,
@@ -794,7 +815,7 @@ def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx
             elif solid_field[xn, yn, zn] == 1 and solid_field[x, y, z] == 0:
                 if phase_wall_mode == 2:
                     h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
-                elif phase_wall_mode == 3:
+                elif phase_wall_mode == 3 or phase_wall_mode == 4:
                     h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
                 else:
                     h[dst_h, x, y, z, q] = 0.0
@@ -805,7 +826,15 @@ def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx
 
 
 @ti.kernel
-def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, phase_wall_mode: ti.i32):
+def boundary_kernel(
+    hbuf: ti.i32,
+    gbuf: ti.i32,
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    phase_wall_mode: ti.i32,
+    phase_wall_wetting_strength: ti.f64,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
         phase_wall_missing_count_field[x, y, z] = 0
         phase_wall_stream_mass_before_field[x, y, z] = 0.0
@@ -817,7 +846,7 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
             for q in ti.static(range(Q)):
                 h[hbuf, x, y, z, q] = 0.0
                 g[gbuf, x, y, z, q] = g[gbuf, x, y, z, opp_field[q]]
-        elif phase_wall_mode == 2 or phase_wall_mode == 3:
+        elif phase_wall_mode == 2 or phase_wall_mode == 3 or phase_wall_mode == 4:
             missing = 0
             old_sum = 0.0
             reflected = 0.0
@@ -837,7 +866,7 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
                         pair_old = h[hbuf, x, y, z, q] + h[hbuf, x, y, z, opp]
                         c0 = clamp01(c_field[x, y, z])
                         ghost = wall_c_ghost_field[x, y, z]
-                        corr = w_field[q] * (ghost - c0)
+                        corr = phase_wall_wetting_strength * w_field[q] * (ghost - c0)
                         proposed = h[hbuf, x, y, z, q] + corr
                         # h_i are phase-field populations, not bounded
                         # probabilities.  Clipping each pair component to
@@ -852,6 +881,16 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
                         h[hbuf, x, y, z, q] = proposed
                         h[hbuf, x, y, z, opp] = pair_old - proposed
                         correction_abs += ti.abs(proposed - val)
+                        val = proposed
+                    elif phase_wall_mode == 4:
+                        c0 = clamp01(c_field[x, y, z])
+                        ghost = wall_c_ghost_field[x, y, z]
+                        corr = phase_wall_wetting_strength * w_field[q] * (ghost - c0)
+                        proposed = h[hbuf, x, y, z, q] + corr
+                        if proposed < 0.0:
+                            clamp_count += 1
+                        h[hbuf, x, y, z, q] = proposed
+                        correction_abs += ti.abs(corr)
                         val = proposed
                     reflected += val
                     missing += 1
@@ -1215,7 +1254,15 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             args.pressure_model,
         )
         stream_kernel(h_collide, h_stream, g_collide, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
-        boundary_kernel(h_stream, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
+        boundary_kernel(
+            h_stream,
+            g_stream,
+            args.nx,
+            args.ny,
+            args.nz,
+            args.phase_wall_mode,
+            args.phase_wall_wetting_strength,
+        )
 
         h_src = h_stream
         h_collide = 1 - h_src
@@ -1225,6 +1272,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         g_stream = g_src
 
         phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
+        if args.phase_wall_mode == 4:
+            wall_mass_correction_prepare_kernel(h_src, args.nx, args.ny, args.nz, args.phase_wall_mode)
+            mass_correction_redistribute_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
+            phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
         if args.phase_bound_mode == 2:
             mass_correction_clip_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
             mass_correction_redistribute_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
@@ -1302,6 +1353,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "wetting_ghost_distance": args.wetting_ghost_distance,
         "wetting_ghost_sign": args.wetting_ghost_sign,
         "phase_wall_mode": args.phase_wall_mode,
+        "phase_wall_wetting_strength": args.phase_wall_wetting_strength,
         "force_mode": args.force_mode,
         "force_closure_mode": args.force_closure_mode,
         "force_insertion_mode": args.force_insertion_mode,
@@ -1363,7 +1415,8 @@ def main() -> int:
     parser.add_argument("--wetting-mode", type=int, default=0, help="0 shadow only, 1 write C at wall band")
     parser.add_argument("--wetting-ghost-distance", type=float, default=1.0, help="normal distance multiplier used by Cghost=Cwall+sign*distance*dCdn")
     parser.add_argument("--wetting-ghost-sign", type=float, default=-1.0, help="sign used by Cghost=Cwall+sign*distance*dCdn; old behavior is -1")
-    parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band, 2 neutral per-link reflect, 3 wetting per-link reconstruction")
+    parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band, 2 neutral per-link reflect, 3 pair-conservative wetting, 4 mass-compensated incoming wetting")
+    parser.add_argument("--phase-wall-wetting-strength", type=float, default=1.0, help="relaxation strength for per-link wetting correction in phase-wall-mode 3/4")
     parser.add_argument("--force-mode", type=int, default=0, help="compatibility alias: 0 force off, 1 enables surface force if force-closure-mode is 0")
     parser.add_argument("--force-closure-mode", type=int, default=0, help="0 off, 1 surface, 2 pressure, 3 surface+pressure")
     parser.add_argument("--force-insertion-mode", type=int, default=0, help="0 none, 1 half-force+Guo, 2 half-force only, 3 Guo only")
