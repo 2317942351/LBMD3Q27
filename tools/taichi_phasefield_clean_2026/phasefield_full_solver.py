@@ -76,6 +76,9 @@ phase_wall_missing_count_field = None
 phase_wall_stream_mass_before_field = None
 phase_wall_reflect_mass_field = None
 phase_wall_delta_mass_field = None
+mass_correction_delta = None
+mass_correction_weight = None
+mass_correction_count = None
 
 
 @dataclass
@@ -109,6 +112,9 @@ class StepMetrics:
     phase_wall_stream_mass_before: float
     phase_wall_reflect_mass: float
     phase_wall_delta_mass: float
+    mass_correction_delta: float
+    mass_correction_weight: float
+    mass_correction_count: int
     wall_ghost_min: float
     wall_ghost_max: float
     nonfinite_count: int
@@ -152,6 +158,7 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     global target_theta_field, wall_c_ghost_field, write_allowed_field
     global phase_wall_missing_count_field, phase_wall_stream_mass_before_field
     global phase_wall_reflect_mass_field, phase_wall_delta_mass_field
+    global mass_correction_delta, mass_correction_weight, mass_correction_count
 
     shape = (nx, ny, nz)
     h = ti.field(dtype=ti.f64, shape=(2, nx, ny, nz, Q))
@@ -191,6 +198,9 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     phase_wall_stream_mass_before_field = ti.field(dtype=ti.f64, shape=shape)
     phase_wall_reflect_mass_field = ti.field(dtype=ti.f64, shape=shape)
     phase_wall_delta_mass_field = ti.field(dtype=ti.f64, shape=shape)
+    mass_correction_delta = ti.field(dtype=ti.f64, shape=())
+    mass_correction_weight = ti.field(dtype=ti.f64, shape=())
+    mass_correction_count = ti.field(dtype=ti.i32, shape=())
 
     e_np, w_np, opp_np = d3q27_lattice()
     e_field.from_numpy(e_np)
@@ -329,6 +339,47 @@ def phase_bound_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, mode: ti.i32):
         if mode == 1:
             c = clamp01(c)
             c_field[x, y, z] = c
+
+
+@ti.kernel
+def mass_correction_clip_kernel(hbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, mode: ti.i32):
+    mass_correction_delta[None] = 0.0
+    mass_correction_weight[None] = 0.0
+    mass_correction_count[None] = 0
+    if mode == 2:
+        for x, y, z in ti.ndrange(nx, ny, nz):
+            if solid_field[x, y, z] == 0:
+                old_c = c_field[x, y, z]
+                new_c = clamp01(old_c)
+                delta = old_c - new_c
+                if delta != 0.0:
+                    c_field[x, y, z] = new_c
+                    corr = new_c - old_c
+                    for q in ti.static(range(Q)):
+                        h[hbuf, x, y, z, q] += w_field[q] * corr
+                    ti.atomic_add(mass_correction_delta[None], delta)
+                weight = new_c * (1.0 - new_c)
+                if weight > 1.0e-8:
+                    ti.atomic_add(mass_correction_weight[None], weight)
+                    ti.atomic_add(mass_correction_count[None], 1)
+
+
+@ti.kernel
+def mass_correction_redistribute_kernel(hbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, mode: ti.i32):
+    if mode == 2:
+        total_weight = mass_correction_weight[None]
+        delta = mass_correction_delta[None]
+        if ti.abs(delta) > 0.0 and total_weight > 1.0e-30:
+            for x, y, z in ti.ndrange(nx, ny, nz):
+                if solid_field[x, y, z] == 0:
+                    c = c_field[x, y, z]
+                    weight = c * (1.0 - c)
+                    if weight > 1.0e-8:
+                        add_c = delta * weight / total_weight
+                        c_new = c + add_c
+                        c_field[x, y, z] = c_new
+                        for q in ti.static(range(Q)):
+                            h[hbuf, x, y, z, q] += w_field[q] * add_c
 
 
 @ti.kernel
@@ -704,6 +755,9 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         phase_wall_stream_mass_before=float(np.sum(arrays["phase_wall_mass_before"])),
         phase_wall_reflect_mass=float(np.sum(arrays["phase_wall_reflect_mass"])),
         phase_wall_delta_mass=float(np.sum(arrays["phase_wall_delta_mass"])),
+        mass_correction_delta=float(mass_correction_delta[None]),
+        mass_correction_weight=float(mass_correction_weight[None]),
+        mass_correction_count=int(mass_correction_count[None]),
         wall_ghost_min=float(np.min(ghost)),
         wall_ghost_max=float(np.max(ghost)),
         nonfinite_count=nonfinite,
@@ -745,7 +799,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         args.momentum_density_mode, args.momentum_rho_ref,
     )
     phase_from_h_kernel(0, args.nx, args.ny, args.nz)
-    phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
+    if args.phase_bound_mode == 2:
+        mass_correction_clip_kernel(0, args.nx, args.ny, args.nz, args.phase_bound_mode)
+        mass_correction_redistribute_kernel(0, args.nx, args.ny, args.nz, args.phase_bound_mode)
+        phase_from_h_kernel(0, args.nx, args.ny, args.nz)
+    else:
+        phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
     rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
     grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
     wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
@@ -774,7 +833,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     rows = [numpy_metrics(0, h_src, g_src, mass0)]
     for step in range(1, args.steps + 1):
         phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
-        phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
+        if args.phase_bound_mode == 2:
+            mass_correction_clip_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
+            mass_correction_redistribute_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
+            phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
+        else:
+            phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
         rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
         wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
@@ -807,7 +871,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         g_stream = g_src
 
         phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
-        phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
+        if args.phase_bound_mode == 2:
+            mass_correction_clip_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
+            mass_correction_redistribute_kernel(h_src, args.nx, args.ny, args.nz, args.phase_bound_mode)
+            phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
+        else:
+            phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
         rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
         force_kernel(

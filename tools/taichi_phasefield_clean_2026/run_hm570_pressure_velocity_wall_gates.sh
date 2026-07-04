@@ -79,6 +79,12 @@ run_case "P3_bulk_surface_guo_phase_adv_20" \
 run_case "P4_bulk_surface_guo_phase_adv_100" \
   --steps 100 --geometry-mode 0 --force-closure-mode 1 --phase-advection-mode 1 --output-period 10
 
+run_case "P5_bulk_surface_guo_phase_adv_masscorr_100" \
+  --steps 100 --geometry-mode 0 --force-closure-mode 1 --phase-advection-mode 1 --phase-bound-mode 2 --output-period 10
+
+run_case "P6_bulk_surface_guo_phase_adv_masscorr_1000" \
+  --steps 1000 --geometry-mode 0 --force-closure-mode 1 --phase-advection-mode 1 --phase-bound-mode 2 --output-period 100
+
 run_case "W1_flat_wall_no_force_none_20" \
   --steps 20 --geometry-mode 1 --theta-deg 90 --force-closure-mode 0 --phase-advection-mode 0 --phase-wall-mode 0
 
@@ -93,6 +99,12 @@ run_case "W4_flat_wall_no_force_perlink_100" \
 
 run_case "W5_flat_wall_surface_perlink_phase_adv_100" \
   --steps 100 --geometry-mode 1 --theta-deg 90 --force-closure-mode 1 --phase-advection-mode 1 --phase-wall-mode 2 --output-period 10
+
+run_case "W7_flat_wall_surface_perlink_phase_adv_masscorr_100" \
+  --steps 100 --geometry-mode 1 --theta-deg 90 --force-closure-mode 1 --phase-advection-mode 1 --phase-wall-mode 2 --phase-bound-mode 2 --output-period 10
+
+run_case "W8_flat_wall_surface_perlink_phase_adv_masscorr_1000" \
+  --steps 1000 --geometry-mode 1 --theta-deg 90 --force-closure-mode 1 --phase-advection-mode 1 --phase-wall-mode 2 --phase-bound-mode 2 --output-period 100
 
 run_case "W6_flat_wall_no_force_perlink_1000" \
   --steps 1000 --geometry-mode 1 --theta-deg 90 --force-closure-mode 0 --phase-advection-mode 0 --phase-wall-mode 2 --output-period 100
