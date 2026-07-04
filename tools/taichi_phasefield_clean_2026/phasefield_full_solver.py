@@ -128,6 +128,13 @@ class StepMetrics:
     phase_source_first_max: float
     wall_ghost_min: float
     wall_ghost_max: float
+    near_wall_interface_cells: int
+    near_wall_force_over_rho_max: float
+    near_wall_mu_min: float
+    near_wall_mu_max: float
+    near_wall_mu_abs_max: float
+    wall_ghost_clamp_low_cells: int
+    wall_ghost_clamp_high_cells: int
     nonfinite_count: int
 
 
@@ -250,6 +257,13 @@ def c_neighbor_or_center(x, y, z, nx, ny, nz, c0):
     value = c_field[xx, yy, zz]
     if solid_field[xx, yy, zz] == 1:
         value = c0
+        for q in ti.static(range(Q)):
+            e = e_field[q]
+            fx = wrap_index(xx + e[0], nx)
+            fy = wrap_index(yy + e[1], ny)
+            fz = wrap_index(zz + e[2], nz)
+            if wall_field[fx, fy, fz] == 1:
+                value = wall_c_ghost_field[fx, fy, fz]
     return value
 
 
@@ -341,15 +355,24 @@ def initialize_fields_kernel(
     nz: ti.i32,
     radius: ti.f64,
     width: ti.f64,
+    center_x: ti.f64,
+    center_y: ti.f64,
+    center_z: ti.f64,
     rho_l: ti.f64,
     rho_g: ti.f64,
     momentum_density_mode: ti.i32,
     momentum_rho_ref: ti.f64,
     pressure_model: ti.i32,
 ):
-    cx = 0.5 * ti.cast(nx - 1, ti.f64)
-    cy = 0.5 * ti.cast(ny - 1, ti.f64)
-    cz = 0.5 * ti.cast(nz - 1, ti.f64)
+    cx = center_x
+    cy = center_y
+    cz = center_z
+    if center_x < 0.0:
+        cx = 0.5 * ti.cast(nx - 1, ti.f64)
+    if center_y < 0.0:
+        cy = 0.5 * ti.cast(ny - 1, ti.f64)
+    if center_z < 0.0:
+        cz = 0.5 * ti.cast(nz - 1, ti.f64)
     for x, y, z in ti.ndrange(nx, ny, nz):
         dx = ti.cast(x, ti.f64) - cx
         dy = ti.cast(y, ti.f64) - cy
@@ -519,15 +542,22 @@ def grad_laplace_mu_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, beta: ti.f64, kap
 
 
 @ti.kernel
-def wetting_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, mode: ti.i32):
+def wetting_kernel(
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    mode: ti.i32,
+    width: ti.f64,
+    ghost_distance: ti.f64,
+    ghost_sign: ti.f64,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
         ghost = 0.5
         if wall_field[x, y, z] == 1:
             theta = target_theta_field[x, y, z]
-            # First-candidate geometric shadow: theta=90 keeps local C.
-            # Non-90 introduces a bounded bias only as an initial skeleton.
-            bias = 0.25 * ti.cos(theta)
-            ghost = clamp01(c_field[x, y, z] + bias)
+            c_wall = clamp01(c_field[x, y, z])
+            dcdn = -(4.0 / width) * ti.cos(theta) * c_wall * (1.0 - c_wall)
+            ghost = clamp01(c_wall + ghost_sign * ghost_distance * dcdn)
             if mode == 1 and write_allowed_field[x, y, z] == 1:
                 c_field[x, y, z] = ghost
         wall_c_ghost_field[x, y, z] = ghost
@@ -738,8 +768,7 @@ def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx
                 if phase_wall_mode == 2:
                     h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
                 elif phase_wall_mode == 3:
-                    ghost = wall_c_ghost_field[x, y, z]
-                    h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]] + w_field[q] * (ghost - c_field[x, y, z])
+                    h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
                 else:
                     h[dst_h, x, y, z, q] = 0.0
                 g[dst_g, x, y, z, q] = g[src_g, x, y, z, opp_field[q]]
@@ -811,6 +840,7 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, ka
         "force_over_rho": force_over_rho_field.to_numpy(),
         "force_cap_hit": force_cap_hit_field.to_numpy(),
         "wall": wall_field.to_numpy(),
+        "solid": solid_field.to_numpy(),
         "write_allowed": write_allowed_field.to_numpy(),
         "ghost": wall_c_ghost_field.to_numpy(),
         "phase_wall_missing": phase_wall_missing_count_field.to_numpy(),
@@ -826,10 +856,14 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, ka
     c = arrays["c"]
     mass = float(np.sum(c))
     u_mag = np.linalg.norm(arrays["u"], axis=-1)
-    inside = c > 0.9
-    outside = c < 0.1
-    interface = (c >= 0.1) & (c <= 0.9)
-    droplet_volume_radius = float((3.0 * max(mass, 0.0) / (4.0 * math.pi)) ** (1.0 / 3.0)) if mass > 0.0 else 0.0
+    fluid = arrays["solid"] == 0
+    inside = (c > 0.9) & fluid
+    outside = (c < 0.1) & fluid
+    interface = (c >= 0.1) & (c <= 0.9) & fluid
+    near_wall = (arrays["wall"] == 1) & fluid
+    near_wall_interface = near_wall & interface
+    fluid_mass = float(np.sum(c[fluid]))
+    droplet_volume_radius = float((3.0 * max(fluid_mass, 0.0) / (4.0 * math.pi)) ** (1.0 / 3.0)) if fluid_mass > 0.0 else 0.0
     pressure_inside_mean = safe_mean(arrays["pressure"][inside])
     pressure_outside_mean = safe_mean(arrays["pressure"][outside])
     laplace_delta_p = pressure_inside_mean - pressure_outside_mean
@@ -849,6 +883,8 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, ka
     force_mag = np.linalg.norm(arrays["force_over_rho"], axis=-1)
     phase_source_first_mag = np.linalg.norm(arrays["phase_source_first"], axis=-1)
     ghost = arrays["ghost"]
+    near_wall_mu = arrays["mu"][near_wall_interface]
+    near_wall_force = force_mag[near_wall_interface]
     return StepMetrics(
         step=step,
         mass=mass,
@@ -895,6 +931,13 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, ka
         phase_source_first_max=float(np.max(phase_source_first_mag)),
         wall_ghost_min=float(np.min(ghost)),
         wall_ghost_max=float(np.max(ghost)),
+        near_wall_interface_cells=int(np.count_nonzero(near_wall_interface)),
+        near_wall_force_over_rho_max=float(np.max(near_wall_force)) if near_wall_force.size else 0.0,
+        near_wall_mu_min=float(np.min(near_wall_mu)) if near_wall_mu.size else 0.0,
+        near_wall_mu_max=float(np.max(near_wall_mu)) if near_wall_mu.size else 0.0,
+        near_wall_mu_abs_max=float(np.max(np.abs(near_wall_mu))) if near_wall_mu.size else 0.0,
+        wall_ghost_clamp_low_cells=int(np.count_nonzero((arrays["wall"] == 1) & (ghost <= 1.0e-12))),
+        wall_ghost_clamp_high_cells=int(np.count_nonzero((arrays["wall"] == 1) & (ghost >= 1.0 - 1.0e-12))),
         nonfinite_count=nonfinite,
     )
 
@@ -907,6 +950,24 @@ def write_csv(path: Path, rows: list[StepMetrics]) -> None:
         writer.writeheader()
         for row in rows:
             writer.writerow(asdict(row))
+
+
+def write_npz_snapshot(path: Path, hbuf: int, gbuf: int) -> None:
+    ti.sync()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(
+        path,
+        c=c_field.to_numpy(),
+        rho=rho_field.to_numpy(),
+        pressure=pressure_field.to_numpy(),
+        mu=mu_field.to_numpy(),
+        u=u_field.to_numpy(),
+        wall=wall_field.to_numpy(),
+        solid=solid_field.to_numpy(),
+        ghost=wall_c_ghost_field.to_numpy(),
+        h=h.to_numpy()[hbuf],
+        g=g.to_numpy()[gbuf],
+    )
 
 
 def git_head() -> str:
@@ -983,6 +1044,13 @@ def resolve_phase_source_scale(args: argparse.Namespace) -> dict[str, float | in
 def run(args: argparse.Namespace) -> dict[str, Any]:
     phase_scale_info = resolve_phase_source_scale(args)
     effective_phase_source_scale = float(phase_scale_info["effective_scale"])
+    center_x = args.center_x if args.center_x >= 0.0 else 0.5 * (args.nx - 1)
+    center_y = args.center_y if args.center_y >= 0.0 else 0.5 * (args.ny - 1)
+    center_z = args.center_z if args.center_z >= 0.0 else 0.5 * (args.nz - 1)
+    if math.isfinite(args.init_contact_angle_deg):
+        if args.geometry_mode != 1:
+            raise ValueError("--init-contact-angle-deg is only defined for flat wall geometry-mode=1")
+        center_y = args.wall_surface_y - args.radius * math.cos(math.radians(args.init_contact_angle_deg))
 
     arch = ti.cuda if args.arch == "cuda" else ti.cpu
     ti.init(
@@ -997,7 +1065,9 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     build_geometry_kernel(args.nx, args.ny, args.nz, args.geometry_mode, args.theta_deg)
     initialize_fields_kernel(
         0, 0, args.nx, args.ny, args.nz,
-        args.radius, args.width, args.rho_l, args.rho_g,
+        args.radius, args.width,
+        center_x, center_y, center_z,
+        args.rho_l, args.rho_g,
         args.momentum_density_mode, args.momentum_rho_ref,
         args.pressure_model,
     )
@@ -1010,8 +1080,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
     rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
     pressure_from_g_kernel(0, args.nx, args.ny, args.nz, args.pressure_model)
+    wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode, args.width, args.wetting_ghost_distance, args.wetting_ghost_sign)
     grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
-    wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
     force_kernel(
         args.nx, args.ny, args.nz,
         args.body_gx, args.body_gy, args.body_gz,
@@ -1046,8 +1116,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
         rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
         pressure_from_g_kernel(g_src, args.nx, args.ny, args.nz, args.pressure_model)
+        wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode, args.width, args.wetting_ghost_distance, args.wetting_ghost_sign)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
-        wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
         force_kernel(
             args.nx, args.ny, args.nz,
             args.body_gx, args.body_gy, args.body_gz,
@@ -1095,6 +1165,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
         rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
         pressure_from_g_kernel(g_src, args.nx, args.ny, args.nz, args.pressure_model)
+        wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode, args.width, args.wetting_ghost_distance, args.wetting_ghost_sign)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
         force_kernel(
             args.nx, args.ny, args.nz,
@@ -1124,6 +1195,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     )
     args.out.mkdir(parents=True, exist_ok=True)
     write_csv(args.out / "step_metrics.csv", rows)
+    if args.write_npz:
+        write_npz_snapshot(args.out / "final_fields.npz", h_src, g_src)
     report = {
         "status": "pass" if gate_pass else "fail",
         "claim_limit": "full-stack skeleton run only; not validation",
@@ -1138,6 +1211,12 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "grid": [args.nx, args.ny, args.nz],
         "steps": args.steps,
         "geometry_mode": args.geometry_mode,
+        "theta_deg": args.theta_deg,
+        "init_contact_angle_deg": args.init_contact_angle_deg,
+        "wall_surface_y": args.wall_surface_y,
+        "resolved_center_x": center_x,
+        "resolved_center_y": center_y,
+        "resolved_center_z": center_z,
         "rho_l": args.rho_l,
         "rho_g": args.rho_g,
         "density_ratio": args.rho_l / args.rho_g,
@@ -1152,6 +1231,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "phase_post_source_factor": phase_scale_info["post_source_factor"],
         "phase_effective_post_scale": phase_scale_info["effective_post_scale"],
         "wetting_mode": args.wetting_mode,
+        "wetting_ghost_distance": args.wetting_ghost_distance,
+        "wetting_ghost_sign": args.wetting_ghost_sign,
         "phase_wall_mode": args.phase_wall_mode,
         "force_mode": args.force_mode,
         "force_closure_mode": args.force_closure_mode,
@@ -1193,6 +1274,11 @@ def main() -> int:
     parser.add_argument("--theta-deg", type=float, default=90.0)
     parser.add_argument("--radius", type=float, default=6.0)
     parser.add_argument("--width", type=float, default=4.0)
+    parser.add_argument("--center-x", type=float, default=-1.0, help="droplet center x; negative uses box center")
+    parser.add_argument("--center-y", type=float, default=-1.0, help="droplet center y; negative uses box center unless --init-contact-angle-deg is set")
+    parser.add_argument("--center-z", type=float, default=-1.0, help="droplet center z; negative uses box center")
+    parser.add_argument("--init-contact-angle-deg", type=float, default=float("nan"), help="flat-wall spherical-cap initial angle; resolves center_y from wall_surface_y - R*cos(theta)")
+    parser.add_argument("--wall-surface-y", type=float, default=0.5, help="half-way physical wall position for flat-wall morphology")
     parser.add_argument("--rho-l", type=float, default=1.0)
     parser.add_argument("--rho-g", type=float, default=0.1)
     parser.add_argument("--nu-l", type=float, default=0.1)
@@ -1207,6 +1293,8 @@ def main() -> int:
     parser.add_argument("--phase-mobility", type=float, default=-1.0, help="CAC mobility used by scale mode 3; negative uses cs2*(1/omega_h-0.5)")
     parser.add_argument("--phase-bound-mode", type=int, default=1)
     parser.add_argument("--wetting-mode", type=int, default=0, help="0 shadow only, 1 write C at wall band")
+    parser.add_argument("--wetting-ghost-distance", type=float, default=1.0, help="normal distance multiplier used by Cghost=Cwall+sign*distance*dCdn")
+    parser.add_argument("--wetting-ghost-sign", type=float, default=-1.0, help="sign used by Cghost=Cwall+sign*distance*dCdn; old behavior is -1")
     parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band, 2 neutral per-link reflect, 3 wetting per-link reconstruction")
     parser.add_argument("--force-mode", type=int, default=0, help="compatibility alias: 0 force off, 1 enables surface force if force-closure-mode is 0")
     parser.add_argument("--force-closure-mode", type=int, default=0, help="0 off, 1 surface, 2 pressure, 3 surface+pressure")
@@ -1227,6 +1315,7 @@ def main() -> int:
     parser.add_argument("--body-gx", type=float, default=0.0)
     parser.add_argument("--body-gy", type=float, default=0.0)
     parser.add_argument("--body-gz", type=float, default=0.0)
+    parser.add_argument("--write-npz", action="store_true", help="write compressed final fields for morphology analysis")
     args = parser.parse_args()
     report = run(args)
     return 0 if report["status"] == "pass" else 1
