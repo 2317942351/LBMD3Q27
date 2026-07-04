@@ -94,9 +94,18 @@ class StepMetrics:
     rho_max: float
     pressure_min: float
     pressure_max: float
+    droplet_volume_radius: float
+    pressure_inside_mean: float
+    pressure_outside_mean: float
+    laplace_delta_p: float
+    sigma_theory: float
+    laplace_delta_p_target: float
+    laplace_delta_p_relative_error: float
     mu_min: float
     mu_max: float
     u_max: float
+    spurious_u_rms_interface: float
+    interface_cells: int
     f_pressure_max: float
     f_surf_max: float
     f_mu_max: float
@@ -601,6 +610,7 @@ def momentum_macro_kernel(
     rho_force_floor: ti.f64,
     momentum_density_mode: ti.i32,
     momentum_rho_ref: ti.f64,
+    velocity_density_mode: ti.i32,
 ):
     for x, y, z in ti.ndrange(nx, ny, nz):
         mom = ti.Vector([0.0, 0.0, 0.0])
@@ -608,6 +618,10 @@ def momentum_macro_kernel(
         rho_macro = rho
         if momentum_density_mode == 1:
             rho_macro = momentum_rho_ref
+        if velocity_density_mode == 1:
+            rho_macro = rho
+        elif velocity_density_mode == 2:
+            rho_macro = ti.max(rho, rho_force_floor)
         for q in ti.static(range(Q)):
             e = e_field[q]
             fq = g[buf, x, y, z, q]
@@ -773,7 +787,13 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
                 h[hbuf, x, y, z, q] = w_field[q] * ghost
 
 
-def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
+def safe_mean(values: np.ndarray) -> float:
+    if values.size == 0:
+        return 0.0
+    return float(np.mean(values))
+
+
+def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, kappa: float) -> StepMetrics:
     ti.sync()
     arrays = {
         "c": c_field.to_numpy(),
@@ -806,6 +826,21 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
     c = arrays["c"]
     mass = float(np.sum(c))
     u_mag = np.linalg.norm(arrays["u"], axis=-1)
+    inside = c > 0.9
+    outside = c < 0.1
+    interface = (c >= 0.1) & (c <= 0.9)
+    droplet_volume_radius = float((3.0 * max(mass, 0.0) / (4.0 * math.pi)) ** (1.0 / 3.0)) if mass > 0.0 else 0.0
+    pressure_inside_mean = safe_mean(arrays["pressure"][inside])
+    pressure_outside_mean = safe_mean(arrays["pressure"][outside])
+    laplace_delta_p = pressure_inside_mean - pressure_outside_mean
+    sigma_theory = math.sqrt(max(kappa * beta, 0.0)) / 6.0
+    laplace_delta_p_target = 2.0 * sigma_theory / droplet_volume_radius if droplet_volume_radius > 0.0 else 0.0
+    laplace_delta_p_relative_error = (
+        abs(laplace_delta_p - laplace_delta_p_target) / max(abs(laplace_delta_p_target), 1.0e-30)
+        if laplace_delta_p_target != 0.0
+        else 0.0
+    )
+    spurious_u_rms_interface = float(np.sqrt(np.mean(u_mag[interface] ** 2))) if np.count_nonzero(interface) else 0.0
     f_pressure_mag = np.linalg.norm(arrays["f_pressure"], axis=-1)
     f_surf_mag = np.linalg.norm(arrays["f_surf"], axis=-1)
     f_mu_mag = np.linalg.norm(arrays["f_mu"], axis=-1)
@@ -826,9 +861,18 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         rho_max=float(np.max(arrays["rho"])),
         pressure_min=float(np.min(arrays["pressure"])),
         pressure_max=float(np.max(arrays["pressure"])),
+        droplet_volume_radius=droplet_volume_radius,
+        pressure_inside_mean=pressure_inside_mean,
+        pressure_outside_mean=pressure_outside_mean,
+        laplace_delta_p=laplace_delta_p,
+        sigma_theory=sigma_theory,
+        laplace_delta_p_target=laplace_delta_p_target,
+        laplace_delta_p_relative_error=laplace_delta_p_relative_error,
         mu_min=float(np.min(arrays["mu"])),
         mu_max=float(np.max(arrays["mu"])),
         u_max=float(np.max(u_mag)),
+        spurious_u_rms_interface=spurious_u_rms_interface,
+        interface_cells=int(np.count_nonzero(interface)),
         f_pressure_max=float(np.max(f_pressure_mag)),
         f_surf_max=float(np.max(f_surf_mag)),
         f_mu_max=float(np.max(f_mu_mag)),
@@ -979,6 +1023,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         0, args.nx, args.ny, args.nz,
         args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
         args.momentum_density_mode, args.momentum_rho_ref,
+        args.velocity_density_mode,
     )
     ti.sync()
     mass0 = float(np.sum(c_field.to_numpy()))
@@ -990,7 +1035,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     g_collide = 1
     g_stream = 0
 
-    rows = [numpy_metrics(0, h_src, g_src, mass0)]
+    rows = [numpy_metrics(0, h_src, g_src, mass0, args.beta, args.kappa)]
     for step in range(1, args.steps + 1):
         phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
         if args.phase_bound_mode == 2:
@@ -1014,6 +1059,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             g_src, args.nx, args.ny, args.nz,
             args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
             args.momentum_density_mode, args.momentum_rho_ref,
+            args.velocity_density_mode,
         )
         collide_phase_kernel(
             h_src, h_collide,
@@ -1061,10 +1107,11 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             g_src, args.nx, args.ny, args.nz,
             args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
             args.momentum_density_mode, args.momentum_rho_ref,
+            args.velocity_density_mode,
         )
 
         if step % args.output_period == 0 or step == args.steps:
-            rows.append(numpy_metrics(step, h_src, g_src, mass0))
+            rows.append(numpy_metrics(step, h_src, g_src, mass0, args.beta, args.kappa))
 
     final = rows[-1]
     max_abs_mass_drift = max(abs(row.mass_drift) for row in rows)
@@ -1116,6 +1163,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "rho_force_floor": args.rho_force_floor,
         "force_accel_cap": args.force_accel_cap,
         "momentum_density_mode": args.momentum_density_mode,
+        "velocity_density_mode": args.velocity_density_mode,
         "momentum_rho_ref": args.momentum_rho_ref,
         "momentum_mode": args.momentum_mode,
         "phase_advection_mode": args.phase_advection_mode,
@@ -1170,6 +1218,7 @@ def main() -> int:
     parser.add_argument("--rho-force-floor", type=float, default=1.0e-12)
     parser.add_argument("--force-accel-cap", type=float, default=0.0, help="diagnostic cap on |F/rho|; 0 disables")
     parser.add_argument("--momentum-density-mode", type=int, default=0, help="0 g equilibrium uses rho(C), 1 diagnostic constant momentum density")
+    parser.add_argument("--velocity-density-mode", type=int, default=0, help="0 use momentum density for u, 1 use local rho(C), 2 use max(rho(C), rho-force-floor)")
     parser.add_argument("--momentum-rho-ref", type=float, default=1.0)
     parser.add_argument("--momentum-mode", type=int, default=0, help="0 frozen/reset equilibrium, 1 coupled BGK")
     parser.add_argument("--phase-advection-mode", type=int, default=0, help="0 h_eq uses zero velocity, 1 h_eq uses u")
