@@ -33,6 +33,12 @@ walls.
   - Pure Python/NumPy tiny-grid producer-consumer loop.
   - Tests `h_src -> collide/source -> pull stream -> C=sum(h_dst)` without
     wall, wetting, pressure force, or curved geometry.
+- `phasefield_bulk_lifecycle_taichi.py`
+  - Taichi kernel version of the same bulk h-population lifecycle.
+  - Uses explicit `h[2,nx,ny,nz,Q]` double buffers and module-level kernels.
+- `run_hm570_phasefield_bulk_kernel.sh`
+  - Remote P100 runner that creates/reuses a Taichi Python environment and
+    executes the kernel gate with `CUDA_VISIBLE_DEVICES=1`.
 
 ## Non-Goals
 
