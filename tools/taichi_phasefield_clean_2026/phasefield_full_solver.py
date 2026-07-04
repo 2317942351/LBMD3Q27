@@ -72,6 +72,10 @@ wall_normal_field = None
 target_theta_field = None
 wall_c_ghost_field = None
 write_allowed_field = None
+phase_wall_missing_count_field = None
+phase_wall_stream_mass_before_field = None
+phase_wall_reflect_mass_field = None
+phase_wall_delta_mass_field = None
 
 
 @dataclass
@@ -101,6 +105,10 @@ class StepMetrics:
     g_max: float
     wall_cells: int
     write_allowed_cells: int
+    phase_wall_missing_links: int
+    phase_wall_stream_mass_before: float
+    phase_wall_reflect_mass: float
+    phase_wall_delta_mass: float
     wall_ghost_min: float
     wall_ghost_max: float
     nonfinite_count: int
@@ -142,6 +150,8 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     global f_total_field, force_over_rho_field, force_cap_hit_field
     global solid_field, wall_field, sdf_field, wall_normal_field
     global target_theta_field, wall_c_ghost_field, write_allowed_field
+    global phase_wall_missing_count_field, phase_wall_stream_mass_before_field
+    global phase_wall_reflect_mass_field, phase_wall_delta_mass_field
 
     shape = (nx, ny, nz)
     h = ti.field(dtype=ti.f64, shape=(2, nx, ny, nz, Q))
@@ -177,6 +187,10 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     target_theta_field = ti.field(dtype=ti.f64, shape=shape)
     wall_c_ghost_field = ti.field(dtype=ti.f64, shape=shape)
     write_allowed_field = ti.field(dtype=ti.i32, shape=shape)
+    phase_wall_missing_count_field = ti.field(dtype=ti.i32, shape=shape)
+    phase_wall_stream_mass_before_field = ti.field(dtype=ti.f64, shape=shape)
+    phase_wall_reflect_mass_field = ti.field(dtype=ti.f64, shape=shape)
+    phase_wall_delta_mass_field = ti.field(dtype=ti.f64, shape=shape)
 
     e_np, w_np, opp_np = d3q27_lattice()
     e_field.from_numpy(e_np)
@@ -202,6 +216,17 @@ def clamp01(x):
     if y > 1.0:
         y = 1.0
     return y
+
+
+@ti.func
+def c_neighbor_or_center(x, y, z, nx, ny, nz, c0):
+    xx = wrap_index(x, nx)
+    yy = wrap_index(y, ny)
+    zz = wrap_index(z, nz)
+    value = c_field[xx, yy, zz]
+    if solid_field[xx, yy, zz] == 1:
+        value = c0
+    return value
 
 
 @ti.func
@@ -341,13 +366,19 @@ def grad_laplace_mu_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, beta: ti.f64, kap
         zm = wrap_index(z - 1, nz)
 
         c0 = c_field[x, y, z]
-        gx = 0.5 * (c_field[xp, y, z] - c_field[xm, y, z])
-        gy = 0.5 * (c_field[x, yp, z] - c_field[x, ym, z])
-        gz = 0.5 * (c_field[x, y, zp] - c_field[x, y, zm])
+        cxp = c_neighbor_or_center(x + 1, y, z, nx, ny, nz, c0)
+        cxm = c_neighbor_or_center(x - 1, y, z, nx, ny, nz, c0)
+        cyp = c_neighbor_or_center(x, y + 1, z, nx, ny, nz, c0)
+        cym = c_neighbor_or_center(x, y - 1, z, nx, ny, nz, c0)
+        czp = c_neighbor_or_center(x, y, z + 1, nx, ny, nz, c0)
+        czm = c_neighbor_or_center(x, y, z - 1, nx, ny, nz, c0)
+        gx = 0.5 * (cxp - cxm)
+        gy = 0.5 * (cyp - cym)
+        gz = 0.5 * (czp - czm)
         lap = (
-            c_field[xp, y, z] + c_field[xm, y, z]
-            + c_field[x, yp, z] + c_field[x, ym, z]
-            + c_field[x, y, zp] + c_field[x, y, zm]
+            cxp + cxm
+            + cyp + cym
+            + czp + czm
             - 6.0 * c0
         )
         grad = ti.Vector([gx, gy, gz])
@@ -478,13 +509,26 @@ def momentum_macro_kernel(
 
 
 @ti.kernel
-def collide_phase_kernel(src: ti.i32, dst: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, omega_h: ti.f64, width: ti.f64, phase_advection_mode: ti.i32):
+def collide_phase_kernel(
+    src: ti.i32,
+    dst: ti.i32,
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    omega_h: ti.f64,
+    width: ti.f64,
+    phase_advection_mode: ti.i32,
+    phase_wall_mode: ti.i32,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
         c = c_field[x, y, z]
         n = normal_field[x, y, z]
         u = u_field[x, y, z]
         if phase_advection_mode == 0:
             u = ti.Vector([0.0, 0.0, 0.0])
+        if phase_wall_mode == 2 and wall_field[x, y, z] == 1:
+            wn = wall_normal_field[x, y, z]
+            u = u - wn * u.dot(wn)
         tmp1 = (1.0 - 4.0 * (c - 0.5) * (c - 0.5)) / width
         for q in ti.static(range(Q)):
             e = e_field[q]
@@ -535,24 +579,57 @@ def collide_momentum_kernel(
 
 
 @ti.kernel
-def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32):
+def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, phase_wall_mode: ti.i32):
     for x, y, z in ti.ndrange(nx, ny, nz):
         for q in ti.static(range(Q)):
             e = e_field[q]
             xn = wrap_index(x - e[0], nx)
             yn = wrap_index(y - e[1], ny)
             zn = wrap_index(z - e[2], nz)
-            h[dst_h, x, y, z, q] = h[src_h, xn, yn, zn, q]
-            g[dst_g, x, y, z, q] = g[src_g, xn, yn, zn, q]
+            if solid_field[xn, yn, zn] == 1 and solid_field[x, y, z] == 0:
+                if phase_wall_mode == 2:
+                    h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
+                else:
+                    h[dst_h, x, y, z, q] = 0.0
+                g[dst_g, x, y, z, q] = g[src_g, x, y, z, opp_field[q]]
+            else:
+                h[dst_h, x, y, z, q] = h[src_h, xn, yn, zn, q]
+                g[dst_g, x, y, z, q] = g[src_g, xn, yn, zn, q]
 
 
 @ti.kernel
 def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, phase_wall_mode: ti.i32):
     for x, y, z in ti.ndrange(nx, ny, nz):
+        phase_wall_missing_count_field[x, y, z] = 0
+        phase_wall_stream_mass_before_field[x, y, z] = 0.0
+        phase_wall_reflect_mass_field[x, y, z] = 0.0
+        phase_wall_delta_mass_field[x, y, z] = 0.0
         if solid_field[x, y, z] == 1:
             for q in ti.static(range(Q)):
                 h[hbuf, x, y, z, q] = 0.0
                 g[gbuf, x, y, z, q] = g[gbuf, x, y, z, opp_field[q]]
+        elif phase_wall_mode == 2:
+            missing = 0
+            old_sum = 0.0
+            reflected = 0.0
+            for q in ti.static(range(Q)):
+                old_sum += h[hbuf, x, y, z, q]
+            for q in ti.static(range(Q)):
+                e = e_field[q]
+                xn = wrap_index(x - e[0], nx)
+                yn = wrap_index(y - e[1], ny)
+                zn = wrap_index(z - e[2], nz)
+                if solid_field[xn, yn, zn] == 1:
+                    val = h[hbuf, x, y, z, q]
+                    reflected += val
+                    missing += 1
+            new_sum = 0.0
+            for q in ti.static(range(Q)):
+                new_sum += h[hbuf, x, y, z, q]
+            phase_wall_missing_count_field[x, y, z] = missing
+            phase_wall_stream_mass_before_field[x, y, z] = old_sum
+            phase_wall_reflect_mass_field[x, y, z] = reflected
+            phase_wall_delta_mass_field[x, y, z] = new_sum - old_sum
         elif wall_field[x, y, z] == 1 and phase_wall_mode == 1:
             ghost = wall_c_ghost_field[x, y, z]
             for q in ti.static(range(Q)):
@@ -579,6 +656,10 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         "wall": wall_field.to_numpy(),
         "write_allowed": write_allowed_field.to_numpy(),
         "ghost": wall_c_ghost_field.to_numpy(),
+        "phase_wall_missing": phase_wall_missing_count_field.to_numpy(),
+        "phase_wall_mass_before": phase_wall_stream_mass_before_field.to_numpy(),
+        "phase_wall_reflect_mass": phase_wall_reflect_mass_field.to_numpy(),
+        "phase_wall_delta_mass": phase_wall_delta_mass_field.to_numpy(),
     }
     nonfinite = 0
     for value in arrays.values():
@@ -619,6 +700,10 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         g_max=float(np.max(arrays["g"])),
         wall_cells=int(np.count_nonzero(arrays["wall"])),
         write_allowed_cells=int(np.count_nonzero(arrays["write_allowed"])),
+        phase_wall_missing_links=int(np.sum(arrays["phase_wall_missing"])),
+        phase_wall_stream_mass_before=float(np.sum(arrays["phase_wall_mass_before"])),
+        phase_wall_reflect_mass=float(np.sum(arrays["phase_wall_reflect_mass"])),
+        phase_wall_delta_mass=float(np.sum(arrays["phase_wall_delta_mass"])),
         wall_ghost_min=float(np.min(ghost)),
         wall_ghost_max=float(np.max(ghost)),
         nonfinite_count=nonfinite,
@@ -705,13 +790,13 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
             args.momentum_density_mode, args.momentum_rho_ref,
         )
-        collide_phase_kernel(h_src, h_collide, args.nx, args.ny, args.nz, args.omega_h, args.width, args.phase_advection_mode)
+        collide_phase_kernel(h_src, h_collide, args.nx, args.ny, args.nz, args.omega_h, args.width, args.phase_advection_mode, args.phase_wall_mode)
         collide_momentum_kernel(
             g_src, g_collide, args.nx, args.ny, args.nz,
             args.momentum_mode, args.force_insertion_mode,
             args.momentum_density_mode, args.momentum_rho_ref,
         )
-        stream_kernel(h_collide, h_stream, g_collide, g_stream, args.nx, args.ny, args.nz)
+        stream_kernel(h_collide, h_stream, g_collide, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
         boundary_kernel(h_stream, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
 
         h_src = h_stream
