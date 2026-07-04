@@ -1,20 +1,17 @@
-"""Full-stack first Taichi phase-field multiphase LBM skeleton.
+"""Book-derived Taichi phase-field multiphase LBM workbench.
 
-This file intentionally builds the whole solver dataflow before optimizing
-individual closures. It is not a validation-grade model yet. It is a complete
-running framework for:
+This file intentionally keeps the whole solver dataflow in one auditable place
+while the model is being closed against the project book anchors. It is not a
+contact-angle validation claim. It is the clean implementation lane for:
 
 - h_i phase populations,
 - g_i momentum populations,
 - rho(C), tau(C), gradC, laplaceC, mu,
-- pressure/surface/body force placeholders,
-- flat-wall geometry and wetting ghost fields,
+- pressure/surface/body force closures,
+- flat-wall geometry and per-link wetting reconstruction,
 - momentum bounce-back,
 - phase wall source/write modes,
 - diagnostics ledgers.
-
-First target: run a low-risk 24^3 droplet case on P100, then a flat-wall
-theta=90 case, and use the same executable for later closure replacement.
 """
 
 import argparse
@@ -79,6 +76,8 @@ phase_wall_delta_mass_field = None
 mass_correction_delta = None
 mass_correction_weight = None
 mass_correction_count = None
+phase_source_sum_field = None
+phase_source_first_field = None
 
 
 @dataclass
@@ -115,6 +114,8 @@ class StepMetrics:
     mass_correction_delta: float
     mass_correction_weight: float
     mass_correction_count: int
+    phase_source_sum_abs_max: float
+    phase_source_first_max: float
     wall_ghost_min: float
     wall_ghost_max: float
     nonfinite_count: int
@@ -159,6 +160,7 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     global phase_wall_missing_count_field, phase_wall_stream_mass_before_field
     global phase_wall_reflect_mass_field, phase_wall_delta_mass_field
     global mass_correction_delta, mass_correction_weight, mass_correction_count
+    global phase_source_sum_field, phase_source_first_field
 
     shape = (nx, ny, nz)
     h = ti.field(dtype=ti.f64, shape=(2, nx, ny, nz, Q))
@@ -201,6 +203,8 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     mass_correction_delta = ti.field(dtype=ti.f64, shape=())
     mass_correction_weight = ti.field(dtype=ti.f64, shape=())
     mass_correction_count = ti.field(dtype=ti.i32, shape=())
+    phase_source_sum_field = ti.field(dtype=ti.f64, shape=shape)
+    phase_source_first_field = ti.Vector.field(3, dtype=ti.f64, shape=shape)
 
     e_np, w_np, opp_np = d3q27_lattice()
     e_field.from_numpy(e_np)
@@ -248,10 +252,49 @@ def feq(q, rho, u):
 
 
 @ti.func
+def geq_pressure_velocity(q, pressure, rho_ref, u):
+    e = e_field[q]
+    eu = ti.cast(e[0], ti.f64) * u[0] + ti.cast(e[1], ti.f64) * u[1] + ti.cast(e[2], ti.f64) * u[2]
+    uu = u.dot(u)
+    pressure_part = pressure / CS2
+    return w_field[q] * (pressure_part + rho_ref * (eu / CS2 + 0.5 * eu * eu / (CS2 * CS2) - 0.5 * uu / CS2))
+
+
+@ti.func
 def heq(q, c, u):
     e = e_field[q]
     eu = ti.cast(e[0], ti.f64) * u[0] + ti.cast(e[1], ti.f64) * u[1] + ti.cast(e[2], ti.f64) * u[2]
     return w_field[q] * c * (1.0 + eu / CS2)
+
+
+@ti.func
+def phase_mobility_factor(c, width, mode):
+    bounded_c = clamp01(c)
+    value = (1.0 - 4.0 * (bounded_c - 0.5) * (bounded_c - 0.5)) / width
+    if mode >= 1:
+        # Book-derived conservative Allen-Cahn route for C in [0, 1]:
+        # |grad(C)|_eq ~ 4 C(1-C) / W.  This keeps the source normalized to
+        # the order-parameter range instead of relying on a hard-coded 0.5.
+        value = 4.0 * bounded_c * (1.0 - bounded_c) / width
+    return value
+
+
+@ti.func
+def phase_source(q, c, n, width, mode):
+    e = e_field[q]
+    edotn = ti.cast(e[0], ti.f64) * n[0] + ti.cast(e[1], ti.f64) * n[1] + ti.cast(e[2], ti.f64) * n[2]
+    scale = phase_mobility_factor(c, width, mode)
+    source = w_field[q] * scale * edotn
+    if mode >= 2:
+        # Enforce sum_i e_i F_i = scale*n on D3Q27.  Without the 1/cs2
+        # correction the first moment is only cs2*scale*n.
+        source = source / CS2
+    return source
+
+
+@ti.func
+def phase_source_scaled(q, c, n, width, mode, source_scale):
+    return phase_source(q, c, n, width, mode) * source_scale
 
 
 @ti.kernel
@@ -292,6 +335,7 @@ def initialize_fields_kernel(
     rho_g: ti.f64,
     momentum_density_mode: ti.i32,
     momentum_rho_ref: ti.f64,
+    pressure_model: ti.i32,
 ):
     cx = 0.5 * ti.cast(nx - 1, ti.f64)
     cy = 0.5 * ti.cast(ny - 1, ti.f64)
@@ -312,12 +356,18 @@ def initialize_fields_kernel(
         c_field[x, y, z] = c
         c_raw_field[x, y, z] = c
         rho_field[x, y, z] = rho
-        pressure_field[x, y, z] = rho * CS2
+        pressure = rho * CS2
+        if pressure_model >= 2:
+            pressure = CS2 * momentum_rho_ref
+        pressure_field[x, y, z] = pressure
         u_field[x, y, z] = u
         u_half_field[x, y, z] = u
         for q in ti.static(range(Q)):
             h[hbuf, x, y, z, q] = w_field[q] * c
-            g[gbuf, x, y, z, q] = feq(q, rho_mom, u)
+            if pressure_model >= 2:
+                g[gbuf, x, y, z, q] = geq_pressure_velocity(q, pressure, rho_mom, u)
+            else:
+                g[gbuf, x, y, z, q] = feq(q, rho_mom, u)
 
 
 @ti.kernel
@@ -403,7 +453,22 @@ def rho_tau_kernel(
         pressure = rho * CS2
         if pressure_model == 1:
             pressure = pressure - pressure_reference
+        if pressure_model >= 2:
+            pressure = pressure_reference
         pressure_field[x, y, z] = pressure
+
+
+@ti.kernel
+def pressure_from_g_kernel(buf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, pressure_model: ti.i32):
+    if pressure_model >= 2:
+        for x, y, z in ti.ndrange(nx, ny, nz):
+            pnorm = 0.0
+            for q in ti.static(range(Q)):
+                pnorm += g[buf, x, y, z, q]
+            pressure = CS2 * pnorm
+            if solid_field[x, y, z] == 1:
+                pressure = 0.0
+            pressure_field[x, y, z] = pressure
 
 
 @ti.kernel
@@ -570,6 +635,8 @@ def collide_phase_kernel(
     width: ti.f64,
     phase_advection_mode: ti.i32,
     phase_wall_mode: ti.i32,
+    phase_equation_mode: ti.i32,
+    phase_source_scale: ti.f64,
 ):
     for x, y, z in ti.ndrange(nx, ny, nz):
         c = c_field[x, y, z]
@@ -580,14 +647,19 @@ def collide_phase_kernel(
         if phase_wall_mode == 2 and wall_field[x, y, z] == 1:
             wn = wall_normal_field[x, y, z]
             u = u - wn * u.dot(wn)
-        tmp1 = (1.0 - 4.0 * (c - 0.5) * (c - 0.5)) / width
+        source_sum = 0.0
+        source_first = ti.Vector([0.0, 0.0, 0.0])
         for q in ti.static(range(Q)):
             e = e_field[q]
-            edotn = ti.cast(e[0], ti.f64) * n[0] + ti.cast(e[1], ti.f64) * n[1] + ti.cast(e[2], ti.f64) * n[2]
-            fphi = w_field[q] * tmp1 * edotn
+            ev = ti.Vector([ti.cast(e[0], ti.f64), ti.cast(e[1], ti.f64), ti.cast(e[2], ti.f64)])
+            fphi = phase_source_scaled(q, c, n, width, phase_equation_mode, phase_source_scale)
+            source_sum += fphi
+            source_first += ev * fphi
             h[dst, x, y, z, q] = h[src, x, y, z, q] - omega_h * (h[src, x, y, z, q] - heq(q, c, u) + 0.5 * fphi) + fphi
             if solid_field[x, y, z] == 1:
                 h[dst, x, y, z, q] = 0.0
+        phase_source_sum_field[x, y, z] = source_sum
+        phase_source_first_field[x, y, z] = source_first
 
 
 @ti.kernel
@@ -601,6 +673,7 @@ def collide_momentum_kernel(
     force_insertion_mode: ti.i32,
     momentum_density_mode: ti.i32,
     momentum_rho_ref: ti.f64,
+    pressure_model: ti.i32,
 ):
     for x, y, z in ti.ndrange(nx, ny, nz):
         rho = rho_field[x, y, z]
@@ -621,12 +694,21 @@ def collide_momentum_kernel(
             source = 0.0
             if force_insertion_mode == 1 or force_insertion_mode == 3:
                 source = guo
-            gnext = g[src, x, y, z, q] - omega * (g[src, x, y, z, q] - feq(q, rho_eq, u)) + source
+            eq = feq(q, rho_eq, u)
+            if pressure_model >= 2:
+                eq = geq_pressure_velocity(q, pressure_field[x, y, z], rho_eq, u)
+            gnext = g[src, x, y, z, q] - omega * (g[src, x, y, z, q] - eq) + source
             if momentum_mode == 0:
-                gnext = feq(q, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
+                if pressure_model >= 2:
+                    gnext = geq_pressure_velocity(q, pressure_field[x, y, z], rho_eq, ti.Vector([0.0, 0.0, 0.0]))
+                else:
+                    gnext = feq(q, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
             g[dst, x, y, z, q] = gnext
             if solid_field[x, y, z] == 1:
-                g[dst, x, y, z, q] = feq(q, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
+                if pressure_model >= 2:
+                    g[dst, x, y, z, q] = geq_pressure_velocity(q, 0.0, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
+                else:
+                    g[dst, x, y, z, q] = feq(q, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
 
 
 @ti.kernel
@@ -640,6 +722,9 @@ def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx
             if solid_field[xn, yn, zn] == 1 and solid_field[x, y, z] == 0:
                 if phase_wall_mode == 2:
                     h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
+                elif phase_wall_mode == 3:
+                    ghost = wall_c_ghost_field[x, y, z]
+                    h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]] + w_field[q] * (ghost - c_field[x, y, z])
                 else:
                     h[dst_h, x, y, z, q] = 0.0
                 g[dst_g, x, y, z, q] = g[src_g, x, y, z, opp_field[q]]
@@ -659,7 +744,7 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
             for q in ti.static(range(Q)):
                 h[hbuf, x, y, z, q] = 0.0
                 g[gbuf, x, y, z, q] = g[gbuf, x, y, z, opp_field[q]]
-        elif phase_wall_mode == 2:
+        elif phase_wall_mode == 2 or phase_wall_mode == 3:
             missing = 0
             old_sum = 0.0
             reflected = 0.0
@@ -711,6 +796,8 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         "phase_wall_mass_before": phase_wall_stream_mass_before_field.to_numpy(),
         "phase_wall_reflect_mass": phase_wall_reflect_mass_field.to_numpy(),
         "phase_wall_delta_mass": phase_wall_delta_mass_field.to_numpy(),
+        "phase_source_sum": phase_source_sum_field.to_numpy(),
+        "phase_source_first": phase_source_first_field.to_numpy(),
     }
     nonfinite = 0
     for value in arrays.values():
@@ -724,6 +811,7 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
     f_body_mag = np.linalg.norm(arrays["f_body"], axis=-1)
     f_total_mag = np.linalg.norm(arrays["f_total"], axis=-1)
     force_mag = np.linalg.norm(arrays["force_over_rho"], axis=-1)
+    phase_source_first_mag = np.linalg.norm(arrays["phase_source_first"], axis=-1)
     ghost = arrays["ghost"]
     return StepMetrics(
         step=step,
@@ -758,6 +846,8 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         mass_correction_delta=float(mass_correction_delta[None]),
         mass_correction_weight=float(mass_correction_weight[None]),
         mass_correction_count=int(mass_correction_count[None]),
+        phase_source_sum_abs_max=float(np.max(np.abs(arrays["phase_source_sum"]))),
+        phase_source_first_max=float(np.max(phase_source_first_mag)),
         wall_ghost_min=float(np.min(ghost)),
         wall_ghost_max=float(np.max(ghost)),
         nonfinite_count=nonfinite,
@@ -797,6 +887,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         0, 0, args.nx, args.ny, args.nz,
         args.radius, args.width, args.rho_l, args.rho_g,
         args.momentum_density_mode, args.momentum_rho_ref,
+        args.pressure_model,
     )
     phase_from_h_kernel(0, args.nx, args.ny, args.nz)
     if args.phase_bound_mode == 2:
@@ -806,6 +897,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     else:
         phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
     rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
+    pressure_from_g_kernel(0, args.nx, args.ny, args.nz, args.pressure_model)
     grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
     wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
     force_kernel(
@@ -840,6 +932,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         else:
             phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
         rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
+        pressure_from_g_kernel(g_src, args.nx, args.ny, args.nz, args.pressure_model)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
         wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
         force_kernel(
@@ -854,11 +947,20 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
             args.momentum_density_mode, args.momentum_rho_ref,
         )
-        collide_phase_kernel(h_src, h_collide, args.nx, args.ny, args.nz, args.omega_h, args.width, args.phase_advection_mode, args.phase_wall_mode)
+        collide_phase_kernel(
+            h_src, h_collide,
+            args.nx, args.ny, args.nz,
+            args.omega_h, args.width,
+            args.phase_advection_mode,
+            args.phase_wall_mode,
+            args.phase_equation_mode,
+            args.phase_source_scale,
+        )
         collide_momentum_kernel(
             g_src, g_collide, args.nx, args.ny, args.nz,
             args.momentum_mode, args.force_insertion_mode,
             args.momentum_density_mode, args.momentum_rho_ref,
+            args.pressure_model,
         )
         stream_kernel(h_collide, h_stream, g_collide, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
         boundary_kernel(h_stream, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
@@ -878,6 +980,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         else:
             phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
         rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
+        pressure_from_g_kernel(g_src, args.nx, args.ny, args.nz, args.pressure_model)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
         force_kernel(
             args.nx, args.ny, args.nz,
@@ -924,6 +1027,8 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "rho_g": args.rho_g,
         "density_ratio": args.rho_l / args.rho_g,
         "phase_bound_mode": args.phase_bound_mode,
+        "phase_equation_mode": args.phase_equation_mode,
+        "phase_source_scale": args.phase_source_scale,
         "wetting_mode": args.wetting_mode,
         "phase_wall_mode": args.phase_wall_mode,
         "force_mode": args.force_mode,
@@ -973,13 +1078,15 @@ def main() -> int:
     parser.add_argument("--beta", type=float, default=0.01)
     parser.add_argument("--kappa", type=float, default=0.01)
     parser.add_argument("--grad-eps", type=float, default=1.0e-12)
+    parser.add_argument("--phase-equation-mode", type=int, default=0, help="0 legacy source, 1 normalized CAC source, 2 moment-corrected CAC source")
+    parser.add_argument("--phase-source-scale", type=float, default=1.0, help="explicit mobility/source scale multiplier for the CAC sharpening source")
     parser.add_argument("--phase-bound-mode", type=int, default=1)
     parser.add_argument("--wetting-mode", type=int, default=0, help="0 shadow only, 1 write C at wall band")
-    parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band")
+    parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band, 2 neutral per-link reflect, 3 wetting per-link reconstruction")
     parser.add_argument("--force-mode", type=int, default=0, help="compatibility alias: 0 force off, 1 enables surface force if force-closure-mode is 0")
     parser.add_argument("--force-closure-mode", type=int, default=0, help="0 off, 1 surface, 2 pressure, 3 surface+pressure")
     parser.add_argument("--force-insertion-mode", type=int, default=0, help="0 none, 1 half-force+Guo, 2 half-force only, 3 Guo only")
-    parser.add_argument("--pressure-model", type=int, default=0, help="0 rho*cs2, 1 rho*cs2 - pressure-reference")
+    parser.add_argument("--pressure-model", type=int, default=0, help="0 rho*cs2, 1 rho*cs2 - reference, 2 pressure-velocity sum(g)*cs2")
     parser.add_argument("--pressure-reference", type=float, default=0.0)
     parser.add_argument("--surface-force-scale", type=float, default=1.0)
     parser.add_argument("--pressure-force-scale", type=float, default=1.0)
