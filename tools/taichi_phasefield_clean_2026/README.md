@@ -39,6 +39,12 @@ walls.
 - `run_hm570_phasefield_bulk_kernel.sh`
   - Remote P100 runner that creates/reuses a Taichi Python environment and
     executes the kernel gate with `CUDA_VISIBLE_DEVICES=1`.
+- `phasefield_full_solver.py`
+  - Full-stack first Taichi solver skeleton: phase population, momentum
+    population, rho/tau, chemical potential, force fields, flat-wall geometry,
+    wetting ghost fields, boundary kernels, and diagnostics.
+- `run_hm570_phasefield_full_solver.sh`
+  - Remote P100 runner for periodic droplet and flat-wall smoke cases.
 
 ## Non-Goals
 
