@@ -66,7 +66,7 @@ escape from the model derivation.
 
 ## Existing Evidence In This Repo
 
-There is already a Taichi single-phase GPU baseline:
+There is already a Taichi single-phase GPU feasibility artifact:
 
 - `tools/taichi_lbm/taichi_cylinder_re100.py`
 - `tools/taichi_lbm/run_hm570_taichi_cylinder_re100.sh`
@@ -77,6 +77,18 @@ There is already a Taichi single-phase GPU baseline:
 The existing report records an exploratory D2Q9 BGK Re=100 cylinder case on
 P100. It is not phase-field validation, but it shows that Taichi GPU execution,
 force-history output, and post-processing can work in this project environment.
+
+Important route decision:
+
+```text
+Do not expand the phase-field solver from the Re=100 single-phase cylinder code.
+```
+
+That file may be used only as evidence that Taichi can run on the target GPU and
+write analyzable artifacts. It is not an architecture template for the current
+phase-field wetting model because it lacks `h_i`, conservative Allen-Cahn or
+Cahn-Hilliard closure, `rho(C)`, chemical potential, two-phase force closure,
+and wetting population reconstruction.
 
 ## Official Taichi Documentation Downloaded
 
@@ -135,41 +147,52 @@ Every field must declare:
 
 ## Recommended Gate Sequence
 
-1. Taichi infrastructure gate:
+1. Book-derived model specification gate:
+   - choose conservative Allen-Cahn or Cahn-Hilliard for the first clean model;
+   - write the target equation, equilibrium moments, source moments, chemical
+     potential, density interpolation, force closure, and wetting boundary
+     strategy before writing GPU kernels;
+   - map every variable to Taichi storage and producer-consumer kernels.
+
+2. Offline algebra gate:
+   - verify `sum_i h_i`, `sum_i h_i^eq`, `sum_i F_phi_i`, and first moments of
+     `F_phi_i` on tiny arrays;
+   - verify pressure/force moment insertion in scalar Python or NumPy before
+     Taichi device kernels.
+
+3. Taichi infrastructure gate:
    - CPU and CUDA smoke produce identical D2Q9/D3Q19 population sums on a tiny
      grid.
    - `debug=True` catches bounds errors.
    - output files record config and commit.
 
-2. Single-phase LBM gate:
-   - Poiseuille or lid-driven cavity.
-   - Then Re=100 cylinder already started in `tools/taichi_lbm`.
-
-3. Passive scalar/phase population gate:
-   - advection-diffusion or conservative Allen-Cahn without momentum coupling.
+4. Phase-population gate:
+   - implement `h_i` with explicit double buffers and the selected
+     book-derived phase equation;
    - verify `sum(h)` moments before wetting.
 
-4. Bulk phase-field gate:
+5. Bulk phase-field gate:
    - static droplet without walls.
    - mass drift, boundedness, curvature/Laplace pressure.
 
-5. Coupled force gate:
+6. Coupled force gate:
    - pressure/surface force/F_mu variants isolated.
    - no wetting until force closure is stable.
 
-6. Flat-wall wetting gate:
+7. Flat-wall wetting gate:
    - 30/90/150 and decoupled response with morphology plots.
 
-7. Curved wall gate:
+8. Curved wall gate:
    - cylinder and sphere per-link or diffuse-solid boundary ledger.
 
-8. Dynamic impact gate:
+9. Dynamic impact gate:
    - only after static flat/cylinder/sphere are credible.
 
 ## Decision
 
 Taichi should be opened as a parallel clean implementation lane. It should not
 replace the TCLB audit record yet, because the TCLB history contains valuable
-failure evidence. The best next step is to build a small Taichi phase-field
-baseline that reproduces the same mathematical model with explicit buffers,
-then compare against C/TCLB on the first 10-20 steps.
+failure evidence. The best next step is to write a book-derived phase-field
+model specification and then build a small Taichi phase-field baseline from
+that specification with explicit buffers. The Re=100 single-phase cylinder
+prototype must not drive this architecture.

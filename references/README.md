@@ -70,7 +70,7 @@ Taichi source: https://github.com/taichi-dev/taichi
 Local snapshot anchor: references/taichi_official_docs_20260704/
 Project audit: docs/stage18/008_taichi_route_assessment_and_official_docs_anchor_20260704.md
 Use: GPU LBM implementation semantics, Taichi kernel/function scope, explicit double buffering, field layout, CUDA sync/debug/profiling.
-Limit: Taichi can simplify implementation semantics but does not by itself fix conservative phase-field, force closure, or wetting boundary physics.
+Limit: Taichi can simplify implementation semantics but does not by itself fix conservative phase-field, force closure, or wetting boundary physics. The existing Re=100 Taichi cylinder script is GPU feasibility evidence only, not the phase-field model architecture.
 ```
 
 Wang 2023 IJMF:
