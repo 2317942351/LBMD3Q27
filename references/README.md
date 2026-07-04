@@ -18,6 +18,49 @@ extracted/wang2024_jfm_main_vlm.md
 
 ## Primary Literature Links
 
+Xu 2024 phase-field LBM book:
+
+```text
+Title: 相场格子玻尔兹曼方法理论与应用
+English title: Theory and Application of Phase-Field-Based Lattice Boltzmann Method
+Author: 徐兴春
+Publisher/date: 国防工业出版社, 2024-06
+Local-only markdown: C:/Users/yuanz/Downloads/相场格子玻尔兹曼方法理论与应用.md
+Local SHA256: 845A2F5F3A392AD78DC4F665494FB5A66488B284C5F4D38B94FA48FF6C69F186
+Repo metadata: references/phasefield_lbm_book_2024/
+Project audit: docs/stage14/178_phasefield_lbm_book_ch3_ch7_code_audit_20260703.md
+Use: phase-field boundedness, conservative Allen-Cahn source closure, MRT phase-field options, force/pressure closure.
+Limit: not a contact-angle/wetting-boundary validation source; do not commit full book text.
+```
+
+Huang and Liu 2023 LBM phase/wetting excerpt:
+
+```text
+Title: 格子Boltzmann方法 从入门到精通
+Authors: 黄海波, 刘魁
+Publisher/date: 中国科学技术大学出版社, 2023
+Local-only markdown: C:/Users/yuanz/Downloads/格子BOLTZMANN方法从入门到精通_相场多相流润湿篇.md
+Local SHA256: 504571167012619CD6BD85BE125A01F9AEA41E55407E23A2C85782CA0EA05052
+Repo metadata: references/huang_liu_2023_lbm_phase_wetting/
+Project anchor: docs/stage14/183_huang_liu_lbm_phase_wetting_context_anchor_20260703.md
+Use: curved boundary streaming semantics, phase-field h-population source timing, contact-angle validation workflow boundaries.
+Limit: do not copy full excerpt; do not mix Shan-Chen/free-energy contact-angle formulas directly into the current conservative Allen-Cahn TCLB model.
+```
+
+He, Li, Wang, and Tong 2023 LBM theory/application excerpt:
+
+```text
+Title: 格子Boltzmann方法的理论及应用
+Authors: 何雅玲, 李庆, 王勇, 童自翔
+Publisher/date: 高等教育出版社, 2023
+Local-only markdown: C:/Users/yuanz/Downloads/15215943_相场多相流润湿篇.md
+Local SHA256: EF76B77D366466B1E25299121CEAF7808E4C4FADEC1CBF816BED009A1E9EAB5F
+Repo metadata: references/he_li_wang_tong_2023_lbm_theory_phase_wetting/
+Project anchor: docs/stage14/184_he_li_wang_tong_lbm_theory_phase_wetting_anchor_20260703.md
+Use: model-family separation for contact-angle formulas, phase-field wetting options, complex-boundary mass-loss audits.
+Limit: do not copy full excerpt; do not transplant pseudo-potential virtual-density or color-gradient formulas directly into the current phase-field solver.
+```
+
 Wang 2023 IJMF:
 
 ```text

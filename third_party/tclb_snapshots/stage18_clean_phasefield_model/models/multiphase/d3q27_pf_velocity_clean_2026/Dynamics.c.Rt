@@ -1,0 +1,2151 @@
+<?R
+    source("conf.R")
+    c_header();
+    source("lib/feq.R")
+    source("lib/boundary.R")
+	source("model.R")
+?>
+// 04/02/2017 - Model Developed: A. Fakhari, T. Mitchell
+//    Extension to 3D from:
+// """" A roust phase-field lattice Boltzmann model
+//		for immiscible fluids at high density ratios """"
+//
+// Maintainer: Travis-Mitchell @TravisMitchell
+
+// Major code updates:
+//		01/04/2017: Initial implementation
+//			    Plan is d3q27 for hydrodynamics
+//			    and d3q15 for interface dynamics
+//		08/04/2017: Verification and validation
+//				- Layered Poiseuille flow
+//				- Rayleigh Taylor up to water-air like properties and Re=3000
+//				- Validated with air Taylor bubble rising through olive oil
+//				  experiment by Bugg et al. (2002)
+//		14/08/2017: Look to improve readability by incorporating more R code
+//				- e.g. for MRT operations etc.
+//		12/12/2017: Model updated for inclusion in v6.2
+//				- MRT collision updated to moment space
+//				- Symmetry bounds removed, autosym added to options
+//				- BGK made option
+//		21/03/2018: Fix of solid contact
+//				- Previous issue with bulk solid regions i.e. solid cells
+//				  surrounded by all solid nodes
+//				- Check added for these cases to stop nan appearances
+//		28/04/2020: Added thermocapillary effects option
+//		07/04/2021: Code clean up
+//				- thermocapillary moved to the bottom of the file to separate
+//				- forces broken up into individual functions, set up so that additional
+//				  physics can be added simply if only a force needs to be altered
+// 				- edge case for wall phase calculation in which normal direction points
+//				  towards a solid node was found. Temporary fix by setting this to a
+//				  reasonable value (1) has been made - this is not ideal...
+//		xx/xx/2022: Extension of phase field to d3q27 option to move away from crappy q15 lattice.
+//		xx/xx/2022: Development of geometric wetting B.C. option as well as existing surface energy.
+//		xx/xx/2023: Code extension for wetting on curved boundaries.
+
+#include <math.h>
+#define PI 3.14159265
+#define cs2 0.33333333
+#ifdef OPTIONS_q27
+#define hPops 27
+#else
+#define hPops 15
+#endif
+
+<?R
+###################################################
+# Get functions to define outputs indicated in .R #
+###################################################
+?>
+CudaDeviceFunction real_t getRho(){
+	if ( IamWall || IamSolid) {
+		return 0.0;
+	} else {
+		real_t current_phase = PhaseF(0,0,0);
+		return stage18_rho_from_phase(current_phase);
+	}
+}
+
+CudaDeviceFunction real_t getPhaseField(){
+	real_t current_phase = PhaseF(0,0,0);
+	return current_phase;
+}
+
+CudaDeviceFunction real_t getPhaseFValid(){
+	real_t current_phase = PhaseF(0,0,0);
+	return (isfinite(current_phase) && current_phase >= PhaseField_l && current_phase <= PhaseField_h) ? 1.0 : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseOutOfBoundsFlag(){
+	return 1.0 - getPhaseFValid();
+}
+
+CudaDeviceFunction vector_t getU(){
+	vector_t u;
+	if ( IamWall || IamSolid ) {
+		u.x = 0.0; u.y = 0.0; u.z = 0.0;
+	} else {
+		u.x = U(0,0,0); u.y = V(0,0,0); u.z = W(0,0,0);
+		if (!isfinite(u.x)) u.x = 0.0;
+		if (!isfinite(u.y)) u.y = 0.0;
+		if (!isfinite(u.z)) u.z = 0.0;
+	}
+	return u;
+}
+
+CudaDeviceFunction real_t getPstar(){
+	real_t p = PressureMoment(0,0,0);
+	return isfinite(p) ? p : 0.0;
+}
+
+CudaDeviceFunction real_t getP(){
+	real_t p = PhysicalPressure(0,0,0);
+	return isfinite(p) ? p : 0.0;
+}
+
+CudaDeviceFunction vector_t getNormal(){
+	vector_t n = {SolidNormalX(0,0,0), SolidNormalY(0,0,0), SolidNormalZ(0,0,0)};
+	if (!isfinite(n.x)) n.x = 0.0;
+	if (!isfinite(n.y)) n.y = 0.0;
+	if (!isfinite(n.z)) n.z = 0.0;
+	return n;
+}
+
+CudaDeviceFunction vector_t getGradPhi(){
+	vector_t gphi = {gradPhiVal_x(0,0,0), gradPhiVal_y(0,0,0), gradPhiVal_z(0,0,0)};
+	if (!isfinite(gphi.x)) gphi.x = 0.0;
+	if (!isfinite(gphi.y)) gphi.y = 0.0;
+	if (!isfinite(gphi.z)) gphi.z = 0.0;
+	return gphi;
+}
+
+CudaDeviceFunction vector_t getForceTotal(){
+	vector_t f = {F_total_x(0,0,0), F_total_y(0,0,0), F_total_z(0,0,0)};
+	if (!isfinite(f.x)) f.x = 0.0;
+	if (!isfinite(f.y)) f.y = 0.0;
+	if (!isfinite(f.z)) f.z = 0.0;
+	return f;
+}
+
+CudaDeviceFunction real_t getWallPhase(){
+	real_t value = WallPhase(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getStage18Violation(){
+	real_t value = Stage18ContractViolation(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPressureInput(){
+	real_t value = PressureInput(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getForceOverRho(){
+	real_t value = ForceOverRho(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getForceInsertionAudit(){
+	real_t value = ForceInsertionAudit(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction vector_t getForceHalfVelocity(){
+	vector_t v = {ForceHalfVelocityX(0,0,0), ForceHalfVelocityY(0,0,0), ForceHalfVelocityZ(0,0,0)};
+	if (!isfinite(v.x)) v.x = 0.0;
+	if (!isfinite(v.y)) v.y = 0.0;
+	if (!isfinite(v.z)) v.z = 0.0;
+	return v;
+}
+
+CudaDeviceFunction vector_t getForceMomentumBefore(){
+	vector_t v = {ForceMomentumBeforeX(0,0,0), ForceMomentumBeforeY(0,0,0), ForceMomentumBeforeZ(0,0,0)};
+	if (!isfinite(v.x)) v.x = 0.0;
+	if (!isfinite(v.y)) v.y = 0.0;
+	if (!isfinite(v.z)) v.z = 0.0;
+	return v;
+}
+
+CudaDeviceFunction vector_t getForceMomentumAfter(){
+	vector_t v = {ForceMomentumAfterX(0,0,0), ForceMomentumAfterY(0,0,0), ForceMomentumAfterZ(0,0,0)};
+	if (!isfinite(v.x)) v.x = 0.0;
+	if (!isfinite(v.y)) v.y = 0.0;
+	if (!isfinite(v.z)) v.z = 0.0;
+	return v;
+}
+
+CudaDeviceFunction real_t getMassCorrectionApplied(){
+	real_t value = MassCorrectionApplied(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getWallHNetMass(){
+	real_t value = WallHNetMass(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getWallHLinkWriteCount(){
+	real_t value = WallHLinkWriteCount(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getWallHMassBefore(){
+	real_t value = WallHMassBefore(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getWallHMassAfter(){
+	real_t value = WallHMassAfter(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHPreSum(){
+	real_t value = PhaseHPreSum(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHRawSum(){
+	real_t value = PhaseHRawSum(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHRawMin(){
+	real_t value = PhaseHRawMin(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHRawMax(){
+	real_t value = PhaseHRawMax(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHRawNonfiniteCount(){
+	real_t value = PhaseHRawNonfiniteCount(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHeqSum(){
+	real_t value = PhaseHeqSum(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseFphiSum(){
+	real_t value = PhaseFphiSum(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseHPostSum(){
+	real_t value = PhaseHPostSum(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseCorrectionDelta(){
+	real_t value = PhaseCorrectionDelta(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseMassRedistributionWeight(){
+	real_t value = PhaseMassRedistributionWeight(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhaseGlobalCorrectionApplied(){
+	real_t value = PhaseGlobalCorrectionApplied(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction real_t getPhasePopulationRepairApplied(){
+	real_t value = PhasePopulationRepairApplied(0,0,0);
+	return isfinite(value) ? value : 0.0;
+}
+
+CudaDeviceFunction vector_t getPhaseFphiFirstMoment(){
+	vector_t v = {PhaseFphiFirstMomentX(0,0,0), PhaseFphiFirstMomentY(0,0,0), PhaseFphiFirstMomentZ(0,0,0)};
+	if (!isfinite(v.x)) v.x = 0.0;
+	if (!isfinite(v.y)) v.y = 0.0;
+	if (!isfinite(v.z)) v.z = 0.0;
+	return v;
+}
+
+CudaDeviceFunction vector_t getForceEquivalentInjected(){
+	vector_t v = {ForceEquivalentInjectedX(0,0,0), ForceEquivalentInjectedY(0,0,0), ForceEquivalentInjectedZ(0,0,0)};
+	if (!isfinite(v.x)) v.x = 0.0;
+	if (!isfinite(v.y)) v.y = 0.0;
+	if (!isfinite(v.z)) v.z = 0.0;
+	return v;
+}
+
+CudaDeviceFunction real_t stage18_clamp(real_t value, real_t lo, real_t hi)
+{
+	if (value < lo) return lo;
+	if (value > hi) return hi;
+	return value;
+}
+
+CudaDeviceFunction real_t stage18_rho_from_phase(real_t C)
+{
+	real_t denom = PhaseField_h - PhaseField_l;
+	real_t q = (fabs(denom) > 1e-30) ? (C - PhaseField_l) / denom : 0.0;
+	real_t rho = Density_l + q * (Density_h - Density_l);
+	if (rho < RhoFloor) rho = RhoFloor;
+	return rho;
+}
+
+CudaDeviceFunction real_t stage18_phase_tmp1(real_t C)
+{
+	real_t denom = PhaseField_h - PhaseField_l;
+	if (fabs(denom) < 1e-30) return 0.0;
+	real_t q = (C - PhaseField_l) / denom;
+	if (q < 0.0) q = 0.0;
+	if (q > 1.0) q = 1.0;
+	return denom * 4.0 * q * (1.0 - q) / IntWidth;
+}
+
+CudaDeviceFunction real_t stage18_bound_omega(real_t omega_value)
+{
+	if (omega_value < MRTMinOmega) return MRTMinOmega;
+	if (omega_value > MRTMaxOmega) return MRTMaxOmega;
+	return omega_value;
+}
+
+CudaDeviceFunction void stage18_update_macro_from_phase()
+{
+	RhoField = stage18_rho_from_phase(PhaseF);
+	PressureMoment = pnorm;
+	PhysicalPressure = PressureMoment * RhoField * cs2;
+}
+
+CudaDeviceFunction void stage18_calc_Fp(real_t *fx, real_t *fy, real_t *fz, real_t pressure, vector_t gPhi)
+{
+	*fx = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.x;
+	*fy = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.y;
+	*fz = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.z;
+}
+
+CudaDeviceFunction void stage18_calc_Fb(real_t *fx, real_t *fy, real_t *fz, real_t rho)
+{
+	*fx = (Density_h-rho)*BuoyancyX + rho*GravitationX;
+	*fy = (Density_h-rho)*BuoyancyY + rho*GravitationY;
+	*fz = (Density_h-rho)*BuoyancyZ + rho*GravitationZ;
+}
+
+CudaDeviceFunction void stage18_calc_Fs(real_t *fx, real_t *fy, real_t *fz, real_t mu_value, vector_t gPhi)
+{
+	*fx = mu_value * gPhi.x;
+	*fy = mu_value * gPhi.y;
+	*fz = mu_value * gPhi.z;
+}
+
+CudaDeviceFunction real_t stage18_phase_weight(int i)
+{
+	#ifdef OPTIONS_q27
+		return wg[i];
+	#else
+		return wh[i];
+	#endif
+}
+
+CudaDeviceFunction real_t stage18_normalized_phase(real_t C)
+{
+	real_t denom = PhaseField_h - PhaseField_l;
+	if (fabs(denom) < 1e-30) return 0.0;
+	return (C - PhaseField_l) / denom;
+}
+
+CudaDeviceFunction real_t stage18_phase_neighbor_value(real_t value, real_t neighbor_solid)
+{
+	if ((neighbor_solid > 0.5 || !isfinite(value)) && (GradPhiMode > 0.5 || LaplaceMode > 0.5 || MuWallFluxMode > 0.5)) {
+		if (WallPhaseValid > 0.5) {
+			return WallPhase(0,0,0);
+		}
+		return stage18_clamp(PhaseF(0,0,0), PhaseField_l, PhaseField_h);
+	}
+	return value;
+}
+
+CudaDeviceFunction vector_t stage18_gradPhi_reconstructed()
+{
+	vector_t g;
+	real_t xp = stage18_phase_neighbor_value(PhaseF(1,0,0), SolidIndicator(1,0,0));
+	real_t xm = stage18_phase_neighbor_value(PhaseF(-1,0,0), SolidIndicator(-1,0,0));
+	real_t yp = stage18_phase_neighbor_value(PhaseF(0,1,0), SolidIndicator(0,1,0));
+	real_t ym = stage18_phase_neighbor_value(PhaseF(0,-1,0), SolidIndicator(0,-1,0));
+	real_t zp = stage18_phase_neighbor_value(PhaseF(0,0,1), SolidIndicator(0,0,1));
+	real_t zm = stage18_phase_neighbor_value(PhaseF(0,0,-1), SolidIndicator(0,0,-1));
+	g.x = 0.5 * (xp - xm);
+	g.y = 0.5 * (yp - ym);
+	g.z = 0.5 * (zp - zm);
+	return g;
+}
+
+CudaDeviceFunction real_t stage18_lapPhi_reconstructed()
+{
+	real_t c0 = PhaseF(0,0,0);
+	real_t xp = stage18_phase_neighbor_value(PhaseF(1,0,0), SolidIndicator(1,0,0));
+	real_t xm = stage18_phase_neighbor_value(PhaseF(-1,0,0), SolidIndicator(-1,0,0));
+	real_t yp = stage18_phase_neighbor_value(PhaseF(0,1,0), SolidIndicator(0,1,0));
+	real_t ym = stage18_phase_neighbor_value(PhaseF(0,-1,0), SolidIndicator(0,-1,0));
+	real_t zp = stage18_phase_neighbor_value(PhaseF(0,0,1), SolidIndicator(0,0,1));
+	real_t zm = stage18_phase_neighbor_value(PhaseF(0,0,-1), SolidIndicator(0,0,-1));
+	return xp + xm + yp + ym + zp + zm - 6.0 * c0;
+}
+
+CudaDeviceFunction int stage18_direction_points_to_fluid(int i)
+{
+	if (i == 1) return (SolidIndicator(1,0,0) < 0.5) ? 1 : 0;
+	if (i == 2) return (SolidIndicator(-1,0,0) < 0.5) ? 1 : 0;
+	if (i == 3) return (SolidIndicator(0,1,0) < 0.5) ? 1 : 0;
+	if (i == 4) return (SolidIndicator(0,-1,0) < 0.5) ? 1 : 0;
+	if (i == 5) return (SolidIndicator(0,0,1) < 0.5) ? 1 : 0;
+	if (i == 6) return (SolidIndicator(0,0,-1) < 0.5) ? 1 : 0;
+	if (i == 7) return (SolidIndicator(1,1,1) < 0.5) ? 1 : 0;
+	if (i == 8) return (SolidIndicator(-1,1,1) < 0.5) ? 1 : 0;
+	if (i == 9) return (SolidIndicator(1,-1,1) < 0.5) ? 1 : 0;
+	if (i == 10) return (SolidIndicator(-1,-1,1) < 0.5) ? 1 : 0;
+	if (i == 11) return (SolidIndicator(1,1,-1) < 0.5) ? 1 : 0;
+	if (i == 12) return (SolidIndicator(-1,1,-1) < 0.5) ? 1 : 0;
+	if (i == 13) return (SolidIndicator(1,-1,-1) < 0.5) ? 1 : 0;
+	if (i == 14) return (SolidIndicator(-1,-1,-1) < 0.5) ? 1 : 0;
+	#ifdef OPTIONS_q27
+	if (i == 15) return (SolidIndicator(1,1,0) < 0.5) ? 1 : 0;
+	if (i == 16) return (SolidIndicator(-1,1,0) < 0.5) ? 1 : 0;
+	if (i == 17) return (SolidIndicator(1,-1,0) < 0.5) ? 1 : 0;
+	if (i == 18) return (SolidIndicator(-1,-1,0) < 0.5) ? 1 : 0;
+	if (i == 19) return (SolidIndicator(1,0,1) < 0.5) ? 1 : 0;
+	if (i == 20) return (SolidIndicator(-1,0,1) < 0.5) ? 1 : 0;
+	if (i == 21) return (SolidIndicator(1,0,-1) < 0.5) ? 1 : 0;
+	if (i == 22) return (SolidIndicator(-1,0,-1) < 0.5) ? 1 : 0;
+	if (i == 23) return (SolidIndicator(0,1,1) < 0.5) ? 1 : 0;
+	if (i == 24) return (SolidIndicator(0,-1,1) < 0.5) ? 1 : 0;
+	if (i == 25) return (SolidIndicator(0,1,-1) < 0.5) ? 1 : 0;
+	if (i == 26) return (SolidIndicator(0,-1,-1) < 0.5) ? 1 : 0;
+	#endif
+	return 0;
+}
+
+CudaDeviceFunction real_t stage18_pressure_input(real_t rho)
+{
+	real_t pstar = PressureMoment;
+	real_t physical = pstar * rho * cs2;
+	if (PressureClosureMode < 0.5) {
+		PressureReference = 0.0;
+		return pstar;
+	}
+	if (PressureClosureMode < 1.5) {
+		PressureReference = 0.0;
+		return physical;
+	}
+	PressureReference = PressureReferenceValue;
+	return physical - PressureReferenceValue;
+}
+
+CudaDeviceFunction void stage18_calc_noneq_stress(real_t pressure_moment, real_t *stress)
+{
+	for (int k = 0; k < 6; k++) stress[k] = 0.0;
+
+	real_t u2mag = U*U + V*V + W*W;
+	real_t gp[27] = {
+		g0, g1, g2, g3, g4, g5, g6, g7, g8,
+		g9, g10, g11, g12, g13, g14, g15, g16, g17,
+		g18, g19, g20, g21, g22, g23, g24, g25, g26
+	};
+
+	for (int i = 0; i < 27; i++) {
+		real_t gamma_i = calcGamma(i, U, V, W, u2mag);
+		real_t geq_i = pressure_moment * wg[i] + (gamma_i - wg[i]);
+		real_t neq = gp[i] - geq_i;
+		real_t ex = d3q27_ex[i];
+		real_t ey = d3q27_ey[i];
+		real_t ez = d3q27_ez[i];
+		stress[0] += neq * ex * ex;
+		stress[1] += neq * ex * ey;
+		stress[2] += neq * ex * ez;
+		stress[3] += neq * ey * ey;
+		stress[4] += neq * ey * ez;
+		stress[5] += neq * ez * ez;
+	}
+}
+
+CudaDeviceFunction void stage18_calc_Fmu_from_stress(real_t *fx, real_t *fy, real_t *fz, real_t tau, vector_t gPhi)
+{
+	real_t stress[6];
+	stage18_calc_noneq_stress(PressureMoment, stress);
+	StressXX = stress[0];
+	StressXY = stress[1];
+	StressXZ = stress[2];
+	StressYY = stress[3];
+	StressYZ = stress[4];
+	StressZZ = stress[5];
+
+	real_t prefactor = (fabs(tau) > 1e-30) ? ((0.5 - tau) / tau) : 0.0;
+	prefactor *= (Density_h - Density_l);
+	*fx = prefactor * (stress[0]*gPhi.x + stress[1]*gPhi.y + stress[2]*gPhi.z);
+	*fy = prefactor * (stress[1]*gPhi.x + stress[3]*gPhi.y + stress[4]*gPhi.z);
+	*fz = prefactor * (stress[2]*gPhi.x + stress[4]*gPhi.y + stress[5]*gPhi.z);
+}
+
+CudaDeviceFunction void stage18_update_globals(real_t pf)
+{
+	real_t bounded_pf = stage18_clamp(pf, PhaseField_l, PhaseField_h);
+	real_t tmpPF = 1.0 - bounded_pf;
+	real_t rho = stage18_rho_from_phase(bounded_pf);
+	real_t u2mag = U*U + V*V + W*W;
+	AddToTotalDensity(rho);
+	AddToKineticEnergy(rho * u2mag);
+	if (bounded_pf < 0.5) {
+		AddToGasTotalVelocity(tmpPF * sqrt(u2mag));
+		AddToGasTotalPhase(tmpPF);
+	} else {
+		AddToLiqTotalVelocity(bounded_pf * sqrt(u2mag));
+		AddToLiqTotalPhase(bounded_pf);
+	}
+}
+
+<?R
+###################################################
+# Miscellaneous helper functions used in the code #
+###################################################
+?>
+/*
+	This function uses isotropic gradient stencils to return
+	the gradient of the phase field variable \phi.
+*/
+CudaDeviceFunction vector_t calcGradPhi()
+{
+	vector_t gradPhi = {0.0,0.0,0.0};
+	#ifdef OPTIONS_OutFlow
+		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
+			gradPhi.x = 0.0;
+			gradPhi.y = 16.00 * (PhaseF(0,1,0) - PhaseF(0,-1,0))
+						+ 2.0*(PhaseF(-1,1,1) - PhaseF(-1,-1,1)
+						+ PhaseF(-1,1,-1)- PhaseF(-1,-1,-1))
+						+  4.00 * (2.0*( PhaseF(-1,1,0) - PhaseF(-1,-1,0))
+							+  PhaseF(0,1,1) - PhaseF(0,-1,1) + PhaseF(0,1,-1) - PhaseF(0,-1,-1));
+			gradPhi.z = 16.00 * (PhaseF(0,0,1) - PhaseF(0,0,-1))
+						+ 2.0*( PhaseF(-1,1,1) + PhaseF(-1,-1,1)
+						-  PhaseF(-1,1,-1)- PhaseF(-1,-1,-1))
+						+  4.00 * (2.0*( PhaseF(-1,0,1) - PhaseF(-1,0,-1))
+							+  PhaseF(0,1,1) + PhaseF(0,-1,1) - PhaseF(0,1,-1) - PhaseF(0,-1,-1));
+		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
+			gradPhi.x = 0.0;
+			gradPhi.y = 16.00 * (PhaseF(0,1,0) - PhaseF(0,-1,0))
+						+ 2.0*(PhaseF(1,1,1) - PhaseF(1,-1,1)
+						+ PhaseF(1,1,-1)- PhaseF(1,-1,-1))
+						+  4.00 * (2.0*( PhaseF(1,1,0) - PhaseF(1,-1,0))
+							+  PhaseF(0,1,1) - PhaseF(0,-1,1) + PhaseF(0,1,-1) - PhaseF(0,-1,-1));
+			gradPhi.z = 16.00 * (PhaseF(0,0,1) - PhaseF(0,0,-1))
+						+ 2.0*( PhaseF(1,1,1) + PhaseF(1,-1,1)
+						-  PhaseF(1,1,-1)- PhaseF(1,-1,-1))
+						+  4.00 * (2.0*( PhaseF(1,0,1) - PhaseF(1,0,-1))
+							+  PhaseF(0,1,1) + PhaseF(0,-1,1) - PhaseF(0,1,-1) - PhaseF(0,-1,-1));
+		} else if ((NodeType & NODE_BOUNDARY)) {
+			gradPhi.x = 0.0;gradPhi.y = 0.0;gradPhi.z = 0.0;
+		} else {
+			<?R
+				IsotropicGrad('gradPhi', 'PhaseF')
+			?>
+		}
+	#else
+		    <?R
+			IsotropicGrad('gradPhi', 'PhaseF')
+		    ?>
+	#endif
+	return gradPhi;
+}
+
+/*
+	This function is run as the second stage of each action and fills
+	the iteration buffer with updated values of PhaseF.
+*/
+CudaDeviceFunction void calcPhaseF()
+{
+	updateBoundary();
+	// NOTE: On the wall we want to take the previous value of the phase field, because
+	// it might be needed for calculation of the gradient
+	if (!( IamWall || IamSolid )) {
+		PhaseF = <?R C(sum(h))?>;
+	} else {
+		PhaseF = PhaseF(0,0,0);
+	}
+}
+
+/*
+	Calculate the chemical potential, mu
+	Eqn. 5 in: Improved locality of the phase-field lattice-Boltzmann model
+	for immiscible fluids at high density ratios
+*/
+CudaDeviceFunction real_t calcMu(real_t C)
+{
+	real_t pfavg, lpPhi, mu;
+	pfavg = 0.5*(PhaseField_l+PhaseField_h);
+	#ifdef OPTIONS_OutFlow
+		if ((NodeType & NODE_BOUNDARY) == NODE_ENeumann || (NodeType & NODE_BOUNDARY) == NODE_EConvect) {
+			lpPhi = 16.0 *( 2.0* PhaseF(-1,0,0)
+						+ (PhaseF(0,1,0)) + (PhaseF(0,-1,0))
+						+ (PhaseF(0,0,1)) + (PhaseF(0,0,-1)))
+					+ 1.0 *(  2.0*(PhaseF(-1,1,1)
+						+ (PhaseF(-1,-1,1))
+							+ (PhaseF(-1,1,-1))
+							+ (PhaseF(-1,-1,-1))))
+					+ 4.0 *(2.0*( (PhaseF(-1,1,0))
+						+ (PhaseF(-1,-1,0))
+						+ (PhaseF(-1,0,1))
+						+ (PhaseF(-1,0,-1)))
+						+ (PhaseF(0,1,1)) + (PhaseF(0,-1,1))
+						+ (PhaseF(0,1,-1))+ (PhaseF(0,-1,-1)))
+				- 152.0 * PhaseF(0,0,0);
+		} else if ((NodeType & NODE_BOUNDARY) == NODE_WNeumann || (NodeType & NODE_BOUNDARY) == NODE_WConvect) {
+			lpPhi = 16.0 *( 2.0* PhaseF(1,0,0)
+						+ (PhaseF(0,1,0)) + (PhaseF(0,-1,0))
+						+ (PhaseF(0,0,1)) + (PhaseF(0,0,-1)))
+					+ 1.0 *(  2.0*(PhaseF(1,1,1)
+						+ (PhaseF(1,-1,1))
+							+ (PhaseF(1,1,-1))
+							+ (PhaseF(1,-1,-1))))
+					+ 4.0 *(2.0*( (PhaseF(1,1,0))
+						+ (PhaseF(1,-1,0))
+						+ (PhaseF(1,0,1))
+						+ (PhaseF(1,0,-1)))
+						+ (PhaseF(0,1,1)) + (PhaseF(0,-1,1))
+						+ (PhaseF(0,1,-1))+ (PhaseF(0,-1,-1)))
+				- 152.0 * PhaseF(0,0,0);
+		} else if ((NodeType & NODE_BOUNDARY)) {
+			// If single phase inlet/outlet, dont want periodic bounds
+			// to interfere - can cause waves/instabilities
+			lpPhi = 0.0;
+		} else {
+			<?R
+				myLaplace('lpPhi', 'PhaseF')
+			?>
+		}
+	#else
+			<?R
+				myLaplace('lpPhi', 'PhaseF')
+			?>
+	#endif
+	#ifdef OPTIONS_thermo
+		mu = 4.0*(12.0*SurfaceTension(0,0,0)/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+			- (1.5 *SurfaceTension(0,0,0)*IntWidth) * lpPhi;
+	#else
+		mu = 4.0*(12.0*sigma/IntWidth)*(C-PhaseField_l)*(C-PhaseField_h)*(C-pfavg)
+			- (1.5 *sigma*IntWidth) * lpPhi;
+	#endif
+	return mu;
+}
+
+/*
+	Eqn. 10 in: Improved locality of the phase-field lattice-Boltzmann model
+	for immiscible fluids at high density ratios
+*/
+CudaDeviceFunction real_t calcGamma(int i, real_t u, real_t v, real_t w, real_t u2mag)
+{
+	real_t gamma, tmp;
+	tmp = (d3q27_ex[i]*u+d3q27_ey[i]*v+d3q27_ez[i]*w);
+
+	gamma = wg[i] * (1 + 3.0*(tmp) + 4.5*(tmp*tmp) - 1.5*(u2mag)) ;
+	return gamma;
+}
+
+/*
+	Eqn. 7 in: Improved locality of the phase-field lattice-Boltzmann model
+	for immiscible fluids at high density ratios
+*/
+CudaDeviceFunction real_t calcF_phi(int i, real_t tmp1, real_t nx, real_t ny, real_t nz)
+{
+	real_t f_phi;
+	#ifdef OPTIONS_q27
+		f_phi = wg[i] * tmp1 * (d3q27_ex[i]*nx + d3q27_ey[i]*ny + d3q27_ez[i]*nz);
+	#else
+		f_phi = wh[i] * tmp1 * (d3q27_ex[i]*nx + d3q27_ey[i]*ny + d3q27_ez[i]*nz);
+	#endif
+	return f_phi;
+}
+
+CudaDeviceFunction real_t sphereTail_max(real_t a, real_t b)
+{
+	return (a > b) ? a : b;
+}
+
+CudaDeviceFunction real_t sphereTail_min(real_t a, real_t b)
+{
+	return (a < b) ? a : b;
+}
+
+CudaDeviceFunction real_t sphereTail_sphereBelowVolume(real_t radius, real_t z_join)
+{
+	return PI * (radius*radius*z_join - z_join*z_join*z_join/3.0 + 2.0*radius*radius*radius/3.0);
+}
+
+CudaDeviceFunction real_t sphereTail_compositeVolume(real_t body_radius, real_t tail_radius, real_t tail_length)
+{
+	if (tail_radius <= 0.0 || tail_length <= 0.0) {
+		return 4.0*PI*body_radius*body_radius*body_radius/3.0;
+	}
+	if (body_radius <= tail_radius) {
+		return 1.0e300;
+	}
+	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
+	return sphereTail_sphereBelowVolume(body_radius, z_join)
+	     + PI*tail_radius*tail_radius*tail_length;
+}
+
+CudaDeviceFunction real_t sphereTail_solveBodyRadius(real_t reference_radius, real_t tail_radius, real_t tail_length)
+{
+	if (tail_radius <= 0.0 || tail_length <= 0.0) return reference_radius;
+
+	real_t target = 4.0*PI*reference_radius*reference_radius*reference_radius/3.0;
+	real_t low = tail_radius * (1.0 + 1.0e-9);
+	if (low < 1.0e-12) low = 1.0e-12;
+	real_t high = reference_radius;
+	if (high <= low) high = low * 1.25;
+
+	for (int i = 0; i < 80 && sphereTail_compositeVolume(high, tail_radius, tail_length) < target; i++) {
+		high *= 1.05;
+	}
+	for (int i = 0; i < 80; i++) {
+		real_t mid = 0.5*(low + high);
+		if (sphereTail_compositeVolume(mid, tail_radius, tail_length) < target) {
+			low = mid;
+		} else {
+			high = mid;
+		}
+	}
+	return 0.5*(low + high);
+}
+
+CudaDeviceFunction real_t sphereTail_topCappedCylinderSignedDistance(real_t radial, real_t z_local, real_t tail_radius, real_t z_join, real_t tail_length)
+{
+	real_t z_top = z_join + tail_length;
+	real_t qx = radial - tail_radius;
+	real_t qz = z_local - z_top;
+	if (z_local <= z_top) {
+		return sphereTail_max(qx, qz);
+	}
+	real_t ox = sphereTail_max(qx, 0.0);
+	return sqrt(ox*ox + qz*qz);
+}
+
+CudaDeviceFunction real_t sphereTail_signedDistance(real_t body_radius, real_t tail_radius, real_t tail_length)
+{
+	real_t x_local = X - CenterX;
+	real_t y_local = Y - CenterY;
+	real_t z_local = Z - CenterZ;
+	real_t radial = sqrt(x_local*x_local + y_local*y_local);
+	real_t sphere_sdf = sqrt(x_local*x_local + y_local*y_local + z_local*z_local) - body_radius;
+
+	if (tail_radius <= 0.0 || tail_length <= 0.0 || body_radius <= tail_radius) return sphere_sdf;
+
+	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
+	real_t truncated_sphere_sdf = sphereTail_max(sphere_sdf, z_local - z_join);
+	real_t cylinder_sdf = 1.0e30;
+	if (z_local >= z_join) {
+		cylinder_sdf = sphereTail_topCappedCylinderSignedDistance(radial, z_local, tail_radius, z_join, tail_length);
+	}
+	return sphereTail_min(truncated_sphere_sdf, cylinder_sdf);
+}
+
+CudaDeviceFunction real_t sphereTail_tailVelocityWeight(real_t body_radius, real_t tail_radius, real_t tail_length, real_t velocity_mode)
+{
+	if (tail_radius <= 0.0 || tail_length <= 0.0 || body_radius <= tail_radius) return 0.0;
+
+	real_t x_local = X - CenterX;
+	real_t y_local = Y - CenterY;
+	real_t z_local = Z - CenterZ;
+	real_t radial = sqrt(x_local*x_local + y_local*y_local);
+	real_t z_join = sqrt(body_radius*body_radius - tail_radius*tail_radius);
+	real_t axial = (z_local - z_join) / tail_length;
+	if (axial <= 0.0 || axial > 1.0) return 0.0;
+
+	real_t radial_weight = 0.5*(1.0 - tanh(2.0*(radial - tail_radius)/IntWidth));
+	real_t top_weight = 0.5*(1.0 - tanh(2.0*(z_local - (z_join + tail_length))/IntWidth));
+	real_t axial_weight = (velocity_mode > 1.5) ? axial : 1.0;
+	real_t weight = axial_weight * radial_weight * top_weight;
+	if (weight < 0.0) weight = 0.0;
+	if (weight > 1.0) weight = 1.0;
+	return weight;
+}
+
+/*	INITIALISATION:	*/
+CudaDeviceFunction void Init()
+{
+	PhaseF = PhaseField;
+	specialCases_Init();
+	if ( IamWall || IamSolid ) PhaseF = stage18_clamp(PhaseField, PhaseField_l, PhaseField_h);
+
+	if (developedFlow > 0.1) {
+		U = 6.0 * Uavg * Y*(HEIGHT - Y)/(HEIGHT*HEIGHT);
+		V = 0.0;
+		W = 0.0;
+	} else if ( developedPipeFlow_X > 0.1 ){
+		U = 2.0 * Uavg * (1 - pow( (sqrt(pow((Y-pipeCentre_Y),2) + pow((Z-pipeCentre_Z),2)) / pipeRadius),2));
+		V = 0.0;
+		W = 0.0;
+	} else {
+		U = VelocityX;	V = VelocityY;	W = VelocityZ;
+	}
+
+	if (DropletOnlyVelocity > 0.5) {
+		real_t pf_mid = 0.5*(PhaseField_h + PhaseField_l);
+		real_t liquid_fraction = (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
+		if (liquid_fraction < 0.0) liquid_fraction = 0.0;
+		if (liquid_fraction > 1.0) liquid_fraction = 1.0;
+		real_t droplet_fraction = (BubbleType >= 0.0) ? liquid_fraction : (1.0 - liquid_fraction);
+		if (DropletOnlyVelocity > 1.5) {
+			U = droplet_fraction * DropletVelocityX;
+			V = droplet_fraction * DropletVelocityY;
+			W = droplet_fraction * DropletVelocityZ;
+		} else {
+			int in_droplet = (BubbleType >= 0.0 && PhaseF > pf_mid) ||
+			                 (BubbleType <  0.0 && PhaseF < pf_mid);
+			if (in_droplet) {
+				U = DropletVelocityX;
+				V = DropletVelocityY;
+				W = DropletVelocityZ;
+			} else {
+				U = 0.0;
+				V = 0.0;
+				W = 0.0;
+			}
+		}
+	}
+
+	if (CompositeDropletTailVelocityMode > 0.5 &&
+	    CompositeDropletTailRadius > 0.0 &&
+	    CompositeDropletTailLength > 0.0 &&
+	    (CompositeDropletTailVelocityX != 0.0 ||
+	     CompositeDropletTailVelocityY != 0.0 ||
+	     CompositeDropletTailVelocityZ != 0.0)) {
+		real_t body_radius = CompositeDropletBodyRadius;
+		if (body_radius <= 0.0) {
+			body_radius = sphereTail_solveBodyRadius(Radius, CompositeDropletTailRadius, CompositeDropletTailLength);
+		}
+		real_t tail_weight = sphereTail_tailVelocityWeight(body_radius, CompositeDropletTailRadius, CompositeDropletTailLength, CompositeDropletTailVelocityMode);
+		U += tail_weight * CompositeDropletTailVelocityX;
+		V += tail_weight * CompositeDropletTailVelocityY;
+		W += tail_weight * CompositeDropletTailVelocityZ;
+	}
+
+	pnorm = 0.0; // initialise as zero and fill in later stage
+}
+
+CudaDeviceFunction void InitFromFieldsStage()
+{
+	PhaseF = Init_PhaseField_External;
+	U = Init_UX_External;
+	V = Init_UY_External;
+	W = Init_UZ_External;
+	if ( IamWall || IamSolid ) PhaseF = stage18_clamp(Init_PhaseField_External, PhaseField_l, PhaseField_h);
+	pnorm = 0.0; // initialise as zero and fill in later stage
+}
+
+CudaDeviceFunction void specialCases_Init()
+{
+	#ifdef OPTIONS_thermo
+		Temp   = T_init;
+		if (fabs(dT) > 0){
+			Temp = T_init + dT*Y;
+		}
+		if (fabs(dTx) > 0){
+			Temp = T_init + dTx*X;
+		}
+		#ifdef OPTIONS_planarBenchmark
+			if ( (NodeType & NODE_ADDITIONALS) == NODE_BWall) { //bottom wall
+				real_t x, omega;
+				x = (X-0.5) - myL;
+				omega = 3.1415926535897 / myL;
+				Temp = T_h + T_0 * cos(omega * x);
+				printf("y,x=%.4lf,%.4lf\n", Y,x);
+			} else if ( (NodeType & NODE_ADDITIONALS) == NODE_TWall) {
+				Temp = T_c;
+				printf("y,x=%.4lf,%.4lf\n", Y, X);
+			}
+			PhaseF = 0.5 + PLUSMINUS * (0.5) * tanh( (Y - MIDPOINT)/(IntWidth/2) );
+		#endif
+		if (surfPower > 1) {
+			SurfaceTension = sigma + sigma_TT*pow((Temp(0,0,0) - T_ref),surfPower) * (1.0/surfPower);
+		} else {
+			SurfaceTension = sigma + sigma_T*(Temp(0,0,0) - T_ref);
+		}
+		Cond = interp(PhaseF, k_h, k_l);
+	#endif
+	// Pre-defined Initialisation patterns:
+	// Diffuse interface sphere
+	   // BubbleType = -1 refers to light fluid bubble.
+        if ( Radius > 0 ){
+                real_t Ri;
+		if (CompositeDropletTailRadius > 0.0 && CompositeDropletTailLength > 0.0) {
+			real_t body_radius = CompositeDropletBodyRadius;
+			if (body_radius <= 0.0) {
+				body_radius = sphereTail_solveBodyRadius(Radius, CompositeDropletTailRadius, CompositeDropletTailLength);
+			}
+			Ri = Radius + sphereTail_signedDistance(body_radius, CompositeDropletTailRadius, CompositeDropletTailLength);
+		} else {
+			Ri = sqrt( (X - CenterX)*(X - CenterX) + (Y - CenterY)*(Y - CenterY) + (Z - CenterZ)*(Z - CenterZ) );
+		}
+                PhaseF = 0.5*(PhaseField_h + PhaseField_l)
+                       - 0.5*(PhaseField_h - PhaseField_l) * BubbleType * tanh(2 * (Ri - Radius)/IntWidth);
+        }
+		// Rayleigh-Taylor Instability
+	    // Initialises with a sharp interface
+	if (RTI_Characteristic_Length > 0){
+		real_t d = RTI_Characteristic_Length;
+		real_t ycutoff;
+        if (pseudo2D > 0.5){
+			ycutoff = 2.0*d + 0.1*d*(cos(2.0*PI*X/d));
+        } else {
+			ycutoff = 2.0*d + 0.05*d*(cos(2.0*PI*X/d) + cos(2.0*PI*Z/d));
+		}
+		if (Y < ycutoff) {PhaseF = 0.0; }
+		else             {PhaseF = 1.0;	}
+	}
+    // Annular Taylor bubble set up
+	if ( DonutTime > 0){
+		real_t intLocation = Donut_D *
+					sqrt( pow(Donut_h,2)
+					    - pow( DonutTime - sqrt(pow(Y-CenterY,2) + pow(Z-CenterZ,2)), 2) );
+		real_t shifter = atan2( (Z-CenterZ), (Y-CenterY));
+		if (shifter < 0) shifter = shifter + 2*PI;
+		if (  (X < Donut_x0 + intLocation*sin(shifter/2)) && (X > Donut_x0 - intLocation) )
+		{
+			PhaseF = 0.0;
+		} else {
+			PhaseF = 1.0;
+		}
+	}
+    // Washburn Law test setup
+    if ((Washburn_start > 0) && (Washburn_end > 0) ) {
+		PhaseF = 1 - 0.5 *  ( tanh( 2.0 * ( X - Washburn_start ) / IntWidth ) -
+						   tanh( 2.0 * ( X - Washburn_end  )  / IntWidth ));
+	}
+}
+
+CudaDeviceFunction void Init_distributions()
+{
+	// Initialise phase variables:
+	int i;
+	real_t C0 = 0.5*(PhaseField_h - PhaseField_l);
+	PhaseF = PhaseF(0,0,0);
+	real_t d = Density_l + (Density_h-Density_l) * (PhaseF - PhaseField_l)/(PhaseField_h - PhaseField_l);
+    pnorm = Pressure / (d*cs2);
+
+	// Gradients and phasefield normals:
+	real_t nx, ny, nz, magnPhi;
+	vector_t gradPhi = calcGradPhi();
+	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+
+	#ifdef OPTIONS_geometric
+		gradPhiVal_x = gradPhi.x;
+		gradPhiVal_y = gradPhi.y;
+		gradPhiVal_z = gradPhi.z;
+	#endif
+	if (magnPhi < minGradient){
+		nx=0.0; ny=0.0; nz=0.0;
+	} else {
+		nx = gradPhi.x/magnPhi;
+		ny = gradPhi.y/magnPhi;
+		nz = gradPhi.z/magnPhi;
+	}
+
+	U = U(0,0,0);
+	V = V(0,0,0);
+	W = W(0,0,0);
+
+	real_t mag = U*U + V*V + W*W;
+	real_t Gamma[27];
+	// ##### heq
+	real_t F_phi[hPops];
+	real_t tmp1 = (1.0 - 4.0*(PhaseF - C0)*(PhaseF - C0))/IntWidth;
+	for (i=0; i< 27; i++){
+		Gamma[i] = calcGamma(i, U, V, W, mag);
+		if (i < hPops) F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz);
+	}
+
+	<?R
+    if (Options$q27){
+	#	C(h, w_h * phase * gammah - 0.5 * Fphi)
+		C(h, phase * gammah )
+    } else {
+		C(h, w_h * phase * gammah )
+    }
+	?>
+
+	// ##### geq
+	<?R
+		w_g = PV(c(paste("wg[",1:27-1,"]",sep="")))
+		press = PV("pnorm")
+		C(g, press*w_g + (gammag-w_g) )
+	?>
+        pnorm  = <?R C(sum(g)) ?>;
+		PhaseF = <?R C(sum(h)) ?>;
+	#ifdef OPTIONS_thermo
+		Temp   = Temp(0,0,0);
+		Cond   = interp(PhaseF, k_h, k_l);
+	#endif
+	#ifdef OPTIONS_OutFlow
+			if ((NodeType & NODE_BOUNDARY) == NODE_EConvect){
+					<?R if (Options$OutFlow){
+							C(g_old, g)
+							C(h_old, h)     }       ?>
+			}
+	#endif
+}
+
+CudaDeviceFunction void UpdateGlobalMarkers()
+{
+	if (IsSpecialBoundaryPoint) {
+		AddToNumSpecialPoints(1);
+	}
+
+	if ( IamWall || IamSolid ) {
+		real_t a, h, pf_f;
+
+		h = 0.5 * sqrt(nw_x*nw_x + nw_y*nw_y + nw_z*nw_z);
+
+        real_t am_i_surrounded = h < 0.001;
+
+        if (! am_i_surrounded) {
+          AddToNumWallBoundaryPoints(1);
+        }
+
+        AddToNumBoundaryPoints(1);
+    }
+
+    if (IamCOLLISION){
+      AddToNumFluidCells(1);
+    }
+}
+
+/*	ITERATION:	*/
+CudaDeviceFunction void Run()
+{
+	// Stage18 clean actions do not use the inherited monolithic Run path.
+	// Keep this symbol as a compatibility no-op so generated helper code can
+	// still compile without re-entering legacy boundary/collision sequencing.
+	pnorm = <?R C(sum(g)) ?>;
+}
+
+/*
+ * Stage18 clean-architecture stages.
+ *
+ * These functions intentionally expose producer-consumer ownership in TCLB.
+ * Some internals are still legacy-compatible in this first baseline, but the
+ * stage order no longer hides wetting, wall source, phase reconstruction, and
+ * force closure inside one monolithic Run() path.
+ */
+
+CudaDeviceFunction void Stage18_InitPhaseField()
+{
+	Init();
+	if (IamWall || IamSolid) {
+		// Stage18 forbids sentinel phase values in physical stencils. Wall
+		// wetting state is represented by WallPhase and passive h sources.
+		PhaseF = stage18_clamp(PhaseField, PhaseField_l, PhaseField_h);
+	}
+	PhaseFValid = (PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+	PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+	stage18_update_macro_from_phase();
+	Stage18ContractViolation = ((IamWall || IamSolid) && (PhaseF < PhaseField_l || PhaseF > PhaseField_h)) ? 1.0 : 0.0;
+}
+
+CudaDeviceFunction void Stage18_InitFromFields()
+{
+	PhaseF = Init_PhaseField_External;
+	U = Init_UX_External;
+	V = Init_UY_External;
+	W = Init_UZ_External;
+	if (IamWall || IamSolid) {
+		PhaseF = stage18_clamp(Init_PhaseField_External, PhaseField_l, PhaseField_h);
+	}
+	PhaseFValid = (PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+	PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+	pnorm = 0.0;
+	stage18_update_macro_from_phase();
+	Stage18ContractViolation = ((IamWall || IamSolid) && (PhaseF < PhaseField_l || PhaseF > PhaseField_h)) ? 1.0 : 0.0;
+}
+
+CudaDeviceFunction void Stage18_IterationInput()
+{
+	// TCLB action input stage: load streamed populations from the previous
+	// snapshot and make them available to later stages.
+}
+
+CudaDeviceFunction void Stage18_GeometryBuild()
+{
+	SolidIndicator = (IamWall || IamSolid) ? 1.0 : 0.0;
+	IsBoundary = SolidIndicator;
+	IsSpecialBoundaryPoint = 0.0;
+
+	SignedDistance = 1.0;
+	SolidNormalX = SolidPlaneNormalX;
+	SolidNormalY = SolidPlaneNormalY;
+	SolidNormalZ = SolidPlaneNormalZ;
+
+	real_t nx = SolidPlaneNormalX;
+	real_t ny = SolidPlaneNormalY;
+	real_t nz = SolidPlaneNormalZ;
+	real_t norm = sqrt(nx*nx + ny*ny + nz*nz);
+	if (norm < 1e-12) {
+		nx = 0.0; ny = 1.0; nz = 0.0; norm = 1.0;
+	}
+	nx /= norm; ny /= norm; nz /= norm;
+
+	if (GeometryMode < 0.5) {
+		SignedDistance = 1.0;
+		SolidIndicator = (IamWall || IamSolid) ? 1.0 : 0.0;
+	} else if (GeometryMode < 1.5) {
+		SignedDistance = nx*X + ny*Y + nz*Z - SolidPlaneOffset;
+	} else if (GeometryMode < 2.5) {
+		real_t dx = X - SolidCenterX;
+		real_t dy = Y - SolidCenterY;
+		real_t dz = Z - SolidCenterZ;
+		if (SolidAxis < 0.5) {
+			dx = 0.0;
+		} else if (SolidAxis < 1.5) {
+			dy = 0.0;
+		} else {
+			dz = 0.0;
+		}
+		real_t r = sqrt(dx*dx + dy*dy + dz*dz);
+		SignedDistance = r - SolidRadius;
+		if (r > 1e-12) {
+			nx = dx/r; ny = dy/r; nz = dz/r;
+		}
+	} else if (GeometryMode < 3.5) {
+		real_t dx = X - SolidCenterX;
+		real_t dy = Y - SolidCenterY;
+		real_t dz = Z - SolidCenterZ;
+		real_t r = sqrt(dx*dx + dy*dy + dz*dz);
+		SignedDistance = r - SolidRadius;
+		if (r > 1e-12) {
+			nx = dx/r; ny = dy/r; nz = dz/r;
+		}
+	}
+
+	SolidNormalX = nx;
+	SolidNormalY = ny;
+	SolidNormalZ = nz;
+	nw_x = nx;
+	nw_y = ny;
+	nw_z = nz;
+	NearWallBand = (fabs(SignedDistance) <= 1.5) ? 1.0 : 0.0;
+	SolidNeighborCount = 0.0;
+	SolidNeighborCount += (SolidIndicator(1,0,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,0,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,1,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,-1,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,0,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,0,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,1,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,1,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,-1,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,-1,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,1,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,1,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,-1,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,-1,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,1,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,1,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,-1,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,-1,0) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,0,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,0,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(1,0,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(-1,0,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,1,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,-1,1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,1,-1) > 0.5) ? 1.0 : 0.0;
+	SolidNeighborCount += (SolidIndicator(0,-1,-1) > 0.5) ? 1.0 : 0.0;
+}
+
+CudaDeviceFunction void Stage18_PhaseFromH()
+{
+	PhasePopulationRepairApplied = 0.0;
+	if (!(IamWall || IamSolid)) {
+		real_t h_raw[hPops];
+		<?R C(PV("h_raw[",1:PF_velocities-1,"]"), h) ?>
+		real_t hraw_sum = 0.0;
+		real_t hraw_min = 1.0e300;
+		real_t hraw_max = -1.0e300;
+		real_t hraw_bad = 0.0;
+		for (int i = 0; i < hPops; i++) {
+			if (isfinite(h_raw[i])) {
+				hraw_sum += h_raw[i];
+				if (h_raw[i] < hraw_min) hraw_min = h_raw[i];
+				if (h_raw[i] > hraw_max) hraw_max = h_raw[i];
+			} else {
+				hraw_bad += 1.0;
+			}
+		}
+		if (hraw_bad > 0.5) {
+			hraw_sum = NAN;
+		}
+		PhaseHRawSum = hraw_sum;
+		PhaseHRawMin = (hraw_bad < hPops) ? hraw_min : NAN;
+		PhaseHRawMax = (hraw_bad < hPops) ? hraw_max : NAN;
+		PhaseHRawNonfiniteCount = hraw_bad;
+		real_t hsum = hraw_sum;
+		if ((!isfinite(hsum) || hsum < PhaseField_l || hsum > PhaseField_h) && PhasePopulationRepairMode > 0.5) {
+			real_t saved_phase = PhaseF(0,0,0);
+			real_t repaired_phase;
+			if (isfinite(hsum)) {
+				repaired_phase = stage18_clamp(hsum, PhaseField_l, PhaseField_h);
+				PhasePopulationRepairApplied = 1.0;
+			} else if (isfinite(saved_phase)) {
+				repaired_phase = stage18_clamp(saved_phase, PhaseField_l, PhaseField_h);
+				PhasePopulationRepairApplied = 2.0;
+			} else {
+				repaired_phase = 0.5 * (PhaseField_l + PhaseField_h);
+				PhasePopulationRepairApplied = 3.0;
+			}
+			real_t Gamma[27];
+			real_t u_local = isfinite(U(0,0,0)) ? U(0,0,0) : 0.0;
+			real_t v_local = isfinite(V(0,0,0)) ? V(0,0,0) : 0.0;
+			real_t w_local = isfinite(W(0,0,0)) ? W(0,0,0) : 0.0;
+			real_t u2mag = u_local*u_local + v_local*v_local + w_local*w_local;
+			for (int i = 0; i < 27; i++) {
+				Gamma[i] = calcGamma(i, u_local, v_local, w_local, u2mag);
+			}
+			<?R C(h, PV("repaired_phase") * gammah) ?>
+			PhaseF = repaired_phase;
+		} else {
+			PhaseF = hsum;
+		}
+		<?R C(hcur, h) ?>
+	}
+	PhaseFValid = (isfinite(PhaseF) && PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+	PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+	stage18_update_macro_from_phase();
+
+	if (!(NodeType & NODE_MRT)) {
+		return;
+	}
+
+	real_t C = PhaseF;
+	real_t grad_mag = sqrt(gradPhiVal_x*gradPhiVal_x + gradPhiVal_y*gradPhiVal_y + gradPhiVal_z*gradPhiVal_z);
+	real_t nx = 0.0, ny = 0.0, nz = 0.0;
+	if (grad_mag >= minGradient) {
+		nx = gradPhiVal_x / grad_mag;
+		ny = gradPhiVal_y / grad_mag;
+		nz = gradPhiVal_z / grad_mag;
+	}
+
+	real_t u2mag = U*U + V*V + W*W;
+	real_t Gamma[27];
+	real_t F_phi[hPops];
+	real_t heq[hPops];
+	real_t tmp1 = (PhaseEquationMode > 0.5)
+		? stage18_phase_tmp1(C)
+		: (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	real_t h_pre[hPops];
+	real_t h_post[hPops];
+	real_t fphi_sum = 0.0;
+	real_t heq_sum = 0.0;
+	real_t hpre_sum = 0.0;
+	real_t fphi_m1x = 0.0;
+	real_t fphi_m1y = 0.0;
+	real_t fphi_m1z = 0.0;
+
+	for (int i = 0; i < 27; i++) {
+		Gamma[i] = calcGamma(i, U, V, W, u2mag);
+		if (i < hPops) {
+			h_pre[i] = 0.0;
+			F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz);
+		}
+	}
+
+	<?R
+		EQ_h_inline = MRT_eq(U[1:PF_velocities,],PV(1),u)
+		C(heq, EQ_h_inline$feq * PV("C"))
+		C(PV("h_pre[",1:PF_velocities-1,"]"), hcur)
+	?>
+
+	for (int i = 0; i < hPops; i++) {
+		hpre_sum += h_pre[i];
+		heq_sum += heq[i];
+		fphi_sum += F_phi[i];
+		fphi_m1x += d3q27_ex[i] * F_phi[i];
+		fphi_m1y += d3q27_ey[i] * F_phi[i];
+		fphi_m1z += d3q27_ez[i] * F_phi[i];
+	}
+	if (PhaseEquationMode > 1.5) {
+		real_t heq_delta = C - heq_sum;
+		real_t fphi_delta = fphi_sum;
+		for (int i = 0; i < hPops; i++) {
+			real_t wi = stage18_phase_weight(i);
+			heq[i] += wi * heq_delta;
+			F_phi[i] -= wi * fphi_delta;
+		}
+		heq_sum = C;
+		fphi_sum = 0.0;
+		fphi_m1x = 0.0;
+		fphi_m1y = 0.0;
+		fphi_m1z = 0.0;
+		for (int i = 0; i < hPops; i++) {
+			fphi_m1x += d3q27_ex[i] * F_phi[i];
+			fphi_m1y += d3q27_ey[i] * F_phi[i];
+			fphi_m1z += d3q27_ez[i] * F_phi[i];
+		}
+	}
+
+	<?R
+		C(PV("h_post[",1:PF_velocities-1,"]"), PV("h_pre[",1:PF_velocities-1,"]") - PV("omega_phi") * (PV("h_pre[",1:PF_velocities-1,"]") - heq + 0.5*Fphi) + Fphi)
+	?>
+
+	real_t hpost_sum = 0.0;
+	for (int i = 0; i < hPops; i++) hpost_sum += h_post[i];
+	if (PhaseEquationMode > 1.5) {
+		real_t post_delta = C - hpost_sum;
+		for (int i = 0; i < hPops; i++) {
+			h_post[i] += stage18_phase_weight(i) * post_delta;
+		}
+		hpost_sum = C;
+	}
+
+	PhaseHPreSum = hpre_sum;
+	PhaseHeqSum = heq_sum;
+	PhaseFphiSum = fphi_sum;
+	PhaseFphiFirstMomentX = fphi_m1x;
+	PhaseFphiFirstMomentY = fphi_m1y;
+	PhaseFphiFirstMomentZ = fphi_m1z;
+	PhaseHPostSum = hpost_sum;
+	<?R C(hcur, PV("h_post[",1:PF_velocities-1,"]")) ?>
+	if (!(IamWall || IamSolid)) {
+		PhaseF = hpost_sum;
+		PhaseFValid = (isfinite(PhaseF) && PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+		PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+		stage18_update_macro_from_phase();
+	}
+	stage18_update_globals(C);
+}
+
+CudaDeviceFunction void Stage18_GradPhi()
+{
+	vector_t gphi;
+	if ((GradPhiMode > 0.5 || MuWallFluxMode > 0.5) && (NearWallBand > 0.5 || SolidNeighborCount > 0.5)) {
+		gphi = stage18_gradPhi_reconstructed();
+	} else {
+		gphi = calcGradPhi();
+	}
+	gradPhiVal_x = gphi.x;
+	gradPhiVal_y = gphi.y;
+	gradPhiVal_z = gphi.z;
+	if (IamWall || IamSolid) {
+		gradPhiVal_x = 0.0;
+		gradPhiVal_y = 0.0;
+		gradPhiVal_z = 0.0;
+	}
+}
+
+CudaDeviceFunction void Stage18_Mu()
+{
+	if (IamWall || IamSolid) {
+		lapPhi = 0.0;
+		mu = 0.0;
+	} else {
+		real_t lp = 0.0;
+		if ((LaplaceMode > 0.5 || MuWallFluxMode > 0.5) && (NearWallBand > 0.5 || SolidNeighborCount > 0.5)) {
+			lp = stage18_lapPhi_reconstructed();
+		} else {
+			<?R myLaplace('lp', 'PhaseF') ?>
+		}
+		lapPhi = lp;
+		real_t pfavg = 0.5*(PhaseField_l+PhaseField_h);
+		#ifdef OPTIONS_thermo
+			mu = 4.0*(12.0*SurfaceTension(0,0,0)/IntWidth)*(PhaseF-PhaseField_l)*(PhaseF-PhaseField_h)*(PhaseF-pfavg)
+				- (1.5 *SurfaceTension(0,0,0)*IntWidth) * lp;
+		#else
+			mu = 4.0*(12.0*sigma/IntWidth)*(PhaseF-PhaseField_l)*(PhaseF-PhaseField_h)*(PhaseF-pfavg)
+				- (1.5 *sigma*IntWidth) * lp;
+		#endif
+	}
+}
+
+CudaDeviceFunction void Stage18_WettingBoundary()
+{
+	WallPhase = PhaseF(0,0,0);
+	WallPhaseValid = 0.0;
+	WallDistance = fabs(SignedDistance);
+	WallLinkMask = 0.0;
+	WallHOutgoingMass = 0.0;
+	WallHIncomingMass = 0.0;
+	WallHNetMass = 0.0;
+
+	if ((IamWall || IamSolid || NearWallBand > 0.5) && WettingModel > 0.5) {
+		real_t gtx = gradPhiVal_x;
+		real_t gty = gradPhiVal_y;
+		real_t gtz = gradPhiVal_z;
+		real_t dotn = gtx*SolidNormalX + gty*SolidNormalY + gtz*SolidNormalZ;
+		gtx -= dotn*SolidNormalX;
+		gty -= dotn*SolidNormalY;
+		gtz -= dotn*SolidNormalZ;
+		real_t gt = sqrt(gtx*gtx + gty*gty + gtz*gtz);
+		real_t hdist = (WallDistance > 1e-12) ? WallDistance : 0.5;
+		WallPhase = PhaseF(0,0,0) + 2.0 * hdist * tan(PI/2.0 - radAngle) * gt;
+		WallPhase = stage18_clamp(WallPhase, PhaseField_l, PhaseField_h);
+		WallPhaseValid = 1.0;
+		WallLinkMask = 1.0;
+	}
+}
+
+CudaDeviceFunction void Stage18_WallPhasePopulationSource()
+{
+	WallHOutgoingMass = 0.0;
+	WallHIncomingMass = 0.0;
+	WallHNetMass = 0.0;
+	WallHLinkWriteCount = 0.0;
+	WallHMassBefore = 0.0;
+	WallHMassAfter = 0.0;
+
+	if ((IamWall || IamSolid) && WettingWriteMode > 0.5 && WallPhaseValid > 0.5) {
+		real_t old_mass = <?R C(sum(h)) ?>;
+		real_t phase = stage18_clamp(WallPhase, PhaseField_l, PhaseField_h);
+		real_t Gamma[27];
+		for (int i = 0; i < 27; i++) {
+			Gamma[i] = calcGamma(i, 0.0, 0.0, 0.0, 0.0);
+		}
+		WallHMassBefore = old_mass;
+		if (WettingWriteMode < 1.5) {
+			<?R C(h, PV("phase") * gammah) ?>
+			WallHLinkWriteCount = (real_t)hPops;
+		} else {
+			real_t h_source[hPops];
+			<?R C(PV("h_source[",1:PF_velocities-1,"]"), h) ?>
+			for (int i = 0; i < hPops; i++) {
+				if (stage18_direction_points_to_fluid(i)) {
+					h_source[i] = phase * Gamma[i];
+					WallHLinkWriteCount += 1.0;
+				}
+			}
+			<?R C(h, PV("h_source[",1:PF_velocities-1,"]")) ?>
+		}
+		real_t new_mass = <?R C(sum(h)) ?>;
+		WallHIncomingMass = old_mass;
+		WallHOutgoingMass = new_mass;
+		WallHMassAfter = new_mass;
+		WallHNetMass = new_mass - old_mass;
+		AddToWallHNetMassTotal(WallHNetMass);
+	}
+}
+
+CudaDeviceFunction void Stage18_InitDistributions()
+{
+	if (IamWall || IamSolid) {
+		PhaseF = (WallPhaseValid > 0.5) ? WallPhase : stage18_clamp(PhaseF, PhaseField_l, PhaseField_h);
+	}
+	Init_distributions();
+	<?R C(hcur, h) ?>
+	PhaseFValid = (isfinite(PhaseF) && PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+	PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+	stage18_update_macro_from_phase();
+}
+
+CudaDeviceFunction void Stage18_InitForceAudit()
+{
+	WallHOutgoingMass = 0.0;
+	WallHIncomingMass = 0.0;
+	WallHNetMass = 0.0;
+	PhaseHPreSum = 0.0;
+	PhaseHRawSum = 0.0;
+	PhaseHRawMin = 0.0;
+	PhaseHRawMax = 0.0;
+	PhaseHRawNonfiniteCount = 0.0;
+	PhaseHeqSum = 0.0;
+	PhaseFphiSum = 0.0;
+	PhaseFphiFirstMomentX = 0.0;
+	PhaseFphiFirstMomentY = 0.0;
+	PhaseFphiFirstMomentZ = 0.0;
+	PhaseHPostSum = 0.0;
+	PhaseCorrectionDelta = 0.0;
+	PhaseMassRedistributionWeight = 0.0;
+	PhaseGlobalCorrectionApplied = 0.0;
+
+	F_surf_x = 0.0; F_surf_y = 0.0; F_surf_z = 0.0;
+	F_pressure_x = 0.0; F_pressure_y = 0.0; F_pressure_z = 0.0;
+	F_mu_x = 0.0; F_mu_y = 0.0; F_mu_z = 0.0;
+	F_body_x = 0.0; F_body_y = 0.0; F_body_z = 0.0;
+	F_total_x = 0.0; F_total_y = 0.0; F_total_z = 0.0;
+	ForceOverRho = 0.0;
+	ForceInsertionAudit = 0.0;
+	PressureInput = 0.0;
+	PressureReference = 0.0;
+	StressXX = 0.0; StressXY = 0.0; StressXZ = 0.0;
+	StressYY = 0.0; StressYZ = 0.0; StressZZ = 0.0;
+
+	MassCorrectionApplied = 0.0;
+}
+
+CudaDeviceFunction void Stage18_ForceClosure()
+{
+	real_t rho = stage18_rho_from_phase(PhaseF);
+	pnorm = <?R C(sum(g)) ?>;
+	PressureMoment = pnorm;
+	PhysicalPressure = PressureMoment * rho * cs2;
+	real_t p = stage18_pressure_input(rho);
+	vector_t gphi = {gradPhiVal_x, gradPhiVal_y, gradPhiVal_z};
+	real_t fps[3] = {0.0,0.0,0.0};
+	real_t fb[3] = {0.0,0.0,0.0};
+	real_t fs[3] = {0.0,0.0,0.0};
+	real_t fmu[3] = {0.0,0.0,0.0};
+	real_t tau = calcTau(PhaseF);
+
+	stage18_calc_Fp(&fps[0], &fps[1], &fps[2], p, gphi);
+	stage18_calc_Fb(&fb[0], &fb[1], &fb[2], rho);
+	stage18_calc_Fs(&fs[0], &fs[1], &fs[2], mu, gphi);
+
+	StressXX = 0.0; StressXY = 0.0; StressXZ = 0.0;
+	StressYY = 0.0; StressYZ = 0.0; StressZZ = 0.0;
+	if (ForceClosureMode > 1.5 && FmuStressMode > 0.5) {
+		stage18_calc_Fmu_from_stress(&fmu[0], &fmu[1], &fmu[2], tau, gphi);
+	}
+
+	PressureInput = p;
+	F_pressure_x = fps[0]; F_pressure_y = fps[1]; F_pressure_z = fps[2];
+	F_body_x = fb[0]; F_body_y = fb[1]; F_body_z = fb[2];
+	F_surf_x = fs[0]; F_surf_y = fs[1]; F_surf_z = fs[2];
+	F_mu_x = fmu[0]; F_mu_y = fmu[1]; F_mu_z = fmu[2];
+	F_total_x = F_pressure_x + F_body_x + F_surf_x + F_mu_x;
+	F_total_y = F_pressure_y + F_body_y + F_surf_y + F_mu_y;
+	F_total_z = F_pressure_z + F_body_z + F_surf_z + F_mu_z;
+	ForceOverRho = sqrt(F_total_x*F_total_x + F_total_y*F_total_y + F_total_z*F_total_z) / rho;
+	ForceInsertionAudit = 0.0;
+}
+
+CudaDeviceFunction void Stage18_MomentumCollision()
+{
+	if (!(NodeType & NODE_MRT)) {
+		return;
+	}
+
+	real_t C = PhaseF(0,0,0);
+	real_t rho = stage18_rho_from_phase(C);
+	real_t rho_inv = 1.0 / rho;
+	real_t tau = calcTau(C);
+	real_t p = <?R C(sum(g)) ?>;
+
+	real_t F_total[3] = {F_total_x, F_total_y, F_total_z};
+	real_t m0[27];
+	real_t m[27];
+	<?R
+		EQ = MRT_eq(U,PV(1),u,mat=t(M))
+		selR = rep(TRUE, length(EQ$order))
+		EQ$Req[1] = PV("p")
+		EQ$feq = solve(M) %*% EQ$Req
+		m0 = PV("m0[",1:27-1,"]")
+		C(m0, M %*% g)
+	?>
+
+	U = (m0[1] + 0.5 * F_total[0]) * rho_inv;
+	V = (m0[2] + 0.5 * F_total[1]) * rho_inv;
+	W = (m0[3] + 0.5 * F_total[2]) * rho_inv;
+	ForceMomentumBeforeX = m0[1];
+	ForceMomentumBeforeY = m0[2];
+	ForceMomentumBeforeZ = m0[3];
+	ForceHalfVelocityX = 0.5 * F_total[0] * rho_inv;
+	ForceHalfVelocityY = 0.5 * F_total[1] * rho_inv;
+	ForceHalfVelocityZ = 0.5 * F_total[2] * rho_inv;
+
+	real_t omega_shear = (MRTShearOmegaOverride > 0.0) ? MRTShearOmegaOverride : (1.0 / tau);
+	omega_shear = stage18_bound_omega(omega_shear);
+	real_t omega_bulk = stage18_bound_omega(MRTBulkOmega);
+	real_t omega_ghost = omega_bulk;
+	real_t omega_default = (MomentumMRTMode > 0.5) ? omega_ghost : 1.0;
+	real_t force_injection_scale = (ForceInsertionMode > 0.5) ? 0.5 : 1.0;
+
+	<?R
+		OmegaStage18 = PV("omega_default") + PV(rep(0, sum(selR)))
+		OmegaStage18[1] = PV("omega_bulk")
+		OmegaStage18[2:4] = PV(1)
+		OmegaStage18[5:9] = PV("omega_shear")
+		mF = PV(rep(0,27))
+		mF[2:4] = PV("force_injection_scale") * PV("F_total[",1:3-1,"]") * PV("rho_inv")
+		C(m, m0 - (m0 - EQ$Req + 0.5*mF)[selR] * OmegaStage18 + mF)
+		C(g, invM %*% m)
+	?>
+
+	pnorm = <?R C(sum(g)) ?>;
+	PressureMoment = pnorm;
+	stage18_update_macro_from_phase();
+	real_t m_after[27];
+	<?R C(PV("m_after[",1:27-1,"]"), M %*% g) ?>
+	ForceMomentumAfterX = m_after[1];
+	ForceMomentumAfterY = m_after[2];
+	ForceMomentumAfterZ = m_after[3];
+	ForceEquivalentInjectedX = ForceMomentumAfterX - ForceMomentumBeforeX;
+	ForceEquivalentInjectedY = ForceMomentumAfterY - ForceMomentumBeforeY;
+	ForceEquivalentInjectedZ = ForceMomentumAfterZ - ForceMomentumBeforeZ;
+	ForceInsertionAudit = force_injection_scale;
+	<?R C(h, PV(paste0("HCur", 0:(PF_velocities-1), "(0,0,0)"))) ?>
+}
+
+CudaDeviceFunction void Stage18_PhaseCollision()
+{
+	if (!(NodeType & NODE_MRT)) {
+		return;
+	}
+
+	real_t C = PhaseF(0,0,0);
+	real_t grad_mag = sqrt(gradPhiVal_x*gradPhiVal_x + gradPhiVal_y*gradPhiVal_y + gradPhiVal_z*gradPhiVal_z);
+	real_t nx = 0.0, ny = 0.0, nz = 0.0;
+	if (grad_mag >= minGradient) {
+		nx = gradPhiVal_x / grad_mag;
+		ny = gradPhiVal_y / grad_mag;
+		nz = gradPhiVal_z / grad_mag;
+	}
+
+	real_t u2mag = U*U + V*V + W*W;
+	real_t Gamma[27];
+	real_t F_phi[hPops];
+	real_t heq[hPops];
+	real_t tmp1 = (PhaseEquationMode > 0.5)
+		? stage18_phase_tmp1(C)
+		: (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	real_t h_pre[hPops];
+	real_t h_post[hPops];
+	real_t fphi_sum = 0.0;
+	real_t heq_sum = 0.0;
+	real_t hpre_sum = 0.0;
+	real_t fphi_m1x = 0.0;
+	real_t fphi_m1y = 0.0;
+	real_t fphi_m1z = 0.0;
+
+	for (int i = 0; i < 27; i++) {
+		Gamma[i] = calcGamma(i, U, V, W, u2mag);
+		if (i < hPops) {
+			h_pre[i] = 0.0;
+			F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz);
+		}
+	}
+
+	<?R
+		EQ_h_clean = MRT_eq(U[1:PF_velocities,],PV(1),u)
+		C(heq, EQ_h_clean$feq * PV("C"))
+		C(PV("h_pre[",1:PF_velocities-1,"]"), hcur)
+	?>
+
+	for (int i = 0; i < hPops; i++) {
+		hpre_sum += h_pre[i];
+		heq_sum += heq[i];
+		fphi_sum += F_phi[i];
+		fphi_m1x += d3q27_ex[i] * F_phi[i];
+		fphi_m1y += d3q27_ey[i] * F_phi[i];
+		fphi_m1z += d3q27_ez[i] * F_phi[i];
+	}
+	if (PhaseEquationMode > 1.5) {
+		real_t heq_delta = C - heq_sum;
+		real_t fphi_delta = fphi_sum;
+		for (int i = 0; i < hPops; i++) {
+			real_t wi = stage18_phase_weight(i);
+			heq[i] += wi * heq_delta;
+			F_phi[i] -= wi * fphi_delta;
+		}
+		heq_sum = C;
+		fphi_sum = 0.0;
+		fphi_m1x = 0.0;
+		fphi_m1y = 0.0;
+		fphi_m1z = 0.0;
+		for (int i = 0; i < hPops; i++) {
+			fphi_m1x += d3q27_ex[i] * F_phi[i];
+			fphi_m1y += d3q27_ey[i] * F_phi[i];
+			fphi_m1z += d3q27_ez[i] * F_phi[i];
+		}
+	}
+
+	<?R
+		C(PV("h_post[",1:PF_velocities-1,"]"), PV("h_pre[",1:PF_velocities-1,"]") - PV("omega_phi") * (PV("h_pre[",1:PF_velocities-1,"]") - heq + 0.5*Fphi) + Fphi)
+		C(h, PV("h_post[",1:PF_velocities-1,"]"))
+	?>
+
+	real_t hpost_sum = 0.0;
+	for (int i = 0; i < hPops; i++) hpost_sum += h_post[i];
+	if (PhaseEquationMode > 1.5) {
+		real_t post_delta = C - hpost_sum;
+		for (int i = 0; i < hPops; i++) {
+			h_post[i] += stage18_phase_weight(i) * post_delta;
+		}
+		<?R C(h, PV("h_post[",1:PF_velocities-1,"]")) ?>
+		hpost_sum = C;
+	}
+
+	PhaseHPreSum = hpre_sum;
+	PhaseHeqSum = heq_sum;
+	PhaseFphiSum = fphi_sum;
+	PhaseFphiFirstMomentX = fphi_m1x;
+	PhaseFphiFirstMomentY = fphi_m1y;
+	PhaseFphiFirstMomentZ = fphi_m1z;
+	PhaseHPostSum = hpost_sum;
+	stage18_update_globals(C);
+}
+
+CudaDeviceFunction void Stage18_ConservativeBoundednessCorrection()
+{
+	MassCorrectionApplied = 0.0;
+	PhaseCorrectionDelta = 0.0;
+	PhaseMassRedistributionWeight = 0.0;
+	PhaseGlobalCorrectionApplied = 0.0;
+	if (!(IamWall || IamSolid)) {
+		PhaseF = PhaseHPostSum;
+		PhaseFValid = (isfinite(PhaseF) && PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+		PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+		stage18_update_macro_from_phase();
+	}
+	if (PhaseBoundednessMode > 0.5) {
+		real_t hsum = PhaseHPostSum;
+		real_t bounded = stage18_clamp(hsum, PhaseField_l, PhaseField_h);
+		PhaseCorrectionDelta = bounded - hsum;
+		if (fabs(PhaseCorrectionDelta) > 1e-14) {
+			MassCorrectionApplied = 1.0;
+		}
+		AddToPhaseClippedMass(PhaseCorrectionDelta);
+		real_t q = stage18_normalized_phase(hsum);
+		if (q > PhaseCorrectionBandMin && q < PhaseCorrectionBandMax) {
+			PhaseMassRedistributionWeight = 4.0 * q * (1.0 - q);
+			AddToPhaseRedistributionWeightTotal(PhaseMassRedistributionWeight);
+		}
+		if (PhaseBoundednessMode > 1.5 && PhaseBoundednessMode < 2.5 && MassCorrectionApplied > 0.5) {
+			real_t correction = PhaseCorrectionDelta;
+			PhaseF = bounded;
+			PhaseFValid = 1.0;
+			PhaseOutOfBoundsFlag = 0.0;
+			stage18_update_macro_from_phase();
+		}
+		if (PhaseBoundednessMode > 2.5 && PhaseMassRedistributionWeight > 0.0 && fabs(PhaseGlobalCorrection) > 0.0) {
+			real_t correction = PhaseGlobalCorrection * PhaseMassRedistributionWeight;
+			PhaseF = hsum + correction;
+			PhaseFValid = (isfinite(PhaseF) && PhaseF >= PhaseField_l && PhaseF <= PhaseField_h) ? 1.0 : 0.0;
+			PhaseOutOfBoundsFlag = 1.0 - PhaseFValid;
+			PhaseGlobalCorrectionApplied = correction;
+			stage18_update_macro_from_phase();
+		}
+	}
+}
+
+CudaDeviceFunction void Stage18_AuditSlim()
+{
+	Stage18ContractViolation = 0.0;
+	if (!isfinite(PhaseF) || !isfinite(RhoField) || !isfinite(U) || !isfinite(V) || !isfinite(W)) {
+		Stage18ContractViolation = 1.0;
+	}
+	if (PhaseF < PhaseField_l - 1e-9 || PhaseF > PhaseField_h + 1e-9) {
+		Stage18ContractViolation = 1.0;
+	}
+	UpdateGlobalMarkers();
+	if (!(IamWall || IamSolid)) {
+		stage18_update_globals(PhaseF);
+	}
+}
+
+CudaDeviceFunction real_t calcTau(real_t pf)
+{
+	real_t tau;
+	if ( pf < PhaseField_l){
+		tau = tau_l + 0.5;
+	} else if (pf > PhaseField_h) {
+		tau = tau_h + 0.5;
+	} else {
+	    if (tauUpdate == 1) { // Linear update:
+            tau = 0.5 + tau_l + (pf-PhaseField_l)*(tau_h - tau_l)/(PhaseField_h - PhaseField_l);
+        } else if (tauUpdate == 2){ // Inverse update:
+		    tau = (pf - PhaseField_l)/(PhaseField_h - PhaseField_l) * (1.0/tau_h - 1.0/tau_l) + 1.0/tau_l;
+		    tau = 1.0/tau + 0.5;
+			// NOTE: For some reason Viscosity_h and Viscosity_l are set to zero. Deduce it from tau here
+			// instead for tauUpdate 3 and tauUpdate 4
+        } else if (tauUpdate == 3){	// Viscosity update:
+		    real_t DynVisc = Density_l*tau_l / 3.0 + pf * (tau_h*Density_h/3.0 - Density_l*tau_l/3.0);
+            real_t rho = getRho();
+		    tau = 3.0 * DynVisc / rho + 0.5;
+        } else if (tauUpdate == 4) { // update from Zu-He 2013
+			real_t mu_l = Density_l * tau_l / 3.0;
+			real_t mu_h = Density_h * tau_h / 3.0;
+		    real_t DynVisc = mu_l * mu_h * (PhaseField_h - PhaseField_l) / ((pf - PhaseField_l)*mu_l  + (PhaseField_h - pf)*mu_h);
+            real_t rho = getRho();
+			tau = 3.0 * DynVisc / rho + 0.5;
+		} else { // default to linear...
+            tau = 0.5 + tau_l + (pf-PhaseField_l)*(tau_h - tau_l)/(PhaseField_h - PhaseField_l);
+        }
+	}
+	return tau;
+}
+
+CudaDeviceFunction void calc_Fp(real_t *fx, real_t *fy, real_t *fz, real_t pressure, vector_t gPhi){
+	*fx = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.x;
+	*fy = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.y;
+	*fz = (-1.0/3.0) * pressure * (Density_h-Density_l) * gPhi.z;
+}
+
+CudaDeviceFunction void calc_Fb(real_t *fx, real_t *fy, real_t *fz, real_t rho){
+    *fx = (Density_h-rho)*BuoyancyX + rho*GravitationX;
+	*fy = (Density_h-rho)*BuoyancyY + rho*GravitationY;
+	*fz = (Density_h-rho)*BuoyancyZ + rho*GravitationZ;
+}
+
+CudaDeviceFunction void calc_Fs(real_t *fx, real_t *fy, real_t *fz, real_t mu, vector_t gPhi){
+	#ifdef OPTIONS_thermo
+		Temp = Temp(0,0,0);
+		SurfaceTension = SurfaceTension(0,0,0);
+		Cond = Cond(0,0,0);
+		real_t tmpSig, delta_s, dotTMP, magnPhi, magnPhi2;
+		magnPhi = sqrt(gPhi.x*gPhi.x + gPhi.y*gPhi.y + gPhi.z*gPhi.z);
+		magnPhi2 = magnPhi*magnPhi;
+		vector_t gradT;
+		<?R
+			IsotropicGrad('gradT','Temp')
+		?>
+		dotTMP = dotProduct(gradT,gPhi);
+		if (surfPower < 2) {
+			delta_s = 1.5*IntWidth*sigma_T;
+			*fx = mu * gPhi.x + delta_s*( magnPhi2*gradT.x - dotTMP*gPhi.x );
+			*fy = mu * gPhi.y + delta_s*( magnPhi2*gradT.y - dotTMP*gPhi.y );
+			*fz = mu * gPhi.z + delta_s*( magnPhi2*gradT.z - dotTMP*gPhi.z );
+		} else {
+			vector_t gradSig;
+			<?R
+				IsotropicGrad('gradSig','SurfaceTension')
+			?>
+			delta_s = 1.5*IntWidth;
+			*fx = mu * gPhi.x + delta_s*gradSig.x*( magnPhi2*gradT.x - dotTMP*gPhi.x );
+			*fy = mu * gPhi.y + delta_s*gradSig.y*( magnPhi2*gradT.y - dotTMP*gPhi.y );
+			*fz = mu * gPhi.z + delta_s*gradSig.z*( magnPhi2*gradT.z - dotTMP*gPhi.z );
+		}
+	#else
+		*fx = mu * gPhi.x;
+		*fy = mu * gPhi.y;
+		*fz = mu * gPhi.z;
+	#endif
+}
+
+#ifndef OPTIONS_BGK
+CudaDeviceFunction void CollisionMRT()
+{
+	PhaseF = PhaseF(0,0,0);
+	int i, j;
+	real_t C  = PhaseF;
+    real_t mu = calcMu( C );
+	real_t tau, DynVisc, rho, p;			// Macroscopic Properties
+	vector_t n, gradPhi;					// Phase field gradients
+	real_t magnPhi;							// Normals
+	real_t F_pressure[3], F_body[3], F_mu[3], F_surf[3], F_total[3]; // Forces
+	real_t tmp1, stress[6]={0.0,0.0,0.0,0.0,0.0,0.0};     // Stress tensor calculation
+	real_t F_phi[hPops], heq[hPops];				// Phase field collision terms
+	real_t F_i[27];							// Momentum distribution forcing term
+	real_t m[27]; 							//MRT Details
+
+	// Find Macroscopic Details
+	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+
+	updateMyGlobals( C );
+
+	real_t m0[27];
+	<?R
+		EQ = MRT_eq(U,PV(1),u,mat=t(M))
+		selR = EQ$order < 10
+		EQ$Req[1] = PV("p")
+		EQ$feq = solve(M) %*% EQ$Req
+		Omega = PV(rep(1,sum(selR)))
+		Omega[5:9] = PV("tau")^(-1)
+		Omega[1:4] = PV(1)
+		m0 = PV("m0[",1:27-1,"]")
+		C(m0[selR], (M %*% g)[selR])
+		F_total = PV("F_total[",1:3-1,"]")
+		rho = PV("rho")
+		rho.inv = rho ^ (-1)
+	?>
+	p = m0[0];
+
+	tau = calcTau( C );
+
+	// GRADIENTS AND NORMALS
+	gradPhi = calcGradPhi();
+	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z);
+
+	if (magnPhi < minGradient){
+		n.x=0.0; n.y=0.0; n.z=0.0;
+	} else {
+		n.x = gradPhi.x/magnPhi;
+		n.y = gradPhi.y/magnPhi;
+		n.z = gradPhi.z/magnPhi;
+	}
+	//magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z + 1e-2);
+	//n.x = gradPhi.x/magnPhi;
+	//n.y = gradPhi.y/magnPhi;
+	//n.z = gradPhi.z/magnPhi;
+
+	// CALCULATE FORCES:
+    calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
+	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
+    calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+	//  Viscous Force:
+	j = 0;
+	do {	// do while loop is guaranteeing the loop will execute at least once
+		j++;
+	<?R
+		C(m[selR], (m0 - EQ$Req)[selR] * Omega)
+
+		stress = PV("stress[",1:6-1,"]");
+		new_g = solve(M) %*% m
+		C(stress[1], sum( U[,1]*U[,1] * new_g )); # XX
+		C(stress[2], sum( U[,1]*U[,2] * new_g )); # XY
+		C(stress[3], sum( U[,1]*U[,3] * new_g )); # XZ
+		C(stress[4], sum( U[,2]*U[,2] * new_g )); # YY
+		C(stress[5], sum( U[,2]*U[,3] * new_g )); # YZ
+		C(stress[6], sum( U[,3]*U[,3] * new_g )); # ZZ
+	?>
+		F_mu[0] = (0.5-tau) * (Density_h-Density_l) * (stress[0]*gradPhi.x + stress[1]*gradPhi.y + stress[2]*gradPhi.z);
+		F_mu[1] = (0.5-tau) * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
+		F_mu[2] = (0.5-tau) * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
+		F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+		F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+		F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+
+	<?R 	C( u, m0[2:4] + 0.5 * F_total * rho.inv) ?>
+	} while (j<force_fixed_iterator);
+	// PHASE FIELD POPULATION UPDATE:
+	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	<?R
+		n = PV("n",c(".x",".y",".z"))
+		EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),u)
+		C(heq, EQ_h$feq * PV("C"))
+		EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),PV(c(0,0,0)))
+		if (Options$q27){
+			wh = EQ_h$feq
+		    EQ_h = MRT_eq(U[1:PF_velocities,],PV(1),u)
+		} else {
+			wh = c(rep(16/72,1),rep(8/72,6),rep(1/72,8))
+        }
+		C(Fphi, wh * PV("tmp1") * (U[1:PF_velocities,] %*% n))
+		C(h, h - omega * (h - heq + 0.5*Fphi) + Fphi)
+
+		mF = PV(rep(0,27))
+		mF[2:4] = F_total * rho.inv
+
+		C(m, m0 - (m0 - EQ$Req + mF*0.5)[selR] * Omega + mF)
+		C(g, invM %*% m)
+	?>
+
+    updateTrackers( C );
+}
+#endif
+
+//######BOUNDARY CONDITIONS######//
+<?RT models/multiphase/d3q27_pf_velocity/Boundary.c.Rt ?>
+//############//
+
+//######UPDATE FUNCTIONS#######//
+CudaDeviceFunction void updateBoundary(){
+    switch (NodeType & NODE_BOUNDARY) {
+		case NODE_Solid:
+		case NODE_Wall:
+			BounceBack();
+			break;
+        <?R
+        for (ii in 1:6){
+        ?>
+        case NODE_<?R C(my_velocity_boundaries[ii])?>:
+			<?R C(my_velocity_boundaries[ii])?>();
+			break;
+		case NODE_<?R C(my_pressure_boundaries[ii])?>:
+			<?R C(my_pressure_boundaries[ii])?>();
+			break;
+		<?R
+        }
+        ?>
+		case NODE_MovingWall_N:
+			MovingNWall();
+			break;
+		case NODE_MovingWall_S:
+			MovingSWall();
+			break;
+		#ifdef OPTIONS_OutFlow
+			case NODE_EConvect:
+				EConvect();
+				break;
+			case NODE_WConvect:
+				WConvect();
+				break;
+			case NODE_ENeumann:
+				ENeumann();
+				break;
+			case NODE_WNeumann:
+				WNeumann();
+				break;
+		#endif
+	}
+}
+
+CudaDeviceFunction void updateMyGlobals(real_t pf){
+	real_t bounded_pf = stage18_clamp(pf, PhaseField_l, PhaseField_h);
+	real_t tmpPF = 1.0 - bounded_pf;
+	real_t rho = stage18_rho_from_phase(bounded_pf);
+	real_t u2mag = (U*U+V*V+W*W);
+	AddToTotalDensity( rho );
+	AddToKineticEnergy( rho * u2mag );
+
+	if (bounded_pf < 0.5)
+	{
+	    AddToGasTotalVelocity( tmpPF*sqrt(u2mag));
+	    AddToGasTotalPhase( tmpPF );
+	} else {
+	    AddToLiqTotalVelocity( bounded_pf*sqrt(u2mag));
+	    AddToLiqTotalPhase( bounded_pf );
+	}
+}
+
+CudaDeviceFunction void updateTrackers(real_t C){
+	real_t location;
+
+	// Stage18 keeps only the declared, lightweight interface-y tracker.
+	// Historical Vfront/Vback/RTI trackers require globals/settings not present
+	// in the clean model and are intentionally not compiled into this baseline.
+	if ((NodeType & NODE_BGK) || (NodeType & NODE_MRT)) {
+		if ( C < 0.5 && PhaseF(0, -1, 0) > 0.5) {
+			location = Y - (C-0.5)/(C-PhaseF(0,-1,0));
+			AddToInterfaceYTop(location);
+		}
+	}
+}
+//#############//
+//######THERMOCAPILLARY UPDATE######//
+#ifdef OPTIONS_thermo
+	<?RT models/multiphase/d3q27_pf_velocity/thermo.c.Rt ?>
+#endif
+//#############//
+
+
+#ifdef OPTIONS_BGK
+CudaDeviceFunction void CollisionBGK()
+{
+    PhaseF = PhaseF(0,0,0);
+	int i, j;
+	real_t C  = PhaseF;
+    real_t mu = calcMu( C );
+	real_t tau, DynVisc, rho, p;			// Macroscopic Properties
+	vector_t gradPhi;				// Phase field gradients
+	real_t nx, ny, nz, magnPhi;			// Normals
+	real_t Gamma[27], geq[27], mag;			// equilibrium, pressure equilibrium, velocity magnitude
+	real_t F_surf[3], F_pressure[3], F_body[3], F_mu[3], F_total[3]; // Forces
+	real_t tmp1, stress[6]={0.0,0.0,0.0,0.0,0.0,0.0};     // Stress tensor calculation
+	real_t F_phi[hPops], heq[hPops];			// Phase field collision terms
+	real_t F_i[27];					// Momentum distribution forcing term
+
+	// Find Macroscopic Details
+	rho = Density_l + (C - PhaseField_l)*(Density_h - Density_l)/(PhaseField_h - PhaseField_l);
+	p = <?R C(sum(g)) ?>;
+	tau = calcTau( C );
+
+	updateMyGlobals( C );
+
+	// GRADIENTS AND NORMALS
+	gradPhi = calcGradPhi();
+	magnPhi = sqrt(gradPhi.x*gradPhi.x + gradPhi.y*gradPhi.y + gradPhi.z*gradPhi.z + 1e-32);
+	nx = gradPhi.x/magnPhi;
+	ny = gradPhi.y/magnPhi;
+	nz = gradPhi.z/magnPhi;
+
+	// CALCULATE FORCES:
+    calc_Fp(&F_pressure[0], &F_pressure[1], &F_pressure[2], p, gradPhi);
+	calc_Fb(&F_body[0], &F_body[1], &F_body[2], rho);
+    calc_Fs(&F_surf[0], &F_surf[1], &F_surf[2], mu, gradPhi);
+    // VISCOUS FORCE:
+    for (j=0;j<2;j++) {
+    // GAMMA AND EQUILIBRIUM
+        mag = U*U + V*V + W*W;
+        for (i=0; i< 27; i++){
+            Gamma[i] = calcGamma(i, U, V, W, mag);
+            geq[i] = wg[i]*p + Gamma[i] - wg[i];
+        }
+
+    <?R
+        geq_bgk <- PV(paste0("geq[",1:27-1,"]"))
+        C( geq_bgk, g - geq_bgk )
+    ?>
+            // Stress/strain Tensor
+        for (i=0; i< 6 ; i++)
+        {
+            stress[i] = 0.0;
+        }
+        for (i=0; i< 27; i++){
+            stress[0] += geq[i]*d3q27_ex[i]*d3q27_ex[i];
+            stress[1] += geq[i]*d3q27_ex[i]*d3q27_ey[i];
+            stress[2] += geq[i]*d3q27_ex[i]*d3q27_ez[i];
+            stress[3] += geq[i]*d3q27_ey[i]*d3q27_ey[i];
+            stress[4] += geq[i]*d3q27_ey[i]*d3q27_ez[i];
+            stress[5] += geq[i]*d3q27_ez[i]*d3q27_ez[i];
+        }
+
+        F_mu[0] = (0.5-tau)/tau * (Density_h-Density_l) * (stress[0]*gradPhi.x + stress[1]*gradPhi.y + stress[2]*gradPhi.z);
+        F_mu[1] = (0.5-tau)/tau * (Density_h-Density_l) * (stress[1]*gradPhi.x + stress[3]*gradPhi.y + stress[4]*gradPhi.z);
+        F_mu[2] = (0.5-tau)/tau * (Density_h-Density_l) * (stress[2]*gradPhi.x + stress[4]*gradPhi.y + stress[5]*gradPhi.z);
+        F_total[0] = F_surf[0] + F_pressure[0] + F_body[0] + F_mu[0];
+        F_total[1] = F_surf[1] + F_pressure[1] + F_body[1] + F_mu[1];
+        F_total[2] = F_surf[2] + F_pressure[2] + F_body[2] + F_mu[2];
+
+    <?R C( u, g %*% U) ?>
+        U = U + (0.5*F_total[0])/rho;
+        V = V + (0.5*F_total[1])/rho;
+        W = W + (0.5*F_total[2])/rho;
+    }
+
+	// PHASE FIELD POPULATION UPDATE:
+	tmp1 = (1.0 - 4.0*(C - 0.5)*(C - 0.5))/IntWidth;
+	for (i=0; i< hPops; i++){
+		F_phi[i] = calcF_phi(i, tmp1, nx, ny, nz); 		// Forcing Terms
+		heq[i] = C * Gamma[i];      	// heq
+	}
+
+	<?R	C(h, h - omega * ( h - w_h*heq + 0.5*Fphi) + Fphi) ?>
+
+	// PRESSURE EVOLUTION UPDATE:
+	for (i=0; i< 27; i++) {
+		F_i[i] = 3.0*wg[i] * (F_total[0]*d3q27_ex[i] + F_total[1]*d3q27_ey[i] + F_total[2]*d3q27_ez[i])/rho;
+	}
+	real_t omega_g = 1.0/tau;
+	<?R
+		om= PV("omega_g")
+		C(g, g - (geq_bgk+0.5*Fi)*om + Fi)
+	?>
+    updateTrackers( C );
+}
+#endif
+
+CudaDeviceFunction vector_t getA(){
+	vector_t ret;
+	return ret;
+}
+CudaDeviceFunction float2 Color() {
+        float2 ret;
+        vector_t u = getU();
+        ret.x = PhaseF(0,0);
+        if (NodeType == NODE_Solid){
+                ret.y = 0;
+        } else {
+                ret.y = 1;
+        }
+        return ret;
+}
+
+/* MRT Matrix Check:
+<?R
+	options(width=200)
+	print(M)
+
+	printf <- function(...) cat(sprintf(...))
+
+	myWeighting = c(8./27.,
+					2./27., 2./27., 2./27., 2./27., 2./27., 2./27.,
+					1./216., 1./216., 1./216., 1./216.,
+					1./216., 1./216., 1./216., 1./216.,
+					1./54.,  1./54.,  1./54.,  1./54.,
+					1./54.,  1./54.,  1./54.,  1./54.,
+					1./54.,  1./54.,  1./54.,  1./54.)
+	printf("Orthogonality Check \n")
+	for (i in 1:27) {
+		printf("Moment %d: ", i-1)
+		for (j in i:27) {
+			tmp <- myWeighting %*% ( M[i,] * M[j,] )
+			printf(" %.2f,", tmp)
+		}
+		printf("\n")
+	}
+?>
+*/
