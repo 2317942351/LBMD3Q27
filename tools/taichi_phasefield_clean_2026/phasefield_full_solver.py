@@ -35,6 +35,7 @@ import taichi as ti
 
 Q = 27
 CS2 = 1.0 / 3.0
+EPS = 1.0e-30
 
 h = None
 g = None
@@ -871,7 +872,74 @@ def git_head() -> str:
         return "unknown"
 
 
+def lattice_phase_mobility(omega_h: float) -> float:
+    tau_h = 1.0 / omega_h
+    return CS2 * (tau_h - 0.5)
+
+
+def phase_post_source_factor(omega_h: float) -> float:
+    return 1.0 - 0.5 * omega_h
+
+
+def resolve_phase_source_scale(args: argparse.Namespace) -> dict[str, float | int | str]:
+    """Resolve the source strength used by the h-population collision.
+
+    The raw D3Q27 moment and the post-collision effective moment are different:
+
+        h_post = h - omega_h (h - h_eq + 0.5 Fphi) + Fphi
+        effective source contribution = (1 - 0.5 omega_h) Fphi
+
+    The scale modes make this distinction explicit instead of hiding it inside
+    a hand-picked phase_source_scale.
+    """
+
+    post_factor = phase_post_source_factor(args.omega_h)
+    lat_mobility = lattice_phase_mobility(args.omega_h)
+    mobility = args.phase_mobility
+    if mobility < 0.0:
+        mobility = lat_mobility
+
+    mode = args.phase_source_scale_mode
+    scale = args.phase_source_scale
+    description = "manual"
+
+    if mode == 1:
+        # Keep the effective source strength of the old stable D3Q27 source
+        # while using the moment-corrected mode-2 algebra.  This is the
+        # conservative bridge from legacy to book-CAC source moments.
+        scale = CS2 if args.phase_equation_mode >= 2 else 1.0
+        description = "legacy_effective_strength"
+    elif mode == 2:
+        # Make the post-collision source moment equal the raw CAC target.
+        # This is mathematically explicit but can be too strong and must be
+        # proven by boundedness/Laplace gates before use.
+        scale = 1.0 / max(abs(post_factor), EPS)
+        description = "post_collision_target_strength"
+    elif mode == 3:
+        # Tie source strength to mobility relative to the lattice mobility.
+        # For phase_equation_mode=2 and default mobility=M_lattice, this gives
+        # CS2 and therefore matches the stable D3Q27 source strength while the
+        # code still carries the corrected raw first moment.
+        base = CS2 if args.phase_equation_mode >= 2 else 1.0
+        scale = base * mobility / max(lat_mobility, EPS)
+        description = "mobility_relative_strength"
+
+    return {
+        "mode": mode,
+        "description": description,
+        "effective_scale": scale,
+        "requested_scale": args.phase_source_scale,
+        "phase_mobility": mobility,
+        "lattice_phase_mobility": lat_mobility,
+        "post_source_factor": post_factor,
+        "effective_post_scale": post_factor * scale,
+    }
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
+    phase_scale_info = resolve_phase_source_scale(args)
+    effective_phase_source_scale = float(phase_scale_info["effective_scale"])
+
     arch = ti.cuda if args.arch == "cuda" else ti.cpu
     ti.init(
         arch=arch,
@@ -954,7 +1022,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
             args.phase_advection_mode,
             args.phase_wall_mode,
             args.phase_equation_mode,
-            args.phase_source_scale,
+            effective_phase_source_scale,
         )
         collide_momentum_kernel(
             g_src, g_collide, args.nx, args.ny, args.nz,
@@ -1028,7 +1096,14 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "density_ratio": args.rho_l / args.rho_g,
         "phase_bound_mode": args.phase_bound_mode,
         "phase_equation_mode": args.phase_equation_mode,
-        "phase_source_scale": args.phase_source_scale,
+        "phase_source_scale": effective_phase_source_scale,
+        "phase_source_scale_requested": args.phase_source_scale,
+        "phase_source_scale_mode": args.phase_source_scale_mode,
+        "phase_source_scale_description": phase_scale_info["description"],
+        "phase_mobility": phase_scale_info["phase_mobility"],
+        "lattice_phase_mobility": phase_scale_info["lattice_phase_mobility"],
+        "phase_post_source_factor": phase_scale_info["post_source_factor"],
+        "phase_effective_post_scale": phase_scale_info["effective_post_scale"],
         "wetting_mode": args.wetting_mode,
         "phase_wall_mode": args.phase_wall_mode,
         "force_mode": args.force_mode,
@@ -1080,6 +1155,8 @@ def main() -> int:
     parser.add_argument("--grad-eps", type=float, default=1.0e-12)
     parser.add_argument("--phase-equation-mode", type=int, default=0, help="0 legacy source, 1 normalized CAC source, 2 moment-corrected CAC source")
     parser.add_argument("--phase-source-scale", type=float, default=1.0, help="explicit mobility/source scale multiplier for the CAC sharpening source")
+    parser.add_argument("--phase-source-scale-mode", type=int, default=0, help="0 manual, 1 legacy effective strength, 2 post-collision target, 3 mobility-relative")
+    parser.add_argument("--phase-mobility", type=float, default=-1.0, help="CAC mobility used by scale mode 3; negative uses cs2*(1/omega_h-0.5)")
     parser.add_argument("--phase-bound-mode", type=int, default=1)
     parser.add_argument("--wetting-mode", type=int, default=0, help="0 shadow only, 1 write C at wall band")
     parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band, 2 neutral per-link reflect, 3 wetting per-link reconstruction")

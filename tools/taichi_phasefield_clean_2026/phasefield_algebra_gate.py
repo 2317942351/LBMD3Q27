@@ -66,6 +66,11 @@ class CaseMetrics:
     fphi_first_y: float
     fphi_first_z: float
     fphi_first_err: float
+    post_source_factor: float
+    effective_fphi_first_x: float
+    effective_fphi_first_y: float
+    effective_fphi_first_z: float
+    effective_fphi_first_err: float
     fphi_second_trace: float
     hpost_sum: float
     hpost_sum_err: float
@@ -119,9 +124,17 @@ def source_scale(c: float, interface_width: float, source_mode: int) -> float:
     return (1.0 - 4.0 * (c - 0.5) * (c - 0.5)) / interface_width
 
 
-def fphi_source(c: float, normal: np.ndarray, interface_width: float, e: np.ndarray, w: np.ndarray, source_mode: int) -> np.ndarray:
+def fphi_source(
+    c: float,
+    normal: np.ndarray,
+    interface_width: float,
+    e: np.ndarray,
+    w: np.ndarray,
+    source_mode: int,
+    source_scale_value: float,
+) -> np.ndarray:
     scale = source_scale(c, interface_width, source_mode)
-    source = w * scale * (e @ normal)
+    source = w * scale * source_scale_value * (e @ normal)
     if source_mode >= 2:
         source = source / CS2
     return source
@@ -138,11 +151,11 @@ def second_moment(pop: np.ndarray, e: np.ndarray) -> np.ndarray:
     return out
 
 
-def analyze_case(case: Case, e: np.ndarray, w: np.ndarray, tol: float, source_mode: int) -> CaseMetrics:
+def analyze_case(case: Case, e: np.ndarray, w: np.ndarray, tol: float, source_mode: int, source_scale_value: float) -> CaseMetrics:
     n = normalize(case.normal)
     u = np.asarray(case.velocity, dtype=np.float64)
     heq = heq_linear(case.c, u, e, w)
-    fphi = fphi_source(case.c, n, case.interface_width, e, w, source_mode)
+    fphi = fphi_source(case.c, n, case.interface_width, e, w, source_mode, source_scale_value)
 
     # Start from equilibrium so the one-cell algebra gate is not contaminated by
     # an arbitrary nonequilibrium initial h. Streaming is tested in the next gate.
@@ -155,11 +168,14 @@ def analyze_case(case: Case, e: np.ndarray, w: np.ndarray, tol: float, source_mo
 
     fphi_sum = float(np.sum(fphi))
     fphi_first = first_moment(fphi, e)
-    scale = source_scale(case.c, case.interface_width, source_mode)
+    scale = source_scale(case.c, case.interface_width, source_mode) * source_scale_value
     fphi_first_expected = CS2 * scale * n
     if source_mode >= 2:
         fphi_first_expected = scale * n
     fphi_second = second_moment(fphi, e)
+    post_factor = 1.0 - 0.5 * case.omega
+    effective_fphi_first = post_factor * fphi_first
+    effective_fphi_first_expected = post_factor * fphi_first_expected
 
     hpost_sum = float(np.sum(h_post))
     hpost_first = first_moment(h_post, e)
@@ -167,6 +183,7 @@ def analyze_case(case: Case, e: np.ndarray, w: np.ndarray, tol: float, source_mo
 
     heq_first_err = float(np.linalg.norm(heq_first - heq_first_expected))
     fphi_first_err = float(np.linalg.norm(fphi_first - fphi_first_expected))
+    effective_fphi_first_err = float(np.linalg.norm(effective_fphi_first - effective_fphi_first_expected))
     hpost_first_err = float(np.linalg.norm(hpost_first - hpost_first_expected))
     heq_sum_err = abs(heq_sum - case.c)
     hpost_sum_err = abs(hpost_sum - case.c)
@@ -175,6 +192,7 @@ def analyze_case(case: Case, e: np.ndarray, w: np.ndarray, tol: float, source_mo
         and heq_first_err <= tol
         and abs(fphi_sum) <= tol
         and fphi_first_err <= tol
+        and effective_fphi_first_err <= tol
         and hpost_sum_err <= tol
         and hpost_first_err <= tol
     )
@@ -198,6 +216,11 @@ def analyze_case(case: Case, e: np.ndarray, w: np.ndarray, tol: float, source_mo
         fphi_first_y=float(fphi_first[1]),
         fphi_first_z=float(fphi_first[2]),
         fphi_first_err=fphi_first_err,
+        post_source_factor=post_factor,
+        effective_fphi_first_x=float(effective_fphi_first[0]),
+        effective_fphi_first_y=float(effective_fphi_first[1]),
+        effective_fphi_first_z=float(effective_fphi_first[2]),
+        effective_fphi_first_err=effective_fphi_first_err,
         fphi_second_trace=float(np.trace(fphi_second)),
         hpost_sum=hpost_sum,
         hpost_sum_err=hpost_sum_err,
@@ -257,10 +280,11 @@ def main() -> int:
     parser.add_argument("--out", type=Path, default=Path("artifacts/stage18_taichi_phasefield_algebra_20260704"))
     parser.add_argument("--tol", type=float, default=1.0e-12)
     parser.add_argument("--source-mode", type=int, default=2, help="0 legacy, 1 normalized CAC, 2 moment-corrected CAC")
+    parser.add_argument("--source-scale", type=float, default=1.0, help="source strength multiplier matching phase_source_scale in the Taichi solver")
     args = parser.parse_args()
 
     e, w = d3q27_lattice()
-    rows = [analyze_case(case, e, w, args.tol, args.source_mode) for case in default_cases()]
+    rows = [analyze_case(case, e, w, args.tol, args.source_mode, args.source_scale) for case in default_cases()]
     gate_pass = all(row.pass_gate for row in rows)
 
     args.out.mkdir(parents=True, exist_ok=True)
@@ -271,6 +295,7 @@ def main() -> int:
         "claim_limit": "offline algebra gate only; not a Taichi run and not contact-angle validation",
         "model_candidate": "D3Q27 conservative Allen-Cahn h population source moment gate",
         "source_mode": args.source_mode,
+        "source_scale": args.source_scale,
         "tolerance": args.tol,
         "cs2": CS2,
         "lattice": lattice_metrics(e, w),
