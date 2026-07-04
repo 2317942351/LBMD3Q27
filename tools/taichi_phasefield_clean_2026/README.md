@@ -1,0 +1,42 @@
+# Taichi Phase-Field Clean 2026
+
+Status: clean book-derived phase-field LBM lane.
+
+This folder is intentionally separate from `tools/taichi_lbm/`. The existing
+Re=100 Taichi cylinder script is single-phase GPU feasibility evidence only.
+It is not the architecture base for this phase-field solver.
+
+## Current Scope
+
+The first implemented gate is offline algebra, not GPU execution:
+
+```text
+D3Q27 weights and lattice moments
+  -> h_i equilibrium moments
+  -> F_phi moments
+  -> one-step h collision/source update
+  -> JSON/CSV evidence
+```
+
+This matches the project decision that the next solver must be built from the
+phase-field LBM model in the literature anchors before adding wetting or curved
+walls.
+
+## Files
+
+- `phasefield_algebra_gate.py`
+  - Pure Python/NumPy source-moment harness.
+  - Does not require Taichi.
+  - Verifies D3Q27 moment closure for the first conservative Allen-Cahn
+    candidate and the current TCLB-like sharpening source.
+- `phasefield_bulk_lifecycle_gate.py`
+  - Pure Python/NumPy tiny-grid producer-consumer loop.
+  - Tests `h_src -> collide/source -> pull stream -> C=sum(h_dst)` without
+    wall, wetting, pressure force, or curved geometry.
+
+## Non-Goals
+
+- No contact-angle validation.
+- No wall or curved-boundary write path.
+- No use of the Re=100 single-phase cylinder as a phase-field template.
+- No hard clamp treated as physical validation.
