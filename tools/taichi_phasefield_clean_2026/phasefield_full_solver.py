@@ -63,6 +63,7 @@ f_mu_field = None
 f_body_field = None
 f_total_field = None
 force_over_rho_field = None
+force_cap_hit_field = None
 
 solid_field = None
 wall_field = None
@@ -84,10 +85,20 @@ class StepMetrics:
     c_oob_high: int
     rho_min: float
     rho_max: float
+    pressure_min: float
+    pressure_max: float
     mu_min: float
     mu_max: float
     u_max: float
+    f_pressure_max: float
+    f_surf_max: float
+    f_mu_max: float
+    f_body_max: float
+    f_total_max: float
     force_over_rho_max: float
+    force_cap_hits: int
+    g_min: float
+    g_max: float
     wall_cells: int
     write_allowed_cells: int
     wall_ghost_min: float
@@ -128,7 +139,7 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     global c_field, c_raw_field, rho_field, tau_field, pressure_field, mu_field
     global laplace_field, grad_field, normal_field, u_field, u_half_field
     global f_pressure_field, f_surf_field, f_mu_field, f_body_field
-    global f_total_field, force_over_rho_field
+    global f_total_field, force_over_rho_field, force_cap_hit_field
     global solid_field, wall_field, sdf_field, wall_normal_field
     global target_theta_field, wall_c_ghost_field, write_allowed_field
 
@@ -157,6 +168,7 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     f_body_field = ti.Vector.field(3, dtype=ti.f64, shape=shape)
     f_total_field = ti.Vector.field(3, dtype=ti.f64, shape=shape)
     force_over_rho_field = ti.Vector.field(3, dtype=ti.f64, shape=shape)
+    force_cap_hit_field = ti.field(dtype=ti.i32, shape=shape)
 
     solid_field = ti.field(dtype=ti.i32, shape=shape)
     wall_field = ti.field(dtype=ti.i32, shape=shape)
@@ -243,6 +255,8 @@ def initialize_fields_kernel(
     width: ti.f64,
     rho_l: ti.f64,
     rho_g: ti.f64,
+    momentum_density_mode: ti.i32,
+    momentum_rho_ref: ti.f64,
 ):
     cx = 0.5 * ti.cast(nx - 1, ti.f64)
     cy = 0.5 * ti.cast(ny - 1, ti.f64)
@@ -256,6 +270,9 @@ def initialize_fields_kernel(
         if solid_field[x, y, z] == 1:
             c = 0.0
         rho = rho_g + c * (rho_l - rho_g)
+        rho_mom = rho
+        if momentum_density_mode == 1:
+            rho_mom = momentum_rho_ref
         u = ti.Vector([0.0, 0.0, 0.0])
         c_field[x, y, z] = c
         c_raw_field[x, y, z] = c
@@ -265,7 +282,7 @@ def initialize_fields_kernel(
         u_half_field[x, y, z] = u
         for q in ti.static(range(Q)):
             h[hbuf, x, y, z, q] = w_field[q] * c
-            g[gbuf, x, y, z, q] = feq(q, rho, u)
+            g[gbuf, x, y, z, q] = feq(q, rho_mom, u)
 
 
 @ti.kernel
@@ -290,14 +307,27 @@ def phase_bound_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, mode: ti.i32):
 
 
 @ti.kernel
-def rho_tau_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, rho_l: ti.f64, rho_g: ti.f64, nu_l: ti.f64, nu_g: ti.f64):
+def rho_tau_kernel(
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    rho_l: ti.f64,
+    rho_g: ti.f64,
+    nu_l: ti.f64,
+    nu_g: ti.f64,
+    pressure_model: ti.i32,
+    pressure_reference: ti.f64,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
         c = clamp01(c_field[x, y, z])
         rho = rho_g + c * (rho_l - rho_g)
         nu = nu_g + c * (nu_l - nu_g)
         rho_field[x, y, z] = rho
         tau_field[x, y, z] = 0.5 + nu / CS2
-        pressure_field[x, y, z] = rho * CS2
+        pressure = rho * CS2
+        if pressure_model == 1:
+            pressure = pressure - pressure_reference
+        pressure_field[x, y, z] = pressure
 
 
 @ti.kernel
@@ -347,38 +377,98 @@ def wetting_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, mode: ti.i32):
 
 
 @ti.kernel
-def force_kernel(nx: ti.i32, ny: ti.i32, nz: ti.i32, gx_body: ti.f64, gy_body: ti.f64, gz_body: ti.f64, force_mode: ti.i32):
+def force_kernel(
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    gx_body: ti.f64,
+    gy_body: ti.f64,
+    gz_body: ti.f64,
+    force_mode: ti.i32,
+    force_closure_mode: ti.i32,
+    surface_force_scale: ti.f64,
+    pressure_force_scale: ti.f64,
+    rho_force_floor: ti.f64,
+    force_accel_cap: ti.f64,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
+        xp = wrap_index(x + 1, nx)
+        xm = wrap_index(x - 1, nx)
+        yp = wrap_index(y + 1, ny)
+        ym = wrap_index(y - 1, ny)
+        zp = wrap_index(z + 1, nz)
+        zm = wrap_index(z - 1, nz)
+        grad_p = ti.Vector([
+            0.5 * (pressure_field[xp, y, z] - pressure_field[xm, y, z]),
+            0.5 * (pressure_field[x, yp, z] - pressure_field[x, ym, z]),
+            0.5 * (pressure_field[x, y, zp] - pressure_field[x, y, zm]),
+        ])
         grad = grad_field[x, y, z]
         mu = mu_field[x, y, z]
-        f_surf = mu * grad
+        f_surf_raw = surface_force_scale * mu * grad
+        f_pressure_raw = -pressure_force_scale * grad_p
+        f_surf = ti.Vector([0.0, 0.0, 0.0])
         f_pressure = ti.Vector([0.0, 0.0, 0.0])
         f_mu = ti.Vector([0.0, 0.0, 0.0])
         f_body = ti.Vector([gx_body, gy_body, gz_body]) * rho_field[x, y, z]
-        if force_mode == 0:
+        active_closure = force_closure_mode
+        if force_mode == 1 and force_closure_mode == 0:
+            active_closure = 1
+        if active_closure == 1 or active_closure == 3:
+            f_surf = f_surf_raw
+        if active_closure == 2 or active_closure == 3:
+            f_pressure = f_pressure_raw
+        if active_closure == 0:
             f_surf = ti.Vector([0.0, 0.0, 0.0])
+            f_pressure = ti.Vector([0.0, 0.0, 0.0])
             f_body = ti.Vector([0.0, 0.0, 0.0])
         f_total = f_pressure + f_surf + f_mu + f_body
+        cap_hit = 0
+        rho_for_force = ti.max(rho_field[x, y, z], rho_force_floor)
+        accel = f_total / rho_for_force
+        accel_mag = ti.sqrt(accel.dot(accel))
+        if force_accel_cap > 0.0 and accel_mag > force_accel_cap:
+            f_total = f_total * (force_accel_cap / accel_mag)
+            cap_hit = 1
         if solid_field[x, y, z] == 1:
             f_total = ti.Vector([0.0, 0.0, 0.0])
+            cap_hit = 0
         f_pressure_field[x, y, z] = f_pressure
         f_surf_field[x, y, z] = f_surf
         f_mu_field[x, y, z] = f_mu
         f_body_field[x, y, z] = f_body
         f_total_field[x, y, z] = f_total
-        force_over_rho_field[x, y, z] = f_total / ti.max(rho_field[x, y, z], 1.0e-30)
+        force_over_rho_field[x, y, z] = f_total / rho_for_force
+        force_cap_hit_field[x, y, z] = cap_hit
 
 
 @ti.kernel
-def momentum_macro_kernel(buf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, momentum_mode: ti.i32):
+def momentum_macro_kernel(
+    buf: ti.i32,
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    momentum_mode: ti.i32,
+    force_insertion_mode: ti.i32,
+    rho_force_floor: ti.f64,
+    momentum_density_mode: ti.i32,
+    momentum_rho_ref: ti.f64,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
         mom = ti.Vector([0.0, 0.0, 0.0])
         rho = rho_field[x, y, z]
+        rho_macro = rho
+        if momentum_density_mode == 1:
+            rho_macro = momentum_rho_ref
         for q in ti.static(range(Q)):
             e = e_field[q]
             fq = g[buf, x, y, z, q]
             mom += ti.Vector([ti.cast(e[0], ti.f64), ti.cast(e[1], ti.f64), ti.cast(e[2], ti.f64)]) * fq
-        u = (mom + 0.5 * f_total_field[x, y, z]) / ti.max(rho, 1.0e-30)
+        f = f_total_field[x, y, z]
+        use_half_force = force_insertion_mode == 1 or force_insertion_mode == 2
+        u = mom / ti.max(rho_macro, rho_force_floor)
+        if use_half_force:
+            u = (mom + 0.5 * f) / ti.max(rho_macro, rho_force_floor)
         if momentum_mode == 0:
             u = ti.Vector([0.0, 0.0, 0.0])
         if solid_field[x, y, z] == 1:
@@ -406,9 +496,22 @@ def collide_phase_kernel(src: ti.i32, dst: ti.i32, nx: ti.i32, ny: ti.i32, nz: t
 
 
 @ti.kernel
-def collide_momentum_kernel(src: ti.i32, dst: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i32, momentum_mode: ti.i32):
+def collide_momentum_kernel(
+    src: ti.i32,
+    dst: ti.i32,
+    nx: ti.i32,
+    ny: ti.i32,
+    nz: ti.i32,
+    momentum_mode: ti.i32,
+    force_insertion_mode: ti.i32,
+    momentum_density_mode: ti.i32,
+    momentum_rho_ref: ti.f64,
+):
     for x, y, z in ti.ndrange(nx, ny, nz):
         rho = rho_field[x, y, z]
+        rho_eq = rho
+        if momentum_density_mode == 1:
+            rho_eq = momentum_rho_ref
         tau = tau_field[x, y, z]
         omega = 1.0 / tau
         u = u_field[x, y, z]
@@ -420,12 +523,15 @@ def collide_momentum_kernel(src: ti.i32, dst: ti.i32, nx: ti.i32, ny: ti.i32, nz
             ef = ev.dot(f)
             uf = u.dot(f)
             guo = w_field[q] * (1.0 - 0.5 * omega) * (ef / CS2 + eu * ef / (CS2 * CS2) - uf / CS2)
-            gnext = g[src, x, y, z, q] - omega * (g[src, x, y, z, q] - feq(q, rho, u)) + guo
+            source = 0.0
+            if force_insertion_mode == 1 or force_insertion_mode == 3:
+                source = guo
+            gnext = g[src, x, y, z, q] - omega * (g[src, x, y, z, q] - feq(q, rho_eq, u)) + source
             if momentum_mode == 0:
-                gnext = feq(q, rho, ti.Vector([0.0, 0.0, 0.0]))
+                gnext = feq(q, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
             g[dst, x, y, z, q] = gnext
             if solid_field[x, y, z] == 1:
-                g[dst, x, y, z, q] = feq(q, rho, ti.Vector([0.0, 0.0, 0.0]))
+                g[dst, x, y, z, q] = feq(q, rho_eq, ti.Vector([0.0, 0.0, 0.0]))
 
 
 @ti.kernel
@@ -460,9 +566,16 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         "h": h.to_numpy()[hbuf],
         "g": g.to_numpy()[gbuf],
         "rho": rho_field.to_numpy(),
+        "pressure": pressure_field.to_numpy(),
         "mu": mu_field.to_numpy(),
         "u": u_field.to_numpy(),
+        "f_pressure": f_pressure_field.to_numpy(),
+        "f_surf": f_surf_field.to_numpy(),
+        "f_mu": f_mu_field.to_numpy(),
+        "f_body": f_body_field.to_numpy(),
+        "f_total": f_total_field.to_numpy(),
         "force_over_rho": force_over_rho_field.to_numpy(),
+        "force_cap_hit": force_cap_hit_field.to_numpy(),
         "wall": wall_field.to_numpy(),
         "write_allowed": write_allowed_field.to_numpy(),
         "ghost": wall_c_ghost_field.to_numpy(),
@@ -473,6 +586,11 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
     c = arrays["c"]
     mass = float(np.sum(c))
     u_mag = np.linalg.norm(arrays["u"], axis=-1)
+    f_pressure_mag = np.linalg.norm(arrays["f_pressure"], axis=-1)
+    f_surf_mag = np.linalg.norm(arrays["f_surf"], axis=-1)
+    f_mu_mag = np.linalg.norm(arrays["f_mu"], axis=-1)
+    f_body_mag = np.linalg.norm(arrays["f_body"], axis=-1)
+    f_total_mag = np.linalg.norm(arrays["f_total"], axis=-1)
     force_mag = np.linalg.norm(arrays["force_over_rho"], axis=-1)
     ghost = arrays["ghost"]
     return StepMetrics(
@@ -485,10 +603,20 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float) -> StepMetrics:
         c_oob_high=int(np.count_nonzero(c > 1.0 + 1.0e-12)),
         rho_min=float(np.min(arrays["rho"])),
         rho_max=float(np.max(arrays["rho"])),
+        pressure_min=float(np.min(arrays["pressure"])),
+        pressure_max=float(np.max(arrays["pressure"])),
         mu_min=float(np.min(arrays["mu"])),
         mu_max=float(np.max(arrays["mu"])),
         u_max=float(np.max(u_mag)),
+        f_pressure_max=float(np.max(f_pressure_mag)),
+        f_surf_max=float(np.max(f_surf_mag)),
+        f_mu_max=float(np.max(f_mu_mag)),
+        f_body_max=float(np.max(f_body_mag)),
+        f_total_max=float(np.max(f_total_mag)),
         force_over_rho_max=float(np.max(force_mag)),
+        force_cap_hits=int(np.count_nonzero(arrays["force_cap_hit"])),
+        g_min=float(np.min(arrays["g"])),
+        g_max=float(np.max(arrays["g"])),
         wall_cells=int(np.count_nonzero(arrays["wall"])),
         write_allowed_cells=int(np.count_nonzero(arrays["write_allowed"])),
         wall_ghost_min=float(np.min(ghost)),
@@ -526,14 +654,28 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     setup_fields(args.nx, args.ny, args.nz)
 
     build_geometry_kernel(args.nx, args.ny, args.nz, args.geometry_mode, args.theta_deg)
-    initialize_fields_kernel(0, 0, args.nx, args.ny, args.nz, args.radius, args.width, args.rho_l, args.rho_g)
+    initialize_fields_kernel(
+        0, 0, args.nx, args.ny, args.nz,
+        args.radius, args.width, args.rho_l, args.rho_g,
+        args.momentum_density_mode, args.momentum_rho_ref,
+    )
     phase_from_h_kernel(0, args.nx, args.ny, args.nz)
     phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
-    rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g)
+    rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
     grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
     wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
-    force_kernel(args.nx, args.ny, args.nz, args.body_gx, args.body_gy, args.body_gz, args.force_mode)
-    momentum_macro_kernel(0, args.nx, args.ny, args.nz, args.momentum_mode)
+    force_kernel(
+        args.nx, args.ny, args.nz,
+        args.body_gx, args.body_gy, args.body_gz,
+        args.force_mode, args.force_closure_mode,
+        args.surface_force_scale, args.pressure_force_scale,
+        args.rho_force_floor, args.force_accel_cap,
+    )
+    momentum_macro_kernel(
+        0, args.nx, args.ny, args.nz,
+        args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
+        args.momentum_density_mode, args.momentum_rho_ref,
+    )
     ti.sync()
     mass0 = float(np.sum(c_field.to_numpy()))
 
@@ -548,13 +690,27 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     for step in range(1, args.steps + 1):
         phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
         phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
-        rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g)
+        rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
         wetting_kernel(args.nx, args.ny, args.nz, args.wetting_mode)
-        force_kernel(args.nx, args.ny, args.nz, args.body_gx, args.body_gy, args.body_gz, args.force_mode)
-        momentum_macro_kernel(g_src, args.nx, args.ny, args.nz, args.momentum_mode)
+        force_kernel(
+            args.nx, args.ny, args.nz,
+            args.body_gx, args.body_gy, args.body_gz,
+            args.force_mode, args.force_closure_mode,
+            args.surface_force_scale, args.pressure_force_scale,
+            args.rho_force_floor, args.force_accel_cap,
+        )
+        momentum_macro_kernel(
+            g_src, args.nx, args.ny, args.nz,
+            args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
+            args.momentum_density_mode, args.momentum_rho_ref,
+        )
         collide_phase_kernel(h_src, h_collide, args.nx, args.ny, args.nz, args.omega_h, args.width, args.phase_advection_mode)
-        collide_momentum_kernel(g_src, g_collide, args.nx, args.ny, args.nz, args.momentum_mode)
+        collide_momentum_kernel(
+            g_src, g_collide, args.nx, args.ny, args.nz,
+            args.momentum_mode, args.force_insertion_mode,
+            args.momentum_density_mode, args.momentum_rho_ref,
+        )
         stream_kernel(h_collide, h_stream, g_collide, g_stream, args.nx, args.ny, args.nz)
         boundary_kernel(h_stream, g_stream, args.nx, args.ny, args.nz, args.phase_wall_mode)
 
@@ -567,10 +723,20 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
 
         phase_from_h_kernel(h_src, args.nx, args.ny, args.nz)
         phase_bound_kernel(args.nx, args.ny, args.nz, args.phase_bound_mode)
-        rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g)
+        rho_tau_kernel(args.nx, args.ny, args.nz, args.rho_l, args.rho_g, args.nu_l, args.nu_g, args.pressure_model, args.pressure_reference)
         grad_laplace_mu_kernel(args.nx, args.ny, args.nz, args.beta, args.kappa, args.grad_eps)
-        force_kernel(args.nx, args.ny, args.nz, args.body_gx, args.body_gy, args.body_gz, args.force_mode)
-        momentum_macro_kernel(g_src, args.nx, args.ny, args.nz, args.momentum_mode)
+        force_kernel(
+            args.nx, args.ny, args.nz,
+            args.body_gx, args.body_gy, args.body_gz,
+            args.force_mode, args.force_closure_mode,
+            args.surface_force_scale, args.pressure_force_scale,
+            args.rho_force_floor, args.force_accel_cap,
+        )
+        momentum_macro_kernel(
+            g_src, args.nx, args.ny, args.nz,
+            args.momentum_mode, args.force_insertion_mode, args.rho_force_floor,
+            args.momentum_density_mode, args.momentum_rho_ref,
+        )
 
         if step % args.output_period == 0 or step == args.steps:
             rows.append(numpy_metrics(step, h_src, g_src, mass0))
@@ -607,6 +773,16 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         "wetting_mode": args.wetting_mode,
         "phase_wall_mode": args.phase_wall_mode,
         "force_mode": args.force_mode,
+        "force_closure_mode": args.force_closure_mode,
+        "force_insertion_mode": args.force_insertion_mode,
+        "pressure_model": args.pressure_model,
+        "pressure_reference": args.pressure_reference,
+        "surface_force_scale": args.surface_force_scale,
+        "pressure_force_scale": args.pressure_force_scale,
+        "rho_force_floor": args.rho_force_floor,
+        "force_accel_cap": args.force_accel_cap,
+        "momentum_density_mode": args.momentum_density_mode,
+        "momentum_rho_ref": args.momentum_rho_ref,
         "momentum_mode": args.momentum_mode,
         "phase_advection_mode": args.phase_advection_mode,
         "mass0": mass0,
@@ -646,7 +822,17 @@ def main() -> int:
     parser.add_argument("--phase-bound-mode", type=int, default=1)
     parser.add_argument("--wetting-mode", type=int, default=0, help="0 shadow only, 1 write C at wall band")
     parser.add_argument("--phase-wall-mode", type=int, default=0, help="0 none, 1 write h=w*Cghost at wall band")
-    parser.add_argument("--force-mode", type=int, default=0, help="0 off, 1 surface/body force on")
+    parser.add_argument("--force-mode", type=int, default=0, help="compatibility alias: 0 force off, 1 enables surface force if force-closure-mode is 0")
+    parser.add_argument("--force-closure-mode", type=int, default=0, help="0 off, 1 surface, 2 pressure, 3 surface+pressure")
+    parser.add_argument("--force-insertion-mode", type=int, default=0, help="0 none, 1 half-force+Guo, 2 half-force only, 3 Guo only")
+    parser.add_argument("--pressure-model", type=int, default=0, help="0 rho*cs2, 1 rho*cs2 - pressure-reference")
+    parser.add_argument("--pressure-reference", type=float, default=0.0)
+    parser.add_argument("--surface-force-scale", type=float, default=1.0)
+    parser.add_argument("--pressure-force-scale", type=float, default=1.0)
+    parser.add_argument("--rho-force-floor", type=float, default=1.0e-12)
+    parser.add_argument("--force-accel-cap", type=float, default=0.0, help="diagnostic cap on |F/rho|; 0 disables")
+    parser.add_argument("--momentum-density-mode", type=int, default=0, help="0 g equilibrium uses rho(C), 1 diagnostic constant momentum density")
+    parser.add_argument("--momentum-rho-ref", type=float, default=1.0)
     parser.add_argument("--momentum-mode", type=int, default=0, help="0 frozen/reset equilibrium, 1 coupled BGK")
     parser.add_argument("--phase-advection-mode", type=int, default=0, help="0 h_eq uses zero velocity, 1 h_eq uses u")
     parser.add_argument("--mass-tol", type=float, default=1.0e-8)
