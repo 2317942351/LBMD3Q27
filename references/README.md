@@ -61,6 +61,18 @@ Use: model-family separation for contact-angle formulas, phase-field wetting opt
 Limit: do not copy full excerpt; do not transplant pseudo-potential virtual-density or color-gradient formulas directly into the current phase-field solver.
 ```
 
+Taichi official documentation:
+
+```text
+Docs site: https://docs.taichi-lang.org/
+Docs source: https://github.com/taichi-dev/docs.taichi.graphics
+Taichi source: https://github.com/taichi-dev/taichi
+Local snapshot anchor: references/taichi_official_docs_20260704/
+Project audit: docs/stage18/008_taichi_route_assessment_and_official_docs_anchor_20260704.md
+Use: GPU LBM implementation semantics, Taichi kernel/function scope, explicit double buffering, field layout, CUDA sync/debug/profiling.
+Limit: Taichi can simplify implementation semantics but does not by itself fix conservative phase-field, force closure, or wetting boundary physics.
+```
+
 Wang 2023 IJMF:
 
 ```text
