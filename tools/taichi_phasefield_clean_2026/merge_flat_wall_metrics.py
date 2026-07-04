@@ -20,7 +20,7 @@ def main() -> int:
     args = parser.parse_args()
 
     rows: list[dict[str, object]] = []
-    for case_dir in sorted(p for p in args.root.iterdir() if p.is_dir()):
+    for case_dir in sorted(p for p in args.root.iterdir() if p.is_dir() and not p.name.startswith("__")):
         metrics = load_json(case_dir / "output" / "metrics.json")
         morph = load_json(case_dir / "analysis" / "morphology_metrics.json")
         final = metrics.get("final", {}) if isinstance(metrics.get("final"), dict) else {}

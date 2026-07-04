@@ -74,6 +74,8 @@ phase_wall_missing_count_field = None
 phase_wall_stream_mass_before_field = None
 phase_wall_reflect_mass_field = None
 phase_wall_delta_mass_field = None
+phase_wall_wetting_correction_field = None
+phase_wall_wetting_clamp_field = None
 mass_correction_delta = None
 mass_correction_weight = None
 mass_correction_count = None
@@ -121,6 +123,8 @@ class StepMetrics:
     phase_wall_stream_mass_before: float
     phase_wall_reflect_mass: float
     phase_wall_delta_mass: float
+    phase_wall_wetting_correction_abs: float
+    phase_wall_wetting_clamp_cells: int
     mass_correction_delta: float
     mass_correction_weight: float
     mass_correction_count: int
@@ -176,6 +180,7 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     global target_theta_field, wall_c_ghost_field, write_allowed_field
     global phase_wall_missing_count_field, phase_wall_stream_mass_before_field
     global phase_wall_reflect_mass_field, phase_wall_delta_mass_field
+    global phase_wall_wetting_correction_field, phase_wall_wetting_clamp_field
     global mass_correction_delta, mass_correction_weight, mass_correction_count
     global phase_source_sum_field, phase_source_first_field
 
@@ -217,6 +222,8 @@ def setup_fields(nx: int, ny: int, nz: int) -> None:
     phase_wall_stream_mass_before_field = ti.field(dtype=ti.f64, shape=shape)
     phase_wall_reflect_mass_field = ti.field(dtype=ti.f64, shape=shape)
     phase_wall_delta_mass_field = ti.field(dtype=ti.f64, shape=shape)
+    phase_wall_wetting_correction_field = ti.field(dtype=ti.f64, shape=shape)
+    phase_wall_wetting_clamp_field = ti.field(dtype=ti.i32, shape=shape)
     mass_correction_delta = ti.field(dtype=ti.f64, shape=())
     mass_correction_weight = ti.field(dtype=ti.f64, shape=())
     mass_correction_count = ti.field(dtype=ti.i32, shape=())
@@ -252,18 +259,28 @@ def clamp01(x):
 @ti.func
 def c_neighbor_or_center(x, y, z, nx, ny, nz, c0):
     xx = wrap_index(x, nx)
-    yy = wrap_index(y, ny)
     zz = wrap_index(z, nz)
-    value = c_field[xx, yy, zz]
-    if solid_field[xx, yy, zz] == 1:
-        value = c0
-        for q in ti.static(range(Q)):
-            e = e_field[q]
-            fx = wrap_index(xx + e[0], nx)
-            fy = wrap_index(yy + e[1], ny)
-            fz = wrap_index(zz + e[2], nz)
-            if wall_field[fx, fy, fz] == 1:
-                value = wall_c_ghost_field[fx, fy, fz]
+    value = c0
+    if y >= 0 and y < ny:
+        yy = y
+        value = c_field[xx, yy, zz]
+        if solid_field[xx, yy, zz] == 1:
+            value = c0
+            # For flat-wall phase-field wetting, the wall-adjacent fluid node
+            # owns the ghost value used by both grad/laplace and missing-link
+            # h_i repair.  Do not wrap in y: otherwise the top gas layer sees
+            # the bottom wall through periodic indexing and receives a fake
+            # wetting boundary.
+            if wall_field[xx, yy, zz] == 1:
+                value = wall_c_ghost_field[xx, yy, zz]
+            else:
+                for q in ti.static(range(Q)):
+                    e = e_field[q]
+                    fx = wrap_index(xx + e[0], nx)
+                    fy = yy + e[1]
+                    fz = wrap_index(zz + e[2], nz)
+                    if fy >= 0 and fy < ny and wall_field[fx, fy, fz] == 1:
+                        value = wall_c_ghost_field[fx, fy, fz]
     return value
 
 
@@ -367,12 +384,11 @@ def initialize_fields_kernel(
     cx = center_x
     cy = center_y
     cz = center_z
-    if center_x < 0.0:
-        cx = 0.5 * ti.cast(nx - 1, ti.f64)
-    if center_y < 0.0:
-        cy = 0.5 * ti.cast(ny - 1, ti.f64)
-    if center_z < 0.0:
-        cz = 0.5 * ti.cast(nz - 1, ti.f64)
+    # Center defaults are resolved on the Python side before entering Taichi.
+    # Do not treat negative values as sentinels here: hydrophilic flat-wall
+    # spherical caps legitimately have cy < wall_y and can be outside the
+    # fluid domain.  Re-applying the old sentinel rule here detaches acute
+    # droplets from the wall and invalidates contact-angle gates.
     for x, y, z in ti.ndrange(nx, ny, nz):
         dx = ti.cast(x, ti.f64) - cx
         dy = ti.cast(y, ti.f64) - cy
@@ -556,8 +572,16 @@ def wetting_kernel(
         if wall_field[x, y, z] == 1:
             theta = target_theta_field[x, y, z]
             c_wall = clamp01(c_field[x, y, z])
-            dcdn = -(4.0 / width) * ti.cos(theta) * c_wall * (1.0 - c_wall)
-            ghost = clamp01(c_wall + ghost_sign * ghost_distance * dcdn)
+            # Wall normal points from solid into fluid.  For the solid-side
+            # ghost used by phase-field wetting, theta<90 must bias the ghost
+            # toward liquid (larger C) and theta>90 toward gas (smaller C).
+            # Keep distance/sign in the CLI for legacy reproducibility, but
+            # mode-3 physical wetting uses this explicit orientation instead
+            # of tuning sign as a repair knob.
+            dcdn = (4.0 / width) * ti.cos(theta) * c_wall * (1.0 - c_wall)
+            ghost = clamp01(c_wall + ghost_distance * dcdn)
+            if mode == 2:
+                ghost = clamp01(c_wall + ghost_sign * ghost_distance * dcdn)
             if mode == 1 and write_allowed_field[x, y, z] == 1:
                 c_field[x, y, z] = ghost
         wall_c_ghost_field[x, y, z] = ghost
@@ -762,9 +786,12 @@ def stream_kernel(src_h: ti.i32, dst_h: ti.i32, src_g: ti.i32, dst_g: ti.i32, nx
         for q in ti.static(range(Q)):
             e = e_field[q]
             xn = wrap_index(x - e[0], nx)
-            yn = wrap_index(y - e[1], ny)
+            yn = y - e[1]
             zn = wrap_index(z - e[2], nz)
-            if solid_field[xn, yn, zn] == 1 and solid_field[x, y, z] == 0:
+            if yn < 0 or yn >= ny:
+                h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
+                g[dst_g, x, y, z, q] = g[src_g, x, y, z, opp_field[q]]
+            elif solid_field[xn, yn, zn] == 1 and solid_field[x, y, z] == 0:
                 if phase_wall_mode == 2:
                     h[dst_h, x, y, z, q] = h[src_h, x, y, z, opp_field[q]]
                 elif phase_wall_mode == 3:
@@ -784,6 +811,8 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
         phase_wall_stream_mass_before_field[x, y, z] = 0.0
         phase_wall_reflect_mass_field[x, y, z] = 0.0
         phase_wall_delta_mass_field[x, y, z] = 0.0
+        phase_wall_wetting_correction_field[x, y, z] = 0.0
+        phase_wall_wetting_clamp_field[x, y, z] = 0
         if solid_field[x, y, z] == 1:
             for q in ti.static(range(Q)):
                 h[hbuf, x, y, z, q] = 0.0
@@ -792,15 +821,38 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
             missing = 0
             old_sum = 0.0
             reflected = 0.0
+            correction_abs = 0.0
+            clamp_count = 0
             for q in ti.static(range(Q)):
                 old_sum += h[hbuf, x, y, z, q]
             for q in ti.static(range(Q)):
                 e = e_field[q]
                 xn = wrap_index(x - e[0], nx)
-                yn = wrap_index(y - e[1], ny)
+                yn = y - e[1]
                 zn = wrap_index(z - e[2], nz)
-                if solid_field[xn, yn, zn] == 1:
+                if yn >= 0 and yn < ny and solid_field[xn, yn, zn] == 1:
                     val = h[hbuf, x, y, z, q]
+                    if phase_wall_mode == 3:
+                        opp = opp_field[q]
+                        pair_old = h[hbuf, x, y, z, q] + h[hbuf, x, y, z, opp]
+                        c0 = clamp01(c_field[x, y, z])
+                        ghost = wall_c_ghost_field[x, y, z]
+                        corr = w_field[q] * (ghost - c0)
+                        proposed = h[hbuf, x, y, z, q] + corr
+                        # h_i are phase-field populations, not bounded
+                        # probabilities.  Clipping each pair component to
+                        # [0, pair_old] distorts the non-equilibrium moments
+                        # and even triggers on neutral theta=90 walls.  Keep
+                        # pair mass exactly conserved and only record the old
+                        # clipping condition as a shadow diagnostic.
+                        if proposed < 0.0:
+                            clamp_count += 1
+                        if proposed > pair_old:
+                            clamp_count += 1
+                        h[hbuf, x, y, z, q] = proposed
+                        h[hbuf, x, y, z, opp] = pair_old - proposed
+                        correction_abs += ti.abs(proposed - val)
+                        val = proposed
                     reflected += val
                     missing += 1
             new_sum = 0.0
@@ -810,6 +862,8 @@ def boundary_kernel(hbuf: ti.i32, gbuf: ti.i32, nx: ti.i32, ny: ti.i32, nz: ti.i
             phase_wall_stream_mass_before_field[x, y, z] = old_sum
             phase_wall_reflect_mass_field[x, y, z] = reflected
             phase_wall_delta_mass_field[x, y, z] = new_sum - old_sum
+            phase_wall_wetting_correction_field[x, y, z] = correction_abs
+            phase_wall_wetting_clamp_field[x, y, z] = clamp_count
         elif wall_field[x, y, z] == 1 and phase_wall_mode == 1:
             ghost = wall_c_ghost_field[x, y, z]
             for q in ti.static(range(Q)):
@@ -847,6 +901,8 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, ka
         "phase_wall_mass_before": phase_wall_stream_mass_before_field.to_numpy(),
         "phase_wall_reflect_mass": phase_wall_reflect_mass_field.to_numpy(),
         "phase_wall_delta_mass": phase_wall_delta_mass_field.to_numpy(),
+        "phase_wall_wetting_correction": phase_wall_wetting_correction_field.to_numpy(),
+        "phase_wall_wetting_clamp": phase_wall_wetting_clamp_field.to_numpy(),
         "phase_source_sum": phase_source_sum_field.to_numpy(),
         "phase_source_first": phase_source_first_field.to_numpy(),
     }
@@ -924,6 +980,8 @@ def numpy_metrics(step: int, hbuf: int, gbuf: int, mass0: float, beta: float, ka
         phase_wall_stream_mass_before=float(np.sum(arrays["phase_wall_mass_before"])),
         phase_wall_reflect_mass=float(np.sum(arrays["phase_wall_reflect_mass"])),
         phase_wall_delta_mass=float(np.sum(arrays["phase_wall_delta_mass"])),
+        phase_wall_wetting_correction_abs=float(np.sum(arrays["phase_wall_wetting_correction"])),
+        phase_wall_wetting_clamp_cells=int(np.count_nonzero(arrays["phase_wall_wetting_clamp"])),
         mass_correction_delta=float(mass_correction_delta[None]),
         mass_correction_weight=float(mass_correction_weight[None]),
         mass_correction_count=int(mass_correction_count[None]),
@@ -965,6 +1023,12 @@ def write_npz_snapshot(path: Path, hbuf: int, gbuf: int) -> None:
         wall=wall_field.to_numpy(),
         solid=solid_field.to_numpy(),
         ghost=wall_c_ghost_field.to_numpy(),
+        phase_wall_missing=phase_wall_missing_count_field.to_numpy(),
+        phase_wall_mass_before=phase_wall_stream_mass_before_field.to_numpy(),
+        phase_wall_reflect_mass=phase_wall_reflect_mass_field.to_numpy(),
+        phase_wall_delta_mass=phase_wall_delta_mass_field.to_numpy(),
+        phase_wall_wetting_correction=phase_wall_wetting_correction_field.to_numpy(),
+        phase_wall_wetting_clamp=phase_wall_wetting_clamp_field.to_numpy(),
         h=h.to_numpy()[hbuf],
         g=g.to_numpy()[gbuf],
     )
@@ -1050,6 +1114,10 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     if math.isfinite(args.init_contact_angle_deg):
         if args.geometry_mode != 1:
             raise ValueError("--init-contact-angle-deg is only defined for flat wall geometry-mode=1")
+        # Keep the initialization convention identical to the calibrated bbox
+        # analyzer: theta = acos((wall_y - cy) / R).  Thus acute hydrophilic
+        # caps have the interface-circle center below the wall, neutral caps
+        # center on the wall, and obtuse hydrophobic caps center above it.
         center_y = args.wall_surface_y - args.radius * math.cos(math.radians(args.init_contact_angle_deg))
 
     arch = ti.cuda if args.arch == "cuda" else ti.cpu
